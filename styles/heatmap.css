@@ -1,0 +1,18 @@
+/* Heatmap Grid Layout Styles */
+.grid-cols-53 {
+  display: grid;
+  grid-template-columns: repeat(53, minmax(0, 1fr));
+}
+
+/* Add responsive adjustment for smaller screens */
+@media (max-width: 768px) {
+  .grid-cols-53 {
+    grid-template-columns: repeat(32, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-cols-53 {
+    grid-template-columns: repeat(18, minmax(0, 1fr));
+  }
+} 

@@ -1,0 +1,3 @@
+[submodule "pages/modules"]
+	path = pages/modules
+	url = https://github.com/adityasharma2000/modules.git

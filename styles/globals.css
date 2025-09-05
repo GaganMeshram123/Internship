@@ -1,0 +1,83 @@
+/* Add these CSS rules to the end of the file */
+
+/* Mobile scrolling fixes */
+html, body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  html, body {
+    height: -webkit-fill-available;
+  }
+  
+  .fixed {
+    position: absolute;
+  }
+  
+  .worksheet-modal {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999 !important;
+  }
+  
+  .worksheet-container {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Force hardware acceleration */
+* {
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Mobile specific layout - prevent rubber-banding */
+@media (max-width: 768px) {
+  body {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  main {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+  
+  .worksheet-modal {
+    position: fixed !important;
+    height: 100vh !important;
+    height: -webkit-fill-available !important;
+  }
+  
+  .worksheet-container {
+    max-height: 90vh !important;
+    max-height: calc(100vh - 40px) !important;
+    max-height: calc(-webkit-fill-available - 40px) !important;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+  }
+} 

@@ -1,0 +1,212 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@keyframes bubble {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-200px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-bubble {
+  animation: bubble 2s ease-out infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0%) translateX(-50%);
+  }
+  100% {
+    transform: translateY(100%) translateX(-50%);
+  }
+}
+
+.animate-fall {
+  animation: fall 1s linear forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  10% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  25% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  90% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 5s ease-in-out forwards;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  10% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  90% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Theme transition animations */
+.theme-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  backdrop-filter: blur(0px);
+  transition: backdrop-filter 0.8s ease-out;
+}
+
+.theme-transition-overlay.active {
+  backdrop-filter: blur(4px);
+}
+
+.theme-transition-circle {
+  position: absolute;
+  border-radius: 50%;
+  animation: theme-transition 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  background: radial-gradient(
+    circle,
+    rgba(79, 70, 229, 0.9) 0%,
+    rgba(99, 102, 241, 0.8) 30%,
+    rgba(129, 140, 248, 0.7) 60%,
+    rgba(165, 180, 252, 0.6) 100%
+  );
+  box-shadow: 0 0 100px 60px rgba(99, 102, 241, 0.7);
+  transform: scale(0);
+  will-change: transform, opacity;
+}
+
+@keyframes theme-transition {
+  0% {
+    transform: scale(0);
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(var(--max-scale, 6));
+    opacity: 0;
+  }
+}
+
+/* Pulse animation for button */
+@keyframes pulse-light {
+  0% {
+    box-shadow: 0 0 0 0 rgba(165, 180, 252, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(165, 180, 252, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(165, 180, 252, 0);
+  }
+}
+
+.animate-pulse-light {
+  animation: pulse-light 1.5s ease-in-out infinite;
+}
+
+/* Add a transition to all elements to make them change smoothly - but exclude certain properties to prevent flickering */
+* {
+  transition: background-color 0.5s ease-out, 
+              color 0.5s ease-out, 
+              border-color 0.5s ease-out, 
+              box-shadow 0.5s ease-out;
+}
+
+/* Target specific elements for smoother transitions */
+body, html, #__next, .amplify-modal, .amplify-modal-content, .planet, .nebula, .stars-small, .stars-medium, .stars-large {
+  transition: background 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: background, background-color;
+}
+
+/* Exclude navbar from sliding animations */
+.fixed.top-0.left-0.right-0.z-30 {
+  transform: none !important;
+  animation: none !important;
+  transition: background-color 0.5s ease-out, 
+              color 0.5s ease-out, 
+              border-color 0.5s ease-out, 
+              box-shadow 0.5s ease-out;
+}
+
+/* Fix slide flickering during transitions */
+.motion-div-slide {
+  will-change: transform, opacity;
+  transition-property: none !important;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Prevent transitions on slide components to avoid flickering */
+[class*="motion-"], 
+[class*="animate-center"], 
+[class*="animate-exit"], 
+[class*="animate-enter"] {
+  transition-property: none !important;
+}
+
+/* Optimize animations for performance */
+.absolute.w-full.h-full.flex.items-center.justify-center {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transition-property: none !important;
+} 

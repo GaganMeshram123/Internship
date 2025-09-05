@@ -1,0 +1,351 @@
+import React, { useState } from 'react';
+import { Interaction, InteractionResponse } from '../../../common-components/concept';
+import { TrackedInteraction } from '../../../common-components/concept';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
+
+export default function EqualChordsTheoremSlide1() {
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+  const [step, setStep] = useState(0); // 0: nothing, 1: circle, 2: first chord, 3: second chord, 4: equal chords, 5: central angles, 6: distances, 7: conclusion
+
+  const slideInteractions: Interaction[] = [
+    {
+      id: 'ct-equal-chords-concept',
+      conceptId: 'ct-equal-chords',
+      conceptName: 'Equal Chords Concept',
+      type: 'learning',
+      description: 'Understanding the relationships between equal chords in a circle'
+    },
+    {
+      id: 'ct-central-angle-relationship',
+      conceptId: 'ct-central-angle-relationship',
+      conceptName: 'Central Angle Relationship',
+      type: 'learning',
+      description: 'Understanding how equal chords relate to equal central angles'
+    },
+    {
+      id: 'ct-distance-relationship',
+      conceptId: 'ct-distance-relationship',
+      conceptName: 'Distance Relationship',
+      type: 'learning',
+      description: 'Understanding how equal chords are equidistant from center'
+    }
+  ];
+
+  const handleInteractionComplete = (response: InteractionResponse) => {
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
+  };
+
+  // Geometry
+  const cx = 200, cy = 175, r = 120;
+  // Make chords closer together - both on the upper part of the circle
+  const angleA1 = Math.PI * 0.65, angleB1 = Math.PI * 0.8;
+  const A1x = cx + r * Math.cos(angleA1), A1y = cy + r * Math.sin(angleA1);
+  const B1x = cx + r * Math.cos(angleB1), B1y = cy + r * Math.sin(angleB1);
+  const angleA2 = Math.PI * 0.2, angleB2 = Math.PI * 0.35;
+  const A2x = cx + r * Math.cos(angleA2), A2y = cy + r * Math.sin(angleA2);
+  const B2x = cx + r * Math.cos(angleB2), B2y = cy + r * Math.sin(angleB2);
+
+  // Perpendiculars OM and ON
+  // OM: from O to (Mx, My)
+  // ON: from O to (Nx, Ny)
+
+  // Central angles: OA, OB, OC, OD
+  // OA1: (cx, cy) to (A1x, A1y)
+  // OB1: (cx, cy) to (B1x, B1y)
+  // OA2: (cx, cy) to (A2x, A2y)
+  // OB2: (cx, cy) to (B2x, B2y)
+
+  // Helper for angle arc at a vertex (always draws minor angle)
+  function angleArc(x: number, y: number, ax: number, ay: number, bx: number, by: number, radius = 18) {
+    let angle1 = Math.atan2(ay - y, ax - x);
+    let angle2 = Math.atan2(by - y, bx - x);
+    
+    if (angle1 < 0) angle1 += 2 * Math.PI;
+    if (angle2 < 0) angle2 += 2 * Math.PI;
+    
+    let diff = angle2 - angle1;
+    if (diff < 0) diff += 2 * Math.PI;
+    if (diff > Math.PI) {
+      [angle1, angle2] = [angle2, angle1];
+      diff = 2 * Math.PI - diff;
+    }
+    
+    const arcX1 = x + radius * Math.cos(angle1);
+    const arcY1 = y + radius * Math.sin(angle1);
+    const arcX2 = x + radius * Math.cos(angle2);
+    const arcY2 = y + radius * Math.sin(angle2);
+    
+    const mid = angle1 + diff / 2;
+    const labelX = x + (radius + 15) * Math.cos(mid);
+    const labelY = y + (radius + 15) * Math.sin(mid);
+    
+    return { 
+      arc: `M ${arcX1} ${arcY1} A ${radius} ${radius} 0 0 1 ${arcX2} ${arcY2}`, 
+      labelX, 
+      labelY 
+    };
+  }
+
+  // SVG Theorem Diagram Component
+  const TheoremDiagram = () => (
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Equal Chords Theorem</h3>
+      
+      <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
+        {/* Circle - shown from step 1 */}
+        {step >= 1 && (
+          <>
+            <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
+            {/* Center O */}
+            <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
+            <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
+          </>
+        )}
+
+        {/* First chord AB - shown from step 2 */}
+        {step >= 2 && (
+          <>
+            {/* Triangle OAB */}
+            <path d={`M ${cx} ${cy} L ${A1x} ${A1y} L ${B1x} ${B1y} Z`} fill="rgba(59, 130, 246, 0.3)" stroke="#3B82F6" strokeWidth="2" />
+            {/* Points and labels for AB */}
+            <circle cx={A1x} cy={A1y} r="4" fill="#3B82F6" />
+            <circle cx={B1x} cy={B1y} r="4" fill="#3B82F6" />
+            <text x={A1x + (A1x > cx ? 10 : -20)} y={A1y + (A1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">A</text>
+            <text x={B1x + (B1x > cx ? 10 : -20)} y={B1y + (B1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">B</text>
+          </>
+        )}
+
+        {/* Second chord CD - shown from step 3 */}
+        {step >= 3 && (
+          <>
+            {/* Triangle OCD */}
+            <path d={`M ${cx} ${cy} L ${A2x} ${A2y} L ${B2x} ${B2y} Z`} fill="rgba(16, 185, 129, 0.3)" stroke="#10B981" strokeWidth="2" />
+            {/* Points and labels for CD */}
+            <circle cx={A2x} cy={A2y} r="4" fill="#10B981" />
+            <circle cx={B2x} cy={B2y} r="4" fill="#10B981" />
+            <text x={A2x + (A2x > cx ? 10 : -20)} y={A2y + (A2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">C</text>
+            <text x={B2x + (B2x > cx ? 10 : -20)} y={B2y + (B2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">D</text>
+          </>
+        )}
+
+        {/* Equal chords indication - shown from step 4 */}
+        {step >= 4 && (
+          <>
+            {/* Tick marks and equality label for AB and CD */}
+            {(() => {
+              // Midpoints of AB and CD
+              const M1x = (A1x + B1x) / 2, M1y = (A1y + B1y) / 2;
+              const M2x = (A2x + B2x) / 2, M2y = (A2y + B2y) / 2;
+              // Tick marks for AB
+              const tickLen = 14;
+              const dx1 = (B1y - A1y), dy1 = -(B1x - A1x);
+              const norm1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+              const tx1 = dx1 / norm1, ty1 = dy1 / norm1;
+              // Tick marks for CD
+              const dx2 = (B2y - A2y), dy2 = -(B2x - A2x);
+              const norm2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+              const tx2 = dx2 / norm2, ty2 = dy2 / norm2;
+              return (
+                <>
+                  {/* AB tick */}
+                  <line x1={M1x - tx1 * tickLen / 2} y1={M1y - ty1 * tickLen / 2} x2={M1x + tx1 * tickLen / 2} y2={M1y + ty1 * tickLen / 2} stroke="#8B5CF6" strokeWidth="3" />
+                  {/* CD tick */}
+                  <line x1={M2x - tx2 * tickLen / 2} y1={M2y - ty2 * tickLen / 2} x2={M2x + tx2 * tickLen / 2} y2={M2y + ty2 * tickLen / 2} stroke="#8B5CF6" strokeWidth="3" />
+                  {/* Equality label */}
+                  <text x={cx} y={(M1y + M2y) / 2 - 10} fill="#8B5CF6" fontSize="15" fontWeight="bold" textAnchor="middle">AB = CD</text>
+                </>
+              );
+            })()}
+          </>
+        )}
+
+        {/* Central angles - shown from step 5 */}
+        {step >= 5 && (
+          <>
+            {/* Angle arcs */}
+            {(() => {
+              const arc1 = angleArc(cx, cy, A1x, A1y, B1x, B1y, 25);
+              const arc2 = angleArc(cx, cy, A2x, A2y, B2x, B2y, 25);
+              return (
+                <>
+                  <path d={arc1.arc} fill="none" stroke="#F59E0B" strokeWidth="2" />
+                  <text x={arc1.labelX} y={arc1.labelY} fill="#F59E0B" fontSize="12" fontWeight="bold">∠AOB</text>
+                  <path d={arc2.arc} fill="none" stroke="#F59E0B" strokeWidth="2" />
+                  <text x={arc2.labelX} y={arc2.labelY} fill="#F59E0B" fontSize="12" fontWeight="bold">∠COD</text>
+                  {/* Equal angles label */}
+                  <text x={cx} y={cy - 50} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">∠AOB = ∠COD</text>
+                </>
+              );
+            })()}
+          </>
+        )}
+
+        {/* Perpendicular distances - shown from step 6 */}
+        {step >= 6 && (
+          <>
+            {/* Perpendiculars from O to AB and CD, right angle markers, and distance labels */}
+            {(() => {
+              // Midpoints
+              const M1x = (A1x + B1x) / 2, M1y = (A1y + B1y) / 2;
+              const M2x = (A2x + B2x) / 2, M2y = (A2y + B2y) / 2;
+              // Perpendiculars
+              return (
+                <>
+                  {/* Perpendicular from O to AB */}
+                  <line x1={cx} y1={cy} x2={M1x} y2={M1y} stroke="#E11D48" strokeWidth="2" strokeDasharray="5 4" />
+                  {/* Right angle marker at M1 */}
+                  <circle cx={M1x} cy={M1y} r="3" fill="#E11D48" />
+                  {/* Distance label d₁ */}
+                  <text x={(cx + M1x) / 2 - 12} y={(cy + M1y) / 2 - 8} fill="#E11D48" fontSize="13" fontWeight="bold">d₁</text>
+                  
+                  {/* Perpendicular from O to CD */}
+                  <line x1={cx} y1={cy} x2={M2x} y2={M2y} stroke="#E11D48" strokeWidth="2" strokeDasharray="5 4" />
+                  {/* Right angle marker at M2 */}
+                  <circle cx={M2x} cy={M2y} r="3" fill="#E11D48" />
+                  {/* Distance label d₂ */}
+                  <text x={(cx + M2x) / 2 - 12} y={(cy + M2y) / 2 + 16} fill="#E11D48" fontSize="13" fontWeight="bold">d₂</text>
+                </>
+              );
+            })()}
+          </>
+        )}
+
+        {/* Final conclusion - shown from step 7 */}
+        {step >= 7 && (
+          <>
+            <text x={cx} y={320} fill="#059669" fontSize="14" fontWeight="bold" textAnchor="middle">d₁ = d₂ (equidistant from center)</text>
+          </>
+        )}
+      </svg>
+      
+      <div className="flex justify-center gap-4 mt-4">
+        <button
+          className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          onClick={() => setStep(s => Math.max(0, s - 1))}
+          disabled={step === 0}
+        >
+          Previous
+        </button>
+        <button
+          className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50 hover:bg-indigo-700 transition-colors"
+          onClick={() => setStep(s => Math.min(7, s + 1))}
+          disabled={step === 7}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+
+  // The slide content
+  const slideContent = (
+    <div className="w-full h-full bg-white dark:bg-gray-900 rounded-xl p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left column - Theorem Statement */}
+        <div className="space-y-6">
+          {/* Main Theorem */}
+          <TrackedInteraction 
+            interaction={slideInteractions[0]} 
+            onInteractionComplete={handleInteractionComplete}
+          >
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
+              <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem Statement:</h3>
+                  <p className="font-medium">
+                    In the same circle (or equal circles), <strong>equal chords</strong> subtend <strong>equal central angles</strong> and are <strong>equidistant</strong> from the center.
+                  </p>
+                </div>
+                
+                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Mathematical Form:</h3>
+                  <p>If AB = CD (equal chords), then:</p>
+                  <ul className="mt-2 space-y-1">
+                    <li>• ∠AOB = ∠COD (equal central angles)</li>
+                    <li>• Distance from O to AB = Distance from O to CD</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Converse is True:</h3>
+                  <p className="text-sm">All three conditions are equivalent - if any one is true, the others must also be true.</p>
+                </div>
+              </div>
+            </div>
+          </TrackedInteraction>
+
+          {/* Central Angle Relationship */}
+          <TrackedInteraction 
+            interaction={slideInteractions[1]} 
+            onInteractionComplete={handleInteractionComplete}
+          >
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+                Central Angle Relationship
+              </h2>
+              
+              <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Why Equal Central Angles?</h3>
+                  <p>Equal chords cut off equal arcs, and equal arcs correspond to equal central angles.</p>
+                </div>
+                
+                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Arc-Chord Relationship:</h3>
+                  <p>The length of a chord is directly related to the central angle it subtends and the radius of the circle.</p>
+                </div>
+                
+                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Symmetry Principle:</h3>
+                  <p className="text-sm">Equal chords exhibit identical geometric properties due to the perfect symmetry of circles.</p>
+                </div>
+              </div>
+            </div>
+          </TrackedInteraction>
+        </div>
+
+        {/* Right column - Distance and Diagram */}
+        <div className="space-y-6">
+          {/* Interactive Diagram */}
+          <TheoremDiagram />
+          
+          {/* Distance Relationship */}
+          <TrackedInteraction 
+            interaction={slideInteractions[2]} 
+            onInteractionComplete={handleInteractionComplete}
+          >
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-transparent">
+                Distance Relationship
+              </h2>
+              
+              <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Equidistant Property:</h3>
+                  <p>Equal chords are the same distance from the center, measured perpendicularly.</p>
+                </div>
+                
+                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Geometric Explanation:</h3>
+                  <p>Since equal chords subtend equal central angles, they must be positioned symmetrically relative to the center.</p>
+                </div>
+              </div>
+            </div>
+          </TrackedInteraction>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <SlideComponentWrapper
+      slideId="ct-equal-chords-theorem-statement"
+      slideTitle="Equal Chords Theorem"
+      moduleId="circle-theorems-0001"
+      submoduleId="equal-chords-theorem"
+      interactions={localInteractions}
+    >
+      {slideContent}
+    </SlideComponentWrapper>
+  );
+} 
