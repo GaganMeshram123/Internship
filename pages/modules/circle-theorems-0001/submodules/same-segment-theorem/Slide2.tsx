@@ -86,7 +86,7 @@ export default function SameSegmentTheoremSlide2() {
   // SVG Proof Diagram Component
   const ProofDiagram = () => (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Proof Visualization</h3>
+      <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Proof Visualization</h3>
       <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
         {step >= 1 && (
           <>
@@ -220,7 +220,7 @@ export default function SameSegmentTheoremSlide2() {
           >
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Given:</h3>
                   <ul className="space-y-2">
                     <li>• Circle with center O</li>
@@ -229,13 +229,13 @@ export default function SameSegmentTheoremSlide2() {
                   </ul>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-3">To Prove:</h3>
+               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="ttext-xl font-medium text-blue-700 dark:text-blue-300 mb-3">To Prove:</h3>
                   <p className="font-medium">∠APB = ∠AQB</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-gray-700 dark:text-gray-300 mb-3">Strategy:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Strategy:</h3>
                   <p>Use properties of isosceles triangles and central angles</p>
                 </div>
               </div>
@@ -248,12 +248,12 @@ export default function SameSegmentTheoremSlide2() {
             onInteractionComplete={handleInteractionComplete}
           >
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Step 1: Isosceles Triangles
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Insight:</h3>
                   <p>Triangles OAP and OBP are isosceles because:</p>
                   <ul className="mt-2 space-y-1">
@@ -262,8 +262,8 @@ export default function SameSegmentTheoremSlide2() {
                   </ul>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-amber-700 dark:text-amber-300 mb-3">Therefore:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Therefore:</h3>
                   <p>In △OAP: ∠OAP = ∠OPA</p>
                   <p>In △OBP: ∠OBP = ∠OPB</p>
                 </div>
@@ -283,25 +283,25 @@ export default function SameSegmentTheoremSlide2() {
             onInteractionComplete={handleInteractionComplete}
           >
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Step 2: Central Angle
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Central Angle ∠AOB:</h3>
                   <p>This angle is the same for both triangles OAP and OAQ because it depends only on the arc AB, not on the position of P or Q.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-indigo-700 dark:text-indigo-300 mb-3">Exterior Angle Theorem:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Exterior Angle Theorem:</h3>
                   <p>In each isosceles triangle:</p>
                   <p className="font-medium mt-2">∠APB = ½∠AOB</p>
                   <p className="font-medium">∠AQB = ½∠AOB</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-green-700 dark:text-green-300 mb-3">Conclusion:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Conclusion:</h3>
                   <p className="font-bold">∠APB = ∠AQB ✓</p>
                   <p className="text-sm mt-2 italic">Both angles equal half the central angle</p>
                 </div>

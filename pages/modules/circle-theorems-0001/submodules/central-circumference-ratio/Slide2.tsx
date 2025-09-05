@@ -348,7 +348,7 @@ export default function CentralCircumferenceRatioSlide2() {
             onInteractionComplete={handleInteractionComplete}
           >
             <div className="bg-yellow-50/60 border border-yellow-200 dark:bg-yellow-900/40 dark:border-yellow-700/50 rounded-xl px-6 py-4 mb-4">
-              <h3 className="text-xl font-medium text-yellow-700 dark:text-yellow-300 mb-3">Triangle Angle Sums:</h3>
+              <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-4">Triangle Angle Sums:</h3>
               <p>In △OAP: ∠AOP = 180° - 2α</p>
               <p>In △OBP: ∠BOP = 180° - 2β</p>
               <p className="text-sm mt-2 italic">(Sum of angles in a triangle = 180°)</p>

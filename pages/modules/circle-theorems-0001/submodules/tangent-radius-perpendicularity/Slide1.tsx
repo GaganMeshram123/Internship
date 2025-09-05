@@ -224,24 +224,24 @@ export default function TangentRadiusPerpendicularitySlide1() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-3">Theorem Statement:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem Statement:</h3>
                   <p className="font-medium">
                     A tangent to a circle is <strong>perpendicular</strong> to the radius drawn to the point of tangency.
                   </p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Mathematical Form:</h3>
                   <p>If line L is tangent to circle at point T, and OT is the radius to T, then:</p>
                   <p className="font-bold text-center mt-2">L ⊥ OT</p>
                   <p className="text-center mt-1">∠OTL = 90°</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-indigo-700 dark:text-indigo-300 mb-3">Key Points:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Points:</h3>
                   <ul className="space-y-2">
                     <li>• Tangent touches circle at exactly one point</li>
                     <li>• Radius connects center to tangent point</li>
@@ -257,24 +257,24 @@ export default function TangentRadiusPerpendicularitySlide1() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-green-500 to-teal-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Why Perpendicular?
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-green-700 dark:text-green-300 mb-3">Geometric Necessity:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Geometric Necessity:</h3>
                   <p>The tangent line represents the shortest distance from an external point to the circle, which must be perpendicular to the radius.</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-teal-700 dark:text-teal-300 mb-3">Unique Contact:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Unique Contact:</h3>
                   <p>Since the tangent touches at exactly one point, any other direction would either miss the circle or intersect it at two points.</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-cyan-700 dark:text-cyan-300 mb-3">Mathematical Proof:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Mathematical Proof:</h3>
                   <p className="text-lg">This can be proven using the fact that the radius to the tangent point gives the shortest distance from the center to the tangent line.</p>
                 </div>
               </div>
@@ -292,14 +292,14 @@ export default function TangentRadiusPerpendicularitySlide1() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Universal Property
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-purple-700 dark:text-purple-300 mb-3">Always True:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Always True:</h3>
                   <p>This perpendicular relationship holds for <strong>every</strong> tangent to any circle, regardless of:</p>
                   <ul className="mt-2 space-y-1 text-lg">
                     <li>• Circle size or radius</li>
@@ -308,8 +308,8 @@ export default function TangentRadiusPerpendicularitySlide1() {
                   </ul>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-pink-700 dark:text-pink-300 mb-3">Applications:</h3>
+               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Applications:</h3>
                   <ul className="space-y-1 text-lg">
                     <li>• Constructing tangent lines</li>
                     <li>• Solving tangent-related problems</li>
@@ -318,8 +318,8 @@ export default function TangentRadiusPerpendicularitySlide1() {
                   </ul>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-rose-700 dark:text-rose-300 mb-3">Converse is True:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Converse is True:</h3>
                   <p className="text-lg">If a line through a point on a circle is perpendicular to the radius at that point, then the line is tangent to the circle.</p>
                 </div>
               </div>

@@ -250,14 +250,14 @@ export default function EqualChordsTheoremSlide1() {
           >
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem Statement:</h3>
                   <p className="font-medium">
                     In the same circle (or equal circles), <strong>equal chords</strong> subtend <strong>equal central angles</strong> and are <strong>equidistant</strong> from the center.
                   </p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Mathematical Form:</h3>
                   <p>If AB = CD (equal chords), then:</p>
                   <ul className="mt-2 space-y-1">
@@ -266,7 +266,7 @@ export default function EqualChordsTheoremSlide1() {
                   </ul>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Converse is True:</h3>
                   <p className="text-sm">All three conditions are equivalent - if any one is true, the others must also be true.</p>
                 </div>
@@ -280,22 +280,22 @@ export default function EqualChordsTheoremSlide1() {
             onInteractionComplete={handleInteractionComplete}
           >
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Central Angle Relationship
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Why Equal Central Angles?</h3>
                   <p>Equal chords cut off equal arcs, and equal arcs correspond to equal central angles.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Arc-Chord Relationship:</h3>
                   <p>The length of a chord is directly related to the central angle it subtends and the radius of the circle.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Symmetry Principle:</h3>
                   <p className="text-sm">Equal chords exhibit identical geometric properties due to the perfect symmetry of circles.</p>
                 </div>
@@ -315,17 +315,17 @@ export default function EqualChordsTheoremSlide1() {
             onInteractionComplete={handleInteractionComplete}
           >
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Distance Relationship
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Equidistant Property:</h3>
                   <p>Equal chords are the same distance from the center, measured perpendicularly.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Geometric Explanation:</h3>
                   <p>Since equal chords subtend equal central angles, they must be positioned symmetrically relative to the center.</p>
                 </div>

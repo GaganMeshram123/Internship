@@ -303,24 +303,24 @@ export default function ChordBisectorTheoremSlide1() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem Statement:</h3>
                   <p className="font-medium">
                     A <strong>perpendicular</strong> drawn from the center of a circle to a chord <strong>bisects</strong> the chord.
                   </p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-green-700 dark:text-green-300 mb-3">Mathematical Form:</h3>
+                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Mathematical Form:</h3>
                   <p>If OM ⊥ chord AB, where O is the center and M is on AB, then:</p>
                   <p className="font-bold text-center mt-2">AM = MB</p>
                   <p className="text-center text-sm">M is the midpoint of AB</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-teal-700 dark:text-teal-300 mb-3">Key Conditions:</h3>
+                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Conditions:</h3>
                   <ul className="space-y-2">
                     <li>• O is the center of the circle</li>
                     <li>• AB is any chord of the circle</li>
@@ -337,24 +337,24 @@ export default function ChordBisectorTheoremSlide1() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold dark:text-blue-400 mb-4 bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
                 Why Does This Work?
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-amber-700 dark:text-amber-300 mb-3">Symmetry Principle:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Symmetry Principle:</h3>
                   <p>The perpendicular from the center creates perfect symmetry, making the two segments equal.</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-orange-700 dark:text-orange-300 mb-3">Congruent Triangles:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Congruent Triangles:</h3>
                   <p>Triangles OAM and OBM are congruent (by RHS), making AM = BM.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-3">Shortest Distance:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Shortest Distance:</h3>
                   <p className="text-sm">The perpendicular represents the shortest distance from center to chord, naturally occurring at the midpoint.</p>
                 </div>
               </div>
@@ -372,19 +372,19 @@ export default function ChordBisectorTheoremSlide1() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold dark:text-blue-400 mb-4 bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
                 Converse Theorem
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-purple-700 dark:text-purple-300 mb-3">Converse Statement:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Converse Statement:</h3>
                   <p>If a line from the center of a circle passes through the midpoint of a chord, then it is perpendicular to that chord.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-pink-700 dark:text-pink-300 mb-3">Practical Meaning:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Practical Meaning:</h3>
                   <p>Both directions are true - bisecting implies perpendicularity, and perpendicularity implies bisecting.</p>
                 </div>
               </div>

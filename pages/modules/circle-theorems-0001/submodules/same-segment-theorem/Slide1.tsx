@@ -204,23 +204,23 @@ export default function SameSegmentTheoremSlide1() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem Statement:</h3>
                   <p className="font-medium">
                     Angles subtended by the same arc from any points on the <strong>same side</strong> of the chord are equal.
                   </p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-indigo-700 dark:text-indigo-300 mb-3">In Mathematical Terms:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">In Mathematical Terms:</h3>
                   <p>If points P, Q, R are on the same arc segment, then:</p>
                   <p className="font-bold text-center mt-2">∠APB = ∠AQB = ∠ARB</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-amber-700 dark:text-amber-300 mb-3">Key Condition:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Condition:</h3>
                   <p>
                     All points must be on the <strong>same side</strong> of the chord AB. Points on opposite sides will create supplementary angles.
                   </p>
@@ -234,8 +234,8 @@ export default function SameSegmentTheoremSlide1() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-green-500 to-teal-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Why Are They Equal?
               </h2>
               
@@ -244,8 +244,8 @@ export default function SameSegmentTheoremSlide1() {
                   Each angle "sees" the same arc AB. Since the arc length remains constant, all angles subtended by this arc from the same side are equal.
                 </p>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-teal-700 dark:text-teal-300 mb-3">Intuitive Understanding:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Intuitive Understanding:</h3>
                   <ul className="space-y-2">
                     <li>• Same arc = Same "view" of the chord</li>
                     <li>• Same side = Same orientation</li>
@@ -267,24 +267,24 @@ export default function SameSegmentTheoremSlide1() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-purple-500 to-pink-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Applications
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-4 py-3">
+               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h4 className="font-medium text-blue-700 dark:text-blue-300 mb-2">Geometry Problems:</h4>
                   <p className="text-sm">Finding unknown angles when points lie on the same arc</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-4 py-3">
-                  <h4 className="font-medium text-pink-700 dark:text-pink-300 mb-2">Cyclic Quadrilaterals:</h4>
+               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h4 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Cyclic Quadrilaterals:</h4>
                   <p className="text-sm">Foundation for understanding opposite angles in cyclic quadrilaterals</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-4 py-3">
-                  <h4 className="font-medium text-rose-700 dark:text-rose-300 mb-2">Construction:</h4>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h4 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Construction:</h4>
                   <p className="text-sm">Creating angles of equal measure using circle properties</p>
                 </div>
               </div>

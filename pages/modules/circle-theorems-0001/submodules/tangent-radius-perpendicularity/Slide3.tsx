@@ -204,7 +204,7 @@ export default function TangentRadiusPerpendicularityAssessment() {
           </p>
         </div>
 
-        <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6 mb-8">
+        <div className="bg-orange-50/60 border border-orange-200 dark:bg-orange-900/40 dark:border-orange-700/50 rounded-lg p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             📐 Tangent-Radius Perpendicularity Assessment Instructions
           </h2>

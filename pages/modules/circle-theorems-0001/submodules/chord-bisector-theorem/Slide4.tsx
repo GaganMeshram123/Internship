@@ -234,7 +234,7 @@ export default function ChordBisectorTheoremAssessment() {
 
         {/* Question 1 */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">
             Question 1: Basic Chord Bisector Application
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -257,7 +257,7 @@ export default function ChordBisectorTheoremAssessment() {
 
         {/* Question 2 */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">
             Question 2: Multiple Chords and Distances
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

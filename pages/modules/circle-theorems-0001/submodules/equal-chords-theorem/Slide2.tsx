@@ -83,12 +83,12 @@ export default function EqualChordsTheoremSlide2() {
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Given:</h3>
                   <p>AB = CD (equal chords in the same circle)</p>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-green-700 dark:text-green-300 mb-3">To Prove:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">To Prove:</h3>
                   <p>∠AOB = ∠COD (equal central angles)</p>
                 </div>
               </div>
@@ -96,9 +96,9 @@ export default function EqualChordsTheoremSlide2() {
           </TrackedInteraction>
           <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">SSS Congruence</h2>
-              <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                <h3 className="text-xl font-medium text-amber-700 dark:text-amber-300 mb-3">Triangle △AOB ≅ △COD:</h3>
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">SSS Congruence</h2>
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Triangle △AOB ≅ △COD:</h3>
                 <ul className="space-y-2">
                   <li>• OA = OC (radii)</li>
                   <li>• OB = OD (radii)</li>
@@ -197,9 +197,8 @@ export default function EqualChordsTheoremSlide2() {
           </div>
           <TrackedInteraction interaction={slideInteractions[2]} onInteractionComplete={handleInteractionComplete}>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
-              <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                <p>Since △AOB ≅ △COD, corresponding angles are equal: ∠AOB = ∠COD</p>
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Conclusion</h2>
+<div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">                <p>Since △AOB ≅ △COD, corresponding angles are equal: ∠AOB = ∠COD</p>
                 <p className="font-bold mt-2">Therefore: Equal chords subtend equal central angles!</p>
               </div>
             </div>

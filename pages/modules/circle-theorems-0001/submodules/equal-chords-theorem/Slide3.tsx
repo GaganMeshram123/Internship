@@ -231,7 +231,7 @@ export default function EqualChordsTheoremAssessment() {
           </p>
         </div>
 
-        <div className="bg-teal-50/60 border border-teal-200 dark:bg-teal-900/40 dark:border-teal-700/50 rounded-lg p-6 mb-8">
+        <div className="bg-orange-50/60 border border-orange-200 dark:bg-orange-900/40 dark:border-orange-700/50 rounded-lg p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             📐 Equal Chords Theorem Assessment Instructions
           </h2>
@@ -245,7 +245,7 @@ export default function EqualChordsTheoremAssessment() {
 
         {/* Question 1 */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-4">
             Question 1: Basic Equal Chords Application
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -268,7 +268,7 @@ export default function EqualChordsTheoremAssessment() {
 
         {/* Question 2 */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-4">
             Question 2: Regular Hexagon Inscribed in Circle
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -292,7 +292,7 @@ export default function EqualChordsTheoremAssessment() {
 
         {/* Question 3 */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-4">
             Question 3: Parallel Chords of Different Lengths
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

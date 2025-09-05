@@ -28,7 +28,7 @@ export default function ChordBisectorTheoremSlide3() {
 
   // Diagram component
   const ProofDiagram = () => (
-    <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
       <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
         {/* Circle and center */}
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
@@ -102,10 +102,10 @@ export default function ChordBisectorTheoremSlide3() {
         <div className="space-y-6">
           {/* Setup */}
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Proof Setup</h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Given:</h3>
                   <ul className="space-y-2">
                     <li>• Circle with center O</li>
@@ -119,10 +119,10 @@ export default function ChordBisectorTheoremSlide3() {
           </TrackedInteraction>
           {/* Congruent Triangles */}
           <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Congruent Triangles</h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Why Congruent?</h3>
                   <ul className="space-y-2">
                     <li>• OA = OB (radii of the circle)</li>
@@ -137,10 +137,10 @@ export default function ChordBisectorTheoremSlide3() {
           </TrackedInteraction>
           {/* Conclusion */}
           <TrackedInteraction interaction={slideInteractions[2]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Conclusion</h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Result:</h3>
                   <p className="font-bold">OM ⊥ AB ⇒ AM = MB ✓</p>
                   <p className="text-sm mt-2 italic">A perpendicular from the center to a chord always bisects the chord.</p>

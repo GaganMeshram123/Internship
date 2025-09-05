@@ -214,7 +214,7 @@ export default function TwoTangentsTheoremAssessment() {
           </p>
         </div>
 
-        <div className="bg-green-50/60 border border-green-200 dark:bg-green-900/40 dark:border-green-700/50 rounded-lg p-6 mb-8">
+        <div className="bg-orange-50/60 border border-orange-200 dark:bg-orange-900/40 dark:border-orange-700/50 rounded-lg p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             📐 Two Tangents Theorem Assessment Instructions
           </h2>
