@@ -78,219 +78,123 @@ export default function ChordBisectorTheoremSlide1() {
   }
 
   // SVG Theorem Diagram Component
-  const TheoremDiagram = () => (
+ const TheoremDiagram = () => {
+  const [step, setStep] = useState(0);
+
+  const steps = [
+    { title: "Draw Circle", description: "Draw a circle with center O." },
+    { title: "Draw Chord AB", description: "Mark points A and B on the circle and draw chord AB." },
+    { title: "Draw Perpendicular OM", description: "Draw perpendicular from center O to chord AB; mark foot as M." },
+    { title: "Mark Midpoint", description: "Highlight M as the midpoint of AB." },
+    { title: "Show Equal Segments", description: "Demonstrate that AM = MB." },
+    { title: "Theorem Statement", description: "Perpendicular from center bisects the chord." },
+    { title: "Converse & Explanation", description: "Both statements of Chord Bisector Theorem are equivalent." },
+  ];
+
+  return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Chord Bisector Theorem</h3>
-      <svg width="420" height="500" viewBox="0 0 400 500" className="mx-auto">
-        {/* Circle */}
-        {step >= 1 && (
-          <circle 
-            cx={cx} 
-            cy={cy} 
-            r={r} 
-            fill="none" 
-            stroke="#64748B" 
-            strokeWidth="2"
-            className="animate-[draw_1s_ease-in-out]"
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        Chord Bisector Theorem
+      </h3>
+
+      {/* Step Indicator */}
+      <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">
+          Step {step + 1}
+        </span>
+        <span className="font-light">of {steps.length}</span>
+        <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
           />
-        )}
-        
-        {/* Center O */}
-        {step >= 1 && (
-          <g>
-            <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
-            <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
-          </g>
-        )}
-        
-        {/* Chord AB */}
-        {step >= 2 && (
-          <g>
-            {/* Chord endpoints */}
-            <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
-            <circle cx={Bx} cy={By} r="4" fill="#3B82F6" />
-            <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
-            <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
-            
-            {/* Chord line */}
-            <line 
-              x1={Ax} 
-              y1={Ay} 
-              x2={Bx} 
-              y2={By} 
-              stroke="#3B82F6" 
-              strokeWidth="3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            <text x={(Ax + Bx) / 2 - 90} y={(Ay + By) / 2 - 10} fill="#3B82F6" fontSize="14" fontWeight="bold">Chord AB</text>
-          </g>
-        )}
-        
-        {/* Perpendicular from O to chord */}
-        {step >= 3 && (
-          <g>
-            {/* Foot of perpendicular M */}
-            <circle cx={Mx} cy={My} r="4" fill="#10B981" />
-            <text x={Mx + 10} y={My - 10} fill="#10B981" fontSize="16" fontWeight="bold">M</text>
-            
-            {/* Perpendicular line OM */}
-            <line 
-              x1={cx} 
-              y1={cy} 
-              x2={Mx} 
-              y2={My} 
-              stroke="#10B981" 
-              strokeWidth="3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            
-            {/* Right angle symbol */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(Mx, My, cx, cy, Ax, Ay, 20);
-              return <>
-                <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="3" />
-                <text x={labelX} y={labelY} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">90°</text>
-              </>;
-            })()}
-            
-            <text x={(cx + Mx) / 2 - 22} y={(cy + My) / 2 - 20} fill="#10B981" fontSize="12" fontWeight="bold">OM ⊥ AB</text>
-          </g>
-        )}
-        
-        {/* Midpoint demonstration */}
-        {step >= 4 && (
-          <g>
-            {/* Highlight midpoint */}
-            <circle 
-              cx={Mx} 
-              cy={My} 
-              r="8" 
-              fill="none" 
-              stroke="#F59E0B" 
-              strokeWidth="3"
-              className="animate-pulse"
-            />
-            <text x={Mx-20} y={My + 20} fill="#F59E0B" fontSize="14" fontWeight="bold">Midpoint</text>
-          </g>
-        )}
-        
-        {/* Equal segments */}
-        {step >= 5 && (
-          <g>
-            {/* Tick marks for equal segments */}
-            <g className="animate-[fade-in_1s_ease-in-out]">
-              {/* AM marks - positioned at midpoint of AM */}
-              {(() => {
-                const midAMx = (Ax + Mx) / 2;
-                const midAMy = (Ay + My) / 2;
-                const angle = Math.atan2(By - Ay, Bx - Ax);
-                const perpAngle = angle + Math.PI / 2;
-                const markLength = 8;
-                
-                return <>
-                  <line 
-                    x1={midAMx + markLength * Math.cos(perpAngle)} 
-                    y1={midAMy + markLength * Math.sin(perpAngle)} 
-                    x2={midAMx - markLength * Math.cos(perpAngle)} 
-                    y2={midAMy - markLength * Math.sin(perpAngle)} 
-                    stroke="#8B5CF6" strokeWidth="3" 
-                  />
-                  <line 
-                    x1={midAMx + 5 + markLength * Math.cos(perpAngle)} 
-                    y1={midAMy + 5 + markLength * Math.sin(perpAngle)} 
-                    x2={midAMx + 5 - markLength * Math.cos(perpAngle)} 
-                    y2={midAMy + 5 - markLength * Math.sin(perpAngle)} 
-                    stroke="#8B5CF6" strokeWidth="3" 
-                  />
-                </>;
-              })()}
-              
-              {/* MB marks - positioned at midpoint of MB */}
-              {(() => {
-                const midMBx = (Mx + Bx) / 2;
-                const midMBy = (My + By) / 2;
-                const angle = Math.atan2(By - Ay, Bx - Ax);
-                const perpAngle = angle + Math.PI / 2;
-                const markLength = 8;
-                
-                return <>
-                  <line 
-                    x1={midMBx + markLength * Math.cos(perpAngle)} 
-                    y1={midMBy + markLength * Math.sin(perpAngle)} 
-                    x2={midMBx - markLength * Math.cos(perpAngle)} 
-                    y2={midMBy - markLength * Math.sin(perpAngle)} 
-                    stroke="#8B5CF6" strokeWidth="3" 
-                  />
-                  <line 
-                    x1={midMBx + 5 + markLength * Math.cos(perpAngle)} 
-                    y1={midMBy + 5 + markLength * Math.sin(perpAngle)} 
-                    x2={midMBx + 5 - markLength * Math.cos(perpAngle)} 
-                    y2={midMBy + 5 - markLength * Math.sin(perpAngle)} 
-                    stroke="#8B5CF6" strokeWidth="3" 
-                  />
-                </>;
-              })()}
-            </g>
-            
-            {/* Equal sign and measurements */}
-            <text x={Mx - 30} y={My + 40} fill="#8B5CF6" fontSize="14" fontWeight="bold">AM = MB</text>
-            <text x={Mx - 50} y={My + 55} fill="#8B5CF6" fontSize="12" fontWeight="bold">M bisects AB</text>
-          </g>
-        )}
-        
-        {/* Converse illustration */}
-        {step >= 6 && (
-          <g>
-            <rect 
-              x="-10" y="350" width="420" height="80" 
-              fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" 
-              rx="10"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            <text x="200" y="370" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
-              Chord Bisector Theorem (Both Directions)
-            </text>
-            <text x="200" y="388" textAnchor="middle" fill="#0C4A6E" fontSize="12">
-              1. Perpendicular from center to chord bisects the chord
-            </text>
-            <text x="200" y="404" textAnchor="middle" fill="#0C4A6E" fontSize="12">
-              2. Line from center through midpoint of chord is perpendicular to chord
-            </text>
-            <text x="200" y="420" textAnchor="middle" fill="#DC2626" fontSize="12" fontWeight="bold">
-              Both statements are equivalent and always true!
-            </text>
-          </g>
-        )}
-        
-        {/* Theorem statement box */}
-        {step >= 5 && (
-          <rect 
-            x="30" y="20" width="340" height="40" 
-            fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
-            rx="10"
-            className="animate-[fade-in_1s_ease-in-out]"
-          />
-        )}
-        {step >= 5 && (
-          <text x="200" y="45" textAnchor="middle" fill="#1F2937" fontSize="16" fontWeight="bold" className="animate-pulse">
-            Perpendicular from Center Bisects Chord
-          </text>
-        )}
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
+        </div>
+      </div>
+
+      {/* Step Description */}
+      <div className="p-4 bg-blue-50 dark:bg-slate-700 rounded-xl shadow-inner border border-blue-100 dark:border-slate-600 mb-6">
+        <h4 className="font-bold text-blue-700 dark:text-blue-300 text-lg">{steps[step].title}</h4>
+        <p className="text-slate-700 dark:text-slate-300 mt-2">{steps[step].description}</p>
+      </div>
+
+      {/* Navigation Buttons */}
+      <div className="flex justify-center gap-4 mb-6">
         <button
           className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
           onClick={() => setStep(s => Math.max(0, s - 1))}
           disabled={step === 0}
-        >Previous</button>
+        >
+          ← Previous
+        </button>
         <button
           className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(6, s + 1))}
-          disabled={step === 6}
-        >Next</button>
+          onClick={() => setStep(s => Math.min(steps.length - 1, s + 1))}
+          disabled={step === steps.length - 1}
+        >
+          Next →
+        </button>
       </div>
+
+      {/* Diagram SVG */}
+      <svg width="420" height="500" viewBox="0 0 400 500" className="mx-auto">
+        {/* Circle */}
+        {step >= 0 && <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />}
+
+        {/* Center O */}
+        {step >= 0 && <>
+          <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
+          <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
+        </>}
+
+        {/* Chord AB */}
+        {step >= 1 && <>
+          <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
+          <circle cx={Bx} cy={By} r="4" fill="#3B82F6" />
+          <text x={Ax + 10} y={Ay - 10} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
+          <text x={Bx + 10} y={By - 10} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
+          <line x1={Ax} y1={Ay} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="3" />
+          <text x={(Ax + Bx) / 2 - 50} y={(Ay + By) / 2 - 10} fill="#3B82F6" fontSize="14" fontWeight="bold">Chord AB</text>
+        </>}
+
+        {/* Perpendicular OM */}
+        {step >= 2 && <>
+          <circle cx={Mx} cy={My} r="4" fill="#10B981" />
+          <text x={Mx + 10} y={My - 10} fill="#10B981" fontSize="16" fontWeight="bold">M</text>
+          <line x1={cx} y1={cy} x2={Mx} y2={My} stroke="#10B981" strokeWidth="3" />
+          <polyline points={`${Mx - 10},${My} ${Mx - 10},${My + 10} ${Mx},${My + 10}`} stroke="#F59E0B" strokeWidth="2" fill="none" />
+          <text x={Mx + 15} y={My + 5} fill="#F59E0B" fontSize="12" fontWeight="bold">90°</text>
+          <text x={(cx + Mx) / 2 - 20} y={(cy + My) / 2 - 15} fill="#10B981" fontSize="12" fontWeight="bold">OM ⊥ AB</text>
+        </>}
+
+        {/* Midpoint & Equal Segments */}
+        {step >= 3 && <>
+          <circle cx={Mx} cy={My} r="8" fill="none" stroke="#F59E0B" strokeWidth="3" />
+          <text x={Mx - 20} y={My + 20} fill="#F59E0B" fontSize="14" fontWeight="bold">Midpoint</text>
+          <text x={Mx - 30} y={My + 40} fill="#8B5CF6" fontSize="14" fontWeight="bold">AM = MB</text>
+          <text x={Mx - 50} y={My + 55} fill="#8B5CF6" fontSize="12" fontWeight="bold">M bisects AB</text>
+        </>}
+
+        {/* Theorem Statement / Converse */}
+        {step >= 4 && <>
+          <rect x="-10" y="350" width="420" height="80" fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" rx="10" />
+          <text x="200" y="370" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
+            Chord Bisector Theorem (Both Directions)
+          </text>
+          <text x="200" y="388" textAnchor="middle" fill="#0C4A6E" fontSize="12">
+            1. Perpendicular from center to chord bisects the chord
+          </text>
+          <text x="200" y="404" textAnchor="middle" fill="#0C4A6E" fontSize="12">
+            2. Line from center through midpoint of chord is perpendicular to chord
+          </text>
+          <text x="200" y="420" textAnchor="middle" fill="#DC2626" fontSize="12" fontWeight="bold">
+            Both statements are equivalent and always true!
+          </text>
+        </>}
+      </svg>
     </div>
   );
+};
+
 
   // The slide content
   const slideContent = (

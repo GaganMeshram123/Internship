@@ -82,152 +82,152 @@ export default function TangentRadiusPerpendicularitySlide2() {
       labelX, 
       labelY 
     };
-  }
+  }const stepContents = [
+  "Step 1: Visualize the circle centered at O",
+  "Step 2: Draw the tangent touching the circle at T",
+  "Step 3: Radius connects center O to tangent point T",
+  "Step 4: Tangent is perpendicular to radius at point T"
+];
+const steps = [
+  { title: "Visualize the Circle", description: "Step 1: Visualize the circle centered at O" },
+  { title: "Draw the Tangent", description: "Step 2: Draw the tangent touching the circle at T" },
+  { title: "Connect Radius", description: "Step 3: Radius connects center O to tangent point T" },
+  { title: "Perpendicularity Proof", description: "Step 4: Tangent is perpendicular to radius at point T" },
+];
+const ProofDiagram = () => {
+  const [step, setStep] = useState(0);
 
-  // SVG Proof Diagram Component
-  const ProofDiagram = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Proof by Shortest Distance</h3>
-      <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-        {/* Circle */}
-        {step >= 1 && (
-          <circle 
-            cx={cx} 
-            cy={cy} 
-            r={r} 
-            fill="none" 
-            stroke="#64748B" 
-            strokeWidth="2"
-            className="animate-[draw_1s_ease-in-out]"
+  // Circle center and radius
+  const cx = 200;
+  const cy = 200;
+  const r = 100;
+
+  // Tangent point (top of circle)
+  const tx = cx;
+  const ty = cy - r;
+
+  // Tangent line coordinates
+  const tangentLength = 150;
+
+  return (
+    <div className="w-full max-w-4xl mx-auto flex flex-col gap-8 p-8 rounded-2xl shadow-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 transition-colors duration-500 transform hover:scale-[1.005] animate-fade-in">
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+        Proof by Shortest Distance
+      </h3>
+
+      {/* Step Indicator */}
+      <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">
+          Step {step + 1}
+        </span>
+        <span className="font-light">of {steps.length}</span>
+        <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
           />
-        )}
-        
-        {/* Center O */}
-        {step >= 1 && (
-          <g>
-            <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
-            <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
-          </g>
-        )}
-        
-        {/* Tangent line */}
-        {step >= 1 && (
-          <g>
-            <line 
-              x1={T1x} 
-              y1={T1y} 
-              x2={T2x} 
-              y2={T2y} 
-              stroke="#3B82F6" 
-              strokeWidth="3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            <circle cx={Tx} cy={Ty} r="4" fill="#3B82F6" />
-            <text x={Tx} y={Ty + 12} fill="#3B82F6" fontSize="16" fontWeight="bold">T</text>
-            <text x={T1x - 30} y={T1y} fill="#3B82F6" fontSize="14" fontWeight="bold">Tangent</text>
-          </g>
-        )}
-        
-        {/* Radius OT */}
-        {step >= 1 && (
-          <g>
-            <line 
-              x1={cx} 
-              y1={cy} 
-              x2={Tx} 
-              y2={Ty} 
-              stroke="#DC2626" 
-              strokeWidth="3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            <text x={(cx + Tx) / 2 + 7} y={(cy + Ty) / 2 - 15} fill="#DC2626" fontSize="14" fontWeight="bold">OT = r</text>
-          </g>
-        )}
-        
-        {/* Perpendicular angle marking */}
-        {step >= 2 && (
-          <g>
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(Tx, Ty, cx, cy, Sx, Sy, 20);
-              return <>
-                <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="3" />
-                <text x={labelX} y={labelY} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">90°</text>
-              </>;
-            })()}
-            {/* Right angle square */}
-          </g>
-        )}
-        
-        {/* Alternative point S on tangent */}
-        {step >= 3 && (
-          <g>
-            <circle 
-              cx={Sx} 
-              cy={Sy} 
-              r="4" 
-              fill="#10B981" 
-              className="animate-[scale-in_0.5s_ease-out]"
-            />
-            <text x={Sx } y={Sy + 12} fill="#10B981" fontSize="16" fontWeight="bold">S</text>
-            
-            {/* Line OS */}
-            <line 
-              x1={cx} 
-              y1={cy} 
-              x2={Sx} 
-              y2={Sy} 
-              stroke="#10B981" 
-              strokeWidth="3"
-              strokeDasharray="3,3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            <text x={(cx + Sx) / 2 + 10} y={(cy + Sy) / 2} fill="#10B981" fontSize="14" fontWeight="bold">{'OS > r'}</text>
-            
-          </g>
-        )}
-        
-        {/* Distance comparison */}
-        {step >= 4 && (
-          <g>
-            <rect 
-              x="30" y="50" width="340" height="80" 
-              fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" 
-              rx="10"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            <text x="200" y="70" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
-              Shortest Distance Principle
-            </text>
-            <text x="200" y="90" textAnchor="middle" fill="#0C4A6E" fontSize="12">
-              OT = radius = r (shortest distance to tangent)
-            </text>
-            <text x="200" y="105" textAnchor="middle" fill="#0C4A6E" fontSize="12">
-              {'OS > r (any other point on tangent is farther)'}
-            </text>
-            <text x="200" y="120" textAnchor="middle" fill="#DC2626" fontSize="12" fontWeight="bold">
-              Tangent is perpendicular to radius at point of contact
-            </text>
-          </g>
-        )}
-        
-        {/* Right angle marking */}
+        </div>
+      </div>
 
-        
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
+      <div className="p-6 bg-blue-50 dark:bg-slate-800 rounded-xl shadow-inner border border-blue-100 dark:border-slate-700 transition-all duration-300 mb-6">
+        <h3 className="font-bold text-xl text-blue-700 dark:text-blue-300 animate-slide-in-up">
+          {steps[step].title}
+        </h3>
+        <p className="text-slate-700 dark:text-slate-300 mt-3 leading-relaxed text-base animate-fade-in-slow">
+          {steps[step].description}
+        </p>
+      </div>
+
+      {/* Buttons above the circle */}
+      <div className="flex justify-center gap-4 mb-6">
         <button
-          className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
+          className="px-4 py-2 rounded bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
           onClick={() => setStep(s => Math.max(0, s - 1))}
           disabled={step === 0}
-        >Previous</button>
+        >
+          ← Previous
+        </button>
+
         <button
           className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(5, s + 1))}
-          disabled={step === 5}
-        >Next</button>
+          onClick={() => setStep(s => Math.min(steps.length - 1, s + 1))}
+          disabled={step === steps.length - 1}
+        >
+          Next →
+        </button>
       </div>
+
+      <svg width="400" height="400" className="mx-auto">
+        {/* Circle */}
+        {step >= 0 && (
+          <circle cx={cx} cy={cy} r={r} stroke="#3b82f6" strokeWidth="3" fill="transparent" />
+        )}
+
+        {/* Tangent */}
+        {step >= 1 && (
+          <>
+            <line
+              x1={tx - tangentLength}
+              y1={ty}
+              x2={tx + tangentLength}
+              y2={ty}
+              stroke="#f97316"
+              strokeWidth="3"
+            />
+            {/* Tangent label */}
+            <text
+              x={tx + tangentLength - 40}
+              y={ty - 10}
+              fill="#f97316"
+              fontWeight="bold"
+              fontSize="14"
+            >
+              Tangent
+            </text>
+          </>
+        )}
+
+        {/* Radius */}
+        {step >= 2 && (
+          <>
+            <line x1={cx} y1={cy} x2={tx} y2={ty} stroke="#10b981" strokeWidth="3" />
+            {/* Radius label */}
+            <text
+              x={cx + (tx - cx) / 2 - 20}
+              y={cy + (ty - cy) / 2 - 10}
+              fill="#10b981"
+              fontWeight="bold"
+              fontSize="14"
+            >
+              Radius
+            </text>
+          </>
+        )}
+
+        {/* Tangent point T */}
+        {step >= 1 && (
+          <>
+            <circle cx={tx} cy={ty} r={6} fill="#ef4444" stroke="#fff" strokeWidth="2" />
+            <text x={tx + 10} y={ty - 10} fill="#ef4444" fontWeight="bold" fontSize="14">
+              T
+            </text>
+          </>
+        )}
+
+        {/* Right angle / perpendicular notation */}
+        {step >= 2 && (
+          <polyline
+            points={`${tx - 10},${ty} ${tx - 10},${ty + 10} ${tx},${ty + 10}`}
+            stroke="#000"
+            strokeWidth="2"
+            fill="none"
+          />
+        )}
+      </svg>
     </div>
   );
+};
+
 
   // The slide content
   const slideContent = (
