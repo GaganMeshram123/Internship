@@ -73,13 +73,13 @@ export default function PowerOfPointSlide1() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem:</h3>
                   <p>If two secant segments are drawn to a circle from an external point, then the product of one secant segment and its external segment equals the product of the other secant segment and its external segment.</p>
                 </div>
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Formula:</h3>
                   <p className="font-bold text-center text-xl">PA × PB = PC × PD</p>
                 </div>
@@ -87,18 +87,21 @@ export default function PowerOfPointSlide1() {
             </div>
           </TrackedInteraction>
           <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Key Concepts</h2>
-              <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Secant Segments:</h3>
-                <p>A secant segment is the entire length from the external point to the farther intersection with the circle.</p>
-              </div>
-              <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mt-4">
-                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">External Segments:</h3>
-                <p>An external segment is the length from the external point to the nearer intersection with the circle.</p>
-              </div>
-            </div>
-          </TrackedInteraction>
+  <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+    <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Key Concepts</h2>
+    
+    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm mb-4">
+      <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Secant Segments:</h3>
+      <p>A secant segment is the entire length from the external point to the farther intersection with the circle.</p>
+    </div>
+    
+    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+      <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">External Segments:</h3>
+      <p>An external segment is the length from the external point to the nearer intersection with the circle.</p>
+    </div>
+  </div>
+</TrackedInteraction>
+
         </div>
         <div className="space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">

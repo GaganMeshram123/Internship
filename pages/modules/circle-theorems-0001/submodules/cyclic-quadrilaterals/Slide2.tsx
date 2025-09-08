@@ -268,9 +268,9 @@ export default function CyclicQuadrilateralsSlide2() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Given:</h3>
                   <ul className="space-y-2">
                     <li>• Cyclic quadrilateral ABCD</li>
@@ -280,12 +280,12 @@ export default function CyclicQuadrilateralsSlide2() {
                   </ul>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Strategy:</h3>
                   <p>Use the inscribed angle theorem and the fact that arcs around a circle sum to 360°.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Insight:</h3>
                   <p>Opposite angles subtend complementary arcs that together form the complete circle.</p>
                 </div>
@@ -298,20 +298,20 @@ export default function CyclicQuadrilateralsSlide2() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Step 1: Arc Relationships
               </h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Angle B's Arc:</h3>
                   <p>∠B subtends arc ADC (the arc from A to C passing through D)</p>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Angle D's Arc:</h3>
                   <p>∠D subtends arc ABC (the arc from A to C passing through B)</p>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Complete Circle:</h3>
                   <p>Arc ADC + Arc ABC = 360°</p>
                   <p className="text-sm mt-2 italic">These two arcs together form the entire circle</p>
@@ -331,12 +331,12 @@ export default function CyclicQuadrilateralsSlide2() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Step 2: Apply Inscribed Angle Theorem
               </h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Inscribed Angle Formula:</h3>
                   <p>Inscribed angle = ½ × Arc measure</p>
                   <ul className="mt-2 space-y-1">
@@ -344,13 +344,13 @@ export default function CyclicQuadrilateralsSlide2() {
                     <li>∠D = ½ × (Arc ABC)</li>
                   </ul>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Add the Angles:</h3>
                   <p>∠B + ∠D = ½(Arc ADC) + ½(Arc ABC)</p>
                   <p>= ½(Arc ADC + Arc ABC)</p>
                   <p>= ½(360°) = 180°</p>
                 </div>
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Similarly for ∠A + ∠C:</h3>
                   <p className="text-sm">Using the same logic, ∠A + ∠C = 180°</p>
                   <p className="font-bold mt-2">Therefore: Opposite angles are supplementary ✓</p>

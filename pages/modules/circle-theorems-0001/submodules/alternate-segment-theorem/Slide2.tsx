@@ -287,10 +287,10 @@ export default function AlternateSegmentTheoremSlide2() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+<div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-3">Given:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Given:</h3>
                   <ul className="space-y-2">
                     <li>• Circle with center O</li>
                     <li>• Tangent at point A</li>
@@ -299,14 +299,14 @@ export default function AlternateSegmentTheoremSlide2() {
                   </ul>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-purple-700 dark:text-purple-300 mb-3">To Prove:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">To Prove:</h3>
                   <p className="font-medium">∠TAB = ∠ACB</p>
                   <p className="text-sm mt-2">(Tangent-chord angle = Inscribed angle in alternate segment)</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-indigo-700 dark:text-indigo-300 mb-3">Proof Strategy:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Proof Strategy:</h3>
                   <p>Use the central-inscribed angle theorem and tangent-radius perpendicularity to establish the relationship.</p>
                 </div>
               </div>
@@ -318,25 +318,25 @@ export default function AlternateSegmentTheoremSlide2() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Step 1: Central-Inscribed Angles
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-amber-700 dark:text-amber-300 mb-3">Central Angle ∠AOB:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Central Angle ∠AOB:</h3>
                   <p>Let ∠AOB = θ (central angle subtending arc AB)</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-orange-700 dark:text-orange-300 mb-3">Inscribed Angle ∠ACB:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Inscribed Angle ∠ACB:</h3>
                   <p>By the central-inscribed angle theorem:</p>
                   <p className="font-bold">∠ACB = ½∠AOB = θ/2</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-3">Key Insight:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Insight:</h3>
                   <p className="text-sm">The inscribed angle in the alternate segment equals half the central angle subtending the same arc.</p>
                 </div>
               </div>
@@ -354,26 +354,26 @@ export default function AlternateSegmentTheoremSlide2() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-green-500 to-blue-600 bg-clip-text text-transparent">
+           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Step 2: Tangent-Radius Relationship
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-green-700 dark:text-green-300 mb-3">Perpendicularity:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Perpendicularity:</h3>
                   <p>Tangent ⊥ radius OA at point A</p>
                   <p>Therefore: ∠TAO = 90°</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Angle Analysis:</h3>
                   <p>In triangle TAO: ∠TAO + ∠AOB + ∠TAB = 180°</p>
                   <p>Since ∠TAO = 90°: ∠TAB = 90° - ∠AOB/2</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-cyan-700 dark:text-cyan-300 mb-3">Final Result:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Final Result:</h3>
                   <p className="font-bold">∠TAB = ∠ACB = θ/2</p>
                   <p className="text-sm mt-2">Both angles equal half the central angle!</p>
                 </div>

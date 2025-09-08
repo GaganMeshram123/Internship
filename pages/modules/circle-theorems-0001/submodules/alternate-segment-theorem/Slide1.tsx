@@ -268,23 +268,23 @@ export default function AlternateSegmentTheoremSlide1() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-3">Theorem Statement:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem Statement:</h3>
                   <p className="font-medium">
                     The angle between a <strong>tangent</strong> and a <strong>chord</strong> drawn from the point of tangency equals the <strong>inscribed angle</strong> in the alternate segment.
                   </p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-purple-700 dark:text-purple-300 mb-3">Mathematical Form:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Mathematical Form:</h3>
                   <p>If tangent TA and chord AB meet at A, and C is any point in the alternate segment, then:</p>
                   <p className="font-bold text-center mt-2">∠TAB = ∠ACB</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-indigo-700 dark:text-indigo-300 mb-3">Key Components:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Components:</h3>
                   <ul className="space-y-2">
                     <li>• Tangent line at point A</li>
                     <li>• Chord AB from tangent point</li>
@@ -301,24 +301,24 @@ export default function AlternateSegmentTheoremSlide1() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Tangent-Chord Angle
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-amber-700 dark:text-amber-300 mb-3">Definition:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Definition:</h3>
                   <p>The angle formed between the tangent line and a chord drawn from the point of tangency.</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-orange-700 dark:text-orange-300 mb-3">Measurement:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Measurement:</h3>
                   <p>Always measured from the tangent to the chord, creating an acute angle with the chord.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-red-700 dark:text-red-300 mb-3">Important Note:</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Important Note:</h3>
                   <p className="text-sm">The tangent-chord angle can be measured on either side of the chord, giving two supplementary angles.</p>
                 </div>
               </div>
@@ -336,18 +336,18 @@ export default function AlternateSegmentTheoremSlide1() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-green-500 to-blue-600 bg-clip-text text-transparent">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Alternate Segment
               </h2>
               
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                  <h3 className="text-xl font-medium text-green-700 dark:text-green-300 mb-3">What is it?</h3>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">What is it?</h3>
                   <p>The alternate segment is the part of the circle on the opposite side of the chord from where the tangent-chord angle is measured.</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Inscribed Angle:</h3>
                   <p>Any angle inscribed in the alternate segment (with the same chord as its base) will equal the tangent-chord angle.</p>
                 </div>

@@ -158,10 +158,10 @@ export default function PowerOfPointSlide3() {
         <div className="space-y-6">
           {/* Step 1: Setup */}
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Proof Setup</h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Given:</h3>
                   <ul className="space-y-2">
                     <li>• External point P</li>
@@ -175,10 +175,10 @@ export default function PowerOfPointSlide3() {
           </TrackedInteraction>
           {/* Step 2: Auxiliary Lines */}
           <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Draw Auxiliary Lines</h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Construction:</h3>
                   <ul className="space-y-2">
                     <li>• Draw chord <span className="font-bold">AD</span></li>
@@ -192,10 +192,10 @@ export default function PowerOfPointSlide3() {
           </TrackedInteraction>
           {/* Step 3: Similar Triangles */}
           <TrackedInteraction interaction={slideInteractions[2]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Similar Triangles</h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Why Similar?</h3>
                   <ul className="space-y-2">
                     <li>• <span className="font-bold">∠APD = ∠CPB</span> because they are vertical angles (formed by intersecting lines at P).</li>
@@ -209,10 +209,10 @@ export default function PowerOfPointSlide3() {
           </TrackedInteraction>
           {/* Step 4: Proportion */}
           <TrackedInteraction interaction={slideInteractions[3]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Proportion from Similarity</h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Set Up Proportion:</h3>
                   <ul className="space-y-2">
                     <li>• Because the triangles are similar, their corresponding sides are proportional:</li>
@@ -228,10 +228,10 @@ export default function PowerOfPointSlide3() {
           </TrackedInteraction>
           {/* Step 5: Conclusion */}
           <TrackedInteraction interaction={slideInteractions[4]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Conclusion</h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Result:</h3>
                   <p className="font-bold">PA × PB = PC × PD ✓</p>
                   <p className="text-sm mt-2 italic">The power of a point theorem is proved using similar triangles.</p>

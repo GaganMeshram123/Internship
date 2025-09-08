@@ -152,7 +152,7 @@ export default function CyclicQuadrilateralsAssessment() {
           </p>
         </div>
 
-        <div className="bg-amber-50/60 border border-amber-200 dark:bg-amber-900/40 dark:border-amber-700/50 rounded-lg p-6 mb-8">
+        <div className="bg-orange-50/60 border border-orange-200 dark:bg-orange-900/40 dark:border-orange-700/50 rounded-lg p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             📐 Cyclic Quadrilaterals Assessment Instructions
           </h2>

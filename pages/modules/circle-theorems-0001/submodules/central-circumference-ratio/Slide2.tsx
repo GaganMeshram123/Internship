@@ -284,16 +284,19 @@ export default function CentralCircumferenceRatioSlide2() {
 
   // The slide content
   const slideContent = (
-    <div className="w-full h-full bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl p-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left column - Proof Steps */}
-        <div className="space-y-6">
-          {/* Proof Setup */}
-          <TrackedInteraction 
-            interaction={slideInteractions[0]} 
-            onInteractionComplete={handleInteractionComplete}
-          >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mb-4">
+  <div className="w-full h-full bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl p-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      {/* Left column - Proof Steps */}
+      <div className="space-y-6">
+        
+        {/* Proof Setup */}
+        <TrackedInteraction 
+          interaction={slideInteractions[0]} 
+          onInteractionComplete={handleInteractionComplete}
+        >
+          <div className="space-y-4">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Given:</h3>
               <ul className="space-y-2">
                 <li>• Circle with center O</li>
@@ -303,23 +306,25 @@ export default function CentralCircumferenceRatioSlide2() {
               </ul>
             </div>
             
-            <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mb-4">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">To Prove:</h3>
               <p className="font-medium">∠AOB = 2 × ∠APB</p>
             </div>
             
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mb-4">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Strategy:</h3>
               <p>Use properties of isosceles triangles and exterior angle theorem</p>
             </div>
-          </TrackedInteraction>
+          </div>
+        </TrackedInteraction>
 
-          {/* Isosceles Triangles */}
-          <TrackedInteraction 
-            interaction={slideInteractions[1]} 
-            onInteractionComplete={handleInteractionComplete}
-          >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mb-4">
+        {/* Isosceles Triangles */}
+        <TrackedInteraction 
+          interaction={slideInteractions[1]} 
+          onInteractionComplete={handleInteractionComplete}
+        >
+          <div className="space-y-4">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Identify Isosceles Triangles:</h3>
               <p>△OAP and △OBP are both isosceles because:</p>
               <ul className="mt-2 space-y-1">
@@ -327,34 +332,37 @@ export default function CentralCircumferenceRatioSlide2() {
               </ul>
             </div>
             
-            <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mb-4">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Base Angles:</h3>
               <p>In △OAP: ∠OAP = ∠OPA = α</p>
               <p>In △OBP: ∠OBP = ∠OPB = β</p>
               <p className="mt-2 text-sm italic">Base angles in isosceles triangles are equal</p>
             </div>
-          </TrackedInteraction>
+          </div>
+        </TrackedInteraction>
 
-          
-        </div>
+      </div>
 
-        {/* Right column - Diagram and Completion */}
-        <div className="space-y-6">
-          {/* Interactive Diagram */}
-          <ProofDiagram />
-          {/* Triangle Angle Sum Method */}
-          <TrackedInteraction 
-            interaction={slideInteractions[2]} 
-            onInteractionComplete={handleInteractionComplete}
-          >
-            <div className="bg-yellow-50/60 border border-yellow-200 dark:bg-yellow-900/40 dark:border-yellow-700/50 rounded-xl px-6 py-4 mb-4">
+      {/* Right column - Diagram and Completion */}
+      <div className="space-y-6">
+        
+        {/* Interactive Diagram */}
+        <ProofDiagram />
+        
+        {/* Triangle Angle Sum Method */}
+        <TrackedInteraction 
+          interaction={slideInteractions[2]} 
+          onInteractionComplete={handleInteractionComplete}
+        >
+          <div className="space-y-4">
+            <div className="bg-yellow-50/60 border border-yellow-200 dark:bg-yellow-900/40 dark:border-yellow-700/50 rounded-xl px-6 py-4">
               <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-4">Triangle Angle Sums:</h3>
               <p>In △OAP: ∠AOP = 180° - 2α</p>
               <p>In △OBP: ∠BOP = 180° - 2β</p>
               <p className="text-sm mt-2 italic">(Sum of angles in a triangle = 180°)</p>
             </div>
             
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mb-4">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Central Angle:</h3>
               <p>∠AOB = ∠AOP - ∠BOP</p>
               <p className="mt-2">∠AOB = (180° - 2α) - (180° - 2β)</p>
@@ -362,24 +370,24 @@ export default function CentralCircumferenceRatioSlide2() {
               <p className="mt-2 font-semibold">∠AOB = 2β - 2α = 2(β - α)</p>
             </div>
             
-            <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mb-4">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Inscribed Angle:</h3>
               <p>∠APB = β - α</p>
               <p className="text-sm mt-1 italic">(Difference of the two base angles)</p>
             </div>
             
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mb-4">  
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">  
               <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Conclusion:</h3>
               <p className="font-bold">∠AOB = 2(β - α) = 2∠APB ✓</p>
               <p className="text-sm mt-2 italic">Central angle is twice the inscribed angle</p>
             </div>
-          </TrackedInteraction>
-        </div>
-
-        
+          </div>
+        </TrackedInteraction>
       </div>
+
     </div>
-  );
+  </div>
+);
 
   return (
     <SlideComponentWrapper

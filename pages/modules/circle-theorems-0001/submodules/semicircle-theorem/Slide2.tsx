@@ -231,9 +231,9 @@ export default function SemicircleTheoremSlide2() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Given:</h3>
                   <ul className="space-y-2">
                     <li>• Circle with center O</li>
@@ -243,12 +243,12 @@ export default function SemicircleTheoremSlide2() {
                   </ul>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Strategy:</h3>
                   <p>Use the central-circumference ratio theorem that we proved earlier.</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Insight:</h3>
                   <p>A diameter creates a special central angle of exactly 180°.</p>
                 </div>
@@ -261,18 +261,18 @@ export default function SemicircleTheoremSlide2() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Step 1: Central Angle
               </h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Diameter = Straight Line:</h3>
                   <p>Since AB is a diameter, it passes through the center O and forms a straight line.</p>
                   <p className="mt-2 font-medium">Central angle ∠AOB = 180°</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Why 180°?</h3>
                   <p>A straight line creates a straight angle, which measures exactly 180°.</p>
                   <p className="text-sm mt-2 italic">This is a fundamental geometric fact.</p>
@@ -292,24 +292,24 @@ export default function SemicircleTheoremSlide2() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Step 2: Apply Ratio Theorem
               </h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Central-Circumference Ratio:</h3>
                   <p>We know that: Central angle = 2 × ∠APB</p>
                   <p className="mt-2">∠AOB = 2 × ∠APB</p>
                 </div>
                 
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Substitute Known Values:</h3>
                   <p>180° = 2 × ∠APB</p>
                   <p className="mt-2">∠APB = 180° ÷ 2 = 90°</p>
                 </div>
                 
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Conclusion:</h3>
                   <p className="font-bold">∠APB = 90° ✓</p>
                   <p className="text-sm mt-2 italic">Any angle subtended by a diameter is a right angle</p>

@@ -47,13 +47,13 @@ export default function IntersectingChordsSlide1() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem:</h3>
                   <p>When two chords intersect inside a circle, the products of their segments are equal.</p>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Formula:</h3>
                   <p className="font-bold text-center text-xl">AE × EC = BE × ED</p>
                 </div>
@@ -61,18 +61,21 @@ export default function IntersectingChordsSlide1() {
             </div>
           </TrackedInteraction>
           <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Key Insights</h2>
-              <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Segment Products:</h3>
-                <p>Each chord is divided into two segments by the intersection point, and the products of opposite segments are always equal.</p>
-              </div>
-              <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mt-4">
-                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Universal Property:</h3>
-                <p>This relationship holds regardless of chord lengths or intersection position within the circle.</p>
-              </div>
-            </div>
-          </TrackedInteraction>
+  <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+    <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Key Insights</h2>
+    
+    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm mb-4">
+      <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Segment Products:</h3>
+      <p>Each chord is divided into two segments by the intersection point, and the products of opposite segments are always equal.</p>
+    </div>
+    
+    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+      <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Universal Property:</h3>
+      <p>This relationship holds regardless of chord lengths or intersection position within the circle.</p>
+    </div>
+  </div>
+</TrackedInteraction>
+
         </div>
         <div className="space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">

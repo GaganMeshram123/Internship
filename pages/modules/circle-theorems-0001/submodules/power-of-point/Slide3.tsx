@@ -58,13 +58,13 @@ export default function PowerOfPointSlide2() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem:</h3>
                   <p>If a tangent segment and a secant segment are drawn to a circle from an external point, then the square of the tangent segment equals the product of the secant segment and its external segment.</p>
                 </div>
-                <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Formula:</h3>
                   <p className="font-bold text-center text-xl">PT² = PA × PB</p>
                 </div>
@@ -72,18 +72,21 @@ export default function PowerOfPointSlide2() {
             </div>
           </TrackedInteraction>
           <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Key Insights</h2>
-              <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
-                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Tangent Special Case:</h3>
-                <p>The tangent can be thought of as a secant where both intersection points coincide at the point of tangency.</p>
-              </div>
-              <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4 mt-4">
-                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Power Consistency:</h3>
-                <p>This formula maintains the same "power" concept as secant-secant, just with one limiting case.</p>
-              </div>
-            </div>
-          </TrackedInteraction>
+  <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+    <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Key Insights</h2>
+    
+    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm mb-4">
+      <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Tangent Special Case:</h3>
+      <p>The tangent can be thought of as a secant where both intersection points coincide at the point of tangency.</p>
+    </div>
+    
+    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+      <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Power Consistency:</h3>
+      <p>This formula maintains the same "power" concept as secant-secant, just with one limiting case.</p>
+    </div>
+  </div>
+</TrackedInteraction>
+
         </div>
         <div className="space-y-6">
           <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">

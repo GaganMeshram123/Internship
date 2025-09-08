@@ -217,13 +217,13 @@ export default function CyclicQuadrilateralsSlide1() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Definition:</h3>
                   <p>A cyclic quadrilateral is a four-sided polygon where all four vertices lie on the circumference of a circle.</p>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Key Properties:</h3>
                   <ul className="space-y-2">
                     <li>• All vertices are concyclic (on same circle)</li>
@@ -232,7 +232,7 @@ export default function CyclicQuadrilateralsSlide1() {
                     <li>• Has special angle relationships</li>
                   </ul>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Also Known As:</h3>
                   <p className="text-lg">Inscribed quadrilateral, concyclic quadrilateral</p>
                 </div>
@@ -245,22 +245,22 @@ export default function CyclicQuadrilateralsSlide1() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Opposite Angles Theorem
               </h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Theorem Statement:</h3>
                   <p>In a cyclic quadrilateral, opposite angles are <strong>supplementary</strong> (they add up to 180°).</p>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Mathematical Form:</h3>
                   <p>For cyclic quadrilateral ABCD:</p>
                   <p className="font-bold mt-2">∠A + ∠C = 180°</p>
                   <p className="font-bold">∠B + ∠D = 180°</p>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Remember:</h3>
                   <p className="text-lg">Opposite angles are across the diagonal from each other, not adjacent angles.</p>
                 </div>
@@ -279,12 +279,12 @@ export default function CyclicQuadrilateralsSlide1() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">
                 Special Properties
               </h2>
               <div className="text-lg text-blue-900 dark:text-blue-100 leading-relaxed space-y-4">
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Unique to Cyclic Quadrilaterals:</h3>
                   <ul className="space-y-1 text-lg">
                     <li>• Opposite angles sum to 180°</li>
@@ -293,7 +293,7 @@ export default function CyclicQuadrilateralsSlide1() {
                     <li>• Has a circumcircle (circumscribed circle)</li>
                   </ul>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Applications:</h3>
                   <ul className="space-y-1 text-lg">
                     <li>• Finding unknown angles</li>
@@ -302,7 +302,7 @@ export default function CyclicQuadrilateralsSlide1() {
                     <li>• Engineering and design</li>
                   </ul>
                 </div>
-                <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-6 py-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                   <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Converse is True:</h3>
                   <p className="text-lg">If opposite angles of a quadrilateral sum to 180°, then it is cyclic!</p>
                 </div>
