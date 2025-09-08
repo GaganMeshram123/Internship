@@ -152,6 +152,8 @@ const ProofDiagram = () => {
         </div>
     );
 };
+
+
   // Slide content
   const slideContent = (
     <div className="w-full h-full bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl p-8">

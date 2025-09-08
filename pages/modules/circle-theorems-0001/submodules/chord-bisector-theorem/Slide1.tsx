@@ -146,53 +146,62 @@ const TheoremDiagram = () => {
                 </button>
             </div>
 
-            {/* 4. Diagram SVG (your original code, untouched) */}
+  {/* Diagram SVG */}
             <div className="mt-6">
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                        Chord Bisector Theorem
+                        Visualizing the Theorem
                     </h3>
                     <svg width="420" height="500" viewBox="0 0 400 500" className="mx-auto">
                         {/* Circle */}
-                        {step >= 0 && <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />}
+                        {step >= 1 && <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />}
 
                         {/* Center O */}
-                        {step >= 0 && <>
+                        {step >= 1 && <>
                             <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
                             <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
                         </>}
 
                         {/* Chord AB */}
-                        {step >= 1 && <>
+                        {step >= 2 && <>
                             <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
                             <circle cx={Bx} cy={By} r="4" fill="#3B82F6" />
-                            <text x={Ax + 10} y={Ay - 10} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
-                            <text x={Bx + 10} y={By - 10} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
+                            <text x={Ax - 20} y={Ay - 5} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
+                            <text x={Bx + 10} y={By - 5} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
                             <line x1={Ax} y1={Ay} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="3" />
-                            <text x={(Ax + Bx) / 2 - 50} y={(Ay + By) / 2 - 10} fill="#3B82F6" fontSize="14" fontWeight="bold">Chord AB</text>
+                            <text x={cx} y={Ay - 40} fill="#3B82F6" fontSize="14" fontWeight="bold" textAnchor="middle">Chord AB</text>
                         </>}
 
                         {/* Perpendicular OM */}
-                        {step >= 2 && <>
+                        {step >= 3 && <>
                             <circle cx={Mx} cy={My} r="4" fill="#10B981" />
-                            <text x={Mx + 10} y={My - 10} fill="#10B981" fontSize="16" fontWeight="bold">M</text>
+                            <text x={Mx + 10} y={My + 5} fill="#10B981" fontSize="16" fontWeight="bold">M</text>
                             <line x1={cx} y1={cy} x2={Mx} y2={My} stroke="#10B981" strokeWidth="3" />
-                            <polyline points={`${Mx - 10},${My} ${Mx - 10},${My + 10} ${Mx},${My + 10}`} stroke="#F59E0B" strokeWidth="2" fill="none" />
-                            <text x={Mx + 15} y={My + 5} fill="#F59E0B" fontSize="12" fontWeight="bold">90°</text>
-                            <text x={(cx + Mx) / 2 - 20} y={(cy + My) / 2 - 15} fill="#10B981" fontSize="12" fontWeight="bold">OM ⊥ AB</text>
+                            
+                            {/* Right Angle Marker and Text */}
+                            <rect x={Mx - 10} y={My - 10} width="10" height="10" stroke="#F59E0B" strokeWidth="2" fill="none" />
+                            <text x={Mx - 35} y={My - 15} fill="#F59E0B" fontSize="12" fontWeight="bold">90°</text>
+                            
+                            <text x={cx + 50} y={(cy + My) / 2} fill="#10B981" fontSize="12" fontWeight="bold">OM ⊥ AB</text>
                         </>}
 
                         {/* Midpoint & Equal Segments */}
-                        {step >= 3 && <>
-                            <circle cx={Mx} cy={My} r="8" fill="none" stroke="#F59E0B" strokeWidth="3" />
-                            <text x={Mx - 20} y={My + 20} fill="#F59E0B" fontSize="14" fontWeight="bold">Midpoint</text>
-                            <text x={Mx - 30} y={My + 40} fill="#8B5CF6" fontSize="14" fontWeight="bold">AM = MB</text>
-                            <text x={Mx - 50} y={My + 55} fill="#8B5CF6" fontSize="12" fontWeight="bold">M bisects AB</text>
+                        {step >= 4 && <>
+                            {/* Midpoint label */}
+                            <text x={Mx} y={My + 40} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">Midpoint</text>
+                            
+                            {/* Equal segment tick marks - Adjusted for clarity */}
+                            <line x1={Ax + (Mx - Ax) / 3 - 5} y1={Ay - 5} x2={Ax + (Mx - Ax) / 3 + 5} y2={Ay + 5} stroke="#8B5CF6" strokeWidth="2" />
+                            <line x1={Bx - (Bx - Mx) / 3 - 5} y1={By - 5} x2={Bx - (Bx - Mx) / 3 + 5} y2={By + 5} stroke="#8B5CF6" strokeWidth="2" />
+
+                            {/* These labels are now inside the circle, below the center */}
+                            <text x={cx} y={cy + 50} fill="#8B5CF6" fontSize="14" fontWeight="bold" textAnchor="middle">AM = MB</text>
+                            <text x={cx} y={cy + 70} fill="#8B5CF6" fontSize="12" fontWeight="bold" textAnchor="middle">M bisects AB</text>
                         </>}
 
                         {/* Theorem Statement / Converse */}
-                        {step >= 4 && <>
-                            <rect x="-10" y="350" width="420" height="80" fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" rx="10" />
+                        {step >= 5 && <>
+                            <rect x="-10" y="350" width="420" height="100" fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" rx="10" />
                             <text x="200" y="370" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
                                 Chord Bisector Theorem (Both Directions)
                             </text>
@@ -212,11 +221,6 @@ const TheoremDiagram = () => {
         </div>
     );
 };
-
-
-
-
-
 
 
 

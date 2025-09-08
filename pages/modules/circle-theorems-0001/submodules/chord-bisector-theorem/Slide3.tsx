@@ -385,18 +385,7 @@ export default function ChordBisectorTheoremSlide2() {
                             </g>
                         )}
                     </svg>
-                    <div className="flex justify-center gap-4 mt-4">
-                        <button
-                            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
-                            onClick={() => setStep(s => Math.max(0, s - 1))}
-                            disabled={step === 0}
-                        >Previous</button>
-                        <button
-                            className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-                            onClick={() => setStep(s => Math.min(5, s + 1))}
-                            disabled={step === 5}
-                        >Next</button>
-                    </div>
+                     
                 </div>
             </div>
         </div>

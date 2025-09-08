@@ -335,18 +335,7 @@ export default function AlternateSegmentTheoremSlide2() {
           <div className="text-center text-sm text-gray-700 dark:text-gray-300 mt-2 min-h-[2em]">
             {steps[step] ? steps[step].description : ''}
           </div>
-          <div className="flex justify-center gap-4 mt-4">
-            <button
-              className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
-              onClick={() => setStep(s => Math.max(1, s - 1))}
-              disabled={step === 1}
-            >Previous</button>
-            <button
-              className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-              onClick={() => setStep(s => Math.min(9, s + 1))}
-              disabled={step === 9}
-            >Next</button>
-          </div>
+          
         </div>
       </div>
     </div>

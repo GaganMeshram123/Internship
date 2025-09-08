@@ -328,22 +328,7 @@ const ProofDiagram = () => {
                             </g>
                         )}
                     </svg>
-                    <div className="flex justify-center gap-4 mt-4">
-                        <button
-                            className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-                            onClick={() => setStep((s) => Math.max(0, s - 1))}
-                            disabled={step === 0}
-                        >
-                            ← Previous
-                        </button>
-                        <button
-                            className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-                            onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
-                            disabled={step === steps.length - 1}
-                        >
-                            Next →
-                        </button>
-                    </div>
+                    
                 </div>
             </div>
         </div>
