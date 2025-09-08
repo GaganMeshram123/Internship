@@ -260,7 +260,7 @@ const TheoremDiagram = () => {
 
   // The slide content
   const slideContent = (
-    <div className="w-full h-full bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl p-8">
+     <div className="w-full h-full bg-white dark:bg-gray-900 rounded-xl p-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left column - Central Angle */}
         <div className="space-y-6">

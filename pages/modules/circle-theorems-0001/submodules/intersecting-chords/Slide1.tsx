@@ -27,23 +27,26 @@ export default function IntersectingChordsSlide1() {
   const Dx = cx + r * Math.cos(angleD), Dy = cy + r * Math.sin(angleD);
   
   // Calculate actual intersection point E of chords AC and BD
-  // Line AC: (x - Ax) / (Cx - Ax) = (y - Ay) / (Cy - Ay)
-  // Line BD: (x - Bx) / (Dx - Bx) = (y - By) / (Dy - By)
   const dAC_x = Cx - Ax, dAC_y = Cy - Ay;
   const dBD_x = Dx - Bx, dBD_y = Dy - By;
-  
-  // Solve for intersection using parametric form
-  // AC: P = A + t * (C - A)
-  // BD: P = B + s * (D - B)
-  // A + t * (C - A) = B + s * (D - B)
   const det = dAC_x * dBD_y - dAC_y * dBD_x;
   const t = ((Bx - Ax) * dBD_y - (By - Ay) * dBD_x) / det;
   
   const Ex = Ax + t * dAC_x;
   const Ey = Ay + t * dAC_y;
 
+  const steps = [
+    { title: "Introduction", description: "Click 'Next' to explore the Intersecting Chords Theorem." },
+    { title: "Step 1: The Circle", description: "We start with a circle and its center O." },
+    { title: "Step 2: The Chords", description: "Draw two chords, AC and BD, that intersect inside the circle." },
+    { title: "Step 3: The Intersection Point", description: "The chords intersect at a point, E, which divides each chord into two segments." },
+    { title: "Step 4: The Segments", description: "The theorem is based on the four segments created by the intersection: AE, EC, BE, and ED." },
+    { title: "Step 5: The Conclusion", description: "The theorem states that the product of the segments of one chord equals the product of the segments of the other: AE × EC = BE × ED." },
+  ];
+
   const slideContent = (
     <div className="w-full h-full bg-white dark:bg-gray-900 rounded-xl p-8">
+       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
@@ -61,25 +64,58 @@ export default function IntersectingChordsSlide1() {
             </div>
           </TrackedInteraction>
           <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
-  <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
-    <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Key Insights</h2>
-    
-    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm mb-4">
-      <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Segment Products:</h3>
-      <p>Each chord is divided into two segments by the intersection point, and the products of opposite segments are always equal.</p>
-    </div>
-    
-    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
-      <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Universal Property:</h3>
-      <p>This relationship holds regardless of chord lengths or intersection position within the circle.</p>
-    </div>
-  </div>
-</TrackedInteraction>
-
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+              <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Key Insights</h2>
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm mb-4">
+                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Segment Products:</h3>
+                <p>Each chord is divided into two segments by the intersection point, and the products of opposite segments are always equal.</p>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                <h3 className="text-xl font-medium text-blue-700 dark:text-blue-300 mb-3">Universal Property:</h3>
+                <p>This relationship holds regardless of chord lengths or intersection position within the circle.</p>
+              </div>
+            </div>
+          </TrackedInteraction>
         </div>
         <div className="space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-            <svg width="400" height="400" viewBox="0 0 400 400" className="mx-auto">
+      <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-8">The Intersecting Chords Theorem</h1>
+            
+            <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+              <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">
+                  Step {step + 1}
+              </span>
+              <span className="font-light">of {steps.length}</span>
+              <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div
+                      className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                      style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                  />
+              </div>
+            </div>
+            <div className="p-4 bg-blue-50 dark:bg-slate-700 rounded-xl shadow-inner border border-blue-100 dark:border-slate-600 mb-6">
+              <h4 className="font-bold text-blue-700 dark:text-blue-300 text-lg">{steps[step].title}</h4>
+              <p className="text-slate-700 dark:text-slate-300 mt-2">{steps[step].description}</p>
+            </div>
+            
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                onClick={() => setStep(s => Math.max(0, s - 1))}
+                disabled={step === 0}
+              >
+                ← Previous
+              </button>
+              <button
+                className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                onClick={() => setStep(s => Math.min(steps.length - 1, s + 1))}
+                disabled={step === steps.length - 1}
+              >
+                Next →
+              </button>
+            </div>
+            
+            <svg width="400" height="400" viewBox="0 0 400 400" className="mx-auto mt-6">
               {step >= 1 && (
                 <g>
                   <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" className="animate-[draw_1s_ease-in-out]" />
@@ -114,15 +150,13 @@ export default function IntersectingChordsSlide1() {
                   <text x={(Ex + Cx) / 2 + 24} y={(Ey + Cy) / 2 + 24} fill="#8B5CF6" fontSize="12" fontWeight="bold">EC</text>
                   <text x={(Bx + Ex) / 2 - 30} y={(By + Ey) / 2 + 16} fill="#F59E0B" fontSize="12" fontWeight="bold">BE</text>
                   <text x={(Ex + Dx) / 2 + 30} y={(Ey + Dy) / 2 - 16} fill="#F59E0B" fontSize="12" fontWeight="bold">ED</text>
-                  {/* Tick marks for AE, EC, BE, ED */}
                   {(() => {
-                    // Helper for tick
                     function tick(x1: number, y1: number, x2: number, y2: number, len = 10) {
                       const mx = (x1 + x2) / 2;
                       const my = (y1 + y2) / 2;
                       const dx = x2 - x1, dy = y2 - y1;
                       const norm = Math.sqrt(dx * dx + dy * dy);
-                      const px = -dy / norm, py = dx / norm; // perpendicular
+                      const px = -dy / norm, py = dx / norm;
                       return (
                         <line x1={mx - px * len / 2} y1={my - py * len / 2} x2={mx + px * len / 2} y2={my + py * len / 2} stroke="#64748B" strokeWidth="2" />
                       );
@@ -145,18 +179,6 @@ export default function IntersectingChordsSlide1() {
                 </g>
               )}
             </svg>
-            <div className="flex justify-center gap-4 mt-4">
-              <button
-                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
-                onClick={() => setStep(s => Math.max(0, s - 1))}
-                disabled={step === 0}
-              >Previous</button>
-              <button
-                className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-                onClick={() => setStep(s => Math.min(5, s + 1))}
-                disabled={step === 5}
-              >Next</button>
-            </div>
           </div>
         </div>
       </div>
@@ -168,4 +190,4 @@ export default function IntersectingChordsSlide1() {
       {slideContent}
     </SlideComponentWrapper>
   );
-} 
+}

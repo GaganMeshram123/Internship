@@ -221,18 +221,7 @@ export default function PowerOfPointSlide3() {
                             </g>
                         )}
                     </svg>
-                    <div className="flex justify-center gap-4 mt-4">
-                        <button
-                            className="px-4 py-2 rounded bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 font-medium border border-blue-300 dark:border-blue-700 disabled:opacity-50"
-                            onClick={() => setStep(s => Math.max(0, step - 1))}
-                            disabled={step === 0}
-                        >Previous</button>
-                        <button
-                            className="px-4 py-2 rounded bg-blue-600 text-white font-medium border border-blue-700 disabled:opacity-50"
-                            onClick={() => setStep(s => Math.min(5, step + 1))}
-                            disabled={step === 5}
-                        >Next</button>
-                    </div>
+                     
                 </div>
             </div>
         </div>
@@ -241,7 +230,7 @@ export default function PowerOfPointSlide3() {
 
   // Slide content
   const slideContent = (
-    <div className="w-full h-full bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl p-8">
+     <div className="w-full h-full bg-white dark:bg-gray-900 rounded-xl p-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left column - Proof Steps */}
         <div className="space-y-6">
