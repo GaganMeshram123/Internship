@@ -5,29 +5,29 @@ import SlideComponentWrapper from '../../../common-components/SlideComponentWrap
 
 export default function EqualChordsTheoremSlide2() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-  const [step, setStep] = useState(0); // 0: nothing, 1: setup, 2: triangles, 3: congruence, 4: equal angles, 5: conclusion
+  const [step, setStep] = useState(0);
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'ct-equal-chords-proof',
-      conceptId: 'ct-equal-chords-proof',
-      conceptName: 'Equal Chords Proof',
+      id: 'ct-given',
+      conceptId: 'ct-given',
+      conceptName: 'Given Conditions',
       type: 'learning',
-      description: 'Understanding the proof of equal chords theorem'
+      description: 'Reviewing the given conditions of the theorem'
     },
     {
-      id: 'ct-isosceles-triangles',
-      conceptId: 'ct-isosceles-triangles',
-      conceptName: 'Isosceles Triangles',
+      id: 'ct-sss-congruence',
+      conceptId: 'ct-sss-congruence',
+      conceptName: 'SSS Congruence',
       type: 'learning',
-      description: 'Using isosceles triangles in the proof'
+      description: 'Understanding SSS congruence in the proof'
     },
     {
-      id: 'ct-central-angles-equality',
-      conceptId: 'ct-central-angles-equality',
-      conceptName: 'Central Angles Equality',
+      id: 'ct-conclusion',
+      conceptId: 'ct-conclusion',
+      conceptName: 'Conclusion',
       type: 'learning',
-      description: 'Proving that equal chords subtend equal central angles'
+      description: 'Final conclusion of the proof'
     }
   ];
 
@@ -37,7 +37,6 @@ export default function EqualChordsTheoremSlide2() {
 
   // Geometry
   const cx = 200, cy = 175, r = 120;
-  // Make chords closer together - both on the upper part of the circle
   const angleA1 = Math.PI * 0.65, angleB1 = Math.PI * 0.8;
   const A1x = cx + r * Math.cos(angleA1), A1y = cy + r * Math.sin(angleA1);
   const B1x = cx + r * Math.cos(angleB1), B1y = cy + r * Math.sin(angleB1);
@@ -45,7 +44,7 @@ export default function EqualChordsTheoremSlide2() {
   const A2x = cx + r * Math.cos(angleA2), A2y = cy + r * Math.sin(angleA2);
   const B2x = cx + r * Math.cos(angleB2), B2y = cy + r * Math.sin(angleB2);
 
-  // Helper for angle arc at a vertex (always draws minor angle)
+  // Helper for angle arc at a vertex with corrected types
   function angleArc(x: number, y: number, ax: number, ay: number, bx: number, by: number, radius = 18) {
     let angle1 = Math.atan2(ay - y, ax - x);
     let angle2 = Math.atan2(by - y, bx - x);
@@ -76,9 +75,21 @@ export default function EqualChordsTheoremSlide2() {
     };
   }
 
+  const steps = [
+    { title: "Introduction", description: "Click 'Next' to begin the visual proof that equal chords subtend equal central angles." },
+    { title: "Step 1: The Setup", description: "We start with a circle and two equal chords, AB and CD. Radii are drawn from the center O to the endpoints of each chord, forming two triangles." },
+    { title: "Step 2: SSS Congruence", description: "The two triangles, △AOB and △COD, are congruent by the Side-Side-Side (SSS) congruence criterion because all three corresponding sides are equal." },
+    { title: "Step 3: Congruent Triangles", description: "Since the triangles are congruent (△AOB ≅ △COD), all corresponding angles are equal. This includes the central angles." },
+    { title: "Step 4: The Conclusion", description: "Therefore, the central angle ∠AOB is equal to the central angle ∠COD." },
+    { title: "Step 5: Final Proof", description: "This demonstrates that equal chords always subtend equal central angles." },
+  ];
+  
   const slideContent = (
     <div className="w-full h-full bg-white dark:bg-gray-900 rounded-xl p-8">
+      <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-8">Proof of the Equal Chords Theorem</h1>
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left column content - kept as-is from your provided image */}
         <div className="space-y-6">
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
@@ -109,9 +120,52 @@ export default function EqualChordsTheoremSlide2() {
             </div>
           </TrackedInteraction>
         </div>
+        
+        {/* Right column content - consolidated interactive elements */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-            <svg width="400" height="400" viewBox="0 0 400 400" className="mx-auto">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Equal Chords Theorem</h3>
+            
+            {/* Step Indicator */}
+            <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+              <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">
+                Step {step + 1}
+              </span>
+              <span className="font-light">of {steps.length}</span>
+              <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                  style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                />
+              </div>
+            </div>
+            
+            {/* Dynamic Step Description */}
+            <div className="p-4 bg-blue-50 dark:bg-slate-700 rounded-xl shadow-inner border border-blue-100 dark:border-slate-600 mb-6">
+              <h4 className="font-bold text-blue-700 dark:text-blue-300 text-lg">{steps[step].title}</h4>
+              <p className="text-slate-700 dark:text-slate-300 mt-2">{steps[step].description}</p>
+            </div>
+            
+            {/* Buttons */}
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                onClick={() => setStep(s => Math.max(0, s - 1))}
+                disabled={step === 0}
+              >
+                ← Previous
+              </button>
+              <button
+                className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                onClick={() => setStep(s => Math.min(steps.length - 1, s + 1))}
+                disabled={step === steps.length - 1}
+              >
+                Next →
+              </button>
+            </div>
+
+            {/* SVG Diagram */}
+            <svg width="400" height="400" viewBox="0 0 400 400" className="mx-auto mt-6">
               {step >= 1 && (
                 <g>
                   <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
@@ -132,13 +186,9 @@ export default function EqualChordsTheoremSlide2() {
                   <text x={A2x + (A2x > cx ? 10 : -20)} y={A2y + (A2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">C</text>
                   <text x={B2x + (B2x > cx ? 10 : -20)} y={B2y + (B2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">D</text>
 
-                  {/* Markings for SSS congruence */}
-                  {/* OA = OC (radii) */}
                   <line x1={cx} y1={cy} x2={A1x} y2={A1y} stroke="#F59E0B" strokeWidth="4" strokeDasharray="6 5" />
                   <line x1={cx} y1={cy} x2={A2x} y2={A2y} stroke="#F59E0B" strokeWidth="4" strokeDasharray="6 5" />
-                  {/* OA = OC (radii) - centered label */}
                   {(() => {
-                    // Midpoints of OA and OC
                     const mx1 = (cx + A1x) / 2, my1 = (cy + A1y) / 2;
                     const mx2 = (cx + A2x) / 2, my2 = (cy + A2y) / 2;
                     const labelX = (mx1 + mx2) / 2;
@@ -146,11 +196,9 @@ export default function EqualChordsTheoremSlide2() {
                     return <text x={labelX} y={labelY} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">OA = OC</text>;
                   })()}
 
-                  {/* OB = OD (radii) */}
                   <line x1={cx} y1={cy} x2={B1x} y2={B1y} stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 5" />
                   <line x1={cx} y1={cy} x2={B2x} y2={B2y} stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 5" />
                   {(() => {
-                    // Midpoints of OB and OD
                     const mx1 = (cx + B1x) / 2, my1 = (cy + B1y) / 2;
                     const mx2 = (cx + B2x) / 2, my2 = (cy + B2y) / 2;
                     const labelX = (mx1 + mx2) / 2 - 20;
@@ -158,12 +206,10 @@ export default function EqualChordsTheoremSlide2() {
                     return <text x={labelX} y={labelY} fill="#8B5CF6" fontSize="12" fontWeight="bold" textAnchor="middle">OB = OD</text>;
                   })()}
 
-                  {/* AB = CD (chord equality) */}
                   <line x1={A1x} y1={A1y} x2={B1x} y2={B1y} stroke="#22D3EE" strokeWidth="4" strokeDasharray="2 3" />
                   <line x1={A2x} y1={A2y} x2={B2x} y2={B2y} stroke="#22D3EE" strokeWidth="4" strokeDasharray="2 3" />
                   <text x={cx} y={(A1y + B1y + A2y + B2y) / 4 + 4} fill="#22D3EE" fontSize="12" fontWeight="bold" textAnchor="middle">AB = CD</text>
 
-                  {/* SSS label between triangles */}
                   <text x={cx} y={cy - 30} fill="#F59E0B" fontSize="15" fontWeight="bold" textAnchor="middle">SSS</text>
                 </g>
               )}
@@ -178,27 +224,12 @@ export default function EqualChordsTheoremSlide2() {
                 </text>
               )}
             </svg>
-            <div className="flex justify-center gap-4 mt-4">
-              <button
-                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                onClick={() => setStep(s => Math.max(0, s - 1))}
-                disabled={step === 0}
-              >
-                Previous
-              </button>
-              <button
-                className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50 hover:bg-indigo-700 transition-colors"
-                onClick={() => setStep(s => Math.min(5, s + 1))}
-                disabled={step === 5}
-              >
-                Next
-              </button>
-            </div>
           </div>
           <TrackedInteraction interaction={slideInteractions[2]} onInteractionComplete={handleInteractionComplete}>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
               <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Conclusion</h2>
-<div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">                <p>Since △AOB ≅ △COD, corresponding angles are equal: ∠AOB = ∠COD</p>
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                <p>Since △AOB ≅ △COD, corresponding angles are equal: ∠AOB = ∠COD</p>
                 <p className="font-bold mt-2">Therefore: Equal chords subtend equal central angles!</p>
               </div>
             </div>
@@ -213,4 +244,4 @@ export default function EqualChordsTheoremSlide2() {
       {slideContent}
     </SlideComponentWrapper>
   );
-} 
+}

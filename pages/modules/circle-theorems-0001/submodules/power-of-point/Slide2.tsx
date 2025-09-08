@@ -57,98 +57,187 @@ export default function PowerOfPointSlide3() {
   const Dy = Py + unitY2 * (t2 + sqrt2);
 
   // Diagram component
-  const ProofDiagram = () => (
-    <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-      <svg width="400" height="400" viewBox="0 0 400 400" className="mx-auto">
-        {/* Circle and center */}
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
-        <circle cx={cx} cy={cy} r="3" fill="#374151" />
-        <text x={cx + 10} y={cy - 2} fill="#374151" fontSize="12" fontWeight="bold">O</text>
-        {/* External point P */}
-        <circle cx={Px} cy={Py} r="4" fill="#DC2626" />
-        <text x={Px + 10} y={Py - 2} fill="#DC2626" fontSize="16" fontWeight="bold">P</text>
-        {/* Secants */}
-        <line x1={Px} y1={Py} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth={step >= 1 ? 3 : 2} opacity={step >= 1 ? 1 : 0.5} />
-        <line x1={Px} y1={Py} x2={Dx} y2={Dy} stroke="#10B981" strokeWidth={step >= 1 ? 3 : 2} opacity={step >= 1 ? 1 : 0.5} />
-        {/* Points A, B, C, D */}
-        <circle cx={Ax} cy={Ay} r="3" fill="#3B82F6" />
-        <circle cx={Bx} cy={By} r="3" fill="#3B82F6" />
-        <circle cx={Cx} cy={Cy} r="3" fill="#10B981" />
-        <circle cx={Dx} cy={Dy} r="3" fill="#10B981" />
-        <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">A</text>
-        <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">B</text>
-        <text x={Cx + (Cx > cx ? 10 : -20)} y={Cy + (Cy > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">C</text>
-        <text x={Dx + (Dx > cx ? 10 : -20)} y={Dy + (Dy > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">D</text>
-        {/* Step 2: Draw auxiliary lines */}
-        {step >= 2 && (
-          <>
-            <line x1={Ax} y1={Ay} x2={Dx} y2={Dy} stroke="#F59E0B" strokeWidth="2.5" strokeDasharray="6 4" />
-            <line x1={Bx} y1={By} x2={Cx} y2={Cy} stroke="#8B5CF6" strokeWidth="2.5" strokeDasharray="6 4" />
-            {/* Labels for chords */}
-            <text x={(Ax + Dx) / 2 - 10} y={(Ay + Dy) / 2 - 10} fill="#F59E0B" fontSize="13" fontWeight="bold">AD</text>
-            <text x={(Bx + Cx) / 2 + 10} y={(By + Cy) / 2 + 10} fill="#8B5CF6" fontSize="13" fontWeight="bold">BC</text>
-          </>
-        )}
-        {/* Step 3: Highlight triangles and angles */}
-        {step >= 3 && (
-          <>
-            {/* Triangle PAD */}
-            <polygon points={`${Px},${Py} ${Ax},${Ay} ${Dx},${Dy}`} fill="#F59E0B" fillOpacity="0.18" stroke="#F59E0B" strokeWidth="2" />
-            {/* Triangle PCB */}
-            <polygon points={`${Px},${Py} ${Cx},${Cy} ${Bx},${By}`} fill="#8B5CF6" fillOpacity="0.18" stroke="#8B5CF6" strokeWidth="2" />
-            {/* Triangle labels */}
-            <text x={(Px + Ax + Dx) / 3 - 10} y={(Py + Ay + Dy) / 3 - 10} fill="#F59E0B" fontSize="13" fontWeight="bold">△PAD</text>
-            <text x={(Px + Cx + Bx) / 3 + 10} y={(Py + Cy + By) / 3 + 10} fill="#8B5CF6" fontSize="13" fontWeight="bold">△PCB</text>
-            {/* Angle marks */}
-            {/* ∠APD and ∠CPB (vertical angles) */}
-            <text x={Px + 18} y={Py - 10} fill="#DC2626" fontSize="13" fontWeight="bold">∠APD</text>
-            <text x={Px - 38} y={Py + 18} fill="#DC2626" fontSize="13" fontWeight="bold">∠CPB</text>
-            {/* ∠PAD and ∠PCB (inscribed angles) */}
-            <text x={Ax - 30} y={Ay - 18} fill="#F59E0B" fontSize="13" fontWeight="bold">∠PAD</text>
-            <text x={Cx + 18} y={Cy - 18} fill="#8B5CF6" fontSize="13" fontWeight="bold">∠PCB</text>
-            {/* Arrows or marks for equal angles could be added with paths if desired */}
-          </>
-        )}
-        {/* Step 4: Proportion arrows/labels */}
-        {step >= 4 && (
-          <>
-            {/* Sides for proportion */}
-            <line x1={Px} y1={Py} x2={Ax} y2={Ay} stroke="#F59E0B" strokeWidth="4" />
-            <line x1={Px} y1={Py} x2={Cx} y2={Cy} stroke="#8B5CF6" strokeWidth="4" />
-            <line x1={Px} y1={Py} x2={Dx} y2={Dy} stroke="#F59E0B" strokeWidth="4" />
-            <line x1={Px} y1={Py} x2={Bx} y2={By} stroke="#8B5CF6" strokeWidth="4" />
-            {/* Labels */}
-            <text x={(Px + Ax) / 2 - 10} y={(Py + Ay) / 2 - 10} fill="#F59E0B" fontSize="13" fontWeight="bold">PA</text>
-            <text x={(Px + Dx) / 2 + 10} y={(Py + Dy) / 2 + 10} fill="#F59E0B" fontSize="13" fontWeight="bold">PD</text>
-            <text x={(Px + Cx) / 2 - 10} y={(Py + Cy) / 2 - 10} fill="#8B5CF6" fontSize="13" fontWeight="bold">PC</text>
-            <text x={(Px + Bx) / 2 + 10} y={(Py + By) / 2 + 10} fill="#8B5CF6" fontSize="13" fontWeight="bold">PB</text>
-            {/* Proportion formula visually */}
-            <text x={Px + 40} y={Py + 40} fill="#1E40AF" fontSize="15" fontWeight="bold">PA / PC = PD / PB</text>
-            <text x={Px + 40} y={Py + 60} fill="#1E40AF" fontSize="15" fontWeight="bold">PA × PB = PC × PD</text>
-          </>
-        )}
-        {/* Step 5: Conclusion box */}
-        {step >= 5 && (
-          <g>
-            <rect x="50" y="320" width="300" height="40" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="2" rx="10" />
-            <text x="200" y="345" textAnchor="middle" fill="#1E40AF" fontSize="15" fontWeight="bold">PA × PB = PC × PD ✓</text>
-          </g>
-        )}
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className="px-4 py-2 rounded bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 font-medium border border-blue-300 dark:border-blue-700 disabled:opacity-50"
-          onClick={() => setStep(s => Math.max(0, step - 1))}
-          disabled={step === 0}
-        >Previous</button>
-        <button
-          className="px-4 py-2 rounded bg-blue-600 text-white font-medium border border-blue-700 disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(5, step + 1))}
-          disabled={step === 5}
-        >Next</button>
-      </div>
-    </div>
-  );
+  const ProofDiagram = () => {
+    // State to manage the current step
+    const [step, setStep] = useState(0);
+
+    // Coordinate constants for the diagram
+    const cx = 200;
+    const cy = 200;
+    const r = 120;
+    const Px = 350;
+    const Py = 100;
+    const Ax = 290;
+    const Ay = 120;
+    const Bx = 210;
+    const By = 230;
+    const Cx = 270;
+    const Cy = 160;
+    const Dx = 190;
+    const Dy = 280;
+    
+    // This is a placeholder for the angleArc function
+     const angleArc = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, radius: number) => {
+        return {
+            arc: "",
+            labelX: 0,
+            labelY: 0
+        };
+    };
+
+    // The steps for the explanation
+    const steps = [
+        { title: "Introduction", description: "Click 'Next' to begin the proof of the Intersecting Secants Theorem (also known as the Power of a Point Theorem)." },
+        { title: "Step 1: The Secants", description: "We start with a circle and an external point P. Two secant lines from P intersect the circle at points A, B, C, and D." },
+        { title: "Step 2: Auxiliary Lines", description: "To prove the theorem, we draw auxiliary chords AD and BC, forming two triangles: △PAD and △PCB." },
+        { title: "Step 3: Similar Triangles", description: "These two triangles, △PAD and △PCB, are similar due to equal angles (∠P is common, and inscribed angles ∠PAD and ∠PCB subtend the same arc BD)." },
+        { title: "Step 4: Proportional Sides", description: "Since the triangles are similar, their corresponding sides are proportional, leading to the relationship: PA/PC = PD/PB." },
+        { title: "Step 5: The Conclusion", description: "Cross-multiplying the proportion gives us the final theorem: PA × PB = PC × PD." }
+    ];
+
+    return (
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+            {/* 1. Headline */}
+            <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-6">The Intersecting Secants Theorem</h1>
+            
+            {/* 2. Step Text with Indicator */}
+            <div className="mb-6">
+                {/* Step Indicator */}
+                <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">Step {step + 1}</span>
+                    <span className="font-light">of {steps.length}</span>
+                    <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+                {/* Step Text */}
+                <div className="p-6 bg-blue-50 dark:bg-gray-800 rounded-xl shadow-inner border border-blue-100 dark:border-gray-700 transition-all duration-300">
+                    <h3 className="font-bold text-xl text-blue-700 dark:text-blue-300">
+                        {steps[step].title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 mt-3 leading-relaxed text-base">
+                        {steps[step].description}
+                    </p>
+                </div>
+            </div>
+
+            {/* 3. Buttons */}
+            <div className="flex justify-center gap-4 mt-4">
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                >
+                    ← Previous
+                </button>
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
+                    disabled={step === steps.length - 1}
+                >
+                    Next →
+                </button>
+            </div>
+
+            {/* 4. Circle Diagram (your original code, untouched) */}
+            <div className="mt-6">
+                 <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+                    <svg width="400" height="400" viewBox="0 0 400 400" className="mx-auto">
+                        {/* Circle and center */}
+                        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
+                        <circle cx={cx} cy={cy} r="3" fill="#374151" />
+                        <text x={cx + 10} y={cy - 2} fill="#374151" fontSize="12" fontWeight="bold">O</text>
+                        {/* External point P */}
+                        <circle cx={Px} cy={Py} r="4" fill="#DC2626" />
+                        <text x={Px + 10} y={Py - 2} fill="#DC2626" fontSize="16" fontWeight="bold">P</text>
+                        {/* Secants */}
+                        <line x1={Px} y1={Py} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth={step >= 1 ? 3 : 2} opacity={step >= 1 ? 1 : 0.5} />
+                        <line x1={Px} y1={Py} x2={Dx} y2={Dy} stroke="#10B981" strokeWidth={step >= 1 ? 3 : 2} opacity={step >= 1 ? 1 : 0.5} />
+                        {/* Points A, B, C, D */}
+                        <circle cx={Ax} cy={Ay} r="3" fill="#3B82F6" />
+                        <circle cx={Bx} cy={By} r="3" fill="#3B82F6" />
+                        <circle cx={Cx} cy={Cy} r="3" fill="#10B981" />
+                        <circle cx={Dx} cy={Dy} r="3" fill="#10B981" />
+                        <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">A</text>
+                        <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">B</text>
+                        <text x={Cx + (Cx > cx ? 10 : -20)} y={Cy + (Cy > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">C</text>
+                        <text x={Dx + (Dx > cx ? 10 : -20)} y={Dy + (Dy > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">D</text>
+                        {/* Step 2: Draw auxiliary lines */}
+                        {step >= 2 && (
+                            <>
+                                <line x1={Ax} y1={Ay} x2={Dx} y2={Dy} stroke="#F59E0B" strokeWidth="2.5" strokeDasharray="6 4" />
+                                <line x1={Bx} y1={By} x2={Cx} y2={Cy} stroke="#8B5CF6" strokeWidth="2.5" strokeDasharray="6 4" />
+                                {/* Labels for chords */}
+                                <text x={(Ax + Dx) / 2 - 10} y={(Ay + Dy) / 2 - 10} fill="#F59E0B" fontSize="13" fontWeight="bold">AD</text>
+                                <text x={(Bx + Cx) / 2 + 10} y={(By + Cy) / 2 + 10} fill="#8B5CF6" fontSize="13" fontWeight="bold">BC</text>
+                            </>
+                        )}
+                        {/* Step 3: Highlight triangles and angles */}
+                        {step >= 3 && (
+                            <>
+                                {/* Triangle PAD */}
+                                <polygon points={`${Px},${Py} ${Ax},${Ay} ${Dx},${Dy}`} fill="#F59E0B" fillOpacity="0.18" stroke="#F59E0B" strokeWidth="2" />
+                                {/* Triangle PCB */}
+                                <polygon points={`${Px},${Py} ${Cx},${Cy} ${Bx},${By}`} fill="#8B5CF6" fillOpacity="0.18" stroke="#8B5CF6" strokeWidth="2" />
+                                {/* Triangle labels */}
+                                <text x={(Px + Ax + Dx) / 3 - 10} y={(Py + Ay + Dy) / 3 - 10} fill="#F59E0B" fontSize="13" fontWeight="bold">△PAD</text>
+                                <text x={(Px + Cx + Bx) / 3 + 10} y={(Py + Cy + By) / 3 + 10} fill="#8B5CF6" fontSize="13" fontWeight="bold">△PCB</text>
+                                {/* Angle marks */}
+                                {/* ∠APD and ∠CPB (vertical angles) */}
+                                <text x={Px + 18} y={Py - 10} fill="#DC2626" fontSize="13" fontWeight="bold">∠APD</text>
+                                <text x={Px - 38} y={Py + 18} fill="#DC2626" fontSize="13" fontWeight="bold">∠CPB</text>
+                                {/* ∠PAD and ∠PCB (inscribed angles) */}
+                                <text x={Ax - 30} y={Ay - 18} fill="#F59E0B" fontSize="13" fontWeight="bold">∠PAD</text>
+                                <text x={Cx + 18} y={Cy - 18} fill="#8B5CF6" fontSize="13" fontWeight="bold">∠PCB</text>
+                                {/* Arrows or marks for equal angles could be added with paths if desired */}
+                            </>
+                        )}
+                        {/* Step 4: Proportion arrows/labels */}
+                        {step >= 4 && (
+                            <>
+                                {/* Sides for proportion */}
+                                <line x1={Px} y1={Py} x2={Ax} y2={Ay} stroke="#F59E0B" strokeWidth="4" />
+                                <line x1={Px} y1={Py} x2={Cx} y2={Cy} stroke="#8B5CF6" strokeWidth="4" />
+                                <line x1={Px} y1={Py} x2={Dx} y2={Dy} stroke="#F59E0B" strokeWidth="4" />
+                                <line x1={Px} y1={Py} x2={Bx} y2={By} stroke="#8B5CF6" strokeWidth="4" />
+                                {/* Labels */}
+                                <text x={(Px + Ax) / 2 - 10} y={(Py + Ay) / 2 - 10} fill="#F59E0B" fontSize="13" fontWeight="bold">PA</text>
+                                <text x={(Px + Dx) / 2 + 10} y={(Py + Dy) / 2 + 10} fill="#F59E0B" fontSize="13" fontWeight="bold">PD</text>
+                                <text x={(Px + Cx) / 2 - 10} y={(Py + Cy) / 2 - 10} fill="#8B5CF6" fontSize="13" fontWeight="bold">PC</text>
+                                <text x={(Px + Bx) / 2 + 10} y={(Py + By) / 2 + 10} fill="#8B5CF6" fontSize="13" fontWeight="bold">PB</text>
+                                {/* Proportion formula visually */}
+                                <text x={Px + 40} y={Py + 40} fill="#1E40AF" fontSize="15" fontWeight="bold">PA / PC = PD / PB</text>
+                                <text x={Px + 40} y={Py + 60} fill="#1E40AF" fontSize="15" fontWeight="bold">PA × PB = PC × PD</text>
+                            </>
+                        )}
+                        {/* Step 5: Conclusion box */}
+                        {step >= 5 && (
+                            <g>
+                                <rect x="50" y="320" width="300" height="40" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="2" rx="10" />
+                                <text x="200" y="345" textAnchor="middle" fill="#1E40AF" fontSize="15" fontWeight="bold">PA × PB = PC × PD ✓</text>
+                            </g>
+                        )}
+                    </svg>
+                    <div className="flex justify-center gap-4 mt-4">
+                        <button
+                            className="px-4 py-2 rounded bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 font-medium border border-blue-300 dark:border-blue-700 disabled:opacity-50"
+                            onClick={() => setStep(s => Math.max(0, step - 1))}
+                            disabled={step === 0}
+                        >Previous</button>
+                        <button
+                            className="px-4 py-2 rounded bg-blue-600 text-white font-medium border border-blue-700 disabled:opacity-50"
+                            onClick={() => setStep(s => Math.min(5, step + 1))}
+                            disabled={step === 5}
+                        >Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
   // Slide content
   const slideContent = (

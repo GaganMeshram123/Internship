@@ -75,150 +75,226 @@ export default function SemicircleTheoremSlide2() {
     };
   }
 
-  // SVG Proof Diagram Component
-  const ProofDiagram = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Semicircle Theorem Proof</h3>
-      <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-        {/* Circle */}
-        {step >= 1 && (
-          <circle 
-            cx="200" 
-            cy="175" 
-            r="120" 
-            fill="none" 
-            stroke="#64748B" 
-            strokeWidth="2"
-            className="animate-[draw_1s_ease-in-out]"
-          />
-        )}
-        
-        {/* Center O */}
-        {step >= 1 && (
-          <g>
-            <circle cx="200" cy="175" r="4" fill="#DC2626" />
-            <text x="210" y="173" fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
-          </g>
-        )}
-        
-        {/* Point P */}
-        {step >= 1 && (
-          <g>
-            <circle cx="200" cy="55" r="5" fill="#3B82F6" />
-            <text x="210" y="53" fill="#3B82F6" fontSize="16" fontWeight="bold">P</text>
-          </g>
-        )}
-        
-        {/* Diameter AB */}
-        {step >= 2 && (
-          <g>
-            <line 
-              x1="80" 
-              y1="175" 
-              x2="320" 
-              y2="175" 
-              stroke="#DC2626" 
-              strokeWidth="4"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            <circle cx="80" cy="175" r="4" fill="#DC2626" />
-            <circle cx="320" cy="175" r="4" fill="#DC2626" />
-            <text x="70" y="165" fill="#DC2626" fontSize="16" fontWeight="bold">A</text>
-            <text x="325" y="165" fill="#DC2626" fontSize="16" fontWeight="bold">B</text>
+ const TheoremDiagram = () => {
+    // State to manage the current step
+    const [step, setStep] = useState(0);
+
+    // Coordinate constants for the diagram
+    const cx = 200;
+    const cy = 175;
+    const r = 120;
+    const Ax = cx - r;
+    const Ay = cy;
+    const Bx = cx + r;
+    const By = cy;
+    const Px = 200;
+    const Py = 55;
+
+    // The steps for the explanation
+    const steps = [
+        { title: "Introduction", description: "Click 'Next' to begin the proof of the Semicircle Theorem (Thales's Theorem)." },
+        { title: "Step 1: The Circle", description: "We start with a circle, its center O, and a point P on its circumference." },
+        { title: "Step 2: The Diameter", description: "Draw a diameter AB. This divides the circle into two semicircles and forms the triangle △APB." },
+        { title: "Step 3: The Central Angle", description: "The central angle ∠AOB, subtended by the diameter AB, is a straight line." },
+        { title: "Step 4: Central Angle Value", description: "Since ∠AOB is a straight line, its measure is always 180°." },
+        { title: "Step 5: The Ratio", description: "The Central-Inscribed Angle Theorem states that a central angle is twice the measure of an inscribed angle subtending the same arc." },
+        { title: "Step 6: The Conclusion", description: "Since the central angle is 180°, the inscribed angle ∠APB must be half of that, which is 90°." }
+    ];
+
+    return (
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+            {/* 1. Headline */}
+            <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-6">Proof of the Semicircle Theorem</h1>
             
-            {/* Lines AP and BP */}
-            <line x1="80" y1="175" x2="200" y2="55" stroke="#3B82F6" strokeWidth="2" />
-            <line x1="320" y1="175" x2="200" y2="55" stroke="#3B82F6" strokeWidth="2" />
-          </g>
-        )}
-        
-        {/* Central angle AOB = 180° */}
-        {step >= 3 && (
-          <g>
-            {/* Radii to show central angle */}
-            <line 
-              x1="200" y1="175" x2="80" y2="175" 
-              stroke="#FFD700" strokeWidth="3" strokeDasharray="5,5"
-              className="animate-[draw_0.8s_ease-in-out]"
-            />
-            <line 
-              x1="200" y1="175" x2="320" y2="175" 
-              stroke="#FFD700" strokeWidth="3" strokeDasharray="5,5"
-              className="animate-[draw_0.8s_ease-in-out]"
-            />
-            
-            {/* Central angle arc */}
-            <path 
-              d="M 150 175 A 50 50 0 0 0 250 175" 
-              fill="none" 
-              stroke="#FFD700" 
-              strokeWidth="4"
-              className="animate-[draw_1s_ease-in_out]"
-            />
-            <text x="185" y="155" fill="#FFD700" fontSize="16" fontWeight="bold">∠AOB</text>
-          </g>
-        )}
-        
-        {/* Straight line indication */}
-        {step >= 4 && (
-          <g>
-            <text x="200" y="200" textAnchor="middle" fill="#FFD700" fontSize="18" fontWeight="bold" className="animate-pulse">
-              180°
-            </text>
-            <text x="200" y="220" textAnchor="middle" fill="#FFD700" fontSize="12" className="animate-pulse">
-              (straight line)
-            </text>
-          </g>
-        )}
-        
-        {/* Ratio application */}
-        
-        {step >= 5 && (
-          <g>
-            {/* Inscribed angle */}
-            <path 
-              d="M 190 65 A 15 15 0 0 1 210 65" 
-              fill="none" 
-              stroke="#3B82F6" 
-              strokeWidth="3"
-              className="animate-pulse"
-            />
-            <text x="180" y="80" fill="#3B82F6" fontSize="14" fontWeight="bold">∠APB</text>
-            
-            {/* Calculation box */}
-            <rect 
-              x="30" y="280" width="340" height="60" 
-              fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
-              rx="10"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            <text x="200" y="300" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">
-              Central-Circumference Ratio: Central = 2 × Inscribed
-            </text>
-            <text x="200" y="318" textAnchor="middle" fill="#1F2937" fontSize="14">
-              180° = 2 × ∠APB
-            </text>
-            <text x="200" y="332" textAnchor="middle" fill="#DC2626" fontSize="14" fontWeight="bold">
-              Therefore: ∠APB = 180° ÷ 2 = 90°
-            </text>
-          </g>
-        )}
-        
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-        >Previous</button>
-        <button
-          className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(6, s + 1))}
-          disabled={step === 6}
-        >Next</button>
-      </div>
-    </div>
-  );
+            {/* 2. Step Text with Indicator */}
+            <div className="mb-6">
+                {/* Step Indicator */}
+                <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">Step {step + 1}</span>
+                    <span className="font-light">of {steps.length}</span>
+                    <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+                {/* Step Text */}
+                <div className="p-6 bg-blue-50 dark:bg-gray-800 rounded-xl shadow-inner border border-blue-100 dark:border-gray-700 transition-all duration-300">
+                    <h3 className="font-bold text-xl text-blue-700 dark:text-blue-300">
+                        {steps[step].title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 mt-3 leading-relaxed text-base">
+                        {steps[step].description}
+                    </p>
+                </div>
+            </div>
+
+            {/* 3. Buttons */}
+            <div className="flex justify-center gap-4 mt-4">
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                >
+                    ← Previous
+                </button>
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
+                    disabled={step === steps.length - 1}
+                >
+                    Next →
+                </button>
+            </div>
+
+            {/* 4. Circle Diagram (your original code, untouched) */}
+            <div className="mt-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Semicircle Theorem Proof</h3>
+                    <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
+                        {/* Circle */}
+                        {step >= 1 && (
+                            <circle 
+                                cx="200" 
+                                cy="175" 
+                                r="120" 
+                                fill="none" 
+                                stroke="#64748B" 
+                                strokeWidth="2"
+                                className="animate-[draw_1s_ease-in-out]"
+                            />
+                        )}
+                        
+                        {/* Center O */}
+                        {step >= 1 && (
+                            <g>
+                                <circle cx="200" cy="175" r="4" fill="#DC2626" />
+                                <text x="210" y="173" fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
+                            </g>
+                        )}
+                        
+                        {/* Point P */}
+                        {step >= 1 && (
+                            <g>
+                                <circle cx="200" cy="55" r="5" fill="#3B82F6" />
+                                <text x="210" y="53" fill="#3B82F6" fontSize="16" fontWeight="bold">P</text>
+                            </g>
+                        )}
+                        
+                        {/* Diameter AB */}
+                        {step >= 2 && (
+                            <g>
+                                <line 
+                                    x1="80" 
+                                    y1="175" 
+                                    x2="320" 
+                                    y2="175" 
+                                    stroke="#DC2626" 
+                                    strokeWidth="4"
+                                    className="animate-[draw_1s_ease-in-out]"
+                                />
+                                <circle cx="80" cy="175" r="4" fill="#DC2626" />
+                                <circle cx="320" cy="175" r="4" fill="#DC2626" />
+                                <text x="70" y="165" fill="#DC2626" fontSize="16" fontWeight="bold">A</text>
+                                <text x="325" y="165" fill="#DC2626" fontSize="16" fontWeight="bold">B</text>
+                                
+                                {/* Lines AP and BP */}
+                                <line x1="80" y1="175" x2="200" y2="55" stroke="#3B82F6" strokeWidth="2" />
+                                <line x1="320" y1="175" x2="200" y2="55" stroke="#3B82F6" strokeWidth="2" />
+                            </g>
+                        )}
+                        
+                        {/* Central angle AOB = 180° */}
+                        {step >= 3 && (
+                            <g>
+                                {/* Radii to show central angle */}
+                                <line 
+                                    x1="200" y1="175" x2="80" y2="175" 
+                                    stroke="#FFD700" strokeWidth="3" strokeDasharray="5,5"
+                                    className="animate-[draw_0.8s_ease-in-out]"
+                                />
+                                <line 
+                                    x1="200" y1="175" x2="320" y2="175" 
+                                    stroke="#FFD700" strokeWidth="3" strokeDasharray="5,5"
+                                    className="animate-[draw_0.8s_ease-in-out]"
+                                />
+                                
+                                {/* Central angle arc */}
+                                <path 
+                                    d="M 150 175 A 50 50 0 0 0 250 175" 
+                                    fill="none" 
+                                    stroke="#FFD700" 
+                                    strokeWidth="4"
+                                    className="animate-[draw_1s_ease-in_out]"
+                                />
+                                <text x="185" y="155" fill="#FFD700" fontSize="16" fontWeight="bold">∠AOB</text>
+                            </g>
+                        )}
+                        
+                        {/* Straight line indication */}
+                        {step >= 4 && (
+                            <g>
+                                <text x="200" y="200" textAnchor="middle" fill="#FFD700" fontSize="18" fontWeight="bold" className="animate-pulse">
+                                    180°
+                                </text>
+                                <text x="200" y="220" textAnchor="middle" fill="#FFD700" fontSize="12" className="animate-pulse">
+                                    (straight line)
+                                </text>
+                            </g>
+                        )}
+                        
+                        {/* Ratio application */}
+                        
+                        {step >= 5 && (
+                            <g>
+                                {/* Inscribed angle */}
+                                <path 
+                                    d="M 190 65 A 15 15 0 0 1 210 65" 
+                                    fill="none" 
+                                    stroke="#3B82F6" 
+                                    strokeWidth="3"
+                                    className="animate-pulse"
+                                />
+                                <text x="180" y="80" fill="#3B82F6" fontSize="14" fontWeight="bold">∠APB</text>
+                                
+                                {/* Calculation box */}
+                                <rect 
+                                    x="30" y="280" width="340" height="60" 
+                                    fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
+                                    rx="10"
+                                    className="animate-[fade-in_1s_ease-in-out]"
+                                />
+                                <text x="200" y="300" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">
+                                    Central-Circumference Ratio: Central = 2 × Inscribed
+                                </text>
+                                <text x="200" y="318" textAnchor="middle" fill="#1F2937" fontSize="14">
+                                    180° = 2 × ∠APB
+                                </text>
+                                <text x="200" y="332" textAnchor="middle" fill="#DC2626" fontSize="14" fontWeight="bold">
+                                    Therefore: ∠APB = 180° ÷ 2 = 90°
+                                </text>
+                            </g>
+                        )}
+                        
+                    </svg>
+                    <div className="flex justify-center gap-4 mt-4">
+                        <button
+                            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
+                            onClick={() => setStep(s => Math.max(0, s - 1))}
+                            disabled={step === 0}
+                        >Previous</button>
+                        <button
+                            className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
+                            onClick={() => setStep(s => Math.min(6, s + 1))}
+                            disabled={step === 6}
+                        >Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
   // The slide content
   const slideContent = (
@@ -285,7 +361,7 @@ export default function SemicircleTheoremSlide2() {
         {/* Right column - Diagram and Completion */}
         <div className="space-y-6">
           {/* Interactive Diagram */}
-          <ProofDiagram />
+          <TheoremDiagram />
           
           {/* Apply Ratio Theorem */}
           <TrackedInteraction 

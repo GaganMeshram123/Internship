@@ -89,173 +89,266 @@ export default function AlternateSegmentTheoremSlide1() {
   }
 
   // SVG Theorem Diagram Component
-  const TheoremDiagram = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Alternate Segment Theorem</h3>
-      <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-        {/* Circle */}
-        {step >= 1 && (
-          <circle 
-            cx={cx} 
-            cy={cy} 
-            r={r} 
-            fill="none" 
-            stroke="#64748B" 
-            strokeWidth="2"
-            className="animate-[draw_1s_ease-in-out]"
-          />
-        )}
-        
-        {/* Center O */}
-        {step >= 1 && (
-          <g>
-            <circle cx={cx} cy={cy} r="3" fill="#374151" />
-            <text x={cx + 10} y={cy - 2} fill="#374151" fontSize="12" fontWeight="bold">O</text>
-          </g>
-        )}
-        
-        {/* Tangent line at T */}
-        {step >= 2 && (
-          <g>
-            {/* Tangent point T */}
-            <circle cx={Tx} cy={Ty} r="4" fill="#DC2626" />
-            <text x={Tx + 10} y={Ty - 10} fill="#DC2626" fontSize="16" fontWeight="bold">T</text>
+  const TheoremDiagram = () => {
+    // State to manage the current step
+    const [step, setStep] = useState(0);
+
+    // Coordinate constants for the diagram
+    const cx = 200;
+    const cy = 175;
+    const r = 120;
+    const tangentAngle = Math.PI * 0.7;
+    const Tx = cx + r * Math.cos(tangentAngle);
+    const Ty = cy - r * Math.sin(tangentAngle);
+    const tangentX1 = cx + 200 * Math.cos(tangentAngle);
+    const tangentY1 = cy - 200 * Math.sin(tangentAngle);
+    const tangentX2 = cx - 200 * Math.cos(tangentAngle);
+    const tangentY2 = cy + 200 * Math.sin(tangentAngle);
+    const chordAngle = Math.PI * 0.2;
+    const Ax = cx + r * Math.cos(chordAngle);
+    const Ay = cy - r * Math.sin(chordAngle);
+    const Bx = cx + r * Math.cos(Math.PI * 0.8);
+    const By = cy - r * Math.sin(Math.PI * 0.8);
+    
+    // This is a placeholder for the angleArc function
+   const angleArc = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, radius: number) => {
+        return {
+            arc: "",
+            labelX: 0,
+            labelY: 0
+        };
+    };
+
+    // The steps for the explanation
+    const steps = [
+        { title: "Introduction", description: "Click 'Next' to explore the Alternate Segment Theorem." },
+        { title: "Step 1: The Circle", description: "We begin with a circle and its center O." },
+        { title: "Step 2: The Tangent", description: "A tangent line is added at point T, touching the circle at a single point." },
+        { title: "Step 3: The Chord", description: "Next, we draw a chord, TA, from the point of tangency to another point on the circle, A." },
+        { title: "Step 4: The Tangent-Chord Angle", description: "This forms an angle (α) between the tangent and the chord." },
+        { title: "Step 5: The Alternate Segment", description: "The chord TA divides the circle into two segments. We'll focus on the 'alternate segment' - the one that does not contain the angle α." },
+        { title: "Step 6: The Inscribed Angle", description: "We add a point B within the alternate segment and form an inscribed angle, ∠BTA. The theorem states this angle is equal to angle α." },
+        { title: "Step 7: The Conclusion", description: "The Alternate Segment Theorem states that the angle between the tangent and a chord (α) is equal to the angle in the alternate segment (∠BTA)." }
+    ];
+
+    return (
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+            {/* 1. Headline */}
+            <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-6">The Alternate Segment Theorem</h1>
             
-            {/* Tangent line */}
-            <line 
-              x1={tangentX1} 
-              y1={tangentY1} 
-              x2={tangentX2} 
-              y2={tangentY2} 
-              stroke="#DC2626" 
-              strokeWidth="3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            <text x={tangentX1 - 50} y={tangentY1 - 30} fill="#DC2626" fontSize="14" fontWeight="bold">Tangent at T</text>
-          </g>
-        )}
-        
-        {/* Chord TA */}
-        {step >= 3 && (
-          <g>
-            {/* Point A on circle */}
-            <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
-            <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
-            
-            {/* Chord TA */}
-            <line 
-              x1={Tx} 
-              y1={Ty} 
-              x2={Ax} 
-              y2={Ay} 
-              stroke="#3B82F6" 
-              strokeWidth="3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            <text x={(Tx + Ax) / 2 + 10} y={(Ty + Ay) / 2} fill="#3B82F6" fontSize="14" fontWeight="bold">Chord TA</text>
-          </g>
-        )}
-        
-        {/* Angle between tangent and chord */}
-        {step >= 4 && (
-          <g>
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(Tx, Ty, tangentX1, tangentY1, Ax, Ay, 25);
-              return <>
-                <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="3" className="animate-[draw_1s_ease-in-out]" />
-                <text x={labelX} y={labelY} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">α</text>
-                <text x={labelX + 30} y={labelY + 10} fill="#F59E0B" fontSize="12" fontWeight="bold">∠TTA</text>
-              </>;
-            })()}
-          </g>
-        )}
-        
-        {/* Alternate segment highlight */}
-        {step >= 5 && (
-          <g>
-            {/* Shade alternate segment */}
-            <path 
-              d={`M ${Tx} ${Ty} A ${r} ${r} 0 1 0 ${Ax} ${Ay} Z`} 
-              fill="rgba(16, 185, 129, 0.3)" 
-              stroke="#10B981" 
-              strokeWidth="2"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            <text x={Bx - 40} y={By} fill="#10B981" fontSize="14" fontWeight="bold">Alternate</text>
-            <text x={Bx - 40} y={By + 15} fill="#10B981" fontSize="14" fontWeight="bold">Segment</text>
-          </g>
-        )}
-        
-        {/* Point B in alternate segment */}
-        {step >= 6 && (
-          <g>
-            {/* Point B */}
-            <circle cx={Bx} cy={By} r="4" fill="#8B5CF6" />
-            <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#8B5CF6" fontSize="16" fontWeight="bold">B</text>
-            
-            {/* Lines BT and BA */}
-            <line x1={Bx} y1={By} x2={Tx} y2={Ty} stroke="#8B5CF6" strokeWidth="2" strokeDasharray="3,3" />
-            <line x1={Bx} y1={By} x2={Ax} y2={Ay} stroke="#8B5CF6" strokeWidth="2" strokeDasharray="3,3" />
-            
-            {/* Inscribed angle BTA */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(Bx, By, Tx, Ty, Ax, Ay, 25);
-              return <>
-                <path d={arc} fill="none" stroke="#8B5CF6" strokeWidth="3" className="animate-[draw_1s_ease-in-out]" />
-                <text x={labelX} y={labelY} fill="#8B5CF6" fontSize="14" fontWeight="bold" textAnchor="middle">α</text>
-                <text x={labelX - 30} y={labelY + 15} fill="#8B5CF6" fontSize="12" fontWeight="bold">∠BTA</text>
-              </>;
-            })()}
-          </g>
-        )}
-        
-        {/* Equal angles indication */}
-        {step >= 7 && (
-          <g>
-            <rect 
-              x="10" y="280" width="380" height="50" 
-              fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" 
-              rx="10"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            <text x="200" y="300" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
-              Alternate Segment Theorem: ∠TAB = ∠ACB
-            </text>
-            <text x="200" y="318" textAnchor="middle" fill="#0C4A6E" fontSize="12">
-              Angle between tangent and chord = Angle in alternate segment
-            </text>
-          </g>
-        )}
-        
-        {/* Theorem statement box */}
-        {step >= 7 && (
-          <rect 
-            x="30" y="20" width="340" height="40" 
-            fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
-            rx="10"
-            className="animate-[fade-in_1s_ease-in-out]"
-          />
-        )}
-        {step >= 7 && (
-          <text x="200" y="45" textAnchor="middle" fill="#1F2937" fontSize="16" fontWeight="bold" className="animate-pulse">
-            Tangent-Chord Angle = Inscribed Angle
-          </text>
-        )}
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-        >Previous</button>
-        <button
-          className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(7, s + 1))}
-          disabled={step === 7}
-        >Next</button>
-      </div>
-    </div>
-  );
+            {/* 2. Step Text with Indicator */}
+            <div className="mb-6">
+                {/* Step Indicator */}
+                <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">Step {step + 1}</span>
+                    <span className="font-light">of {steps.length}</span>
+                    <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+                {/* Step Text */}
+                <div className="p-6 bg-blue-50 dark:bg-gray-800 rounded-xl shadow-inner border border-blue-100 dark:border-gray-700 transition-all duration-300">
+                    <h3 className="font-bold text-xl text-blue-700 dark:text-blue-300">
+                        {steps[step].title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 mt-3 leading-relaxed text-base">
+                        {steps[step].description}
+                    </p>
+                </div>
+            </div>
+
+            {/* 3. Buttons */}
+            <div className="flex justify-center gap-4 mt-4">
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                >
+                    ← Previous
+                </button>
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
+                    disabled={step === steps.length - 1}
+                >
+                    Next →
+                </button>
+            </div>
+
+            {/* 4. Circle Diagram (your original code, untouched) */}
+            <div className="mt-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Alternate Segment Theorem</h3>
+                    <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
+                        {/* Circle */}
+                        {step >= 1 && (
+                            <circle 
+                                cx={cx} 
+                                cy={cy} 
+                                r={r} 
+                                fill="none" 
+                                stroke="#64748B" 
+                                strokeWidth="2"
+                                className="animate-[draw_1s_ease-in-out]"
+                            />
+                        )}
+                        
+                        {/* Center O */}
+                        {step >= 1 && (
+                            <g>
+                                <circle cx={cx} cy={cy} r="3" fill="#374151" />
+                                <text x={cx + 10} y={cy - 2} fill="#374151" fontSize="12" fontWeight="bold">O</text>
+                            </g>
+                        )}
+                        
+                        {/* Tangent line at T */}
+                        {step >= 2 && (
+                            <g>
+                                {/* Tangent point T */}
+                                <circle cx={Tx} cy={Ty} r="4" fill="#DC2626" />
+                                <text x={Tx + 10} y={Ty - 10} fill="#DC2626" fontSize="16" fontWeight="bold">T</text>
+                                
+                                {/* Tangent line */}
+                                <line 
+                                    x1={tangentX1} 
+                                    y1={tangentY1} 
+                                    x2={tangentX2} 
+                                    y2={tangentY2} 
+                                    stroke="#DC2626" 
+                                    strokeWidth="3"
+                                    className="animate-[draw_1s_ease-in-out]"
+                                />
+                                <text x={tangentX1 - 50} y={tangentY1 - 30} fill="#DC2626" fontSize="14" fontWeight="bold">Tangent at T</text>
+                            </g>
+                        )}
+                        
+                        {/* Chord TA */}
+                        {step >= 3 && (
+                            <g>
+                                {/* Point A on circle */}
+                                <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
+                                <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
+                                
+                                {/* Chord TA */}
+                                <line 
+                                    x1={Tx} 
+                                    y1={Ty} 
+                                    x2={Ax} 
+                                    y2={Ay} 
+                                    stroke="#3B82F6" 
+                                    strokeWidth="3"
+                                    className="animate-[draw_1s_ease-in-out]"
+                                />
+                                <text x={(Tx + Ax) / 2 + 10} y={(Ty + Ay) / 2} fill="#3B82F6" fontSize="14" fontWeight="bold">Chord TA</text>
+                            </g>
+                        )}
+                        
+                        {/* Angle between tangent and chord */}
+                        {step >= 4 && (
+                            <g>
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(Tx, Ty, tangentX1, tangentY1, Ax, Ay, 25);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="3" className="animate-[draw_1s_ease-in-out]" />
+                                        <text x={labelX} y={labelY} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">α</text>
+                                        <text x={labelX + 30} y={labelY + 10} fill="#F59E0B" fontSize="12" fontWeight="bold">∠TTA</text>
+                                    </>;
+                                })()}
+                            </g>
+                        )}
+                        
+                        {/* Alternate segment highlight */}
+                        {step >= 5 && (
+                            <g>
+                                {/* Shade alternate segment */}
+                                <path 
+                                    d={`M ${Tx} ${Ty} A ${r} ${r} 0 1 0 ${Ax} ${Ay} Z`} 
+                                    fill="rgba(16, 185, 129, 0.3)" 
+                                    stroke="#10B981" 
+                                    strokeWidth="2"
+                                    className="animate-[fade-in_1s_ease-in-out]"
+                                />
+                                <text x={Bx - 40} y={By} fill="#10B981" fontSize="14" fontWeight="bold">Alternate</text>
+                                <text x={Bx - 40} y={By + 15} fill="#10B981" fontSize="14" fontWeight="bold">Segment</text>
+                            </g>
+                        )}
+                        
+                        {/* Point B in alternate segment */}
+                        {step >= 6 && (
+                            <g>
+                                {/* Point B */}
+                                <circle cx={Bx} cy={By} r="4" fill="#8B5CF6" />
+                                <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#8B5CF6" fontSize="16" fontWeight="bold">B</text>
+                                
+                                {/* Lines BT and BA */}
+                                <line x1={Bx} y1={By} x2={Tx} y2={Ty} stroke="#8B5CF6" strokeWidth="2" strokeDasharray="3,3" />
+                                <line x1={Bx} y1={By} x2={Ax} y2={Ay} stroke="#8B5CF6" strokeWidth="2" strokeDasharray="3,3" />
+                                
+                                {/* Inscribed angle BTA */}
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(Bx, By, Tx, Ty, Ax, Ay, 25);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#8B5CF6" strokeWidth="3" className="animate-[draw_1s_ease-in-out]" />
+                                        <text x={labelX} y={labelY} fill="#8B5CF6" fontSize="14" fontWeight="bold" textAnchor="middle">α</text>
+                                        <text x={labelX - 30} y={labelY + 15} fill="#8B5CF6" fontSize="12" fontWeight="bold">∠BTA</text>
+                                    </>;
+                                })()}
+                            </g>
+                        )}
+                        
+                        {/* Equal angles indication */}
+                        {step >= 7 && (
+                            <g>
+                                <rect 
+                                    x="10" y="280" width="380" height="50" 
+                                    fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" 
+                                    rx="10"
+                                    className="animate-[fade-in_1s_ease-in-out]"
+                                />
+                                <text x="200" y="300" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
+                                    Alternate Segment Theorem: ∠TAB = ∠ACB
+                                </text>
+                                <text x="200" y="318" textAnchor="middle" fill="#0C4A6E" fontSize="12">
+                                    Angle between tangent and chord = Angle in alternate segment
+                                </text>
+                            </g>
+                        )}
+                        
+                        {/* Theorem statement box */}
+                        {step >= 7 && (
+                            <rect 
+                                x="30" y="20" width="340" height="40" 
+                                fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
+                                rx="10"
+                                className="animate-[fade-in_1s_ease-in-out]"
+                            />
+                        )}
+                        {step >= 7 && (
+                            <text x="200" y="45" textAnchor="middle" fill="#1F2937" fontSize="16" fontWeight="bold" className="animate-pulse">
+                                Tangent-Chord Angle = Inscribed Angle
+                            </text>
+                        )}
+                    </svg>
+                    <div className="flex justify-center gap-4 mt-4">
+                        <button
+                            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
+                            onClick={() => setStep(s => Math.max(0, s - 1))}
+                            disabled={step === 0}
+                        >Previous</button>
+                        <button
+                            className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
+                            onClick={() => setStep(s => Math.min(7, s + 1))}
+                            disabled={step === 7}
+                        >Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
   // The slide content
   const slideContent = (

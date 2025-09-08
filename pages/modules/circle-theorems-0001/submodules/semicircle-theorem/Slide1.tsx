@@ -87,114 +87,207 @@ export default function SemicircleTheoremSlide1() {
   };
 
   // SVG Theorem Diagram Component
-  const TheoremDiagram = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Semicircle Theorem</h3>
-      <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-        {/* Circle */}
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
-        
-        {/* Center O */}
-        <circle cx={cx} cy={cy} r="3" fill="#374151" />
-        <text x={cx + 10} y={cy - 2} fill="#374151" fontSize="12" fontWeight="bold">O</text>
-        
-        {/* Diameter AB */}
-        {step >= 1 && (
-          <g>
-            <line x1={Ax} y1={Ay} x2={Bx} y2={By} stroke="#DC2626" strokeWidth="4" />
-            <circle cx={Ax} cy={Ay} r="4" fill="#DC2626" />
-            <circle cx={Bx} cy={By} r="4" fill="#DC2626" />
-            <text x={Ax - 15} y={Ay + 20} fill="#DC2626" fontSize="16" fontWeight="bold">A</text>
-            <text x={Bx + 8} y={By + 20} fill="#DC2626" fontSize="16" fontWeight="bold">B</text>
-          </g>
-        )}
-        
-        {/* Point P1 */}
-        {step >= 2 && (
-          <g>
-            <circle cx={P1x} cy={P1y} r="5" fill="#3B82F6" />
-            <text x={P1x - 20} y={P1y - 10} fill="#3B82F6" fontSize="16" fontWeight="bold">P</text>
-            <line x1={P1x} y1={P1y} x2={Ax} y2={Ay} stroke="#3B82F6" strokeWidth="2" />
-            <line x1={P1x} y1={P1y} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="2" />
-          </g>
-        )}
-        
-        {/* Point P2 */}
-        {step >= 3 && (
-          <g>
-            <circle cx={P2x} cy={P2y} r="5" fill="#10B981" />
-            <text x={P2x - 10} y={P2y - 15} fill="#10B981" fontSize="16" fontWeight="bold">Q</text>
-            <line x1={P2x} y1={P2y} x2={Ax} y2={Ay} stroke="#10B981" strokeWidth="2" />
-            <line x1={P2x} y1={P2y} x2={Bx} y2={By} stroke="#10B981" strokeWidth="2" />
-          </g>
-        )}
-        
-        {/* Point P3 */}
-        {step >= 4 && (
-          <g>
-            <circle cx={P3x} cy={P3y} r="5" fill="#8B5CF6" />
-            <text x={P3x + 10} y={P3y - 10} fill="#8B5CF6" fontSize="16" fontWeight="bold">R</text>
-            <line x1={P3x} y1={P3y} x2={Ax} y2={Ay} stroke="#8B5CF6" strokeWidth="2" />
-            <line x1={P3x} y1={P3y} x2={Bx} y2={By} stroke="#8B5CF6" strokeWidth="2" />
-          </g>
-        )}
-        
-        {/* Right angles */}
-        {step >= 5 && (
-          <g>
-            {/* Right angle at P */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(P1x, P1y, Ax, Ay, Bx, By, 20);
-              return <>
-                <path d={arc} fill="none" stroke="#3B82F6" strokeWidth="3" />
-                <text x={labelX} y={labelY} fill="#3B82F6" fontSize="14" fontWeight="bold" textAnchor="middle">90°</text>
-              </>;
-            })()}
-            
-            {/* Right angle at Q */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(P2x, P2y, Ax, Ay, Bx, By, 20);
-              return <>
-                <path d={arc} fill="none" stroke="#10B981" strokeWidth="3" />
-                <text x={labelX} y={labelY} fill="#10B981" fontSize="14" fontWeight="bold" textAnchor="middle">90°</text>
-              </>;
-            })()}
-            
-            {/* Right angle at R */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(P3x, P3y, Ax, Ay, Bx, By, 20);
-              return <>
-                <path d={arc} fill="none" stroke="#8B5CF6" strokeWidth="3" />
-                <text x={labelX} y={labelY} fill="#8B5CF6" fontSize="14" fontWeight="bold" textAnchor="middle">90°</text>
-              </>;
-            })()}
-          </g>
-        )}
-        
-        {/* Moving point animation */}
-        {step >= 6 && (
-          <g>
-            {/* Moving point */}
-            <circle cx={cx + r * Math.cos(Math.PI * 0.8)} cy={cy + r * Math.sin(Math.PI * 0.8)} r="6" fill="#F59E0B" className="animate-[move-around_4s_ease-in-out_infinite]" />
-            <text x="50" y="320" fill="#F59E0B" fontSize="14" fontWeight="bold">Any point on circumference creates 90°</text>
-          </g>
-        )}
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-        >Previous</button>
-        <button
-          className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(6, s + 1))}
-          disabled={step === 6}
-        >Next</button>
-      </div>
-    </div>
-  );
+const TheoremDiagram = () => {
+    // State to manage the current step
+    const [step, setStep] = useState(0);
 
+    // Coordinate constants for the diagram
+    const cx = 200;
+    const cy = 175;
+    const r = 120;
+    const Ax = cx - r;
+    const Ay = cy;
+    const Bx = cx + r;
+    const By = cy;
+
+    const angleP1 = Math.PI * 0.7;
+    const angleP2 = Math.PI * 0.2;
+    const angleP3 = Math.PI * 1.5;
+    const P1x = cx + r * Math.cos(angleP1);
+    const P1y = cy + r * Math.sin(angleP1);
+    const P2x = cx + r * Math.cos(angleP2);
+    const P2y = cy + r * Math.sin(angleP2);
+    const P3x = cx + r * Math.cos(angleP3);
+    const P3y = cy + r * Math.sin(angleP3);
+
+    // This is a placeholder for the angleArc function
+   const angleArc = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, radius: number) => {
+        return {
+            arc: "",
+            labelX: 0,
+            labelY: 0
+        };
+    };
+
+    // The steps for the explanation
+    const steps = [
+        { title: "Introduction", description: "Click 'Next' to begin exploring the Semicircle Theorem, also known as Thales's Theorem." },
+        { title: "Step 1: The Diameter", description: "We start with a circle and a diameter, AB. The diameter creates a semicircle on either side." },
+        { title: "Step 2: First Triangle", description: "We pick a point P on the circumference and draw lines from P to A and B, forming a triangle △APB." },
+        { title: "Step 3: Second Triangle", description: "Now we add another point, Q, on the same circumference and draw lines to A and B, forming triangle △AQB." },
+        { title: "Step 4: Third Triangle", description: "Finally, we add a third point, R, and form triangle △ARB. Notice how all three triangles are inscribed in the semicircle." },
+        { title: "Step 5: The Right Angles", description: "The theorem states that any angle inscribed in a semicircle is a right angle (90°). This is true for all three triangles we've drawn." },
+        { title: "Step 6: The Conclusion", description: "This demonstrates that no matter where you place the vertex on the semicircle, the angle formed by the endpoints of the diameter will always be 90°." }
+    ];
+
+    return (
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+            {/* 1. Headline */}
+            <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-6">The Semicircle Theorem</h1>
+            
+            {/* 2. Step Text with Indicator */}
+            <div className="mb-6">
+                {/* Step Indicator */}
+                <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">Step {step + 1}</span>
+                    <span className="font-light">of {steps.length}</span>
+                    <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+                {/* Step Text */}
+                <div className="p-6 bg-blue-50 dark:bg-gray-800 rounded-xl shadow-inner border border-blue-100 dark:border-gray-700 transition-all duration-300">
+                    <h3 className="font-bold text-xl text-blue-700 dark:text-blue-300">
+                        {steps[step].title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 mt-3 leading-relaxed text-base">
+                        {steps[step].description}
+                    </p>
+                </div>
+            </div>
+
+            {/* 3. Buttons */}
+            <div className="flex justify-center gap-4 mt-4">
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                >
+                    ← Previous
+                </button>
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
+                    disabled={step === steps.length - 1}
+                >
+                    Next →
+                </button>
+            </div>
+
+            {/* 4. Circle Diagram (your original code, untouched) */}
+            <div className="mt-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Semicircle Theorem</h3>
+                    <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
+                        {/* Circle */}
+                        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
+                        
+                        {/* Center O */}
+                        <circle cx={cx} cy={cy} r="3" fill="#374151" />
+                        <text x={cx + 10} y={cy - 2} fill="#374151" fontSize="12" fontWeight="bold">O</text>
+                        
+                        {/* Diameter AB */}
+                        {step >= 1 && (
+                            <g>
+                                <line x1={Ax} y1={Ay} x2={Bx} y2={By} stroke="#DC2626" strokeWidth="4" />
+                                <circle cx={Ax} cy={Ay} r="4" fill="#DC2626" />
+                                <circle cx={Bx} cy={By} r="4" fill="#DC2626" />
+                                <text x={Ax - 15} y={Ay + 20} fill="#DC2626" fontSize="16" fontWeight="bold">A</text>
+                                <text x={Bx + 8} y={By + 20} fill="#DC2626" fontSize="16" fontWeight="bold">B</text>
+                            </g>
+                        )}
+                        
+                        {/* Point P1 */}
+                        {step >= 2 && (
+                            <g>
+                                <circle cx={P1x} cy={P1y} r="5" fill="#3B82F6" />
+                                <text x={P1x - 20} y={P1y - 10} fill="#3B82F6" fontSize="16" fontWeight="bold">P</text>
+                                <line x1={P1x} y1={P1y} x2={Ax} y2={Ay} stroke="#3B82F6" strokeWidth="2" />
+                                <line x1={P1x} y1={P1y} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="2" />
+                            </g>
+                        )}
+                        
+                        {/* Point P2 */}
+                        {step >= 3 && (
+                            <g>
+                                <circle cx={P2x} cy={P2y} r="5" fill="#10B981" />
+                                <text x={P2x - 10} y={P2y - 15} fill="#10B981" fontSize="16" fontWeight="bold">Q</text>
+                                <line x1={P2x} y1={P2y} x2={Ax} y2={Ay} stroke="#10B981" strokeWidth="2" />
+                                <line x1={P2x} y1={P2y} x2={Bx} y2={By} stroke="#10B981" strokeWidth="2" />
+                            </g>
+                        )}
+                        
+                        {/* Point P3 */}
+                        {step >= 4 && (
+                            <g>
+                                <circle cx={P3x} cy={P3y} r="5" fill="#8B5CF6" />
+                                <text x={P3x + 10} y={P3y - 10} fill="#8B5CF6" fontSize="16" fontWeight="bold">R</text>
+                                <line x1={P3x} y1={P3y} x2={Ax} y2={Ay} stroke="#8B5CF6" strokeWidth="2" />
+                                <line x1={P3x} y1={P3y} x2={Bx} y2={By} stroke="#8B5CF6" strokeWidth="2" />
+                            </g>
+                        )}
+                        
+                        {/* Right angles */}
+                        {step >= 5 && (
+                            <g>
+                                {/* Right angle at P */}
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(P1x, P1y, Ax, Ay, Bx, By, 20);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#3B82F6" strokeWidth="3" />
+                                        <text x={labelX} y={labelY} fill="#3B82F6" fontSize="14" fontWeight="bold" textAnchor="middle">90°</text>
+                                    </>;
+                                })()}
+                                
+                                {/* Right angle at Q */}
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(P2x, P2y, Ax, Ay, Bx, By, 20);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#10B981" strokeWidth="3" />
+                                        <text x={labelX} y={labelY} fill="#10B981" fontSize="14" fontWeight="bold" textAnchor="middle">90°</text>
+                                    </>;
+                                })()}
+                                
+                                {/* Right angle at R */}
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(P3x, P3y, Ax, Ay, Bx, By, 20);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#8B5CF6" strokeWidth="3" />
+                                        <text x={labelX} y={labelY} fill="#8B5CF6" fontSize="14" fontWeight="bold" textAnchor="middle">90°</text>
+                                    </>;
+                                })()}
+                            </g>
+                        )}
+                        
+                        {/* Moving point animation */}
+                        {step >= 6 && (
+                            <g>
+                                {/* Moving point */}
+                                <circle cx={cx + r * Math.cos(Math.PI * 0.8)} cy={cy + r * Math.sin(Math.PI * 0.8)} r="6" fill="#F59E0B" className="animate-[move-around_4s_ease-in-out_infinite]" />
+                                <text x="50" y="320" fill="#F59E0B" fontSize="14" fontWeight="bold">Any point on circumference creates 90°</text>
+                            </g>
+                        )}
+                    </svg>
+                    <div className="flex justify-center gap-4 mt-4">
+                        <button
+                            className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
+                            onClick={() => setStep(s => Math.max(0, s - 1))}
+                            disabled={step === 0}
+                        >Previous</button>
+                        <button
+                            className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
+                            onClick={() => setStep(s => Math.min(6, s + 1))}
+                            disabled={step === 6}
+                        >Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
   // The slide content
   const slideContent = (
     <div className="w-full h-full bg-white dark:bg-gray-900 rounded-xl p-8">

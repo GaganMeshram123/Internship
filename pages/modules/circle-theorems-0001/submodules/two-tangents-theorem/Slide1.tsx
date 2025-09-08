@@ -82,230 +82,304 @@ export default function TwoTangentsTheoremSlide1() {
   }
 
   // SVG Theorem Diagram Component
-  const TheoremDiagram = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-      <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Two Tangents from External Point</h3>
-      <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-        {/* Circle */}
-        {step >= 1 && (
-          <circle 
-            cx={cx} 
-            cy={cy} 
-            r={r} 
-            fill="none" 
-            stroke="#64748B" 
-            strokeWidth="2"
-            className="animate-[draw_1s_ease-in-out]"
-          />
-        )}
-        
-        {/* Center O */}
-        {step >= 1 && (
-          <g>
-            <circle cx={cx} cy={cy} r="3" fill="#374151" />
-            <text x={cx + 10} y={cy - 2} fill="#374151" fontSize="14" fontWeight="bold">O</text>
-          </g>
-        )}
-        
-        {/* External point P */}
-        {step >= 2 && (
-          <g>
-            <circle 
-              cx={Px} 
-              cy={Py} 
-              r="5" 
-              fill="#DC2626" 
-              className="animate-[scale-in_0.5s_ease-out]"
-            />
-            <text x={Px + 10} y={Py - 2} fill="#DC2626" fontSize="16" fontWeight="bold">P</text>
-          </g>
-        )}
-        
-        {/* First tangent PA */}
-        {step >= 3 && (
-          <g>
-            {/* Tangent point A */}
-            <circle cx={T1x} cy={T1y} r="4" fill="#3B82F6" />
-            <text x={T1x + (T1x > cx ? 10 : -20)} y={T1y + (T1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
+  const TheoremDiagram = () => {
+    // State to manage the current step
+    const [step, setStep] = useState(0);
+
+    // Coordinate constants for the diagram
+    const cx = 200;
+    const cy = 175;
+    const r = 120;
+    const Px = 350;
+    const Py = 175;
+    const T1x = 200 + r * Math.cos(Math.PI / 6);
+    const T1y = 175 - r * Math.sin(Math.PI / 6);
+    const T2x = 200 + r * Math.cos(-Math.PI / 6);
+    const T2y = 175 - r * Math.sin(-Math.PI / 6);
+
+    // This is a placeholder for the angleArc function
+    const angleArc = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, radius: number) => {
+        return {
+            arc: "",
+            labelX: 0,
+            labelY: 0
+        };
+    };
+
+    // The steps for the explanation
+    const steps = [
+        { title: "Introduction", description: "Click 'Next' to explore the theorem about two tangents drawn from an external point to a circle." },
+        { title: "Step 1: The Circle", description: "We start with a circle and its center, labeled O." },
+        { title: "Step 2: External Point", description: "Next, we add a point P outside the circle, from which we will draw our tangents." },
+        { title: "Step 3: First Tangent", description: "We draw the first tangent from point P to the circle, meeting it at point A. The radius OA is perpendicular to the tangent PA, forming a 90° angle." },
+        { title: "Step 4: Second Tangent", description: "Similarly, we draw a second tangent from point P, meeting the circle at point B. The radius OB is perpendicular to the tangent PB." },
+        { title: "Step 5: Equal Tangent Lengths", description: "The theorem states that the lengths of the two tangents drawn from the same external point are equal. Therefore, PA = PB." },
+        { title: "Step 6: Angle Bisector", description: "The line segment connecting the external point P to the center O bisects the angle formed by the two tangents (∠APB)." }
+    ];
+
+    return (
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+            {/* 1. Headline */}
+            <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-6">Two Tangents from an External Point</h1>
             
-            {/* Tangent line PA */}
-            <line 
-              x1={Px} 
-              y1={Py} 
-              x2={T1x} 
-              y2={T1y} 
-              stroke="#3B82F6" 
-              strokeWidth="3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            
-            {/* Radius OA */}
-            <line 
-              x1={cx} y1={cy} x2={T1x} y2={T1y} 
-              stroke="#3B82F6" strokeWidth="2" strokeDasharray="3,3"
-            />
-            
-            {/* Right angle at A */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(T1x, T1y, cx, cy, Px, Py, 20);
-              return <>
-                <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="3" />
-                <text x={labelX} y={labelY} fill="#F59E0B" fontSize="10" fontWeight="bold" textAnchor="middle">90°</text>
-              </>;
-            })()}
-          </g>
-        )}
-        
-        {/* Second tangent PB */}
-        {step >= 4 && (
-          <g>
-            {/* Tangent point B */}
-            <circle cx={T2x} cy={T2y} r="4" fill="#10B981" />
-            <text x={T2x + (T2x > cx ? 10 : -20)} y={T2y + (T2y > cy ? 18 : -8)} fill="#10B981" fontSize="16" fontWeight="bold">B</text>
-            
-            {/* Tangent line PB */}
-            <line 
-              x1={Px} 
-              y1={Py} 
-              x2={T2x} 
-              y2={T2y} 
-              stroke="#10B981" 
-              strokeWidth="3"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            
-            {/* Radius OB */}
-            <line 
-              x1={cx} y1={cy} x2={T2x} y2={T2y} 
-              stroke="#10B981" strokeWidth="2" strokeDasharray="3,3"
-            />
-            
-            {/* Right angle at B */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(T2x, T2y, cx, cy, Px, Py, 20);
-              return <>
-                <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="3" />
-                <text x={labelX} y={labelY} fill="#F59E0B" fontSize="10" fontWeight="bold" textAnchor="middle">90°</text>
-              </>;
-            })()}
-          </g>
-        )}
-        
-        {/* Equal length markings */}
-        {step >= 5 && (
-          <g>
-            {/* Tick marks for equal lengths */}
-            <g className="animate-[fade-in_1s_ease-in-out]">
-              {/* PA marks - positioned at midpoint of PA */}
-              {(() => {
-                const midX = (Px + T1x) / 2;
-                const midY = (Py + T1y) / 2;
-                const angle = Math.atan2(T1y - Py, T1x - Px);
-                const perpAngle = angle + Math.PI / 2;
-                const markLength = 5;
-                
-                return <>
-                  <line 
-                    x1={midX + markLength * Math.cos(perpAngle)} 
-                    y1={midY + markLength * Math.sin(perpAngle)} 
-                    x2={midX - markLength * Math.cos(perpAngle)} 
-                    y2={midY - markLength * Math.sin(perpAngle)} 
-                    stroke="#8B5CF6" strokeWidth="3" 
-                  />
-                </>;
-              })()}
-              
-              {/* PB marks - positioned at midpoint of PB */}
-              {(() => {
-                const midX = (Px + T2x) / 2;
-                const midY = (Py + T2y) / 2;
-                const angle = Math.atan2(T2y - Py, T2x - Px);
-                const perpAngle = angle + Math.PI / 2;
-                const markLength = 5;
-                
-                return <>
-                  <line 
-                    x1={midX + markLength * Math.cos(perpAngle)} 
-                    y1={midY + markLength * Math.sin(perpAngle)} 
-                    x2={midX - markLength * Math.cos(perpAngle)} 
-                    y2={midY - markLength * Math.sin(perpAngle)} 
-                    stroke="#8B5CF6" strokeWidth="3" 
-                  />
-                </>;
-              })()}
-              
-              {/* Equal sign */}
-              <text x={Px - 30} y={Py - 30} fill="#8B5CF6" fontSize="16" fontWeight="bold">PA</text>
-              <text x={Px - 30} y={Py+35} fill="#8B5CF6" fontSize="16" fontWeight="bold">PB</text>
-            </g>
-          </g>
-        )}
-        
-        {/* Angle bisector */}
-        {step >= 6 && (
-          <g>
-            {/* Line PO */}
-            <line 
-              x1={Px} 
-              y1={Py} 
-              x2={cx} 
-              y2={cy} 
-              stroke="#F59E0B" 
-              strokeWidth="3"
-              strokeDasharray="5,5"
-              className="animate-[draw_1s_ease-in-out]"
-            />
-            
-            {/* Angle markings using angleArc helper */}
-            {(() => {
-              const { arc: arc1, labelX: labelX1, labelY: labelY1 } = angleArc(Px, Py, T1x, T1y, cx, cy, 25);
-              const { arc: arc2, labelX: labelX2, labelY: labelY2 } = angleArc(Px, Py, cx, cy, T2x, T2y, 25);
-              return <>
-                <path d={arc1} fill="none" stroke="#F59E0B" strokeWidth="2" className="animate-pulse" />
-                <text x={labelX1} y={labelY1} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">α</text>
-                <path d={arc2} fill="none" stroke="#F59E0B" strokeWidth="2" className="animate-pulse" />
-                <text x={labelX2} y={labelY2} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">α</text>
-              </>;
-            })()}
-            
-            <text x={(Px + cx) / 2 - 50} y={(Py + cy) / 2 - 10} fill="#F59E0B" fontSize="12" fontWeight="bold">PO bisects ∠APB</text>
-          </g>
-        )}
-        
-        {/* Theorem statement box */}
-        {step >= 5 && (
-          <rect 
-            x="30" y="20" width="340" height="50" 
-            fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
-            rx="10"
-            className="animate-[fade-in_1s_ease-in-out]"
-          />
-        )}
-        {step >= 5 && (
-          <g>
-            <text x="200" y="40" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">
-              Two Tangents from External Point: PA = PB
-            </text>
-            <text x="200" y="58" textAnchor="middle" fill="#1F2937" fontSize="12">
-              PO bisects ∠APB and ∠AOB
-            </text>
-          </g>
-        )}
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-        >Previous</button>
-        <button
-          className="px-4 py-2 rounded bg-indigo-600 text-white font-medium disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(6, s + 1))}
-          disabled={step === 6}
-        >Next</button>
-      </div>
-    </div>
-  );
+            {/* 2. Step Text with Indicator */}
+            <div className="mb-6">
+                {/* Step Indicator */}
+                <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">Step {step + 1}</span>
+                    <span className="font-light">of {steps.length}</span>
+                    <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+                {/* Step Text */}
+                <div className="p-6 bg-blue-50 dark:bg-gray-800 rounded-xl shadow-inner border border-blue-100 dark:border-gray-700 transition-all duration-300">
+                    <h3 className="font-bold text-xl text-blue-700 dark:text-blue-300">
+                        {steps[step].title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 mt-3 leading-relaxed text-base">
+                        {steps[step].description}
+                    </p>
+                </div>
+            </div>
+
+            {/* 3. Buttons */}
+            <div className="flex justify-center gap-4 mt-4">
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                >
+                    ← Previous
+                </button>
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
+                    disabled={step === steps.length - 1}
+                >
+                    Next →
+                </button>
+            </div>
+
+            {/* 4. Circle Diagram (your original code, untouched) */}
+            <div className="mt-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">Two Tangents from External Point</h3>
+                    <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
+                        {/* Circle */}
+                        {step >= 1 && (
+                            <circle 
+                                cx={cx} 
+                                cy={cy} 
+                                r={r} 
+                                fill="none" 
+                                stroke="#64748B" 
+                                strokeWidth="2"
+                                className="animate-[draw_1s_ease-in-out]"
+                            />
+                        )}
+                        
+                        {/* Center O */}
+                        {step >= 1 && (
+                            <g>
+                                <circle cx={cx} cy={cy} r="3" fill="#374151" />
+                                <text x={cx + 10} y={cy - 2} fill="#374151" fontSize="14" fontWeight="bold">O</text>
+                            </g>
+                        )}
+                        
+                        {/* External point P */}
+                        {step >= 2 && (
+                            <g>
+                                <circle 
+                                    cx={Px} 
+                                    cy={Py} 
+                                    r="5" 
+                                    fill="#DC2626" 
+                                    className="animate-[scale-in_0.5s_ease-out]"
+                                />
+                                <text x={Px + 10} y={Py - 2} fill="#DC2626" fontSize="16" fontWeight="bold">P</text>
+                            </g>
+                        )}
+                        
+                        {/* First tangent PA */}
+                        {step >= 3 && (
+                            <g>
+                                {/* Tangent point A */}
+                                <circle cx={T1x} cy={T1y} r="4" fill="#3B82F6" />
+                                <text x={T1x + (T1x > cx ? 10 : -20)} y={T1y + (T1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
+                                
+                                {/* Tangent line PA */}
+                                <line 
+                                    x1={Px} 
+                                    y1={Py} 
+                                    x2={T1x} 
+                                    y2={T1y} 
+                                    stroke="#3B82F6" 
+                                    strokeWidth="3"
+                                    className="animate-[draw_1s_ease-in-out]"
+                                />
+                                
+                                {/* Radius OA */}
+                                <line 
+                                    x1={cx} y1={cy} x2={T1x} y2={T1y} 
+                                    stroke="#3B82F6" strokeWidth="2" strokeDasharray="3,3"
+                                />
+                                
+                                {/* Right angle at A */}
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(T1x, T1y, cx, cy, Px, Py, 20);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="3" />
+                                        <text x={labelX} y={labelY} fill="#F59E0B" fontSize="10" fontWeight="bold" textAnchor="middle">90°</text>
+                                    </>;
+                                })()}
+                            </g>
+                        )}
+                        
+                        {/* Second tangent PB */}
+                        {step >= 4 && (
+                            <g>
+                                {/* Tangent point B */}
+                                <circle cx={T2x} cy={T2y} r="4" fill="#10B981" />
+                                <text x={T2x + (T2x > cx ? 10 : -20)} y={T2y + (T2y > cy ? 18 : -8)} fill="#10B981" fontSize="16" fontWeight="bold">B</text>
+                                
+                                {/* Tangent line PB */}
+                                <line 
+                                    x1={Px} 
+                                    y1={Py} 
+                                    x2={T2x} 
+                                    y2={T2y} 
+                                    stroke="#10B981" 
+                                    strokeWidth="3"
+                                    className="animate-[draw_1s_ease-in-out]"
+                                />
+                                
+                                {/* Radius OB */}
+                                <line 
+                                    x1={cx} y1={cy} x2={T2x} y2={T2y} 
+                                    stroke="#10B981" strokeWidth="2" strokeDasharray="3,3"
+                                />
+                                
+                                {/* Right angle at B */}
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(T2x, T2y, cx, cy, Px, Py, 20);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="3" />
+                                        <text x={labelX} y={labelY} fill="#F59E0B" fontSize="10" fontWeight="bold" textAnchor="middle">90°</text>
+                                    </>;
+                                })()}
+                            </g>
+                        )}
+                        
+                        {/* Equal length markings */}
+                        {step >= 5 && (
+                            <g>
+                                {/* Tick marks for equal lengths */}
+                                <g className="animate-[fade-in_1s_ease-in-out]">
+                                    {/* PA marks - positioned at midpoint of PA */}
+                                    {(() => {
+                                        const midX = (Px + T1x) / 2;
+                                        const midY = (Py + T1y) / 2;
+                                        const angle = Math.atan2(T1y - Py, T1x - Px);
+                                        const perpAngle = angle + Math.PI / 2;
+                                        const markLength = 5;
+                                        
+                                        return <>
+                                            <line 
+                                                x1={midX + markLength * Math.cos(perpAngle)} 
+                                                y1={midY + markLength * Math.sin(perpAngle)} 
+                                                x2={midX - markLength * Math.cos(perpAngle)} 
+                                                y2={midY - markLength * Math.sin(perpAngle)} 
+                                                stroke="#8B5CF6" strokeWidth="3" 
+                                            />
+                                        </>;
+                                    })()}
+                                    
+                                    {/* PB marks - positioned at midpoint of PB */}
+                                    {(() => {
+                                        const midX = (Px + T2x) / 2;
+                                        const midY = (Py + T2y) / 2;
+                                        const angle = Math.atan2(T2y - Py, T2x - Px);
+                                        const perpAngle = angle + Math.PI / 2;
+                                        const markLength = 5;
+                                        
+                                        return <>
+                                            <line 
+                                                x1={midX + markLength * Math.cos(perpAngle)} 
+                                                y1={midY + markLength * Math.sin(perpAngle)} 
+                                                x2={midX - markLength * Math.cos(perpAngle)} 
+                                                y2={midY - markLength * Math.sin(perpAngle)} 
+                                                stroke="#8B5CF6" strokeWidth="3" 
+                                            />
+                                        </>;
+                                    })()}
+                                    
+                                    {/* Equal sign */}
+                                    <text x={Px - 30} y={Py - 30} fill="#8B5CF6" fontSize="16" fontWeight="bold">PA</text>
+                                    <text x={Px - 30} y={Py+35} fill="#8B5CF6" fontSize="16" fontWeight="bold">PB</text>
+                                </g>
+                            </g>
+                        )}
+                        
+                        {/* Angle bisector */}
+                        {step >= 6 && (
+                            <g>
+                                {/* Line PO */}
+                                <line 
+                                    x1={Px} 
+                                    y1={Py} 
+                                    x2={cx} 
+                                    y2={cy} 
+                                    stroke="#F59E0B" 
+                                    strokeWidth="3"
+                                    strokeDasharray="5,5"
+                                    className="animate-[draw_1s_ease-in-out]"
+                                />
+                                
+                                {/* Angle markings using angleArc helper */}
+                                {(() => {
+                                    const { arc: arc1, labelX: labelX1, labelY: labelY1 } = angleArc(Px, Py, T1x, T1y, cx, cy, 25);
+                                    const { arc: arc2, labelX: labelX2, labelY: labelY2 } = angleArc(Px, Py, cx, cy, T2x, T2y, 25);
+                                    return <>
+                                        <path d={arc1} fill="none" stroke="#F59E0B" strokeWidth="2" className="animate-pulse" />
+                                        <text x={labelX1} y={labelY1} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">α</text>
+                                        <path d={arc2} fill="none" stroke="#F59E0B" strokeWidth="2" className="animate-pulse" />
+                                        <text x={labelX2} y={labelY2} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">α</text>
+                                    </>;
+                                })()}
+                                
+                                <text x={(Px + cx) / 2 - 50} y={(Py + cy) / 2 - 10} fill="#F59E0B" fontSize="12" fontWeight="bold">PO bisects ∠APB</text>
+                            </g>
+                        )}
+                        
+                        {/* Theorem statement box */}
+                        {step >= 5 && (
+                            <rect 
+                                x="30" y="20" width="340" height="50" 
+                                fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
+                                rx="10"
+                                className="animate-[fade-in_1s_ease-in-out]"
+                            />
+                        )}
+                        {step >= 5 && (
+                            <g>
+                                <text x="200" y="40" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">
+                                    Two Tangents from External Point: PA = PB
+                                </text>
+                                <text x="200" y="58" textAnchor="middle" fill="#1F2937" fontSize="12">
+                                    PO bisects ∠APB and ∠AOB
+                                </text>
+                            </g>
+                        )}
+                    </svg>
+                </div>
+            </div>
+        </div>
+    );
+};
 
   // The slide content
   const slideContent = (

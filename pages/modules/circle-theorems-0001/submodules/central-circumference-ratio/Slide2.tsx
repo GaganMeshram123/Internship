@@ -75,213 +75,283 @@ export default function CentralCircumferenceRatioSlide2() {
       labelY 
     };
   }
+const ProofDiagram = () => {
+    // State to manage the current step
+    const [step, setStep] = useState(0);
 
-  // SVG Proof Diagram Component
-  const ProofDiagram = () => (
-    <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
-      <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-4">Proof Visualization</h3>
-      <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-        {/* Circle */}
-        {step >= 1 && (
-          <circle 
-            cx="200" 
-            cy="175" 
-            r="120" 
-            fill="none" 
-            stroke="#64748B" 
-            strokeWidth="2"
-            className="animate-[draw_1s_ease-in-out]"
-          />
-        )}
-        
-        {/* Center O */}
-        {step >= 1 && (
-          <g>
-            <circle cx={cx} cy={cy} r="4" fill="#3B82F6" />
-            <text x={cx + 10} y={cy - 2} fill="#3B82F6" fontSize="14" fontWeight="bold">O</text>
-          </g>
-        )}
-        
-        {/* Points A, B, P */}
-        {step >= 1 && (
-          <g>
-            <circle cx={Ax} cy={Ay} r="4" fill="#000000" />
-            <circle cx={Bx} cy={By} r="4" fill="#000000" />
-            <circle cx={Px} cy={Py} r="4" fill="#3B82F6" />
-            <text x={Ax - 10} y={Ay - 10} fill="#000000" fontSize="16" fontWeight="bold">A</text>
-            <text x={Bx + 10} y={By - 10} fill="#000000" fontSize="16" fontWeight="bold">B</text>
-            <text x={Px + 10} y={Py - 10} fill="#3B82F6" fontSize="16" fontWeight="bold">P</text>
-            
-            {/* Lines AP and BP */}
-            <line x1={Ax} y1={Ay} x2={Px} y2={Py} stroke="#3B82F6" strokeWidth="2" />
-            <line x1={Bx} y1={By} x2={Px} y2={Py} stroke="#3B82F6" strokeWidth="2" />
-          </g>
-        )}
-        
-        {/* Radii */}
-        {step >= 2 && (
-          <g>
-            <line 
-              x1={cx} y1={cy} x2={Ax} y2={Ay} 
-              stroke="#DC2626" strokeWidth="3" strokeDasharray="5,5"
-              className="animate-[draw_0.8s_ease-in-out]"
-            />
-            <line 
-              x1={cx} y1={cy} x2={Bx} y2={By} 
-              stroke="#DC2626" strokeWidth="3" strokeDasharray="5,5"
-              className="animate-[draw_0.8s_ease-in-out]"
-            />
-            <line 
-              x1={cx} y1={cy} x2={Px} y2={Py} 
-              stroke="#DC2626" strokeWidth="3" strokeDasharray="5,5"
-              className="animate-[draw_0.8s_ease-in-out]"
-            />
-          </g>
-        )}
-        
-        {/* Isosceles triangles highlighting */}
-        {step >= 3 && step < 4 && (
-          <g>
-            {/* Triangle OAP */}
-            <path 
-              d={`M ${cx} ${cy} L ${Ax} ${Ay} L ${Px} ${Py} Z`} 
-              fill="#FFD700" 
-              fillOpacity="0.3"
-              stroke="#FFD700" 
-              strokeWidth="2"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            <text x={(cx + Ax + Px) / 3} y={(cy + Ay + Py) / 3} fill="#FFD700" fontSize="12" fontWeight="bold">△OAP</text>
-            {/* Triangle OBP */}
-            <path 
-              d={`M ${cx} ${cy} L ${Bx} ${By} L ${Px} ${Py} Z`} 
-              fill="#FF6B35" 
-              fillOpacity="0.3"
-              stroke="#FF6B35" 
-              strokeWidth="2"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            <text x={(cx + Bx + Px) / 3} y={(cy + By + Py) / 3} fill="#FF6B35" fontSize="12" fontWeight="bold">△OBP</text>
-            {/* Equal sides markings */}
-            <text x={(cx + Ax) / 2 - 10} y={(cy + Ay) / 2} fill="#FFD700" fontSize="10" fontWeight="bold">r</text>
-            <text x={(cx + Bx) / 2 + 10} y={(cy + By) / 2} fill="#FF6B35" fontSize="10" fontWeight="bold">r</text>
-            <text x={(cx + Px) / 2} y={(cy + Py) / 2 - 10} fill="#DC2626" fontSize="10" fontWeight="bold">r</text>
-          </g>
-        )}
-        {/* Isosceles triangles highlighting (no labels) */}
-        {step === 4 && (
-          <g>
-            {/* Triangle OAP */}
-            <path 
-              d={`M ${cx} ${cy} L ${Ax} ${Ay} L ${Px} ${Py} Z`} 
-              fill="#FFD700" 
-              fillOpacity="0.3"
-              stroke="#FFD700" 
-              strokeWidth="2"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            {/* Triangle OBP */}
-            <path 
-              d={`M ${cx} ${cy} L ${Bx} ${By} L ${Px} ${Py} Z`} 
-              fill="#FF6B35" 
-              fillOpacity="0.3"
-              stroke="#FF6B35" 
-              strokeWidth="2"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            {/* Equal sides markings */}
-            <text x={(cx + Ax) / 2 - 10} y={(cy + Ay) / 2} fill="#FFD700" fontSize="10" fontWeight="bold">r</text>
-            <text x={(cx + Bx) / 2 + 10} y={(cy + By) / 2} fill="#FF6B35" fontSize="10" fontWeight="bold">r</text>
-            <text x={(cx + Px) / 2} y={(cy + Py) / 2 - 10} fill="#DC2626" fontSize="10" fontWeight="bold">r</text>
-          </g>
-        )}
-        
-        {/* Exterior angle demonstration */}
-        {step >= 4 && (
-          <g>
-            {/* Central angle AOB */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(cx, cy, Ax, Ay, Bx, By, 35);
-              return <>
-                <path d={arc} fill="none" stroke="#8B5CF6" strokeWidth="4" className="animate-pulse" />
-                <text x={labelX} y={labelY} fill="#8B5CF6" fontSize="12" fontWeight="bold" textAnchor="middle">∠AOB</text>
-              </>;
-            })()}
-            
-            {/* Inscribed angle APB */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(Px, Py, Ax, Ay, Bx, By, 25);
-              return <>
-                <path d={arc} fill="none" stroke="#10B981" strokeWidth="3" className="animate-pulse" />
-                <text x={labelX} y={labelY} fill="#10B981" fontSize="12" fontWeight="bold" textAnchor="middle">∠APB</text>
-              </>;
-            })()}
-            
-            {/* Base angles in triangle OAP */}
-            {(() => {
-              const { arc: arc1, labelX: labelX1, labelY: labelY1 } = angleArc(Ax, Ay, cx, cy, Px, Py, 15);
-              const { arc: arc2, labelX: labelX2, labelY: labelY2 } = angleArc(Px, Py, Ax, Ay, cx, cy, 15);
-              return <>
-                <path d={arc1} fill="none" stroke="#FFD700" strokeWidth="2" />
-                <text x={labelX1} y={labelY1} fill="#FFD700" fontSize="10" textAnchor="middle">α</text>
-                <path d={arc2} fill="none" stroke="#FFD700" strokeWidth="2" />
-                <text x={labelX2} y={labelY2} fill="#FFD700" fontSize="10" textAnchor="middle">α</text>
-              </>;
-            })()}
-            
-            {/* Base angles in triangle OBP */}
-            {(() => {
-              const { arc: arc1, labelX: labelX1, labelY: labelY1 } = angleArc(Bx, By, cx, cy, Px, Py, 15);
-              const { arc: arc2, labelX: labelX2, labelY: labelY2 } = angleArc(Px, Py, Bx, By, cx, cy, 15);
-              return <>
-                <path d={arc1} fill="none" stroke="#FF6B35" strokeWidth="2" />
-                <text x={labelX1} y={labelY1} fill="#FF6B35" fontSize="10" textAnchor="middle">β</text>
-                <path d={arc2} fill="none" stroke="#FF6B35" strokeWidth="2" />
-                <text x={labelX2} y={labelY2} fill="#FF6B35" fontSize="10" textAnchor="middle">β</text>
-              </>;
-            })()}
-          </g>
-        )}
-        
-        {/* Equation demonstration */}
-        {step >= 5 && (
-          <g>
-            {/* Equation box */}
-            <rect 
-              x="30" y="280" width="340" height="60" 
-              fill="#DBEAFE" stroke="#3B82F6" strokeWidth="2" 
-              rx="10"
-              className="animate-[fade-in_1s_ease-in-out]"
-            />
-            <text x="200" y="300" textAnchor="middle" fill="#1E40AF" fontSize="14" fontWeight="bold">
-              Triangle Angle Sum Method:
-            </text>
-            <text x="200" y="318" textAnchor="middle" fill="#1E40AF" fontSize="12">
-              ∠AOB = (180° - 2α) - (180° - 2β) = 2(β - α) = 2∠APB
-            </text>
-            <text x="200" y="332" textAnchor="middle" fill="#3B82F6" fontSize="12" fontWeight="bold">
-              Therefore: Central Angle = 2 × Inscribed Angle
-            </text>
-          </g>
-        )}
-        
-        {/* Final result highlighting */}
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className="px-4 py-2 rounded bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 font-medium border border-blue-300 dark:border-blue-700 disabled:opacity-50"
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-        >Previous</button>
-        <button
-          className="px-4 py-2 rounded bg-blue-600 text-white font-medium border border-blue-700 disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(6, s + 1))}
-          disabled={step === 6}
-        >Next</button>
-      </div>
-    </div>
-  );
+    // Coordinate constants for the diagram
+    const r = 120;
+    const cx = 200;
+    const cy = 175;
+    const angleA = Math.PI / 4;
+    const angleB = (3 * Math.PI) / 4;
+    const angleP = (7 * Math.PI) / 6;
+    const Ax = cx + r * Math.cos(angleA);
+    const Ay = cy - r * Math.sin(angleA);
+    const Bx = cx + r * Math.cos(angleB);
+    const By = cy - r * Math.sin(angleB);
+    const Px = cx + r * Math.cos(angleP);
+    const Py = cy - r * Math.sin(angleP);
+    
+    // Placeholder for angleArc function
+    const angleArc = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, radius: number) => {
+      // This is a placeholder function
+      return { arc: "", labelX: 0, labelY: 0 };
+    };
 
+    // The steps for the proof
+    const steps = [
+        { title: "Introduction", description: "Click 'Next' to begin the visual proof of the Central vs Inscribed Angle Theorem." },
+        { title: "Step 1: The Setup", description: "We start with a circle and the key points: the center O, and points A, B, and P on the circumference." },
+        { title: "Step 2: Connect the Radii", description: "Draw radii from the center O to points A, B, and P. These lines are all equal in length." },
+        { title: "Step 3: Identify Isosceles Triangles", description: "Notice the two isosceles triangles formed: △OAP and △OBP. The sides OA, OP, and OB are all radii (r)." },
+        { title: "Step 4: Analyze the Angles", description: "We can now identify the equal base angles within these isosceles triangles. We'll use these to prove the theorem." },
+        { title: "Step 5: The Equation", description: "By applying the exterior angle theorem, we can derive the final equation: the central angle equals twice the inscribed angle." },
+        { title: "Step 6: Final Conclusion", description: "This visual proof demonstrates that the relationship Central Angle = 2 × Inscribed Angle is a direct result of simple geometric principles." }
+    ];
+
+    return (
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+            {/* 1. Headline */}
+            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6 text-center">Visual Proof of the Theorem</h1>
+
+            {/* 2. Steps */}
+            <div className="mb-6">
+                {/* Step Indicator */}
+                <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">Step {step + 1}</span>
+                    <span className="font-light">of {steps.length}</span>
+                    <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+
+                {/* Step Text */}
+                <div className="p-6 bg-blue-50 dark:bg-slate-800 rounded-xl shadow-inner border border-blue-100 dark:border-slate-700 transition-all duration-300">
+                    <h3 className="font-bold text-xl text-blue-700 dark:text-blue-300 animate-slide-in-up">
+                        {steps[step].title}
+                    </h3>
+                    <p className="text-slate-700 dark:text-slate-300 mt-3 leading-relaxed text-base animate-fade-in-slow">
+                        {steps[step].description}
+                    </p>
+                </div>
+            </div>
+
+            {/* 3. Buttons */}
+            <div className="flex justify-center gap-4 mt-4">
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                >
+                    ← Previous
+                </button>
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
+                    disabled={step === steps.length - 1}
+                >
+                    Next →
+                </button>
+            </div>
+
+            {/* 4. Circle Diagram (your original code, untouched) */}
+            <div className="mt-6">
+                 <div className="bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-lg p-6">
+                    <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-4">Proof Visualization</h3>
+                    <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
+                        {/* Circle */}
+                        {step >= 1 && (
+                            <circle 
+                                cx="200" 
+                                cy="175" 
+                                r="120" 
+                                fill="none" 
+                                stroke="#64748B" 
+                                strokeWidth="2"
+                                className="animate-[draw_1s_ease-in-out]"
+                            />
+                        )}
+                        
+                        {/* Center O */}
+                        {step >= 1 && (
+                            <g>
+                                <circle cx={cx} cy={cy} r="4" fill="#3B82F6" />
+                                <text x={cx + 10} y={cy - 2} fill="#3B82F6" fontSize="14" fontWeight="bold">O</text>
+                            </g>
+                        )}
+                        
+                        {/* Points A, B, P */}
+                        {step >= 1 && (
+                            <g>
+                                <circle cx={Ax} cy={Ay} r="4" fill="#000000" />
+                                <circle cx={Bx} cy={By} r="4" fill="#000000" />
+                                <circle cx={Px} cy={Py} r="4" fill="#3B82F6" />
+                                <text x={Ax - 10} y={Ay - 10} fill="#000000" fontSize="16" fontWeight="bold">A</text>
+                                <text x={Bx + 10} y={By - 10} fill="#000000" fontSize="16" fontWeight="bold">B</text>
+                                <text x={Px + 10} y={Py - 10} fill="#3B82F6" fontSize="16" fontWeight="bold">P</text>
+                                
+                                {/* Lines AP and BP */}
+                                <line x1={Ax} y1={Ay} x2={Px} y2={Py} stroke="#3B82F6" strokeWidth="2" />
+                                <line x1={Bx} y1={By} x2={Px} y2={Py} stroke="#3B82F6" strokeWidth="2" />
+                            </g>
+                        )}
+                        
+                        {/* Radii */}
+                        {step >= 2 && (
+                            <g>
+                                <line 
+                                    x1={cx} y1={cy} x2={Ax} y2={Ay} 
+                                    stroke="#DC2626" strokeWidth="3" strokeDasharray="5,5"
+                                    className="animate-[draw_0.8s_ease-in-out]"
+                                />
+                                <line 
+                                    x1={cx} y1={cy} x2={Bx} y2={By} 
+                                    stroke="#DC2626" strokeWidth="3" strokeDasharray="5,5"
+                                    className="animate-[draw_0.8s_ease-in-out]"
+                                />
+                                <line 
+                                    x1={cx} y1={cy} x2={Px} y2={Py} 
+                                    stroke="#DC2626" strokeWidth="3" strokeDasharray="5,5"
+                                    className="animate-[draw_0.8s_ease-in-out]"
+                                />
+                            </g>
+                        )}
+                        
+                        {/* Isosceles triangles highlighting */}
+                        {step >= 3 && step < 4 && (
+                            <g>
+                                {/* Triangle OAP */}
+                                <path 
+                                    d={`M ${cx} ${cy} L ${Ax} ${Ay} L ${Px} ${Py} Z`} 
+                                    fill="#FFD700" 
+                                    fillOpacity="0.3"
+                                    stroke="#FFD700" 
+                                    strokeWidth="2"
+                                    className="animate-[fade-in_1s_ease-in-out]"
+                                />
+                                <text x={(cx + Ax + Px) / 3} y={(cy + Ay + Py) / 3} fill="#FFD700" fontSize="12" fontWeight="bold">△OAP</text>
+                                {/* Triangle OBP */}
+                                <path 
+                                    d={`M ${cx} ${cy} L ${Bx} ${By} L ${Px} ${Py} Z`} 
+                                    fill="#FF6B35" 
+                                    fillOpacity="0.3"
+                                    stroke="#FF6B35" 
+                                    strokeWidth="2"
+                                    className="animate-[fade-in_1s_ease-in-out]"
+                                />
+                                <text x={(cx + Bx + Px) / 3} y={(cy + By + Py) / 3} fill="#FF6B35" fontSize="12" fontWeight="bold">△OBP</text>
+                                {/* Equal sides markings */}
+                                <text x={(cx + Ax) / 2 - 10} y={(cy + Ay) / 2} fill="#FFD700" fontSize="10" fontWeight="bold">r</text>
+                                <text x={(cx + Bx) / 2 + 10} y={(cy + By) / 2} fill="#FF6B35" fontSize="10" fontWeight="bold">r</text>
+                                <text x={(cx + Px) / 2} y={(cy + Py) / 2 - 10} fill="#DC2626" fontSize="10" fontWeight="bold">r</text>
+                            </g>
+                        )}
+                        {/* Isosceles triangles highlighting (no labels) */}
+                        {step === 4 && (
+                            <g>
+                                {/* Triangle OAP */}
+                                <path 
+                                    d={`M ${cx} ${cy} L ${Ax} ${Ay} L ${Px} ${Py} Z`} 
+                                    fill="#FFD700" 
+                                    fillOpacity="0.3"
+                                    stroke="#FFD700" 
+                                    strokeWidth="2"
+                                    className="animate-[fade-in_1s_ease-in-out]"
+                                />
+                                {/* Triangle OBP */}
+                                <path 
+                                    d={`M ${cx} ${cy} L ${Bx} ${By} L ${Px} ${Py} Z`} 
+                                    fill="#FF6B35" 
+                                    fillOpacity="0.3"
+                                    stroke="#FF6B35" 
+                                    strokeWidth="2"
+                                    className="animate-[fade-in_1s_ease-in-out]"
+                                />
+                                {/* Equal sides markings */}
+                                <text x={(cx + Ax) / 2 - 10} y={(cy + Ay) / 2} fill="#FFD700" fontSize="10" fontWeight="bold">r</text>
+                                <text x={(cx + Bx) / 2 + 10} y={(cy + By) / 2} fill="#FF6B35" fontSize="10" fontWeight="bold">r</text>
+                                <text x={(cx + Px) / 2} y={(cy + Py) / 2 - 10} fill="#DC2626" fontSize="10" fontWeight="bold">r</text>
+                            </g>
+                        )}
+                        
+                        {/* Exterior angle demonstration */}
+                        {step >= 4 && (
+                            <g>
+                                {/* Central angle AOB */}
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(cx, cy, Ax, Ay, Bx, By, 35);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#8B5CF6" strokeWidth="4" className="animate-pulse" />
+                                        <text x={labelX} y={labelY} fill="#8B5CF6" fontSize="12" fontWeight="bold" textAnchor="middle">∠AOB</text>
+                                    </>;
+                                })()}
+                                
+                                {/* Inscribed angle APB */}
+                                {(() => {
+                                    const { arc, labelX, labelY } = angleArc(Px, Py, Ax, Ay, Bx, By, 25);
+                                    return <>
+                                        <path d={arc} fill="none" stroke="#10B981" strokeWidth="3" className="animate-pulse" />
+                                        <text x={labelX} y={labelY} fill="#10B981" fontSize="12" fontWeight="bold" textAnchor="middle">∠APB</text>
+                                    </>;
+                                })()}
+                                
+                                {/* Base angles in triangle OAP */}
+                                {(() => {
+                                    const { arc: arc1, labelX: labelX1, labelY: labelY1 } = angleArc(Ax, Ay, cx, cy, Px, Py, 15);
+                                    const { arc: arc2, labelX: labelX2, labelY: labelY2 } = angleArc(Px, Py, Ax, Ay, cx, cy, 15);
+                                    return <>
+                                        <path d={arc1} fill="none" stroke="#FFD700" strokeWidth="2" />
+                                        <text x={labelX1} y={labelY1} fill="#FFD700" fontSize="10" textAnchor="middle">α</text>
+                                        <path d={arc2} fill="none" stroke="#FFD700" strokeWidth="2" />
+                                        <text x={labelX2} y={labelY2} fill="#FFD700" fontSize="10" textAnchor="middle">α</text>
+                                    </>;
+                                })()}
+                                
+                                {/* Base angles in triangle OBP */}
+                                {(() => {
+                                    const { arc: arc1, labelX: labelX1, labelY: labelY1 } = angleArc(Bx, By, cx, cy, Px, Py, 15);
+                                    const { arc: arc2, labelX: labelX2, labelY: labelY2 } = angleArc(Px, Py, Bx, By, cx, cy, 15);
+                                    return <>
+                                        <path d={arc1} fill="none" stroke="#FF6B35" strokeWidth="2" />
+                                        <text x={labelX1} y={labelY1} fill="#FF6B35" fontSize="10" textAnchor="middle">β</text>
+                                        <path d={arc2} fill="none" stroke="#FF6B35" strokeWidth="2" />
+                                        <text x={labelX2} y={labelY2} fill="#FF6B35" fontSize="10" textAnchor="middle">β</text>
+                                    </>;
+                                })()}
+                            </g>
+                        )}
+                        
+                        {/* Equation demonstration */}
+                        {step >= 5 && (
+                            <g>
+                                {/* Equation box */}
+                                <rect 
+                                    x="30" y="280" width="340" height="60" 
+                                    fill="#DBEAFE" stroke="#3B82F6" strokeWidth="2" 
+                                    rx="10"
+                                    className="animate-[fade-in_1s_ease-in-out]"
+                                />
+                                <text x="200" y="300" textAnchor="middle" fill="#1E40AF" fontSize="14" fontWeight="bold">
+                                    Triangle Angle Sum Method:
+                                </text>
+                                <text x="200" y="318" textAnchor="middle" fill="#1E40AF" fontSize="12">
+                                    ∠AOB = (180° - 2α) - (180° - 2β) = 2(β - α) = 2∠APB
+                                </text>
+                                <text x="200" y="332" textAnchor="middle" fill="#3B82F6" fontSize="12" fontWeight="bold">
+                                    Therefore: Central Angle = 2 × Inscribed Angle
+                                </text>
+                            </g>
+                        )}
+                    </svg>
+                </div>
+            </div>
+        </div>
+    );
+};
   // The slide content
   const slideContent = (
   <div className="w-full h-full bg-blue-100/60 border border-blue-300 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl p-8">

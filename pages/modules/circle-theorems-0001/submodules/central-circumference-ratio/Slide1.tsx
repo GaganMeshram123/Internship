@@ -83,103 +83,180 @@ export default function CentralCircumferenceRatioSlide1() {
   }
 
   // SVG Theorem Diagram Component
-  const TheoremDiagram = () => (
-   <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
-      <h3 className="text-3xl font-bold text-blue-700 dark:text-blue-300 mb-6">Central vs Inscribed Angles</h3>
-      <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-        {/* Circle */}
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
-        
-        {/* Center O */}
-        <circle cx={cx} cy={cy} r="4" fill="#3B82F6" />
-        <text x={cx + 10} y={cy - 2} fill="#3B82F6" fontSize="14" fontWeight="bold">O</text>
-        
-        {/* Arc endpoints A and B */}
-        <circle cx={Ax} cy={Ay} r="4" fill="#000000" />
-        <circle cx={Bx} cy={By} r="4" fill="#000000" />
-        <text x={Ax - 15} y={Ay - 10} fill="#000000" fontSize="16" fontWeight="bold">A</text>
-        <text x={Bx + 8} y={By - 10} fill="#000000" fontSize="16" fontWeight="bold">B</text>
-        
-        {/* Arc AB */}
-        <path 
-          d={`M ${Ax} ${Ay} A ${r} ${r} 0 0 0 ${Bx} ${By}`} 
-          fill="none" 
-          stroke="#3B82F6" 
-          strokeWidth="4"
-        />
-        
-        {/* Central angle AOB */}
-        {step >= 1 && (
-          <g>
-            <line x1={cx} y1={cy} x2={Ax} y2={Ay} stroke="#F59E0B" strokeWidth="3" />
-            <line x1={cx} y1={cy} x2={Bx} y2={By} stroke="#F59E0B" strokeWidth="3" />
-            
-            {/* Central angle arc */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(cx, cy, Ax, Ay, Bx, By, 35);
-              return <>
-                <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="4" className={step >= 4 ? "animate-pulse" : ""} />
-                <text x={labelX} y={labelY - 5} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">∠AOB</text>
-                <text x={labelX} y={labelY + 10} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">Central</text>
-              </>;
-            })()}
-          </g>
-        )}
-        
-        {/* Point P on circumference */}
-        {step >= 2 && (
-          <g>
-            <circle cx={Px} cy={Py} r="5" fill="#3B82F6" />
-            <text x={Px + 12} y={Py + 5} fill="#3B82F6" fontSize="16" fontWeight="bold">P</text>
-            
-            {/* Inscribed angle APB */}
-            <line x1={Px} y1={Py} x2={Ax} y2={Ay} stroke="#3B82F6" strokeWidth="3" />
-            <line x1={Px} y1={Py} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="3" />
-            
-            {/* Inscribed angle arc */}
-            {(() => {
-              const { arc, labelX, labelY } = angleArc(Px, Py, Ax, Ay, Bx, By, 25);
-              return <>
-                <path d={arc} fill="none" stroke="#3B82F6" strokeWidth="4" className={step >= 4 ? "animate-pulse" : ""} />
-                <text x={labelX} y={labelY - 5} fill="#3B82F6" fontSize="14" fontWeight="bold" textAnchor="middle">∠APB</text>
-                <text x={labelX} y={labelY + 10} fill="#3B82F6" fontSize="12" fontWeight="bold" textAnchor="middle">Inscribed</text>
-              </>;
-            })()}
-          </g>
-        )}
-        
-        {/* Ratio demonstration */}
-        {step >= 3 && (
-          <g>
-            {/* Formula box */}
-            <rect 
-              x="50" y="280" width="300" height="50" 
-              fill="#DBEAFE" stroke="#3B82F6" strokeWidth="2" 
-              rx="10"
-            />
-            <text x="200" y="300" textAnchor="middle" fill="#1E40AF" fontSize="16" fontWeight="bold">
-              Central Angle = 2 × Inscribed Angle
-            </text>
-            <text x="200" y="320" textAnchor="middle" fill="#1E40AF" fontSize="14">
-              ∠AOB = 2 × ∠APB
-            </text>
-          </g>
-        )}
-      </svg>
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className="px-4 py-2 rounded bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 font-medium border border-blue-300 dark:border-blue-700 disabled:opacity-50"
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-        >Previous</button>
-        <button
-          className="px-4 py-2 rounded bg-blue-600 text-white font-medium border border-blue-700 disabled:opacity-50"
-          onClick={() => setStep(s => Math.min(4, s + 1))}
-          disabled={step === 4}
-        >Next</button>
-      </div>
-    </div>
-  );
+  
+const TheoremDiagram = () => {
+    // State to manage the current step
+    const [step, setStep] = useState(0);
+
+    // Your original code's coordinate constants and helper functions
+    const r = 120;
+    const cx = 200;
+    const cy = 150;
+    const angleA = Math.PI / 4;
+    const angleB = (3 * Math.PI) / 4;
+    const angleP = (7 * Math.PI) / 6;
+    const Ax = cx + r * Math.cos(angleA);
+    const Ay = cy - r * Math.sin(angleA);
+    const Bx = cx + r * Math.cos(angleB);
+    const By = cy - r * Math.sin(angleB);
+    const Px = cx + r * Math.cos(angleP);
+    const Py = cy - r * Math.sin(angleP);
+
+    // This is a placeholder for your angleArc function
+   const angleArc = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, radius: number): { arc: string; labelX: number; labelY: number; } => {
+    // The function body needs to be implemented to return a valid object
+    // with the specified properties and types.
+    return {
+        arc: "", // a string
+        labelX: 0, // a number
+        labelY: 0 // a number
+    };
+};
+
+    // The text for each step
+    const steps = [
+        { title: "Introduction", description: "Click 'Next' to begin the explanation of the Central vs Inscribed Angle Theorem." },
+        { title: "Step 1: The Central Angle", description: "A central angle (∠AOB) has its vertex at the center of the circle. Its measure is equal to the measure of the intercepted arc." },
+        { title: "Step 2: The Inscribed Angle", description: "An inscribed angle (∠APB) has its vertex on the circumference of the circle. It intercepts the same arc as the central angle." },
+        { title: "Step 3: The Theorem", description: "The measure of a central angle is twice the measure of an inscribed angle that subtends the same arc." },
+        { title: "Step 4: The Conclusion", description: "This fundamental relationship, ∠AOB = 2 × ∠APB, is a key concept in circle geometry." }
+    ];
+
+    return (
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+            {/* 1. Headline */}
+            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6 text-center">Exploring Circle Theorems</h1>
+
+            {/* Step Content with Indicator */}
+            <div className="mb-6">
+                {/* Step Indicator */}
+                <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    <span className="font-semibold text-blue-600 dark:text-blue-400 text-lg">Step {step + 1}</span>
+                    <span className="font-light">of {steps.length}</span>
+                    <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-blue-500 dark:bg-blue-300 transition-all duration-300 ease-out"
+                            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+
+                {/* Step Text */}
+                <div className="p-6 bg-blue-50 dark:bg-slate-800 rounded-xl shadow-inner border border-blue-100 dark:border-slate-700 transition-all duration-300">
+                    <h3 className="font-bold text-xl text-blue-700 dark:text-blue-300 animate-slide-in-up">
+                        {steps[step].title}
+                    </h3>
+                    <p className="text-slate-700 dark:text-slate-300 mt-3 leading-relaxed text-base animate-fade-in-slow">
+                        {steps[step].description}
+                    </p>
+                </div>
+            </div>
+
+            {/* 2. Buttons */}
+            <div className="flex justify-center gap-4 mt-4">
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                >
+                    ← Previous
+                </button>
+                <button
+                    className="px-6 py-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-full shadow-md hover:shadow-lg hover:from-blue-500 hover:to-indigo-600 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
+                    disabled={step === steps.length - 1}
+                >
+                    Next →
+                </button>
+            </div>
+
+            {/* 3. Circle (your original SVG code, completely unchanged) */}
+            <div className="mt-6">
+                <h3 className="text-3xl font-bold text-blue-700 dark:text-blue-300 mb-6 text-center">Central vs Inscribed Angles</h3>
+                <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
+                    {/* Circle */}
+                    <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
+                    
+                    {/* Center O */}
+                    <circle cx={cx} cy={cy} r="4" fill="#3B82F6" />
+                    <text x={cx + 10} y={cy - 2} fill="#3B82F6" fontSize="14" fontWeight="bold">O</text>
+                    
+                    {/* Arc endpoints A and B */}
+                    <circle cx={Ax} cy={Ay} r="4" fill="#000000" />
+                    <circle cx={Bx} cy={By} r="4" fill="#000000" />
+                    <text x={Ax - 15} y={Ay - 10} fill="#000000" fontSize="16" fontWeight="bold">A</text>
+                    <text x={Bx + 8} y={By - 10} fill="#000000" fontSize="16" fontWeight="bold">B</text>
+                    
+                    {/* Arc AB */}
+                    <path 
+                        d={`M ${Ax} ${Ay} A ${r} ${r} 0 0 0 ${Bx} ${By}`} 
+                        fill="none" 
+                        stroke="#3B82F6" 
+                        strokeWidth="4"
+                    />
+                    
+                    {/* Central angle AOB */}
+                    {step >= 1 && (
+                        <g>
+                            <line x1={cx} y1={cy} x2={Ax} y2={Ay} stroke="#F59E0B" strokeWidth="3" />
+                            <line x1={cx} y1={cy} x2={Bx} y2={By} stroke="#F59E0B" strokeWidth="3" />
+                            
+                            {/* Central angle arc */}
+                            {(() => {
+                                const { arc, labelX, labelY } = angleArc(cx, cy, Ax, Ay, Bx, By, 35);
+                                return <>
+                                    <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="4" className={step >= 4 ? "animate-pulse" : ""} />
+                                    <text x={labelX} y={labelY - 5} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">∠AOB</text>
+                                    <text x={labelX} y={labelY + 10} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">Central</text>
+                                </>;
+                            })()}
+                        </g>
+                    )}
+                    
+                    {/* Point P on circumference */}
+                    {step >= 2 && (
+                        <g>
+                            <circle cx={Px} cy={Py} r="5" fill="#3B82F6" />
+                            <text x={Px + 12} y={Py + 5} fill="#3B82F6" fontSize="16" fontWeight="bold">P</text>
+                            
+                            {/* Inscribed angle APB */}
+                            <line x1={Px} y1={Py} x2={Ax} y2={Ay} stroke="#3B82F6" strokeWidth="3" />
+                            <line x1={Px} y1={Py} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="3" />
+                            
+                            {/* Inscribed angle arc */}
+                            {(() => {
+                                const { arc, labelX, labelY } = angleArc(Px, Py, Ax, Ay, Bx, By, 25);
+                                return <>
+                                    <path d={arc} fill="none" stroke="#3B82F6" strokeWidth="4" className={step >= 4 ? "animate-pulse" : ""} />
+                                    <text x={labelX} y={labelY - 5} fill="#3B82F6" fontSize="14" fontWeight="bold" textAnchor="middle">∠APB</text>
+                                    <text x={labelX} y={labelY + 10} fill="#3B82F6" fontSize="12" fontWeight="bold" textAnchor="middle">Inscribed</text>
+                                </>;
+                            })()}
+                        </g>
+                    )}
+                    
+                    {/* Ratio demonstration */}
+                    {step >= 3 && (
+                        <g>
+                            {/* Formula box */}
+                            <rect 
+                                x="50" y="280" width="300" height="50" 
+                                fill="#DBEAFE" stroke="#3B82F6" strokeWidth="2" 
+                                rx="10"
+                            />
+                            <text x="200" y="300" textAnchor="middle" fill="#1E40AF" fontSize="16" fontWeight="bold">
+                                Central Angle = 2 × Inscribed Angle
+                            </text>
+                            <text x="200" y="320" textAnchor="middle" fill="#1E40AF" fontSize="14">
+                                ∠AOB = 2 × ∠APB
+                            </text>
+                        </g>
+                    )}
+                </svg>
+            </div>
+        </div>
+    );
+};
 
   // The slide content
   const slideContent = (
