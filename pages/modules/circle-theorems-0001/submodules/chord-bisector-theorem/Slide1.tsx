@@ -148,74 +148,93 @@ const TheoremDiagram = () => {
 
   {/* Diagram SVG */}
             <div className="mt-6">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                        Visualizing the Theorem
-                    </h3>
-                    <svg width="420" height="500" viewBox="0 0 400 500" className="mx-auto">
-                        {/* Circle */}
-                        {step >= 1 && <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />}
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            Visualizing the Theorem
+        </h3>
+        <svg width="420" height="500" viewBox="0 0 400 500" className="mx-auto">
+            {/* Circle */}
+            {step >= 1 && <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />}
 
-                        {/* Center O */}
-                        {step >= 1 && <>
-                            <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
-                            <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
-                        </>}
+            {/* Center O */}
+            {step >= 1 && (
+                <>
+                    <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
+                    <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
+                </>
+            )}
 
-                        {/* Chord AB */}
-                        {step >= 2 && <>
-                            <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
-                            <circle cx={Bx} cy={By} r="4" fill="#3B82F6" />
-                            <text x={Ax - 20} y={Ay - 5} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
-                            <text x={Bx + 10} y={By - 5} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
-                            <line x1={Ax} y1={Ay} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="3" />
-                            <text x={cx} y={Ay - 40} fill="#3B82F6" fontSize="14" fontWeight="bold" textAnchor="middle">Chord AB</text>
-                        </>}
+            {/* Chord AB */}
+            {step >= 2 && (
+                <>
+                    <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
+                    <circle cx={Bx} cy={By} r="4" fill="#3B82F6" />
+                    <text x={Ax - 20} y={Ay - 5} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
+                    <text x={Bx + 10} y={By - 5} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
+                    <line x1={Ax} y1={Ay} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="3" />
+                    {/* Position Chord AB label clearly above the chord */}
+                    <text x={cx} y={Ay - 30} fill="#3B82F6" fontSize="16" fontWeight="bold" textAnchor="middle">Chord AB</text>
+                </>
+            )}
 
-                        {/* Perpendicular OM */}
-                        {step >= 3 && <>
-                            <circle cx={Mx} cy={My} r="4" fill="#10B981" />
-                            <text x={Mx + 10} y={My + 5} fill="#10B981" fontSize="16" fontWeight="bold">M</text>
-                            <line x1={cx} y1={cy} x2={Mx} y2={My} stroke="#10B981" strokeWidth="3" />
-                            
-                            {/* Right Angle Marker and Text */}
-                            <rect x={Mx - 10} y={My - 10} width="10" height="10" stroke="#F59E0B" strokeWidth="2" fill="none" />
-                            <text x={Mx - 35} y={My - 15} fill="#F59E0B" fontSize="12" fontWeight="bold">90°</text>
-                            
-                            <text x={cx + 50} y={(cy + My) / 2} fill="#10B981" fontSize="12" fontWeight="bold">OM ⊥ AB</text>
-                        </>}
+            {/* Perpendicular OM */}
+            {step >= 3 && (
+                <>
+                    <circle cx={Mx} cy={My} r="4" fill="#10B981" />
+                    <text x={Mx + 10} y={My + 5} fill="#10B981" fontSize="16" fontWeight="bold">M</text>
+                    <line x1={cx} y1={cy} x2={Mx} y2={My} stroke="#10B981" strokeWidth="3" />
+                    
+                    {/* Right Angle Marker and 90° Text */}
+                    <rect x={Mx - 10} y={My - 10} width="10" height="10" stroke="#F59E0B" strokeWidth="2" fill="none" />
+                    <text x={Mx - 25} y={My - 15} fill="#F59E0B" fontSize="12" fontWeight="bold">90°</text>
+                    
+                    {/* OM ⊥ AB Label - Positioned clearly beside OM */}
+                    <text x={Mx + 20} y={(cy + My) / 2 - 10} fill="#10B981" fontSize="14" fontWeight="bold">OM ⊥ AB</text>
+                </>
+            )}
 
-                        {/* Midpoint & Equal Segments */}
-                        {step >= 4 && <>
-                            {/* Midpoint label */}
-                            <text x={Mx} y={My + 40} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">Midpoint</text>
-                            
-                            {/* Equal segment tick marks - Adjusted for clarity */}
-                            <line x1={Ax + (Mx - Ax) / 3 - 5} y1={Ay - 5} x2={Ax + (Mx - Ax) / 3 + 5} y2={Ay + 5} stroke="#8B5CF6" strokeWidth="2" />
-                            <line x1={Bx - (Bx - Mx) / 3 - 5} y1={By - 5} x2={Bx - (Bx - Mx) / 3 + 5} y2={By + 5} stroke="#8B5CF6" strokeWidth="2" />
+            {/* Midpoint & Equal Segments */}
+            {step >= 4 && (
+                <>
+                    {/* Midpoint label - clear position below M */}
+                    <text x={Mx} y={My + 25} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">Midpoint</text>
+                    
+                    {/* Equal segment tick marks - Adjusted for better visibility and angle */}
+                    {/* Tick mark 1 for AM - centered on AM segment */}
+                    <line x1={Ax + (Mx - Ax) * 0.5 - 5 * ((My - Ay) / Math.hypot(Mx - Ax, My - Ay))} y1={Ay + (My - Ay) * 0.5 + 5 * ((Mx - Ax) / Math.hypot(Mx - Ax, My - Ay))} 
+                          x2={Ax + (Mx - Ax) * 0.5 + 5 * ((My - Ay) / Math.hypot(Mx - Ax, My - Ay))} y2={Ay + (My - Ay) * 0.5 - 5 * ((Mx - Ax) / Math.hypot(Mx - Ax, My - Ay))} 
+                          stroke="#8B5CF6" strokeWidth="2" />
+                    {/* Tick mark 2 for MB - centered on MB segment */}
+                    <line x1={Mx + (Bx - Mx) * 0.5 - 5 * ((By - My) / Math.hypot(Bx - Mx, By - My))} y1={My + (By - My) * 0.5 + 5 * ((Bx - Mx) / Math.hypot(Bx - Mx, By - My))} 
+                          x2={Mx + (Bx - Mx) * 0.5 + 5 * ((By - My) / Math.hypot(Bx - Mx, By - My))} y2={My + (By - My) * 0.5 - 5 * ((Bx - Mx) / Math.hypot(Bx - Mx, By - My))} 
+                          stroke="#8B5CF6" strokeWidth="2" />
 
-                            {/* These labels are now inside the circle, below the center */}
-                            <text x={cx} y={cy + 50} fill="#8B5CF6" fontSize="14" fontWeight="bold" textAnchor="middle">AM = MB</text>
-                            <text x={cx} y={cy + 70} fill="#8B5CF6" fontSize="12" fontWeight="bold" textAnchor="middle">M bisects AB</text>
-                        </>}
+                    {/* AM = MB and M bisects AB labels - Grouped nicely below the circle */}
+                    <text x={cx} y={cy + r + 30} fill="#8B5CF6" fontSize="16" fontWeight="bold" textAnchor="middle">AM = MB</text>
+                    <text x={cx} y={cy + r + 50} fill="#8B5CF6" fontSize="14" textAnchor="middle">M bisects AB</text>
+                </>
+            )}
 
-                        {/* Theorem Statement / Converse */}
-                        {step >= 5 && <>
-                            <rect x="-10" y="350" width="420" height="100" fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" rx="10" />
-                            <text x="200" y="370" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
-                                Chord Bisector Theorem (Both Directions)
-                            </text>
-                            <text x="200" y="388" textAnchor="middle" fill="#0C4A6E" fontSize="12">
-                                1. Perpendicular from center to chord bisects the chord
-                            </text>
-                            <text x="200" y="404" textAnchor="middle" fill="#0C4A6E" fontSize="12">
-                                2. Line from center through midpoint of chord is perpendicular to chord
-                            </text>
-                            <text x="200" y="420" textAnchor="middle" fill="#DC2626" fontSize="12" fontWeight="bold">
-                                Both statements are equivalent and always true!
-                            </text>
-                        </>}
-                    </svg>
+            {/* Theorem Statement / Converse */}
+            {step >= 5 && (
+                <>
+                    {/* Adjusted position of the box and text for better vertical spacing */}
+                    <rect x="0" y="380" width="400" height="110" fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" rx="10" />
+                    <text x="200" y="400" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
+                        Chord Bisector Theorem (Both Directions)
+                    </text>
+                    <text x="200" y="418" textAnchor="middle" fill="#0C4A6E" fontSize="12">
+                        1. Perpendicular from center to chord bisects the chord
+                    </text>
+                    <text x="200" y="434" textAnchor="middle" fill="#0C4A6E" fontSize="12">
+                        2. Line from center through midpoint of chord is perpendicular to chord
+                    </text>
+                    <text x="200" y="452" textAnchor="middle" fill="#DC2626" fontSize="12" fontWeight="bold">
+                        Both statements are equivalent and always true!
+                    </text>
+                </>
+            )}
+        </svg>
                 </div>
             </div>
         </div>

@@ -97,7 +97,7 @@ const ProofDiagram = () => {
             {/* 4. Circle Diagram (your original code, untouched) */}
             <div className="mt-6">
                 <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
-                    <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
+                    <svg width="400" height="450" viewBox="0 0 400 350" className="mx-auto">
     {/* Circle and center */}
     <circle cx={cx} cy={cy} r={r} fill="none" stroke="#A0AEC0" strokeWidth="2" /> {/* Neutral gray for circle */}
     <circle cx={cx} cy={cy} r="4" fill="#3182CE" /> {/* Distinct blue for center O */}
@@ -146,10 +146,10 @@ const ProofDiagram = () => {
     )}
     
     {/* Conclusion box */}
-    {step >= 4 && (
+     {step >= 4 && (
         <g>
-            <rect x="50" y="50" width="300" height="40" fill="#EBF8FF" stroke="#3182CE" strokeWidth="2" rx="10" /> {/* Light blue background for box */}
-            <text x="200" y="75" textAnchor="middle" fill="#2C5282" fontSize="15" fontWeight="bold">OM ⊥ AB ⇒ AM = MB ✓</text> {/* Darker blue for text */}
+            <rect x="50" y={cy + r + 50} width="300" height="40" fill="#EBF8FF" stroke="#3182CE" strokeWidth="2" rx="10" />
+            <text x="200" y={cy + r + 75} textAnchor="middle" fill="#2C5282" fontSize="15" fontWeight="bold">OM ⊥ AB ⇒ AM = MB ✓</text>
         </g>
     )}
 </svg>

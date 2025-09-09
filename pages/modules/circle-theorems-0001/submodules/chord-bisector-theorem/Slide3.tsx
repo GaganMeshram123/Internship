@@ -172,219 +172,211 @@ export default function ChordBisectorTheoremSlide2() {
             <div className="mt-6">
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Center Construction Method</h3>
-                    <svg width="420" height="500" viewBox="0 0 400 350" className="mx-auto">
-                        {/* Circle (initially hidden center) */}
-                        {step >= 1 && (
-                            <circle 
-                                cx={cx} 
-                                cy={cy} 
-                                r={r} 
-                                fill="none" 
-                                stroke="#64748B" 
-                                strokeWidth="2"
-                                className="animate-[draw_1s_ease-in-out]"
-                            />
-                        )}
-                        
-                        {/* First chord AB */}
-                        {step >= 2 && (
-                            <g>
-                                {/* Chord endpoints */}
-                                <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
-                                <circle cx={Bx} cy={By} r="4" fill="#3B82F6" />
-                                <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
-                                <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
-                                
-                                {/* Chord line */}
-                                <line 
-                                    x1={Ax} 
-                                    y1={Ay} 
-                                    x2={Bx} 
-                                    y2={By} 
-                                    stroke="#3B82F6" 
-                                    strokeWidth="3"
-                                    className="animate-[draw_1s_ease-in-out]"
-                                />
-                                <text x={(Ax + Bx) / 2 - 30} y={(Ay + By) / 2 - 10} fill="#3B82F6" fontSize="12" fontWeight="bold">Chord AB</text>
-                            </g>
-                        )}
-                        
-                        {/* First perpendicular bisector */}
-                        {step >= 3 && (
-                            <g>
-                                {/* Midpoint of AB */}
-                                <circle cx={Mx} cy={My} r="3" fill="#10B981" />
-                                <text x={Mx + 10} y={My - 2} fill="#10B981" fontSize="12" fontWeight="bold">M₁</text>
-                                
-                                {/* Perpendicular bisector - extend through center */}
-                                <line 
-                                    x1={cx} 
-                                    y1={cy} 
-                                    x2={Mx} 
-                                    y2={My} 
-                                    stroke="#10B981" 
-                                    strokeWidth="3"
-                                    strokeDasharray="5,5"
-                                    className="animate-[draw_2s_ease-in-out]"
-                                />
-                                {/* Extend line beyond midpoint */}
-                                <line 
-                                    x1={Mx} 
-                                    y1={My} 
-                                    x2={2 * Mx - cx} 
-                                    y2={2 * My - cy} 
-                                    stroke="#10B981" 
-                                    strokeWidth="3"
-                                    strokeDasharray="5,5"
-                                    className="animate-[draw_2s_ease-in-out]"
-                                />
-                                <text x={Mx + 20} y={My - 20} fill="#10B981" fontSize="12" fontWeight="bold">Perp. Bisector 1</text>
-                                
-                                {/* Right angle at midpoint */}
-                                {(() => {
-                                    const { arc, labelX, labelY } = angleArc(Mx, My, cx, cy, Ax, Ay, 15);
-                                    return <>
-                                        <path d={arc} fill="none" stroke="#F59E0B" strokeWidth="2" />
-                                        <text x={labelX} y={labelY} fill="#F59E0B" fontSize="10" fontWeight="bold" textAnchor="middle">90°</text>
-                                    </>;
-                                })()}
-                            </g>
-                        )}
-                        
-                        {/* Second chord CD */}
-                        {step >= 4 && (
-                            <g>
-                                {/* Chord endpoints */}
-                                <circle cx={Cx} cy={Cy} r="4" fill="#8B5CF6" />
-                                <circle cx={Dx} cy={Dy} r="4" fill="#8B5CF6" />
-                                <text x={Cx + (Cx > cx ? 10 : -20)} y={Cy + (Cy > cy ? 18 : -8)} fill="#8B5CF6" fontSize="16" fontWeight="bold">C</text>
-                                <text x={Dx + (Dx > cx ? 10 : -20)} y={Dy + (Dy > cy ? 18 : -8)} fill="#8B5CF6" fontSize="16" fontWeight="bold">D</text>
-                                {/* Chord line */}
-                                <line 
-                                    x1={Cx} 
-                                    y1={Cy} 
-                                    x2={Dx} 
-                                    y2={Dy} 
-                                    stroke="#8B5CF6" 
-                                    strokeWidth="3"
-                                    className="animate-[draw_1s_ease-in-out]"
-                                />
-                                <text x={(Cx + Dx) / 2 - 30} y={(Cy + Dy) / 2 - 10} fill="#8B5CF6" fontSize="12" fontWeight="bold">Chord CD</text>
-                            </g>
-                        )}
-                        
-                        {/* Second perpendicular bisector */}
-                        {step >= 5 && (
-                            <g>
-                                {/* Midpoint of CD */}
-                                <circle cx={M2x} cy={M2y} r="3" fill="#F59E0B" />
-                                <text x={M2x + 10} y={M2y - 2} fill="#F59E0B" fontSize="12" fontWeight="bold">M₂</text>
-                                {/* Perpendicular bisector */}
-                                {/* Find perpendicular bisector direction for CD */}
-                                {(() => {
-                                    // Direction vector of CD
-                                    const dx = Dx - Cx, dy = Dy - Cy;
-                                    // Perpendicular direction
-                                    const perpDx = -dy, perpDy = dx;
-                                    // Normalize and scale for line length
-                                    const len = Math.sqrt(perpDx * perpDx + perpDy * perpDy);
-                                    const scale = 100; // length of bisector line
-                                    const x1 = M2x - (perpDx / len) * scale;
-                                    const y1 = M2y - (perpDy / len) * scale;
-                                    const x2 = M2x + (perpDx / len) * scale;
-                                    const y2 = M2y + (perpDy / len) * scale;
-                                    return <>
-                                        <line 
-                                            x1={x1} 
-                                            y1={y1} 
-                                            x2={x2} 
-                                            y2={y2} 
-                                            stroke="#F59E0B" 
-                                            strokeWidth="3"
-                                            strokeDasharray="5,5"
-                                            className="animate-[draw_2s_ease-in-out]"
-                                        />
-                                        <text x={x2 + 5} y={y2} fill="#F59E0B" fontSize="12" fontWeight="bold">Perp. Bisector 2</text>
-                                    </>;
-                                })()}
-                                {/* Right angle at midpoint */}
-                                <rect 
-                                    x={M2x - 10} y={M2y - 10} width="20" height="20" 
-                                    fill="none" stroke="#10B981" strokeWidth="2"
-                                />
-                            </g>
-                        )}
-                        
-                        {/* Intersection point */}
-                        {step >= 6 && (
-                            <g>
-                                <circle 
-                                    cx="200" 
-                                    cy="175" 
-                                    r="8" 
-                                    fill="none" 
-                                    stroke="#DC2626" 
-                                    strokeWidth="4"
-                                    className="animate-pulse"
-                                />
-                                <text x="210" y="173" fill="#DC2626" fontSize="16" fontWeight="bold">O</text>
-                                <text x="205" y="190" fill="#DC2626" fontSize="12" fontWeight="bold">Center!</text>
-                            </g>
-                        )}
-                        
-                        {/* Center verification */}
-                        {step >= 7 && (
-                            <g>
-                                {/* Radii to all points */}
-                                <line x1="200" y1="175" x2="130" y2="120" stroke="#DC2626" strokeWidth="2" strokeDasharray="2,2" strokeOpacity="0.7" />
-                                <line x1="200" y1="175" x2="270" y2="230" stroke="#DC2626" strokeWidth="2" strokeDasharray="2,2" strokeOpacity="0.7" />
-                                <line x1="200" y1="175" x2="140" y2="240" stroke="#DC2626" strokeWidth="2" strokeDasharray="2,2" strokeOpacity="0.7" />
-                                <line x1="200" y1="175" x2="260" y2="110" stroke="#DC2626" strokeWidth="2" strokeDasharray="2,2" strokeOpacity="0.7" />
-                                
-                                {/* Equal radius annotations */}
-                                <text x="160" y="140" fill="#DC2626" fontSize="10" fontWeight="bold">r</text>
-                                <text x="240" y="210" fill="#DC2626" fontSize="10" fontWeight="bold">r</text>
-                                <text x="165" y="210" fill="#DC2626" fontSize="10" fontWeight="bold">r</text>
-                                <text x="235" y="140" fill="#DC2626" fontSize="10" fontWeight="bold">r</text>
-                                
-                                <rect 
-                                    x="30" y="280" width="340" height="50" 
-                                    fill="#E6F7FF" stroke="#1890FF" strokeWidth="2" 
-                                    rx="10"
-                                    className="animate-[fade-in_1s_ease-in-out]"
-                                />
-                                <text x="200" y="300" textAnchor="middle" fill="#002766" fontSize="14" fontWeight="bold">
-                                    Success! All distances from O are equal (radius)
-                                </text>
-                                <text x="200" y="318" textAnchor="middle" fill="#002766" fontSize="12">
-                                    Perpendicular bisectors of any two chords intersect at the center
-                                </text>
-                            </g>
-                        )}
-                        
-                        {/* Construction steps box */}
-                        {step >= 3 && (
-                            <rect 
-                                x="0" y="330" width="400" height="60" 
-                                fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
-                                rx="10"
-                                className="animate-[fade-in_1s_ease-in-out]"
-                            />
-                        )}
-                        {step >= 3 && (
-                            <g>
-                                <text x="200" y="350" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">
-                                    Circle Center Construction Method
-                                </text>
-                                <text x="200" y="368" textAnchor="middle" fill="#1F2937" fontSize="12">
-                                    Step 1: Draw any chord → Step 2: Find its perpendicular bisector
-                                </text>
-                                <text x="200" y="382" textAnchor="middle" fill="#1F2937" fontSize="12">
-                                    Step 3: Repeat with another chord → Step 4: Intersection = Center
-                                </text>
-                            </g>
-                        )}
-                    </svg>
+                    <svg width="420" height="500" viewBox="0 0 420 500" className="mx-auto">
+    {/* Circle and its initial state */}
+    {step >= 1 && (
+        <circle 
+            cx={cx} 
+            cy={cy} 
+            r={r} 
+            fill="none" 
+            stroke="#64748B" 
+            strokeWidth="2"
+        />
+    )}
+    
+    {/* First chord AB */}
+    {step >= 2 && (
+        <g>
+            {/* Chord endpoints and labels */}
+            <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
+            <circle cx={Bx} cy={By} r="4" fill="#3B82F6" />
+            <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
+            <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
+            
+            {/* Chord line */}
+            <line 
+                x1={Ax} 
+                y1={Ay} 
+                x2={Bx} 
+                y2={By} 
+                stroke="#3B82F6" 
+                strokeWidth="3"
+            />
+            {/* Chord label repositioned for clarity */}
+            <text x={(Ax + Bx) / 2} y={(Ay + By) / 2 - 20} fill="#3B82F6" fontSize="12" fontWeight="bold" textAnchor="middle">Chord AB</text>
+        </g>
+    )}
+    
+    {/* First perpendicular bisector */}
+    {step >= 3 && (
+        <g>
+            {/* Midpoint of AB */}
+            <circle cx={Mx} cy={My} r="3" fill="#10B981" />
+            <text x={Mx + 10} y={My - 2} fill="#10B981" fontSize="12" fontWeight="bold">M₁</text>
+            
+            {/* Perpendicular bisector line */}
+            <line 
+                x1={cx} 
+                y1={cy} 
+                x2={Mx} 
+                y2={My} 
+                stroke="#10B981" 
+                strokeWidth="3"
+                strokeDasharray="5,5"
+            />
+            {/* Extended line to show it passes through the center */}
+            <line 
+                x1={Mx} 
+                y1={My} 
+                x2={2 * Mx - cx} 
+                y2={2 * My - cy} 
+                stroke="#10B981" 
+                strokeWidth="3"
+                strokeDasharray="5,5"
+            />
+            {/* Perpendicular bisector label repositioned */}
+            <text x={Mx + 20} y={My - 20} fill="#10B981" fontSize="12" fontWeight="bold">Perp. Bisector 1</text>
+            
+            {/* Right angle at midpoint */}
+            {(() => {
+                const lineAngle = Math.atan2(By - Ay, Bx - Ax);
+                const rectSize = 10;
+                return (
+                    <rect 
+                        x={Mx + rectSize * Math.sin(lineAngle)} 
+                        y={My - rectSize * Math.cos(lineAngle)} 
+                        width={rectSize} 
+                        height={rectSize} 
+                        fill="none" 
+                        stroke="#F59E0B" 
+                        strokeWidth="2" 
+                        transform={`rotate(${lineAngle * 180 / Math.PI}, ${Mx}, ${My})`}
+                    />
+                );
+            })()}
+        </g>
+    )}
+    
+    {/* Second chord CD */}
+    {step >= 4 && (
+        <g>
+            {/* Chord endpoints and labels */}
+            <circle cx={Cx} cy={Cy} r="4" fill="#8B5CF6" />
+            <circle cx={Dx} cy={Dy} r="4" fill="#8B5CF6" />
+            <text x={Cx + (Cx > cx ? 10 : -20)} y={Cy + (Cy > cy ? 18 : -8)} fill="#8B5CF6" fontSize="16" fontWeight="bold">C</text>
+            <text x={Dx + (Dx > cx ? 10 : -20)} y={Dy + (Dy > cy ? 18 : -8)} fill="#8B5CF6" fontSize="16" fontWeight="bold">D</text>
+            {/* Chord line */}
+            <line 
+                x1={Cx} 
+                y1={Cy} 
+                x2={Dx} 
+                y2={Dy} 
+                stroke="#8B5CF6" 
+                strokeWidth="3"
+            />
+            <text x={(Cx + Dx) / 2} y={(Cy + Dy) / 2 - 20} fill="#8B5CF6" fontSize="12" fontWeight="bold" textAnchor="middle">Chord CD</text>
+        </g>
+    )}
+    
+    {/* Second perpendicular bisector */}
+    {step >= 5 && (
+        <g>
+            {/* Midpoint of CD */}
+            <circle cx={M2x} cy={M2y} r="3" fill="#F59E0B" />
+            <text x={M2x + 10} y={M2y - 2} fill="#F59E0B" fontSize="12" fontWeight="bold">M₂</text>
+            {/* Perpendicular bisector */}
+            <line 
+                x1={cx} 
+                y1={cy} 
+                x2={M2x} 
+                y2={M2y} 
+                stroke="#F59E0B" 
+                strokeWidth="3"
+                strokeDasharray="5,5"
+            />
+            {/* Extend line beyond midpoint */}
+            <line 
+                x1={M2x} 
+                y1={M2y} 
+                x2={2 * M2x - cx} 
+                y2={2 * M2y - cy} 
+                stroke="#F59E0B" 
+                strokeWidth="3"
+                strokeDasharray="5,5"
+            />
+            <text x={M2x + 20} y={M2y - 20} fill="#F59E0B" fontSize="12" fontWeight="bold">Perp. Bisector 2</text>
+            
+            {/* Right angle at midpoint */}
+            {(() => {
+                const lineAngle = Math.atan2(Dy - Cy, Dx - Cx);
+                const rectSize = 10;
+                return (
+                    <rect 
+                        x={M2x + rectSize * Math.sin(lineAngle)} 
+                        y={M2y - rectSize * Math.cos(lineAngle)} 
+                        width={rectSize} 
+                        height={rectSize} 
+                        fill="none" 
+                        stroke="#10B981" 
+                        strokeWidth="2" 
+                        transform={`rotate(${lineAngle * 180 / Math.PI}, ${M2x}, ${M2y})`}
+                    />
+                );
+            })()}
+        </g>
+    )}
+    
+    {/* Intersection point */}
+    {step >= 6 && (
+        <g>
+            {/* Re-highlight center O */}
+            <circle cx={cx} cy={cy} r="8" fill="none" stroke="#DC2626" strokeWidth="4" />
+            <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="16" fontWeight="bold">O</text>
+            <text x={cx + 5} y={cy + 15} fill="#DC2626" fontSize="12" fontWeight="bold">Center!</text>
+        </g>
+    )}
+    
+    {/* Construction steps box - repositioned */}
+    {step >= 3 && (
+        <g>
+            <rect 
+                x="10" y="340" width="400" height="60" 
+                fill="#F3F4F6" stroke="#6B7280" strokeWidth="2" 
+                rx="10"
+            />
+            <text x="210" y="360" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">
+                Circle Center Construction Method
+            </text>
+            <text x="210" y="378" textAnchor="middle" fill="#1F2937" fontSize="12">
+                Step 1: Draw any chord → Step 2: Find its perpendicular bisector
+            </text>
+            <text x="210" y="392" textAnchor="middle" fill="#1F2937" fontSize="12">
+                Step 3: Repeat with another chord → Step 4: Intersection = Center
+            </text>
+        </g>
+    )}
+    
+    {/* Final conclusion box - repositioned */}
+    {step >= 7 && (
+    <g>
+        <rect 
+            x="10" y="420" width="400" height="50" 
+            fill="#E0F2FE" stroke="#0EA5E9" strokeWidth="2" 
+            rx="10"
+        />
+        <text x="210" y="435" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
+            The perpendicular bisectors of any two chords
+        </text>
+        <text x="210" y="450" textAnchor="middle" fill="#0C4A6E" fontSize="14" fontWeight="bold">
+            intersect at the center.
+        </text>
+        <text x="210" y="465" textAnchor="middle" fill="#DC2626" fontSize="12" fontWeight="bold">
+            This is a method for finding the center of a circle!
+        </text>
+    </g>
+)}
+</svg>
                      
                 </div>
             </div>
