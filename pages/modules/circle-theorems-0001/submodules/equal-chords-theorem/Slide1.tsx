@@ -182,130 +182,128 @@ export default function EqualChordsTheoremSlide1() {
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Equal Chords Theorem</h3>
                     
                     <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-                        {/* Circle - shown from step 1 */}
-                        {step >= 1 && (
-                            <>
-                                <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
-                                {/* Center O */}
-                                <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
-                                <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
-                            </>
-                        )}
+    {/* Circle - shown from step 1 */}
+    {step >= 1 && (
+        <>
+            <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
+            {/* Center O */}
+            <circle cx={cx} cy={cy} r="4" fill="#DC2626" />
+            <text x={cx + 10} y={cy - 2} fill="#DC2626" fontSize="14" fontWeight="bold">O</text>
+        </>
+    )}
 
-                        {/* First chord AB - shown from step 2 */}
-                        {step >= 2 && (
-                            <>
-                                {/* Triangle OAB */}
-                                <path d={`M ${cx} ${cy} L ${A1x} ${A1y} L ${B1x} ${B1y} Z`} fill="rgba(59, 130, 246, 0.3)" stroke="#3B82F6" strokeWidth="2" />
-                                {/* Points and labels for AB */}
-                                <circle cx={A1x} cy={A1y} r="4" fill="#3B82F6" />
-                                <circle cx={B1x} cy={B1y} r="4" fill="#3B82F6" />
-                                <text x={A1x + (A1x > cx ? 10 : -20)} y={A1y + (A1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">A</text>
-                                <text x={B1x + (B1x > cx ? 10 : -20)} y={B1y + (B1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">B</text>
-                            </>
-                        )}
+    {/* First chord AB - shown from step 2 */}
+    {step >= 2 && (
+        <>
+            {/* Triangle OAB */}
+            <path d={`M ${cx} ${cy} L ${A1x} ${A1y} L ${B1x} ${B1y} Z`} fill="rgba(59, 130, 246, 0.3)" stroke="#3B82F6" strokeWidth="2" />
+            {/* Points and labels for AB */}
+            <circle cx={A1x} cy={A1y} r="4" fill="#3B82F6" />
+            <circle cx={B1x} cy={B1y} r="4" fill="#3B82F6" />
+            <text x={A1x + (A1x > cx ? 10 : -20)} y={A1y + (A1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">A</text>
+            <text x={B1x + (B1x > cx ? 10 : -20)} y={B1y + (B1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">B</text>
+        </>
+    )}
 
-                        {/* Second chord CD - shown from step 3 */}
-                        {step >= 3 && (
-                            <>
-                                {/* Triangle OCD */}
-                                <path d={`M ${cx} ${cy} L ${A2x} ${A2y} L ${B2x} ${B2y} Z`} fill="rgba(16, 185, 129, 0.3)" stroke="#10B981" strokeWidth="2" />
-                                {/* Points and labels for CD */}
-                                <circle cx={A2x} cy={A2y} r="4" fill="#10B981" />
-                                <circle cx={B2x} cy={B2y} r="4" fill="#10B981" />
-                                <text x={A2x + (A2x > cx ? 10 : -20)} y={A2y + (A2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">C</text>
-                                <text x={B2x + (B2x > cx ? 10 : -20)} y={B2y + (B2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">D</text>
-                            </>
-                        )}
+    {/* Second chord CD - shown from step 3 */}
+    {step >= 3 && (
+        <>
+            {/* Triangle OCD */}
+            <path d={`M ${cx} ${cy} L ${A2x} ${A2y} L ${B2x} ${B2y} Z`} fill="rgba(16, 185, 129, 0.3)" stroke="#10B981" strokeWidth="2" />
+            {/* Points and labels for CD */}
+            <circle cx={A2x} cy={A2y} r="4" fill="#10B981" />
+            <circle cx={B2x} cy={B2y} r="4" fill="#10B981" />
+            <text x={A2x + (A2x > cx ? 10 : -20)} y={A2y + (A2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">C</text>
+            <text x={B2x + (B2x > cx ? 10 : -20)} y={B2y + (B2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">D</text>
+        </>
+    )}
 
-                        {/* Equal chords indication - shown from step 4 */}
-                        {step >= 4 && (
-                            <>
-                                {/* Tick marks and equality label for AB and CD */}
-                                {(() => {
-                                    // Midpoints of AB and CD
-                                    const M1x = (A1x + B1x) / 2, M1y = (A1y + B1y) / 2;
-                                    const M2x = (A2x + B2x) / 2, M2y = (A2y + B2y) / 2;
-                                    // Tick marks for AB and CD
-                                    const tickLen = 14;
-                                    const dx1 = (B1y - A1y), dy1 = -(B1x - A1x);
-                                    const norm1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-                                    const tx1 = dx1 / norm1, ty1 = dy1 / norm1;
-                                    const dx2 = (B2y - A2y), dy2 = -(B2x - A2x);
-                                    const norm2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-                                    const tx2 = dx2 / norm2, ty2 = dy2 / norm2;
-                                    return (
-                                        <>
-                                            {/* AB tick */}
-                                            <line x1={M1x - tx1 * tickLen / 2} y1={M1y - ty1 * tickLen / 2} x2={M1x + tx1 * tickLen / 2} y2={M1y + ty1 * tickLen / 2} stroke="#8B5CF6" strokeWidth="3" />
-                                            {/* CD tick */}
-                                            <line x1={M2x - tx2 * tickLen / 2} y1={M2y - ty2 * tickLen / 2} x2={M2x + tx2 * tickLen / 2} y2={M2y + ty2 * tickLen / 2} stroke="#8B5CF6" strokeWidth="3" />
-                                            {/* Equality label */}
-                                            <text x={cx} y={(M1y + M2y) / 2 - 10} fill="#8B5CF6" fontSize="15" fontWeight="bold" textAnchor="middle">AB = CD</text>
-                                        </>
-                                    );
-                                })()}
-                            </>
-                        )}
+    {/* Equal chords indication - shown from step 4 */}
+    {step >= 4 && (
+        <>
+            {(() => {
+                // Midpoints of AB and CD
+                const M1x = (A1x + B1x) / 2, M1y = (A1y + B1y) / 2;
+                const M2x = (A2x + B2x) / 2, M2y = (A2y + B2y) / 2;
+                // Tick marks for AB and CD
+                const tickLen = 14;
+                const dx1 = (B1y - A1y), dy1 = -(B1x - A1x);
+                const norm1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+                const tx1 = dx1 / norm1, ty1 = dy1 / norm1;
+                const dx2 = (B2y - A2y), dy2 = -(B2x - A2x);
+                const norm2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                const tx2 = dx2 / norm2, ty2 = dy2 / norm2;
+                return (
+                    <>
+                        {/* AB tick */}
+                        <line x1={M1x - tx1 * tickLen / 2} y1={M1y - ty1 * tickLen / 2} x2={M1x + tx1 * tickLen / 2} y2={M1y + ty1 * tickLen / 2} stroke="#8B5CF6" strokeWidth="3" />
+                        {/* CD tick */}
+                        <line x1={M2x - tx2 * tickLen / 2} y1={M2y - ty2 * tickLen / 2} x2={M2x + tx2 * tickLen / 2} y2={M2y + ty2 * tickLen / 2} stroke="#8B5CF6" strokeWidth="3" />
+                        {/* Equality label - moved to the right */}
+                        <text x={cx + 100} y={cy - 20} fill="#8B5CF6" fontSize="15" fontWeight="bold" textAnchor="middle">AB ≅ CD</text>
+                    </>
+                );
+            })()}
+        </>
+    )}
 
-                        {/* Central angles - shown from step 5 */}
-                        {step >= 5 && (
-                            <>
-                                {/* Angle arcs */}
-                                {(() => {
-                                    const arc1 = angleArc(cx, cy, A1x, A1y, B1x, B1y, 25);
-                                    const arc2 = angleArc(cx, cy, A2x, A2y, B2x, B2y, 25);
-                                    return (
-                                        <>
-                                            <path d={arc1.arc} fill="none" stroke="#F59E0B" strokeWidth="2" />
-                                            <text x={arc1.labelX} y={arc1.labelY} fill="#F59E0B" fontSize="12" fontWeight="bold">∠AOB</text>
-                                            <path d={arc2.arc} fill="none" stroke="#F59E0B" strokeWidth="2" />
-                                            <text x={arc2.labelX} y={arc2.labelY} fill="#F59E0B" fontSize="12" fontWeight="bold">∠COD</text>
-                                            {/* Equal angles label */}
-                                            <text x={cx} y={cy - 50} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">∠AOB = ∠COD</text>
-                                        </>
-                                    );
-                                })()}
-                            </>
-                        )}
+    {/* Central angles - shown from step 5 */}
+    {step >= 5 && (
+        <>
+            {(() => {
+                const arc1 = angleArc(cx, cy, A1x, A1y, B1x, B1y, 25);
+                const arc2 = angleArc(cx, cy, A2x, A2y, B2x, B2y, 25);
+                return (
+                    <>
+                        <path d={arc1.arc} fill="none" stroke="#F59E0B" strokeWidth="2" />
+                        <text x={arc1.labelX} y={arc1.labelY} fill="#F59E0B" fontSize="12" fontWeight="bold">∠AOB</text>
+                        <path d={arc2.arc} fill="none" stroke="#F59E0B" strokeWidth="2" />
+                        <text x={arc2.labelX} y={arc2.labelY} fill="#F59E0B" fontSize="12" fontWeight="bold">∠COD</text>
+                        {/* Equal angles label - moved to the left */}
+                        <text x={cx - 100} y={cy - 20} fill="#F59E0B" fontSize="14" fontWeight="bold" textAnchor="middle">∠AOB ≅ ∠COD</text>
+                    </>
+                );
+            })()}
+        </>
+    )}
 
-                        {/* Perpendicular distances - shown from step 6 */}
-                        {step >= 6 && (
-                            <>
-                                {/* Perpendiculars from O to AB and CD, right angle markers, and distance labels */}
-                                {(() => {
-                                    // Midpoints
-                                    const M1x = (A1x + B1x) / 2, M1y = (A1y + B1y) / 2;
-                                    const M2x = (A2x + B2x) / 2, M2y = (A2y + B2y) / 2;
-                                    // Perpendiculars
-                                    return (
-                                        <>
-                                            {/* Perpendicular from O to AB */}
-                                            <line x1={cx} y1={cy} x2={M1x} y2={M1y} stroke="#E11D48" strokeWidth="2" strokeDasharray="5 4" />
-                                            {/* Right angle marker at M1 */}
-                                            <circle cx={M1x} cy={M1y} r="3" fill="#E11D48" />
-                                            {/* Distance label d₁ */}
-                                            <text x={(cx + M1x) / 2 - 12} y={(cy + M1y) / 2 - 8} fill="#E11D48" fontSize="13" fontWeight="bold">d₁</text>
-                                            
-                                            {/* Perpendicular from O to CD */}
-                                            <line x1={cx} y1={cy} x2={M2x} y2={M2y} stroke="#E11D48" strokeWidth="2" strokeDasharray="5 4" />
-                                            {/* Right angle marker at M2 */}
-                                            <circle cx={M2x} cy={M2y} r="3" fill="#E11D48" />
-                                            {/* Distance label d₂ */}
-                                            <text x={(cx + M2x) / 2 - 12} y={(cy + M2y) / 2 + 16} fill="#E11D48" fontSize="13" fontWeight="bold">d₂</text>
-                                        </>
-                                    );
-                                })()}
-                            </>
-                        )}
+    {/* Perpendicular distances - shown from step 6 */}
+    {step >= 6 && (
+        <>
+            {(() => {
+                // Midpoints
+                const M1x = (A1x + B1x) / 2, M1y = (A1y + B1y) / 2;
+                const M2x = (A2x + B2x) / 2, M2y = (A2y + B2y) / 2;
+                // Perpendiculars
+                return (
+                    <>
+                        {/* Perpendicular from O to AB */}
+                        <line x1={cx} y1={cy} x2={M1x} y2={M1y} stroke="#E11D48" strokeWidth="2" strokeDasharray="5 4" />
+                        {/* Right angle marker at M1 */}
+                        <circle cx={M1x} cy={M1y} r="3" fill="#E11D48" />
+                        {/* Distance label d₁ */}
+                        <text x={(cx + M1x) / 2 - 12} y={(cy + M1y) / 2 - 8} fill="#E11D48" fontSize="13" fontWeight="bold">d₁</text>
+                        
+                        {/* Perpendicular from O to CD */}
+                        <line x1={cx} y1={cy} x2={M2x} y2={M2y} stroke="#E11D48" strokeWidth="2" strokeDasharray="5 4" />
+                        {/* Right angle marker at M2 */}
+                        <circle cx={M2x} cy={M2y} r="3" fill="#E11D48" />
+                        {/* Distance label d₂ */}
+                        <text x={(cx + M2x) / 2 - 12} y={(cy + M2y) / 2 + 16} fill="#E11D48" fontSize="13" fontWeight="bold">d₂</text>
+                    </>
+                );
+            })()}
+        </>
+    )}
 
-                        {/* Final conclusion - shown from step 7 */}
-                        {step >= 7 && (
-                            <>
-                                <text x={cx} y={320} fill="#059669" fontSize="14" fontWeight="bold" textAnchor="middle">d₁ = d₂ (equidistant from center)</text>
-                            </>
-                        )}
-                    </svg>
+    {/* Final conclusion - shown from step 7 */}
+    {step >= 7 && (
+        <>
+            <text x={cx} y={320} fill="#059669" fontSize="14" fontWeight="bold" textAnchor="middle">d₁ = d₂ (equidistant from center)</text>
+        </>
+    )}
+</svg>
+
                 </div>
             </div>
         </div>

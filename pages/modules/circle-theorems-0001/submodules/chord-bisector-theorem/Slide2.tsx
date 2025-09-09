@@ -98,55 +98,61 @@ const ProofDiagram = () => {
             <div className="mt-6">
                 <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
                     <svg width="400" height="350" viewBox="0 0 400 350" className="mx-auto">
-                        {/* Circle and center */}
-                        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
-                        <circle cx={cx} cy={cy} r="4" fill="#3B82F6" />
-                        <text x={cx + 10} y={cy - 2} fill="#3B82F6" fontSize="14" fontWeight="bold">O</text>
-                        {/* Chord AB */}
-                        <circle cx={Ax} cy={Ay} r="4" fill="#3B82F6" />
-                        <circle cx={Bx} cy={By} r="4" fill="#3B82F6" />
-                        <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">A</text>
-                        <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#3B82F6" fontSize="16" fontWeight="bold">B</text>
-                        <line x1={Ax} y1={Ay} x2={Bx} y2={By} stroke="#3B82F6" strokeWidth="3" />
-                        {/* Midpoint M */}
-                        <circle cx={Mx} cy={My} r="5" fill="#F59E0B" />
-                        <text x={Mx + 10} y={My - 10} fill="#F59E0B" fontSize="16" fontWeight="bold">M</text>
-                        {/* Perpendicular OM */}
-                        <line x1={cx} y1={cy} x2={Mx} y2={My} stroke="#10B981" strokeWidth="3" />
-                        <text x={(cx + Mx) / 2 - 22} y={(cy + My) / 2 - 20} fill="#10B981" fontSize="12" fontWeight="bold">OM ⊥ AB</text>
-                        {/* Right angle at M */}
-                        <rect x={Mx - 7} y={My - 7} width="12" height="12" fill="none" stroke="#F59E0B" strokeWidth="2" transform={`rotate(${Math.atan2(cy-My, cx-Mx)*180/Math.PI},${Mx},${My})`} />
-                        {/* Congruent triangles highlight */}
-                        {step >= 2 && (
-                            <>
-                                {/* △OAM */}
-                                <polygon points={`${cx},${cy} ${Ax},${Ay} ${Mx},${My}`} fill="#3B82F6" fillOpacity="0.13" stroke="#3B82F6" strokeWidth="2" />
-                                {/* △OBM */}
-                                <polygon points={`${cx},${cy} ${Bx},${By} ${Mx},${My}`} fill="#10B981" fillOpacity="0.13" stroke="#10B981" strokeWidth="2" />
-                                {/* Triangle labels */}
-                                <text x={(cx + Ax + Mx) / 3 - 10} y={(cy + Ay + My) / 3 - 10} fill="#3B82F6" fontSize="13" fontWeight="bold">△OAM</text>
-                                <text x={(cx + Bx + Mx) / 3 + 10} y={(cy + By + My) / 3 + 10} fill="#10B981" fontSize="13" fontWeight="bold">△OBM</text>
-                            </>
-                        )}
-                        {/* Equal segments */}
-                        {step >= 3 && (
-                            <>
-                                {/* Tick marks for AM and MB */}
-                                <line x1={Ax} y1={Ay} x2={Mx} y2={My} stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 4" />
-                                <line x1={Bx} y1={By} x2={Mx} y2={My} stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 4" />
-                                <text x={(Ax + Mx) / 2 - 18} y={(Ay + My) / 2 - 8} fill="#8B5CF6" fontSize="13" fontWeight="bold">AM</text>
-                                <text x={(Bx + Mx) / 2 + 18} y={(By + My) / 2 + 8} fill="#8B5CF6" fontSize="13" fontWeight="bold">MB</text>
-                                <text x={Mx - 30} y={My + 40} fill="#8B5CF6" fontSize="14" fontWeight="bold">AM = MB</text>
-                            </>
-                        )}
-                        {/* Conclusion box */}
-                        {step >= 4 && (
-                            <g>
-                                <rect x="50" y="50" width="300" height="40" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="2" rx="10" />
-                                <text x="200" y="75" textAnchor="middle" fill="#1E40AF" fontSize="15" fontWeight="bold">OM ⊥ AB ⇒ AM = MB ✓</text>
-                            </g>
-                        )}
-                    </svg>
+    {/* Circle and center */}
+    <circle cx={cx} cy={cy} r={r} fill="none" stroke="#A0AEC0" strokeWidth="2" /> {/* Neutral gray for circle */}
+    <circle cx={cx} cy={cy} r="4" fill="#3182CE" /> {/* Distinct blue for center O */}
+    <text x={cx + 10} y={cy - 2} fill="#3182CE" fontSize="14" fontWeight="bold">O</text>
+    {/* Chord AB */}
+    <circle cx={Ax} cy={Ay} r="4" fill="#3182CE" />
+    <circle cx={Bx} cy={By} r="4" fill="#3182CE" />
+    <text x={Ax + (Ax > cx ? 10 : -20)} y={Ay + (Ay > cy ? 18 : -8)} fill="#3182CE" fontSize="16" fontWeight="bold">A</text>
+    <text x={Bx + (Bx > cx ? 10 : -20)} y={By + (By > cy ? 18 : -8)} fill="#3182CE" fontSize="16" fontWeight="bold">B</text>
+    <line x1={Ax} y1={Ay} x2={Bx} y2={By} stroke="#3182CE" strokeWidth="3" />
+    {/* Midpoint M */}
+    <circle cx={Mx} cy={My} r="5" fill="#DD6B20" /> {/* Distinct orange for M */}
+    <text x={Mx + 10} y={My - 10} fill="#DD6B20" fontSize="16" fontWeight="bold">M</text>
+    {/* Perpendicular OM */}
+    <line x1={cx} y1={cy} x2={Mx} y2={My} stroke="#38A169" strokeWidth="3" /> {/* Distinct green for perpendicular */}
+    {/* Right angle at M */}
+    <rect x={Mx - 7} y={My - 7} width="12" height="12" fill="none" stroke="#DD6B20" strokeWidth="2" transform={`rotate(${Math.atan2(cy-My, cx-Mx)*180/Math.PI},${Mx},${My})`} />
+    
+    {/* Labels for the theorem conditions */}
+    <text x={cx - 110} y={cy - 10} fill="#38A169" fontSize="12" fontWeight="bold" textAnchor="middle">OM ⊥ AB</text>
+    
+    {/* Congruent triangles highlight */}
+    {step >= 2 && (
+        <>
+            {/* △OAM */}
+            <polygon points={`${cx},${cy} ${Ax},${Ay} ${Mx},${My}`} fill="#3182CE" fillOpacity="0.1" stroke="#3182CE" strokeWidth="2" /> {/* Lighter blue fill */}
+            {/* △OBM */}
+            <polygon points={`${cx},${cy} ${Bx},${By} ${Mx},${My}`} fill="#38A169" fillOpacity="0.1" stroke="#38A169" strokeWidth="2" /> {/* Lighter green fill */}
+            {/* Triangle labels */}
+            <text x={cx - 110} y={cy + 10} fill="#3182CE" fontSize="13" fontWeight="bold" textAnchor="middle">△OAM</text>
+            <text x={cx + 110} y={cy + 10} fill="#38A169" fontSize="13" fontWeight="bold" textAnchor="middle">△OBM</text>
+        </>
+    )}
+    
+    {/* Equal segments */}
+    {step >= 3 && (
+        <>
+            {/* Tick marks for AM and MB */}
+            <line x1={Ax} y1={Ay} x2={Mx} y2={My} stroke="#805AD5" strokeWidth="4" strokeDasharray="6 4" /> {/* Distinct purple */}
+            <line x1={Bx} y1={By} x2={Mx} y2={My} stroke="#805AD5" strokeWidth="4" strokeDasharray="6 4" />
+            <text x={(Ax + Mx) / 2 - 18} y={(Ay + My) / 2 - 8} fill="#805AD5" fontSize="13" fontWeight="bold">AM</text>
+            <text x={(Bx + Mx) / 2 + 18} y={(By + My) / 2 + 8} fill="#805AD5" fontSize="13" fontWeight="bold">MB</text>
+            {/* AM = MB text, moved to a clear space */}
+            <text x={cx} y={cy + r + 20} fill="#805AD5" fontSize="14" fontWeight="bold" textAnchor="middle">AM = MB</text>
+        </>
+    )}
+    
+    {/* Conclusion box */}
+    {step >= 4 && (
+        <g>
+            <rect x="50" y="50" width="300" height="40" fill="#EBF8FF" stroke="#3182CE" strokeWidth="2" rx="10" /> {/* Light blue background for box */}
+            <text x="200" y="75" textAnchor="middle" fill="#2C5282" fontSize="15" fontWeight="bold">OM ⊥ AB ⇒ AM = MB ✓</text> {/* Darker blue for text */}
+        </g>
+    )}
+</svg>
                 </div>
             </div>
         </div>

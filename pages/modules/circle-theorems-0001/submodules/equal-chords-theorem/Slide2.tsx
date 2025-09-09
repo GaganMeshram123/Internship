@@ -166,64 +166,65 @@ export default function EqualChordsTheoremSlide2() {
 
             {/* SVG Diagram */}
             <svg width="400" height="400" viewBox="0 0 400 400" className="mx-auto mt-6">
-              {step >= 1 && (
-                <g>
-                  <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
-                  <circle cx={cx} cy={cy} r="3" fill="#DC2626" />
-                  <text x={cx + 10} y={cy - 5} fill="#DC2626" fontSize="12" fontWeight="bold">O</text>
-                </g>
-              )}
-              {step >= 2 && (
-                <g>
-                  <path d={`M ${cx} ${cy} L ${A1x} ${A1y} L ${B1x} ${B1y} Z`} fill="rgba(59, 130, 246, 0.3)" stroke="#3B82F6" strokeWidth="2" />
-                  <path d={`M ${cx} ${cy} L ${A2x} ${A2y} L ${B2x} ${B2y} Z`} fill="rgba(16, 185, 129, 0.3)" stroke="#10B981" strokeWidth="2" />
-                  <circle cx={A1x} cy={A1y} r="3" fill="#3B82F6" />
-                  <circle cx={B1x} cy={B1y} r="3" fill="#3B82F6" />
-                  <circle cx={A2x} cy={A2y} r="3" fill="#10B981" />
-                  <circle cx={B2x} cy={B2y} r="3" fill="#10B981" />
-                  <text x={A1x + (A1x > cx ? 10 : -20)} y={A1y + (A1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">A</text>
-                  <text x={B1x + (B1x > cx ? 10 : -20)} y={B1y + (B1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">B</text>
-                  <text x={A2x + (A2x > cx ? 10 : -20)} y={A2y + (A2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">C</text>
-                  <text x={B2x + (B2x > cx ? 10 : -20)} y={B2y + (B2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">D</text>
+    {/* Circle and Center O */}
+    {step >= 1 && (
+        <g>
+            <circle cx={cx} cy={cy} r={r} fill="none" stroke="#64748B" strokeWidth="2" />
+            <circle cx={cx} cy={cy} r="3" fill="#DC2626" />
+            <text x={cx + 10} y={cy - 5} fill="#DC2626" fontSize="12" fontWeight="bold">O</text>
+        </g>
+    )}
 
-                  <line x1={cx} y1={cy} x2={A1x} y2={A1y} stroke="#F59E0B" strokeWidth="4" strokeDasharray="6 5" />
-                  <line x1={cx} y1={cy} x2={A2x} y2={A2y} stroke="#F59E0B" strokeWidth="4" strokeDasharray="6 5" />
-                  {(() => {
-                    const mx1 = (cx + A1x) / 2, my1 = (cy + A1y) / 2;
-                    const mx2 = (cx + A2x) / 2, my2 = (cy + A2y) / 2;
-                    const labelX = (mx1 + mx2) / 2;
-                    const labelY = (my1 + my2) / 2 - 10;
-                    return <text x={labelX} y={labelY} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">OA = OC</text>;
-                  })()}
+    {/* Triangles, Points, and Labels */}
+    {step >= 2 && (
+        <g>
+            {/* Triangle fill and outline */}
+            <path d={`M ${cx} ${cy} L ${A1x} ${A1y} L ${B1x} ${B1y} Z`} fill="rgba(59, 130, 246, 0.3)" stroke="#3B82F6" strokeWidth="2" />
+            <path d={`M ${cx} ${cy} L ${A2x} ${A2y} L ${B2x} ${B2y} Z`} fill="rgba(16, 185, 129, 0.3)" stroke="#10B981" strokeWidth="2" />
 
-                  <line x1={cx} y1={cy} x2={B1x} y2={B1y} stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 5" />
-                  <line x1={cx} y1={cy} x2={B2x} y2={B2y} stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 5" />
-                  {(() => {
-                    const mx1 = (cx + B1x) / 2, my1 = (cy + B1y) / 2;
-                    const mx2 = (cx + B2x) / 2, my2 = (cy + B2y) / 2;
-                    const labelX = (mx1 + mx2) / 2 - 20;
-                    const labelY = (my1 + my2) / 2 - 20;
-                    return <text x={labelX} y={labelY} fill="#8B5CF6" fontSize="12" fontWeight="bold" textAnchor="middle">OB = OD</text>;
-                  })()}
+            {/* Points and labels for A, B, C, D */}
+            <circle cx={A1x} cy={A1y} r="3" fill="#3B82F6" />
+            <circle cx={B1x} cy={B1y} r="3" fill="#3B82F6" />
+            <circle cx={A2x} cy={A2y} r="3" fill="#10B981" />
+            <circle cx={B2x} cy={B2y} r="3" fill="#10B981" />
+            <text x={A1x + (A1x > cx ? 10 : -20)} y={A1y + (A1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">A</text>
+            <text x={B1x + (B1x > cx ? 10 : -20)} y={B1y + (B1y > cy ? 18 : -8)} fill="#3B82F6" fontSize="14" fontWeight="bold">B</text>
+            <text x={A2x + (A2x > cx ? 10 : -20)} y={A2y + (A2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">C</text>
+            <text x={B2x + (B2x > cx ? 10 : -20)} y={B2y + (B2y > cy ? 18 : -8)} fill="#10B981" fontSize="14" fontWeight="bold">D</text>
 
-                  <line x1={A1x} y1={A1y} x2={B1x} y2={B1y} stroke="#22D3EE" strokeWidth="4" strokeDasharray="2 3" />
-                  <line x1={A2x} y1={A2y} x2={B2x} y2={B2y} stroke="#22D3EE" strokeWidth="4" strokeDasharray="2 3" />
-                  <text x={cx} y={(A1y + B1y + A2y + B2y) / 4 + 4} fill="#22D3EE" fontSize="12" fontWeight="bold" textAnchor="middle">AB = CD</text>
+            {/* Radii lines with dashes */}
+            <line x1={cx} y1={cy} x2={A1x} y2={A1y} stroke="#F59E0B" strokeWidth="4" strokeDasharray="6 5" />
+            <line x1={cx} y1={cy} x2={A2x} y2={A2y} stroke="#F59E0B" strokeWidth="4" strokeDasharray="6 5" />
+            <line x1={cx} y1={cy} x2={B1x} y2={B1y} stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 5" />
+            <line x1={cx} y1={cy} x2={B2x} y2={B2y} stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 5" />
 
-                  <text x={cx} y={cy - 30} fill="#F59E0B" fontSize="15" fontWeight="bold" textAnchor="middle">SSS</text>
-                </g>
-              )}
-              {step >= 3 && (
-                <text x={cx} y={cy - 100} textAnchor="middle" fill="#F59E0B" fontSize="16" fontWeight="bold" className="animate-pulse">
-                  △AOB ≅ △COD (SSS)
-                </text>
-              )}
-              {step >= 4 && (
-                <text x={cx} y={cy + 150} textAnchor="middle" fill="#10B981" fontSize="14" fontWeight="bold">
-                  ∴ ∠AOB = ∠COD ✓
-                </text>
-              )}
-            </svg>
+            {/* Chords with dashes */}
+            <line x1={A1x} y1={A1y} x2={B1x} y2={B1y} stroke="#22D3EE" strokeWidth="4" strokeDasharray="2 3" />
+            <line x1={A2x} y1={A2y} x2={B2x} y2={B2y} stroke="#22D3EE" strokeWidth="4" strokeDasharray="2 3" />
+
+            {/* Side Congruence Labels (repositioned for clarity) */}
+            <text x={cx - 120} y={cy} fill="#F59E0B" fontSize="12" fontWeight="bold" textAnchor="middle">OA ≅ OC</text>
+            <text x={cx + 120} y={cy} fill="#8B5CF6" fontSize="12" fontWeight="bold" textAnchor="middle">OB ≅ OD</text>
+            <text x={cx} y={cy + r + 30} fill="#22D3EE" fontSize="12" fontWeight="bold" textAnchor="middle">AB ≅ CD</text>
+        </g>
+    )}
+
+    {/* Theorem and Conclusion Labels (repositioned for clarity) */}
+    {step >= 3 && (
+        <g>
+            <text x={cx} y={cy - r - 60} textAnchor="middle" fill="#F59E0B" fontSize="16" fontWeight="bold" className="animate-pulse">
+                △AOB ≅ △COD (SSS)
+            </text>
+            <text x={cx} y={cy - r - 30} fill="#F59E0B" fontSize="15" fontWeight="bold" textAnchor="middle">SSS</text>
+        </g>
+    )}
+
+    {step >= 4 && (
+        <text x={cx} y={cy + r + 60} textAnchor="middle" fill="#10B981" fontSize="14" fontWeight="bold">
+            ∴ ∠AOB ≅ ∠COD ✓
+        </text>
+    )}
+</svg>
           </div>
           <TrackedInteraction interaction={slideInteractions[2]} onInteractionComplete={handleInteractionComplete}>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
