@@ -9,26 +9,26 @@ interface Point {
   y: number;
 }
 
-interface Vector {
-  start: Point;
-  end: Point;
+interface TriangleSides {
+  a: number;
+  b: number;
+  c: number;
 }
 
-export default function VectorMagnitudeSlide() {
+export default function IrrationalPythagoreanSlide() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [canvasSize, setCanvasSize] = useState({ width: 400, height: 350 });
   const centerX = canvasSize.width / 2;
   const centerY = canvasSize.height / 2;
 
-  const [vector, setVector] = useState<Vector>({
-    start: { x: centerX, y: centerY },
-    end: { x: centerX + 80, y: centerY - 60 }
+  const [hypotenuseEnd, setHypotenuseEnd] = useState<Point>({
+    x: centerX + 80,
+    y: centerY - 60
   });
 
   const [isDragging, setIsDragging] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  // Quiz state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<string | null>(null);
   const [showQuizFeedback, setShowQuizFeedback] = useState<boolean>(false);
@@ -36,49 +36,47 @@ export default function VectorMagnitudeSlide() {
   const [score, setScore] = useState<number>(0);
   const [isQuizComplete, setIsQuizComplete] = useState<boolean>(false);
 
-  // Define interactions for this slide
   const slideInteractions: Interaction[] = [
     {
-      id: 'vector-magnitude-content',
-      conceptId: 'vector-magnitude-concept',
-      conceptName: 'Vector Magnitude Understanding',
+      id: 'irrational-pythagorean-content',
+      conceptId: 'irrational-pythagorean-concept',
+      conceptName: 'Irrational Numbers and the Pythagorean Theorem',
       type: 'learning',
-      description: 'Understanding how to calculate vector magnitude using Pythagoras theorem'
+      description: 'Understanding how irrational numbers arise from geometric shapes like right triangles'
     },
     {
-      id: 'vector-magnitude-interaction',
-      conceptId: 'vector-magnitude-interactive',
-      conceptName: 'Vector Magnitude Interactive',
+      id: 'pythagorean-interactive',
+      conceptId: 'pythagorean-interactive-demo',
+      conceptName: 'Pythagorean Theorem Interactive',
       type: 'learning',
-      description: 'Interactive exploration of vector magnitude calculation'
+      description: 'Interactive exploration of the Pythagorean theorem and irrational results'
     },
     {
-      id: 'unit-vector-quiz',
-      conceptId: 'unit-vector-identification',
-      conceptName: 'Unit Vector Identification',
+      id: 'geometric-origins-quiz',
+      conceptId: 'geometric-origins-identification',
+      conceptName: 'Geometric Origins of Irrationals Quiz',
       type: 'judging',
-      description: 'Identifying unit vectors by calculating magnitude',
+      description: 'Identifying irrational results from geometric problems',
       question: {
         type: 'mcq',
-        question: 'Which of the following is a unit vector (has magnitude = 1)?',
-        options: ['3î + 4ĵ', '0.6î + 0.8ĵ', '1î + 1ĵ', '2î + 0ĵ']
+        question: 'Which of the following describes the hypotenuse of a right triangle with legs of length 1 and 1?',
+        options: ['Rational, length = 1', 'Rational, length = 2', 'Irrational, length = √2', 'Irrational, length = √3']
       }
     },
     {
-      id: 'vector-operations-quiz',
-      conceptId: 'vector-operations-calculation',
-      conceptName: 'Vector Operations Calculation',
+      id: 'pythagorean-property-quiz',
+      conceptId: 'pythagorean-property-understanding',
+      conceptName: 'Pythagorean Property Quiz',
       type: 'judging',
-      description: 'Calculating vector operations with given components',
+      description: 'Testing understanding of the results of the Pythagorean theorem',
       question: {
         type: 'mcq',
-        question: 'Given A = 2î + 3ĵ and B = 1î + 4ĵ, what is 2A + B?',
-        options: ['5î + 10ĵ', '3î + 7ĵ', '4î + 6ĵ', '5î + 7ĵ']
+        question: 'If a and b are integers, is the hypotenuse c always an irrational number?',
+        options: ['Yes', 'No']
       }
     }
   ];
 
-  // Handle completion of an interaction
   const handleInteractionComplete = (response: InteractionResponse) => {
     setLocalInteractions(prev => ({
       ...prev,
@@ -86,75 +84,32 @@ export default function VectorMagnitudeSlide() {
     }));
   };
 
-  // Fixed canvas size - no need for resize listener since SVG has fixed viewBox
   useEffect(() => {
-    // Initialize vector position for fixed canvas size
-    const newCenterX = 200; // 400/2
-    const newCenterY = 175; // 350/2
-    setVector({
-      start: { x: newCenterX, y: newCenterY },
-      end: { x: newCenterX + 80, y: newCenterY - 60 }
+    const newCenterX = 200;
+    const newCenterY = 175;
+    setHypotenuseEnd({
+      x: newCenterX + 80,
+      y: newCenterY - 60
     });
   }, []);
 
-  // Calculate vector components and magnitude
-  const dx = vector.end.x - vector.start.x;
-  const dy = vector.start.y - vector.end.y; // Flip y for mathematical coordinates
-  const magnitude = Math.sqrt(dx * dx + dy * dy);
-  const scale = 20; // Scale factor for display units
-
-  // Quiz questions
-  const questions = [
-    {
-      id: 'unit-vector-identification',
-      question: 'Which of the following is a unit vector (has magnitude = 1)?',
-      options: [
-        { id: '3i4j', text: '3î + 4ĵ', isCorrect: false },
-        { id: '0.6i0.8j', text: '0.6î + 0.8ĵ', isCorrect: true },
-        { id: '1i1j', text: '1î + 1ĵ', isCorrect: false },
-        { id: '2i0j', text: '2î + 0ĵ', isCorrect: false }
-      ],
-      explanation: '0.6î + 0.8ĵ has magnitude √(0.6² + 0.8²) = √(0.36 + 0.64) = 1'
-    },
-    {
-      id: 'vector-operations-calculation',
-      question: 'Given A = 2î + 3ĵ and B = 1î + 4ĵ, what is 2A + B?',
-      options: [
-        { id: '5i10j', text: '5î + 10ĵ', isCorrect: true },
-        { id: '3i7j', text: '3î + 7ĵ', isCorrect: false },
-        { id: '4i6j', text: '4î + 6ĵ', isCorrect: false },
-        { id: '5i7j', text: '5î + 7ĵ', isCorrect: false }
-      ],
-      explanation: '2A + B = 2(2î + 3ĵ) + (1î + 4ĵ) = 4î + 6ĵ + 1î + 4ĵ = 5î + 10ĵ'
-    }
-  ];
-
-  const currentQuestion = questions[currentQuestionIndex];
+  const a = (hypotenuseEnd.x - centerX);
+  const b = (centerY - hypotenuseEnd.y);
+  const c = Math.sqrt(a * a + b * b);
+  const scale = 20;
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !canvasRef.current) return;
-    
-    const rect = canvasRef.current.getBoundingClientRect();
     const svgRect = canvasRef.current.querySelector('svg')?.getBoundingClientRect();
-    
     if (svgRect) {
-      // Calculate position within the SVG viewBox (400x350)
       const x = ((e.clientX - svgRect.left) / svgRect.width) * 400;
       const y = ((e.clientY - svgRect.top) / svgRect.height) * 350;
-      
-      // Clamp to viewBox boundaries
       const clampedX = Math.max(10, Math.min(390, x));
       const clampedY = Math.max(10, Math.min(340, y));
-      
-      setVector(prev => ({
-        ...prev,
-        end: { x: clampedX, y: clampedY }
-      }));
-
-      // Track interaction
+      setHypotenuseEnd({ x: clampedX, y: clampedY });
       handleInteractionComplete({
-        interactionId: 'vector-magnitude-interaction',
-        value: `magnitude-${magnitude.toFixed(2)}`,
+        interactionId: 'pythagorean-interactive',
+        value: `hypotenuse-${(c / scale).toFixed(2)}`,
         timestamp: Date.now()
       });
     }
@@ -162,61 +117,120 @@ export default function VectorMagnitudeSlide() {
 
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (!canvasRef.current) return;
-    
     const svgRect = canvasRef.current.querySelector('svg')?.getBoundingClientRect();
-    
     if (svgRect) {
-      // Calculate position within the SVG viewBox (400x350)
       const x = ((e.clientX - svgRect.left) / svgRect.width) * 400;
       const y = ((e.clientY - svgRect.top) / svgRect.height) * 350;
-      
-      // Clamp to viewBox boundaries
       const clampedX = Math.max(10, Math.min(390, x));
       const clampedY = Math.max(10, Math.min(340, y));
-      
-      setVector(prev => ({
-        ...prev,
-        end: { x: clampedX, y: clampedY }
-      }));
-
-      // Track interaction
+      setHypotenuseEnd({ x: clampedX, y: clampedY });
       handleInteractionComplete({
-        interactionId: 'vector-magnitude-interaction',
-        value: `magnitude-${magnitude.toFixed(2)}`,
+        interactionId: 'pythagorean-interactive',
+        value: `hypotenuse-${(c / scale).toFixed(2)}`,
         timestamp: Date.now()
       });
     }
   };
 
-  // Handle quiz answer
+  const questions = [
+    {
+      id: 'geometric-origins-quiz',
+      question: 'Which of the following is the length of the hypotenuse of a right triangle with legs of length 1 and 1?',
+      options: [
+        { id: 'hypot-1-1-rational-1', text: 'Rational, length = 1', isCorrect: false },
+        { id: 'hypot-1-1-rational-2', text: 'Rational, length = 2', isCorrect: false },
+        { id: 'hypot-1-1-irrational-sqrt2', text: 'Irrational, length = √2', isCorrect: true },
+        { id: 'hypot-1-1-irrational-sqrt3', text: 'Irrational, length = √3', isCorrect: false }
+      ],
+      explanation: 'Using the Pythagorean theorem, c² = 1² + 1² = 2, so the hypotenuse is c = √2, which is an irrational number.'
+    },
+    {
+      id: 'pythagorean-property-quiz',
+      question: 'If a and b are integers, is the hypotenuse c always an irrational number?',
+      options: [
+        { id: 'always-irrational-yes', text: 'Yes', isCorrect: false },
+        { id: 'always-irrational-no', text: 'No', isCorrect: true }
+      ],
+      explanation: 'No. For example, a right triangle with legs of length 3 and 4 has a hypotenuse of length 5 (since 3² + 4² = 9 + 16 = 25, and √25 = 5), which is a rational number.'
+    },
+    {
+      id: 'hypotenuse-2-2',
+      question: 'A right triangle has legs with lengths a = 2 and b = 2. What is the length of the hypotenuse?',
+      options: [
+        { id: 'h-2-2-a', text: '2', isCorrect: false },
+        { id: 'h-2-2-b', text: '4', isCorrect: false },
+        { id: 'h-2-2-c', text: '√8', isCorrect: true },
+        { id: 'h-2-2-d', text: '√2', isCorrect: false }
+      ],
+      explanation: 'According to the Pythagorean theorem, c² = 2² + 2² = 4 + 4 = 8. Therefore, the hypotenuse c = √8.'
+    },
+    {
+      id: 'missing-leg-sqrt13',
+      question: 'The hypotenuse of a right triangle is √13. If one leg has a length of 2, what is the length of the other leg?',
+      options: [
+        { id: 'ml-sqrt13-a', text: '3', isCorrect: true },
+        { id: 'ml-sqrt13-b', text: '4', isCorrect: false },
+        { id: 'ml-sqrt13-c', text: '√9', isCorrect: false },
+        { id: 'ml-sqrt13-d', text: '√11', isCorrect: false }
+      ],
+      explanation: 'Using the theorem: 2² + b² = (√13)². This simplifies to 4 + b² = 13, so b² = 9, and b = 3.'
+    },
+    {
+      id: 'diagonal-square-area-7',
+      question: 'A square has an area of 7 square units. What is the length of its diagonal?',
+      options: [
+        { id: 'ds-7-a', text: '√7', isCorrect: false },
+        { id: 'ds-7-b', text: '√14', isCorrect: true },
+        { id: 'ds-7-c', text: '7', isCorrect: false },
+        { id: 'ds-7-d', text: '14', isCorrect: false }
+      ],
+      explanation: 'The side length of the square is √7. The diagonal is the hypotenuse of a right triangle with legs of length √7. Therefore, d² = (√7)² + (√7)² = 7 + 7 = 14, so d = √14.'
+    },
+    {
+      id: 'converse-pythagorean-theorem',
+      question: 'True or False: The sum of the squares of the two shorter sides of a triangle is always equal to the square of the longest side.',
+      options: [
+        { id: 'converse-true', text: 'True', isCorrect: false },
+        { id: 'converse-false', text: 'False', isCorrect: true }
+      ],
+      explanation: 'False. This is only true for right triangles, a fact known as the converse of the Pythagorean theorem. It is not true for all triangles.'
+    },
+    {
+      id: 'is-right-triangle-5-12-13',
+      question: 'A triangle has side lengths of 5, 12, and 13. Is this a right triangle?',
+      options: [
+        { id: 'is-right-yes', text: 'Yes', isCorrect: true },
+        { id: 'is-right-no', text: 'No', isCorrect: false }
+      ],
+      explanation: 'Yes. Checking the Pythagorean theorem: 5² + 12² = 25 + 144 = 169. Since 13² = 169, the theorem holds true.'
+    }
+  ];
+
+  const currentQuestion = questions[currentQuestionIndex];
+
   const handleQuizAnswer = (answerText: string) => {
     setSelectedQuizAnswer(answerText);
     setShowQuizFeedback(true);
-    
     const correctOption = currentQuestion.options.find(o => o.isCorrect);
     const isCorrect = answerText === correctOption?.text;
-    
-    // Update score if this question hasn't been answered before
     if (!questionsAnswered[currentQuestionIndex]) {
       if (isCorrect) {
         setScore(prev => prev + 1);
       }
-      // Mark this question as answered
       setQuestionsAnswered(prev => {
         const newAnswered = [...prev];
         newAnswered[currentQuestionIndex] = true;
         return newAnswered;
       });
     }
-    
     handleInteractionComplete({
-      interactionId: `vector-magnitude-quiz-${currentQuestion.id}`,
+      interactionId: `irrational-pythagorean-quiz-${currentQuestion.id}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
       conceptId: currentQuestion.id,
-      conceptName: currentQuestion.id === 'unit-vector-identification' ? 'Unit Vector Identification' : 'Vector Operations Calculation',
-      conceptDescription: `Testing understanding of vector concepts - Question ${currentQuestionIndex + 1}: ${currentQuestion.question.substring(0, 50)}...`,
+      conceptName: currentQuestion.id,
+      conceptDescription: `Testing understanding of geometric origins of irrationals - Question ${currentQuestionIndex + 1}: ${currentQuestion.question.substring(0, 50)}...`,
       question: {
         type: 'mcq',
         question: currentQuestion.question,
@@ -225,7 +239,6 @@ export default function VectorMagnitudeSlide() {
     });
   };
 
-  // Handle next question
   const handleNextQuestion = () => {
     const nextIndex = currentQuestionIndex + 1;
     if (nextIndex >= questions.length) {
@@ -239,70 +252,62 @@ export default function VectorMagnitudeSlide() {
 
   return (
     <SlideComponentWrapper
-      slideId="vector-magnitude"
-      slideTitle="Vector Magnitude"
-      moduleId="vectors"
-      submoduleId="vector-operations"
+      slideId="irrational-pythagorean-slide"
+      slideTitle="Irrational Numbers & Geometry"
+      moduleId="irrational-numbers"
+      submoduleId="sum"
       interactions={localInteractions}
     >
       <div className="w-full h-full bg-slate-50 dark:bg-slate-900/20 rounded-xl p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left column - Explanation */}
           <div className="space-y-6">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <div className="space-y-6">
-                {/* Main concept */}
-
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                    Vectors have a magnitude and a direction. Sometimes, just the magnitude is of importance.
-                  </p>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                    For example, the magnitude of the velocity vector is called "speed". It tells us how fast an 
-                    object is travelling but not the direction.
-                  </p>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                    Using Pythagoras' theorem, we can obtain the magnitude of a vector from its components.
-                  </p>
-
-                {/* Formula */}
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+                  Irrational numbers don't just appear in abstract calculations; they are deeply rooted in geometry. The ancient Greeks first discovered these numbers when trying to measure the hypotenuse of a right-angled triangle.
+                </p>
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+                  The **Pythagorean theorem** is the formula that links these geometric shapes to numbers. It states that for any right-angled triangle, the square of the hypotenuse (the longest side) is equal to the sum of the squares of the other two sides.
+                </p>
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                  Using the theorem, we can prove that some lengths, like the diagonal of a unit square, are inherently irrational.
+                </p>
                 <div className="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg">
                   <h4 className="text-blue-600 dark:text-blue-400 text-lg font-medium mb-3">
-                    Magnitude Formula
+                    The Pythagorean Theorem
                   </h4>
                   <div className="text-center">
-                    <BlockMath math="|V| = \sqrt{V_x^2 + V_y^2}" />
+                    <BlockMath math="a^2 + b^2 = c^2" />
                   </div>
                 </div>
-
-                {/* Real-time calculation */}
                 <div className="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg">
                   <h4 className="text-blue-600 dark:text-blue-400 text-lg font-medium mb-3">
-                    Current Vector
+                    Current Triangle
                   </h4>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-blue-700 dark:text-blue-300">
-                        <InlineMath math="V_x" />:
+                        <InlineMath math="a" /> (x-side):
                       </span>
                       <span className="text-blue-700 dark:text-blue-300 font-mono">
-                        {(dx / scale).toFixed(1)} units
+                        {(a / scale).toFixed(1)} units
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-blue-700 dark:text-blue-300">
-                        <InlineMath math="V_y" />:
+                        <InlineMath math="b" /> (y-side):
                       </span>
                       <span className="text-blue-700 dark:text-blue-300 font-mono">
-                        {(dy / scale).toFixed(1)} units
+                        {(b / scale).toFixed(1)} units
                       </span>
                     </div>
                     <hr className="border-blue-300 dark:border-blue-600" />
                     <div className="flex justify-between items-center">
                       <span className="text-blue-700 dark:text-blue-300 font-medium">
-                        <InlineMath math="|V|" />:
+                        <InlineMath math="c" /> (hypotenuse):
                       </span>
                       <span className="text-blue-700 dark:text-blue-300 font-mono font-bold">
-                        {(magnitude / scale).toFixed(1)} units
+                        {(c / scale).toFixed(2)} units
                       </span>
                     </div>
                   </div>
@@ -311,18 +316,15 @@ export default function VectorMagnitudeSlide() {
             </div>
           </div>
 
-          {/* Right column - Interactive visualization */}
           <div className="space-y-6">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-4">
-                Interactive Vector
+                Interactive Geometry
               </h3>
               <p className="text-slate-700 dark:text-slate-300 mb-4">
-                Drag the white dot to change the vector and see how the magnitude changes. You can also click anywhere on the canvas to move the vector there.
+                Drag the white dot to change the triangle's shape and see the hypotenuse length update in real-time.
               </p>
-
-              {/* Interactive canvas */}
-              <div 
+              <div
                 ref={canvasRef}
                 className="relative w-full h-132 bg-blue-100 dark:bg-gray-900 rounded-lg cursor-crosshair border-2 border-blue-200 dark:border-blue-700"
                 onMouseMove={handleMouseMove}
@@ -331,15 +333,12 @@ export default function VectorMagnitudeSlide() {
                 onClick={handleCanvasClick}
               >
                 <svg width="100%" height="500" viewBox="0 0 400 350" className="mx-auto">
-                  {/* Grid lines */}
                   <defs>
-                    {/* Arrow markers */}
-                    <marker id="vectorArrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+                    <marker id="hypotenuseArrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
                       <polygon points="0 0, 6 2, 0 4" fill="#8B5CF6" />
                     </marker>
                   </defs>
                   
-                  {/* Grid lines aligned with scale */}
                   {Array.from({ length: Math.ceil(canvasSize.width / scale) + 1 }).map((_, i) => (
                     <line
                       key={`v-${i}`}
@@ -366,46 +365,6 @@ export default function VectorMagnitudeSlide() {
                     />
                   ))}
                   
-                  {/* Grid unit labels */}
-                  {Array.from({ length: Math.ceil(canvasSize.width / scale) + 1 }).map((_, i) => {
-                    const gridX = centerX + (i - Math.floor(canvasSize.width / (2 * scale))) * scale;
-                    const unitValue = i - Math.floor(canvasSize.width / (2 * scale));
-                    if (unitValue !== 0 && gridX > 10 && gridX < canvasSize.width - 10) {
-                      return (
-                        <text
-                          key={`x-label-${i}`}
-                          x={gridX}
-                          y={centerY + 15}
-                          className="fill-blue-600 text-xs"
-                          textAnchor="middle"
-                        >
-                          {unitValue}
-                        </text>
-                      );
-                    }
-                    return null;
-                  })}
-                  
-                  {Array.from({ length: Math.ceil(canvasSize.height / scale) + 1 }).map((_, i) => {
-                    const gridY = centerY + (i - Math.floor(canvasSize.height / (2 * scale))) * scale;
-                    const unitValue = -(i - Math.floor(canvasSize.height / (2 * scale))); // Negative for mathematical y-axis
-                    if (unitValue !== 0 && gridY > 15 && gridY < canvasSize.height - 5) {
-                      return (
-                        <text
-                          key={`y-label-${i}`}
-                          x={centerX - 15}
-                          y={gridY + 3}
-                          className="fill-blue-600 text-xs"
-                          textAnchor="middle"
-                        >
-                          {unitValue}
-                        </text>
-                      );
-                    }
-                    return null;
-                  })}
-                  
-                  {/* Origin label */}
                   <text
                     x={centerX - 15}
                     y={centerY + 15}
@@ -414,67 +373,77 @@ export default function VectorMagnitudeSlide() {
                   >
                     0
                   </text>
+
+                  {/* Pythogorean Theorem Formula */}
+                  <text
+                    x={centerX + 15}
+                    y={centerY - 10}
+                    className="fill-blue-600 text-lg font-bold"
+                    textAnchor="start"
+                  >
+                    <tspan>a²+b²=c²</tspan>
+                  </text>
                   
-                  {/* Vector components (dashed lines) */}
+                  {/* side a */}
                   <line 
-                    x1={vector.start.x} 
-                    y1={vector.start.y} 
-                    x2={vector.end.x} 
-                    y2={vector.start.y} 
+                    x1={centerX} 
+                    y1={centerY} 
+                    x2={hypotenuseEnd.x} 
+                    y2={centerY} 
                     stroke="#EF4444" 
                     strokeWidth="2"
                     strokeDasharray="5,5"
                   />
                   <text 
-                    x={(vector.start.x + vector.end.x) / 2} 
-                    y={vector.start.y - 10} 
+                    x={(centerX + hypotenuseEnd.x) / 2} 
+                    y={centerY - 10} 
                     className="fill-red-600 text-sm font-bold" 
                     textAnchor="middle"
                   >
-                    V<tspan baselineShift="sub">x</tspan>
+                    a
                   </text>
                   
+                  {/* side b */}
                   <line 
-                    x1={vector.end.x} 
-                    y1={vector.start.y} 
-                    x2={vector.end.x} 
-                    y2={vector.end.y} 
+                    x1={hypotenuseEnd.x} 
+                    y1={centerY} 
+                    x2={hypotenuseEnd.x} 
+                    y2={hypotenuseEnd.y} 
                     stroke="#10B981" 
                     strokeWidth="2"
                     strokeDasharray="5,5"
                   />
                   <text 
-                    x={vector.end.x + 15} 
-                    y={(vector.start.y + vector.end.y) / 2} 
+                    x={hypotenuseEnd.x + 15} 
+                    y={(centerY + hypotenuseEnd.y) / 2} 
                     className="fill-green-600 text-sm font-bold" 
                     textAnchor="start"
                   >
-                    V<tspan baselineShift="sub">y</tspan>
+                    b
                   </text>
                   
-                  {/* Main vector */}
+                  {/* hypotenuse c */}
                   <line 
-                    x1={vector.start.x} 
-                    y1={vector.start.y} 
-                    x2={vector.end.x} 
-                    y2={vector.end.y} 
+                    x1={centerX} 
+                    y1={centerY} 
+                    x2={hypotenuseEnd.x} 
+                    y2={hypotenuseEnd.y} 
                     stroke="#8B5CF6" 
                     strokeWidth="4"
-                    markerEnd="url(#vectorArrow)"
+                    markerEnd="url(#hypotenuseArrow)"
                   />
                   <text 
-                    x={(vector.start.x + vector.end.x) / 2 - 20} 
-                    y={(vector.start.y + vector.end.y) / 2 - 10} 
+                    x={(centerX + hypotenuseEnd.x) / 2 - 20} 
+                    y={(centerY + hypotenuseEnd.y) / 2 - 10} 
                     className="fill-purple-600 text-lg font-bold" 
                     textAnchor="middle"
                   >
-                    V
+                    c
                   </text>
                   
-                  {/* Draggable endpoint */}
                   <circle
-                    cx={vector.end.x}
-                    cy={vector.end.y}
+                    cx={hypotenuseEnd.x}
+                    cy={hypotenuseEnd.y}
                     r="8"
                     fill="#FFFFFF"
                     stroke="#8B5CF6"
@@ -483,159 +452,120 @@ export default function VectorMagnitudeSlide() {
                     onMouseDown={() => setIsDragging(true)}
                   />
                   
-                  {/* Origin point */}
                   <circle
-                    cx={vector.start.x}
-                    cy={vector.start.y}
+                    cx={centerX}
+                    cy={centerY}
                     r="4"
                     fill="#3B82F6"
                   />
                 </svg>
               </div>
-
-              {/* Step-by-step calculation */}
-              <div className="mt-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
-                <div className="space-y-2 text-slate-700 dark:text-slate-300 text-center">
-                  <div>
-                    <InlineMath math={`|V| = \\sqrt{V_x^2 + V_y^2}`} />
-                  </div>
-                  <div>
-                    <InlineMath math={`|V| = \\sqrt{(${(dx/scale).toFixed(1)})^2 + (${(dy/scale).toFixed(1)})^2}`} />
-                  </div>
-                  <div>
-                    <InlineMath math={`|V| = \\sqrt{${((dx/scale)**2).toFixed(1)} + ${((dy/scale)**2).toFixed(1)}}`} />
-                  </div>
-                  <div className="font-bold">
-                    <InlineMath math={`|V| = ${(magnitude/scale).toFixed(1)} \\text{ units}`} />
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-            {isQuizComplete ? (
-              // Quiz Complete Screen
-              <div>
-                <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Quiz Complete!</h3>
-                <div className="text-center mb-4">
-                  <div className="text-6xl mb-4">
-                    {score === questions.length ? '🏆' : score >= questions.length * 0.75 ? '🎉' : score >= questions.length * 0.5 ? '👍' : '📚'}
+              {isQuizComplete ? (
+                <div>
+                  <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Quiz Complete!</h3>
+                  <div className="text-center mb-4">
+                    <div className="text-6xl mb-4">
+                      {score === questions.length ? '🏆' : '📚'}
+                    </div>
+                    <div className="text-2xl font-bold mb-2">
+                      Score: {score}/{questions.length}
+                    </div>
                   </div>
-                  <div className="text-2xl font-bold mb-2">
-                    Score: {score}/{questions.length}
-                  </div>
-                  <div className="text-lg">
-                    <span className={`${score >= questions.length * 0.75 ? 'text-green-600 dark:text-green-400' : score >= questions.length * 0.5 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {Math.round((score / questions.length) * 100)}%
+                  <p className="text-center text-lg">
+                    {score === questions.length ? "Perfect! You understand how irrational numbers are born from geometry!" : "Review the Pythagorean theorem and how it relates to irrational numbers."}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Quick Check</h3>
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                      Question {currentQuestionIndex + 1} of {questions.length}
                     </span>
                   </div>
-                </div>
-                <p className="text-center text-lg">
-                  {score === questions.length 
-                    ? "Perfect! You understand vector magnitude and operations!" 
-                    : score >= questions.length * 0.75 
-                    ? "Excellent! You have a solid grasp of vector concepts." 
-                    : score >= questions.length * 0.5
-                    ? "Good work! Review vector calculations and unit vectors."
-                    : "Keep studying! Focus on magnitude calculations and vector operations."}
-                </p>
-              </div>
-            ) : (
-              // Active Quiz
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Quick Check</h3>
-                  <span className="text-sm text-slate-600 dark:text-slate-400">
-                    Question {currentQuestionIndex + 1} of {questions.length}
-                  </span>
-                </div>
-                
-                <p className="text-lg mb-4">
-                  {currentQuestion.question}
-                </p>
-                
-                <div className="space-y-2">
-                  {currentQuestion.options.map((option) => {
-                    const wasSelected = selectedQuizAnswer === option.text;
-                    const isOptionCorrect = option.isCorrect;
-                    
-                    let buttonClass = "w-full p-3 rounded-lg border-2 text-left transition-all ";
-                    
-                    if (showQuizFeedback) {
-                      if (wasSelected) {
-                        if (isOptionCorrect) {
-                          buttonClass += "border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200";
+                  
+                  <p className="text-lg mb-4">
+                    {currentQuestion.question}
+                  </p>
+                  
+                  <div className="space-y-2">
+                    {currentQuestion.options.map((option) => {
+                      const wasSelected = selectedQuizAnswer === option.text;
+                      const isOptionCorrect = option.isCorrect;
+                      let buttonClass = "w-full p-3 rounded-lg border-2 text-left transition-all ";
+                      if (showQuizFeedback) {
+                        if (wasSelected) {
+                          if (isOptionCorrect) {
+                            buttonClass += "border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200";
+                          } else {
+                            buttonClass += "border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200";
+                          }
+                        } else if (isOptionCorrect) {
+                          buttonClass += "border-green-400 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300";
                         } else {
-                          buttonClass += "border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200";
+                          buttonClass += "border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400";
                         }
-                      } else if (isOptionCorrect) {
-                        buttonClass += "border-green-400 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300";
                       } else {
-                        buttonClass += "border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400";
+                        buttonClass += "border-slate-300 dark:border-slate-600 hover:border-blue-300 cursor-pointer";
                       }
-                    } else {
-                      buttonClass += "border-slate-300 dark:border-slate-600 hover:border-blue-300 cursor-pointer";
-                    }
-                    
-                    return (
-                      <button
-                        key={option.id}
-                        onClick={() => handleQuizAnswer(option.text)}
-                        disabled={showQuizFeedback}
-                        className={buttonClass}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span>
-                            <InlineMath math={option.text} />
-                          </span>
-                          {showQuizFeedback && (
-                            <span className="ml-2">
-                              {wasSelected && isOptionCorrect && "✅"}
-                              {wasSelected && !isOptionCorrect && "❌"}
-                              {!wasSelected && isOptionCorrect && "✓"}
-                            </span>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {showQuizFeedback && (
-                  <div className={`mt-4 p-4 rounded-lg ${
-                    currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
-                      ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                      : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
-                  }`}>
-                    <div className={`font-semibold mb-2 ${
-                      currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
-                        ? 'text-green-700 dark:text-green-300'
-                        : 'text-red-700 dark:text-red-300'
-                    }`}>
-                      {currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect ? 'Correct!' : 'Not quite right.'}
-                    </div>
-                    <div className={`text-sm mb-3 ${
-                      currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}>
-                      {currentQuestion.explanation}
-                    </div>
-                    
-                    <button
-                      onClick={handleNextQuestion}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                    >
-                      {currentQuestionIndex + 1 >= questions.length ? 'Finish Quiz' : 'Next Question'}
-                    </button>
+                      return (
+                        <button
+                          key={option.id}
+                          onClick={() => handleQuizAnswer(option.text)}
+                          disabled={showQuizFeedback}
+                          className={buttonClass}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span>{option.text}</span>
+                            {showQuizFeedback && (
+                              <span className="ml-2">
+                                {wasSelected && isOptionCorrect && "✅"}
+                                {wasSelected && !isOptionCorrect && "❌"}
+                                {!wasSelected && isOptionCorrect && "✓"}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
-              </div>
-            )}
+                  {showQuizFeedback && (
+                    <div className={`mt-4 p-4 rounded-lg ${
+                      currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
+                        ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
+                        : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                    }`}>
+                      <div className={`font-semibold mb-2 ${
+                        currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
+                          ? 'text-green-700 dark:text-green-300'
+                          : 'text-red-700 dark:text-red-300'
+                      }`}>
+                        {currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect ? 'Correct!' : 'Not quite right.'}
+                      </div>
+                      <div className={`text-sm mb-3 ${
+                        currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
+                          ? 'text-green-600 dark:text-green-400'
+                          : 'text-red-600 dark:text-red-400'
+                      }`}>
+                        {currentQuestion.explanation}
+                      </div>
+                      <button
+                        onClick={handleNextQuestion}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                      >
+                        {currentQuestionIndex + 1 >= questions.length ? 'Finish Quiz' : 'Next Question'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-          </div>          
         </div>
       </div>
     </SlideComponentWrapper>
   );
-} 
+}

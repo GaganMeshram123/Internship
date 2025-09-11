@@ -13,35 +13,40 @@ export interface Question {
   id: string;
   questionText: string;
   inputType: 'text' | 'number' | 'radio' | 'checkbox' | 'textarea' | 'select' | 'image';
-  options?: string[]; // For radio or checkbox inputs
+  options?: string[];
   required?: boolean;
 }
-
 
 export interface MatchingPair {
   key: string;
   value: string;
 }
 
+// Canonical question metadata
+export type QuestionType = 'mcq' | 'multiselect' | 'integer' | 'matching';
+
+// Corrected and consolidated InteractionQuestionMeta interface
 export interface InteractionQuestionMeta {
   type: QuestionType; // Required question type
-  question: string;   // Required question text
+  question: string;  // Required question text
   options?: string[]; // Optional list of options (for mcq/multiselect)
-  matching?: {        // Optional matching structure (for matching questions)
+  matching?: {      // Optional matching structure (for matching questions)
     left?: string[];  // Left column items
     right?: string[]; // Right column items
   };
 }
 
+// Corrected and consolidated Slide interface
 export interface Slide {
-  type: 'text' | 'image' | 'animation' | 'interactive' | 'question';
-  title?: string;
-  content: React.ReactNode;
-  component?: React.ComponentType<any>;
-  questions?: Question[]; // Optional array of questions for this slide
-  persistResponse?: boolean; // Whether to save responses to the database
   id: string; // Unique identifier for the slide
+  title?: string;
+  type: 'learning' | 'judging' | 'matching' | 'question' | 'image' | 'text' | 'interactive' | 'animation' | 'component';
+  content?: React.ReactNode; // Made optional as content is often in the component
+  component?: React.ComponentType<any>; // Made optional for cases where content is a simple ReactNode
+  questions?: Question[];
+  persistResponse?: boolean;
 }
+
 
 export interface UserResponse {
   studentId: string;
@@ -50,102 +55,69 @@ export interface UserResponse {
   submoduleId?: string;
   slideId?: string;
   questionId: string;
-  response: string | string[]; // Can be a string or array of strings (for checkbox)
+  response: string | string[];
   createdAt: Date;
 }
 
-// Teacher remarks interface
 export interface TeacherRemark {
   teacherId: string;
   text: string;
   timestamp: string;
 }
 
-// Interaction tracking interfaces
 export type InteractionType = 'learning' | 'judging';
 
 export interface Interaction {
-  id: string; // Unique identifier for this interaction
-  conceptId: string; // ID of the concept being evaluated
-  conceptName: string; // Name of the concept
-  type: InteractionType; // Type of interaction (learning or judging)
-  description?: string; // Optional description of what this interaction is testing
-  conceptDescription?: string; // Detailed description of what concept is being tested
-  question?: InteractionQuestionMeta; // Optional metadata about the question
-}
-
-// Canonical question metadata
-export type QuestionType = 'mcq' | 'multiselect' | 'integer' | 'matching';
-
-export interface InteractionQuestionMeta {
-  type: QuestionType;
-  question: string; // Required question text
-  options?: string[]; // MCQ/Multiselect options (optional)
-  matching?: {
-    left?: string[]; // Items to match (left side)
-    right?: string[]; // Target labels (e.g., ["scalar", "vector"])
-  };
+  id: string;
+  conceptId: string;
+  conceptName: string;
+  type: InteractionType;
+  description?: string;
+  conceptDescription?: string;
+  question?: InteractionQuestionMeta;
 }
 
 export interface InteractionResponse {
-  interactionId: string; // ID of the interaction
-  // Value types per question type:
-  // - mcq: string
-  // - multiselect: string[]
-  // - integer: number
-  // - matching: MatchingPair[]
-  // - learning interactions: number (counter)
+  interactionId: string;
   value: string | number | string[] | MatchingPair[];
-  isCorrect?: boolean; // Whether the response is correct (for judging interactions)
-  timestamp: number; // When the interaction occurred (ms epoch)
-  conceptId?: string; // ID of the concept being evaluated
-  conceptName?: string; // Name of the concept
-  conceptDescription?: string; // Detailed description of what is being tested
-  studentId?: string; // ID of the student performing the interaction
-  question?: InteractionQuestionMeta; // Question metadata (required for judging interactions)
-
+  isCorrect?: boolean;
+  timestamp: number;
+  conceptId?: string;
+  conceptName?: string;
+  conceptDescription?: string;
+  studentId?: string;
+  question?: InteractionQuestionMeta;
 }
 
 export interface SlideInteractionData {
   slideId: string;
   slideTitle: string;
-  timeSpent: number; // Time spent on the slide in milliseconds
-  // Note: to support multiple attempts, callers may store a nested map
-  // interactions[interactionId] = InteractionResponse | Record<string, InteractionResponse>
+  timeSpent: number;
   interactions: Record<string, any>;
 }
 
-// Create a context for judging interactions
 export const JudgingInteractionContext = React.createContext<
-
   (value: string | number | string[] | MatchingPair[], isCorrect?: boolean, question?: InteractionQuestionMeta) => void
 >(() => {});
 
-// Component to wrap interactive elements and track interactions
 export const TrackedInteraction: React.FC<{
   interaction: Interaction;
   onInteractionComplete: (response: InteractionResponse) => void;
   children: React.ReactNode;
-  studentId?: string; // Add studentId prop
+  studentId?: string;
 }> = ({ interaction, onInteractionComplete, children, studentId }) => {
-  // Track interaction counts for learning interactions
   const [interactionCount, setInteractionCount] = React.useState(0);
   
-  // Handle click or interaction
   const handleInteraction = (
     value: string | number | string[] | MatchingPair[] = true as unknown as string | number | string[] | MatchingPair[],
     isCorrect?: boolean,
     question?: InteractionQuestionMeta
   ) => {
-    // For learning interactions, increment the count
     if (interaction.type === 'learning') {
       setInteractionCount(prev => prev + 1);
     }
 
-    // Determine the value that would be recorded
     const candidateValue = interaction.type === 'learning' ? interactionCount + 1 : value;
-
-    // Reject invalid values: null/undefined or empty arrays
     const isInvalid = (
       candidateValue === null || candidateValue === undefined ||
       (Array.isArray(candidateValue) && candidateValue.length === 0)
@@ -155,7 +127,6 @@ export const TrackedInteraction: React.FC<{
       return;
     }
     
-    // Create interaction response
     const response: InteractionResponse = {
       interactionId: interaction.id,
       value: candidateValue,
@@ -164,20 +135,17 @@ export const TrackedInteraction: React.FC<{
       conceptId: interaction.conceptId,
       conceptName: interaction.conceptName,
       conceptDescription: interaction.conceptDescription,
-      studentId, // Include studentId in the response
+      studentId,
       question: question ?? interaction.question
     };
     
-    // Warn if judging interaction is missing required question metadata
     if (interaction.type === 'judging' && !response.question) {
       console.warn(`Judging interaction '${interaction.id}' missing question metadata.`);
     }
     
-
     onInteractionComplete(response);
   };
   
-  // Wrap the children with an onClick handler if they're learning interactions
   if (interaction.type === 'learning') {
     return (
       <div 
@@ -189,7 +157,6 @@ export const TrackedInteraction: React.FC<{
     );
   }
   
-  // For judging interactions, we provide the handleInteraction through context
   return (
     <JudgingInteractionContext.Provider value={handleInteraction}>
       <div className="tracked-interaction">
@@ -199,12 +166,10 @@ export const TrackedInteraction: React.FC<{
   );
 };
 
-// Helper hook to use judging interactions
 export const useJudgingInteraction = () => {
   return React.useContext(JudgingInteractionContext);
 };
 
-// Helper function to compress images before upload
 const compressImage = (file: File, maxWidth = 1024, maxHeight = 1024, quality = 0.8): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -214,12 +179,10 @@ const compressImage = (file: File, maxWidth = 1024, maxHeight = 1024, quality = 
       img.src = event.target?.result as string;
       
       img.onload = () => {
-        // Create a canvas to resize the image
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
         
-        // Calculate the new dimensions
         if (width > height) {
           if (width > maxWidth) {
             height = Math.round(height * maxWidth / width);
@@ -235,11 +198,9 @@ const compressImage = (file: File, maxWidth = 1024, maxHeight = 1024, quality = 
         canvas.width = width;
         canvas.height = height;
         
-        // Draw the resized image
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(img, 0, 0, width, height);
         
-        // Convert to base64
         const dataUrl = canvas.toDataURL('image/jpeg', quality);
         resolve(dataUrl);
       };
@@ -255,24 +216,21 @@ const compressImage = (file: File, maxWidth = 1024, maxHeight = 1024, quality = 
   });
 };
 
-// Divider component to separate content from questions
 export const QuestionsDivider: React.FC<{ label?: string }> = ({ label = "Your Response" }) => {
   return (
     <div className="mb-4">
       <div className="flex items-center">
-        <div className="flex-grow border-t-2 border-gray-600 dark:border-gray-600 border-gray-300"></div>
+        <div className="flex-grow border-t-2 border-gray-300 dark:border-gray-600"></div>
         <span className="mx-4 px-4 py-2 text-gray-800 dark:text-white font-medium">
           {label}
         </span>
-        <div className="flex-grow border-t-2 border-gray-600 dark:border-gray-600 border-gray-300"></div>
+        <div className="flex-grow border-t-2 border-gray-300 dark:border-gray-600"></div>
       </div>
     </div>
   );
 };
 
-// Component to display teacher remarks
 export const TeacherRemarkDisplay: React.FC<{ teacherRemark: TeacherRemark }> = ({ teacherRemark }) => {
-  // Format the timestamp
   const formattedDate = new Date(teacherRemark.timestamp).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
@@ -297,7 +255,6 @@ export const TeacherRemarkDisplay: React.FC<{ teacherRemark: TeacherRemark }> = 
   );
 };
 
-// A reusable component for user input questions
 export const InputQuestion: React.FC<{
   question: Question;
   value: string | string[];
@@ -308,7 +265,6 @@ export const InputQuestion: React.FC<{
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
   
-  // Function to render the teacher's remark if available
   const renderTeacherRemark = () => {
     if (teacherRemark) {
       return <TeacherRemarkDisplay teacherRemark={teacherRemark} />;
@@ -458,17 +414,14 @@ export const InputQuestion: React.FC<{
                         setIsUploading(true);
                         setUploadError(null);
                         
-                        // Validate file size before processing
-                        if (file.size > 15 * 1024 * 1024) { // 15MB max
+                        if (file.size > 15 * 1024 * 1024) {
                           throw new Error('File is too large. Maximum size is 15MB.');
                         }
                         
-                        // Check file size and compress if larger than 1MB
                         if (file.size > 1024 * 1024) {
                           const compressedImage = await compressImage(file);
                           onChange(compressedImage);
                         } else {
-                          // For smaller files, use regular FileReader without compression
                           const reader = new FileReader();
                           reader.onloadend = () => {
                             onChange(reader.result as string);
@@ -520,10 +473,19 @@ export const InputQuestion: React.FC<{
   }
 };
 
-// Maintain backward compatibility
+export const SlideComponentWrapper: React.FC<{
+  slideId: string;
+  slideTitle: string;
+  moduleId: string;
+  submoduleId: string;
+  interactions: Record<string, InteractionResponse>;
+  children: React.ReactNode;
+}> = ({ children }) => {
+    return <div className="p-4">{children}</div>;
+};
+
 export const UserInputQuestion = InputQuestion;
 
-// Dummy component to satisfy Next.js page requirements
 function ConceptModuleComponent() {
   return <div>This is a component module, not a page.</div>;
 }

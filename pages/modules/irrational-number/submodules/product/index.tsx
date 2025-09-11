@@ -3,6 +3,8 @@ import { Slide } from '../../../common-components/concept';
 import IrrationalProductIntroSlide from './Slide1';
 import IrrationalProductExamplesSlide from './Slide2';
 import IrrationalProductPropertiesSlide from './Slide3';
+import SlideFour from './Slide4';
+import SlideFive from './Slide5';
 
 export const irrationalProductSlides: Slide[] = [
   {
@@ -25,6 +27,20 @@ export const irrationalProductSlides: Slide[] = [
     content: '',
     component: IrrationalProductPropertiesSlide,
     id: 'irrational-product-properties'
+  },
+  { // Add this new slide object for SlideFour
+    type: 'interactive',
+    title: 'When Irrationals Multiply: Rational or Irrational?',
+    content: '',
+    component: SlideFour,
+    id: 'slide-four-id'
+  },
+  { // Add this new slide object for SlideFive
+    type: 'interactive',
+    title: 'Division of Irrational Numbers',
+    content: '',
+    component: SlideFive,
+    id: 'slide-five-id'
   }
 ];
 
