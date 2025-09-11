@@ -45,6 +45,7 @@ const getModules = async () => {
     'spring-forces-0001',
     'trigonometry-basics',
     'vectors',
+    'irrational-number',
     'work-energy-power-0001'
   ];
 
