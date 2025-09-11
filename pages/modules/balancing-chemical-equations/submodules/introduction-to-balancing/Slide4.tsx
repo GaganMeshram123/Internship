@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Interaction, InteractionResponse } from '../../../../common-components/concept';
-import { TrackedInteraction } from '../../../../common-components/concept';
-import SlideComponentWrapper from '../../../../common-components/SlideComponentWrapper';
+import { Interaction, InteractionResponse } from '../../../common-components/concept';
+import { TrackedInteraction } from '../../../common-components/concept';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 
@@ -143,7 +143,7 @@ export default function CombustionDemonstrationSlide() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Example: Propane Combustion
               </h2>
@@ -173,7 +173,7 @@ export default function CombustionDemonstrationSlide() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-6 border border-blue-300 dark:border-blue-700">
+           <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Step-by-Step Builder
               </h2>
@@ -238,7 +238,7 @@ export default function CombustionDemonstrationSlide() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-300 dark:bg-blue-700/30 rounded-lg p-6 border border-blue-400 dark:border-blue-600">
+           <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Equation Balancer
               </h2>
@@ -336,7 +336,7 @@ export default function CombustionDemonstrationSlide() {
             interaction={slideInteractions[3]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-400 dark:bg-blue-600/30 rounded-lg p-6 border border-blue-500 dark:border-blue-500">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <div className="space-y-4">
                 {showVerification && (
                   <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">

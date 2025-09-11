@@ -1,4 +1,5 @@
-import { Slide } from '../../common-components/concept';
+import React from 'react';
+import { Slide } from '../common-components/concept';
 
 // Import submodule content
 import { introductionToBalancingSlides } from './submodules/introduction-to-balancing/index';
@@ -21,36 +22,31 @@ export const submodules: Submodule[] = [
   {
     id: 'introduction-to-balancing',
     title: 'Introduction to Balancing Chemical Equations',
-    description:
-      'Learn the fundamental principles and systematic approaches to balancing chemical equations',
+    description: 'Learn the fundamental principles and systematic approaches to balancing chemical equations',
     slides: introductionToBalancingSlides,
     estimatedTime: '45 min',
     difficulty: 'Beginner',
-    topics: [
-      'Chemical Equations',
-      'Conservation of Mass',
-      'Balancing Strategy',
-      'Combustion Reactions',
-    ],
+    topics: ['Chemical Equations', 'Conservation of Mass', 'Balancing Strategy', 'Combustion Reactions']
   },
   {
     id: 'advanced-balancing-techniques',
     title: 'Advanced Balancing Techniques',
-    description:
-      'Master advanced methods including LCM, fractional coefficients, and polyatomic ion strategies',
+    description: 'Master advanced methods including LCM, fractional coefficients, and polyatomic ion strategies',
     slides: advancedBalancingSlides,
     estimatedTime: '60 min',
     difficulty: 'Intermediate',
-    topics: ['LCM Method', 'Fractional Coefficients', 'Polyatomic Ions', 'Complex Equations'],
-  },
+    topics: ['LCM Method', 'Fractional Coefficients', 'Polyatomic Ions', 'Complex Equations']
+  }
 ];
 
-// 👇 Module config that Quazar Tester will detect
-const moduleConfig = {
-  id: 'balancing-chemical-equations',
-  title: 'Balancing Chemical Equations',
-  description: 'Interactive module on balancing chemical equations',
-  submodules,
-};
+// Dummy React component to satisfy Next.js requirements
+function BalancingChemicalEquationsComponent() {
+  return (
+    <div>
+      This is a module component, not a page.
+    </div>
+  );
+}
 
-export default moduleConfig;
+// Export the dummy component as default while keeping the submodules export
+export default BalancingChemicalEquationsComponent; 

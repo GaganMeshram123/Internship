@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
-import SlideComponentWrapper from '../../../../common-components/SlideComponentWrapper';
-import { TrackedInteraction, Interaction, InteractionResponse } from '../../../../common-components/concept';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
+import { TrackedInteraction, Interaction, InteractionResponse } from '../../../common-components/concept';
 
-
-export default function LCMMethodSlide() {
+export default function FractionalCoefficientsSlide() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'lcm-concept',
-      conceptId: 'lcm-balancing-concept',
-      conceptName: 'LCM Method for Balancing',
+      id: 'fractional-concept',
+      conceptId: 'fractional-balancing-method',
+      conceptName: 'Fractional Coefficients Strategy',
       type: 'learning',
-      description: 'Understanding LCM in chemical balancing'
+      description: 'Understanding how fractional coefficients can simplify balancing'
     },
     {
-      id: 'lcm-quiz',
-      conceptId: 'lcm-application-quiz',
-      conceptName: 'LCM Method Application Quiz',
+      id: 'fractional-quiz',
+      conceptId: 'fractional-strategy-quiz',
+      conceptName: 'Fractional Coefficients Quiz',
       type: 'judging',
-      description: 'Quiz on when to use LCM method'
+      description: 'Quiz on fractional coefficients strategy'
     }
   ];
 
@@ -34,11 +33,11 @@ export default function LCMMethodSlide() {
   // Handle quiz answer selection
   const handleQuizAnswer = (answerId: string) => {
     handleInteractionComplete({
-      interactionId: 'lcm-quiz',
+      interactionId: 'fractional-quiz',
       value: answerId,
       timestamp: Date.now(),
-      conceptId: 'lcm-application-quiz',
-      conceptName: 'LCM Method Application Quiz'
+      conceptId: 'fractional-strategy-quiz',
+      conceptName: 'Fractional Coefficients Quiz'
     });
   };
 
@@ -47,34 +46,35 @@ export default function LCMMethodSlide() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column */}
         <div className="space-y-6">
-          {/* When Elements Appear in Different Ratios */}
+          {/* Fractional Coefficients Strategy */}
           <TrackedInteraction
             interaction={slideInteractions[0]}
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100 dark:bg-blue-800/30 rounded-lg p-6 border border-blue-300 dark:border-blue-600">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
-                When Elements Appear in Different Ratios
+                When Fractions Are Useful Temporarily
               </h2>
               
               <div className="space-y-4">
                 <p className="text-gray-700 dark:text-gray-300 text-lg">
-                  Sometimes elements appear in different amounts on each side. The LCM method helps find the smallest common number both sides can use.
+                  Sometimes it's easier to balance with fractions first, then eliminate them at the end. 
+                  This approach can simplify complex equations.
                 </p>
 
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                   <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">Example Problem:</h3>
                   <div className="text-center text-xl mb-4">
-                    <InlineMath math="Ga + CuBr_2 \rightarrow GaBr_3 + Cu" />
+                    <InlineMath math="SO_2 + O_2 \rightarrow SO_3" />
                   </div>
                   
                   <div className="space-y-2 text-gray-600 dark:text-gray-400">
-                    <p><strong>Problem:</strong> Bromine appears as:</p>
+                    <p><strong>Challenge:</strong> Oxygen appears in multiple places</p>
                     <ul className="list-disc list-inside pl-4">
-                      <li>Left side: 2 bromines (in CuBr₂)</li>
-                      <li>Right side: 3 bromines (in GaBr₃)</li>
+                      <li>Left: SO₂ has 2 O, O₂ has 2 O</li>
+                      <li>Right: SO₃ has 3 O</li>
                     </ul>
-                    <p><strong>Solution:</strong> Find LCM of 2 and 3 = 6</p>
+                    <p><strong>Strategy:</strong> Use fractions temporarily</p>
                   </div>
                 </div>
               </div>
@@ -82,34 +82,34 @@ export default function LCMMethodSlide() {
           </TrackedInteraction>
 
           {/* Knowledge Check */}
-          <div className="bg-blue-100 dark:bg-blue-800/30 rounded-lg p-6 border border-blue-300 dark:border-blue-600">
+           <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
             <h3 className="text-xl font-semibold mb-3 text-blue-700 dark:text-blue-300">
               Quick Check
             </h3>
             <div className="space-y-3">
-              <p className="text-lg text-gray-700 dark:text-gray-300">When should you use the LCM method for balancing chemical equations?</p>
+              <p className="text-lg text-gray-700 dark:text-gray-300">What should you do after balancing an equation using fractional coefficients?</p>
               <TrackedInteraction 
                 interaction={slideInteractions[1]} 
                 onInteractionComplete={handleInteractionComplete}
               >
                 <div className="space-y-2">
                   <button
-                    onClick={() => handleQuizAnswer('different_ratios')}
+                    onClick={() => handleQuizAnswer('multiply_eliminate')}
                     className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200 text-lg"
                   >
-                    When elements appear in different ratios on each side
+                    Multiply all coefficients to eliminate fractions
                   </button>
                   <button
-                    onClick={() => handleQuizAnswer('same_ratios')}
+                    onClick={() => handleQuizAnswer('keep_fractions')}
                     className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200 text-lg"
                   >
-                    When elements appear in the same ratios on both sides
+                    Keep the fractions in the final answer
                   </button>
                   <button
-                    onClick={() => handleQuizAnswer('only_metals')}
+                    onClick={() => handleQuizAnswer('convert_decimals')}
                     className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200 text-lg"
                   >
-                    Only when dealing with metal compounds
+                    Convert fractions to decimal numbers
                   </button>
                 </div>
               </TrackedInteraction>
@@ -120,35 +120,34 @@ export default function LCMMethodSlide() {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Solution Process */}
-          <div className="bg-blue-200 dark:bg-blue-700/30 rounded-lg p-6 border border-blue-400 dark:border-blue-500">
+           <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
             <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
-              LCM Solution Process
+              Step-by-Step Solution
             </h2>
             
             <div className="space-y-4">
               <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-3">Step 1: Identify the problem</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-2">
-                  Bromine: 2 on left, 3 on right
-                </p>
-                <p className="text-gray-600 dark:text-gray-400">
-                  LCM of 2 and 3 = 6
-                </p>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-3">Step 2: Get 6 bromines on both sides</h3>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400">
-                  <li>Left: 3CuBr₂ gives 3 × 2 = 6 bromines</li>
-                  <li>Right: 2GaBr₃ gives 2 × 3 = 6 bromines</li>
-                </ul>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-3">Step 3: Balance other elements</h3>
-                <div className="text-center text-lg">
-                  <InlineMath math="2Ga + 3CuBr_2 \rightarrow 2GaBr_3 + 3Cu" />
+                <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-3">Step 1: Balance with fractions</h3>
+                <div className="text-center text-lg mb-2">
+                  <InlineMath math="SO_2 + \frac{1}{2}O_2 \rightarrow SO_3" />
                 </div>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Now oxygen is balanced: 2 + 1 = 3 on both sides
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-3">Step 2: Eliminate fractions</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-2">Multiply everything by 2:</p>
+                <div className="text-center text-lg">
+                  <InlineMath math="2SO_2 + O_2 \rightarrow 2SO_3" />
+                </div>
+              </div>
+
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3 border border-blue-300 dark:border-blue-600">
+                <p className="text-center font-semibold text-blue-700 dark:text-blue-300">
+                  Final balanced equation with whole numbers!
+                </p>
               </div>
             </div>
           </div>
@@ -159,8 +158,8 @@ export default function LCMMethodSlide() {
 
   return (
     <SlideComponentWrapper
-      slideId="lcm-method"
-      slideTitle="Using Least Common Multiples (LCM)"
+      slideId="fractional-coefficients"
+      slideTitle="Fractional Coefficients Strategy"
       moduleId="balancing-chemical-equations"
       submoduleId="advanced-balancing-techniques"
       interactions={localInteractions}

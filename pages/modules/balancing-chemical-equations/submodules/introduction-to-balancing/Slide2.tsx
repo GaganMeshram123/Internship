@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Interaction, InteractionResponse } from '../../../../common-components/concept';
-import { TrackedInteraction } from '../../../../common-components/concept';
-import SlideComponentWrapper from '../../../../common-components/SlideComponentWrapper';
+import { Interaction, InteractionResponse } from '../../../common-components/concept';
+import { TrackedInteraction } from '../../../common-components/concept';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 
@@ -96,7 +96,8 @@ export default function GoldenRuleOfBalancingSlide() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+
               <div className="space-y-4">
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-6 text-center">
                   <div className="text-xl font-bold mb-2">🎯 GOLDEN RULE</div>
@@ -131,7 +132,8 @@ export default function GoldenRuleOfBalancingSlide() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-6 border border-blue-300 dark:border-blue-700">
+           <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Why Balance Equations?
               </h2>
@@ -182,7 +184,8 @@ export default function GoldenRuleOfBalancingSlide() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-200 dark:bg-blue-800/30 rounded-lg p-6 border border-blue-300 dark:border-blue-600">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Before/After Comparison
               </h2>
@@ -236,7 +239,8 @@ export default function GoldenRuleOfBalancingSlide() {
             interaction={slideInteractions[3]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-300 dark:bg-blue-700/30 rounded-lg p-6 border border-blue-400 dark:border-blue-600">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Atom Tracker
               </h2>

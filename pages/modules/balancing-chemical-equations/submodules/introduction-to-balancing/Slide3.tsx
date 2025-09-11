@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Interaction, InteractionResponse } from '../../../../common-components/concept';
-import { TrackedInteraction } from '../../../../common-components/concept';
-import SlideComponentWrapper from '../../../../common-components/SlideComponentWrapper';
+import { Interaction, InteractionResponse } from '../../../common-components/concept';
+import { TrackedInteraction } from '../../../common-components/concept';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 
@@ -21,21 +21,21 @@ export default function BasicStrategySlide() {
     {
       title: "Step 2: Non-metals (except H, O)",
       description: "Balance other non-metal atoms second",
-      color: "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700",
+      color: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700",
       icon: "⚛️",
       example: "Balance C, N, P, S atoms before H and O"
     },
     {
       title: "Step 3: Hydrogen Third",
       description: "Balance hydrogen atoms third",
-      color: "bg-blue-200 dark:bg-blue-800/30 border-blue-400 dark:border-blue-600",
+      color: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700",
       icon: "🎈",
       example: "H atoms are often in multiple compounds"
     },
     {
       title: "Step 4: Oxygen Last",
       description: "Save oxygen for the final step",
-      color: "bg-blue-300 dark:bg-blue-700/30 border-blue-500 dark:border-blue-500",
+      color: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700",
       icon: "💨",
       example: "O appears in many compounds, easier to adjust last"
     }
@@ -121,7 +121,8 @@ export default function BasicStrategySlide() {
             interaction={slideInteractions[0]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Standard Order of Balancing
               </h2>
@@ -153,7 +154,8 @@ export default function BasicStrategySlide() {
             interaction={slideInteractions[1]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-6 border border-blue-300 dark:border-blue-700">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Why This Order?
               </h2>
@@ -200,7 +202,8 @@ export default function BasicStrategySlide() {
             interaction={slideInteractions[2]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-300 dark:bg-blue-700/30 rounded-lg p-6 border border-blue-400 dark:border-blue-600">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Strategy Selector
               </h2>
@@ -247,7 +250,8 @@ export default function BasicStrategySlide() {
             interaction={slideInteractions[3]} 
             onInteractionComplete={handleInteractionComplete}
           >
-            <div className="bg-blue-400 dark:bg-blue-600/30 rounded-lg p-6 border border-blue-500 dark:border-blue-500">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+
               <h2 className="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">
                 Priority Order
               </h2>

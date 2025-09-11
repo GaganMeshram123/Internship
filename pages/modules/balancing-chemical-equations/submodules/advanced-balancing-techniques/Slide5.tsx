@@ -1,5 +1,5 @@
 import React from 'react';
-import SlideComponentWrapper from '../../../../common-components/SlideComponentWrapper';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 
 const AdvancedPracticeSlide: React.FC = () => {
   // The slide content
@@ -11,7 +11,7 @@ const AdvancedPracticeSlide: React.FC = () => {
           and polyatomic ion methods as appropriate. Show your work step by step.
         </p>
         
-        <div className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-900 rounded-xl p-6 shadow-lg border border-blue-300 dark:border-blue-700 mb-8">
+        <div className="bg-amber-50/60 border border-amber-200 dark:bg-amber-900/40 dark:border-amber-700/50 rounded-lg p-6 mb-8">
           <div className="flex items-center mb-4">
             <div className="bg-blue-600 rounded-full p-2 mr-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
