@@ -1,291 +1,216 @@
+/*
+ * Hey there! This is a React file for an interactive slide.
+ * Its goal is to teach the proof that the square root of 2 is irrational.
+ * I've added comments to explain how it all works, step-by-step.
+ */
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
+import { InteractionResponse } from '../../../common-components/concept';
 
-// Interface to define the props for GeometricProofVisualization
-interface GeometricProofProps {
-  currentStep: number;
-}
+// --- 1. THE DATA FOR OUR PROOF ---
+// It's a good practice to keep our data (like text and math formulas) separate
+// from our components (the visual parts). This makes the code much cleaner.
 
-// This component provides a visual, geometric representation of the proof.
-const GeometricProofVisualization: React.FC<GeometricProofProps> = ({ currentStep }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.5 } },
-  };
+const proofSteps = [
+  {
+    title: "Step 1: The Assumption",
+    // This is the story for the first step.
+    text: "Okay, let's start with a trick. We'll assume the opposite of what we want to prove. So, let's pretend √2 IS a rational number (a simple fraction). That means we can write it as p/q, where the fraction is as simplified as possible (like 3/5, not 6/10).",
+    math: "\\sqrt{2} = \\frac{p}{q}",
+  },
+  {
+    title: "Step 2: Get Rid of the Square Root",
+    text: "Square roots are tricky, so let's get rid of it by squaring both sides. This gives us a new equation. From this, we can see that p² has to be an even number. And if a number's square is even, the number itself must also be even.",
+    math: "2 = \\frac{p^2}{q^2} \\implies 2q^2 = p^2",
+  },
+  {
+    title: "Step 3: A Smart Substitution",
+    text: "Since we know p is even, we can describe it in another way: p = 2k (which is just the definition of an even number). Let's plug '2k' back into our equation where 'p' used to be.",
+    math: "2q^2 = (2k)^2 \\implies 2q^2 = 4k^2 \\implies q^2 = 2k^2",
+    result: "Look! This means q² is also even, so q must be even too."
+  },
+  {
+    title: "Step 4: The 'Aha!' Moment (The Contradiction)",
+    text: "Wait a minute... We just proved that both p AND q have to be even. If they're both even, they can both be divided by 2. This means our fraction p/q was NOT simplified after all!",
+    math: "\\text{p is even AND q is even}",
+    result: "This is a CONTRADICTION! It breaks our first rule."
+  },
+  {
+    title: "Step 5: The Conclusion",
+    text: "Because our starting assumption led us to an impossible situation (a contradiction), our assumption must have been wrong from the very beginning. The only thing left to conclude is the truth:",
+    math: "\\sqrt{2} \\text{ is irrational}",
+  }
+];
 
+
+// --- 2. VISUAL COMPONENTS FOR EACH STEP ---
+// Instead of one giant, confusing component for the animation,
+// we can make a small, simple component for each step. This is much easier to manage.
+
+const Step0Viz = () => ( /* Shows the initial square */
+  <motion.div className="flex flex-col items-center">
+    <motion.div className="w-48 h-48 border-4 border-blue-600 relative">
+      <div className="absolute top-0 left-0 w-full h-full border-4 border-green-600 rotate-45"></div>
+      <p className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-slate-700 dark:text-slate-300">Assume a square with sides <InlineMath math="q"/></p>
+    </motion.div>
+  </motion.div>
+);
+const Step1Viz = () => ( /* Shows the area relationships */
+  <motion.div className="relative w-64 h-64 border-4 border-blue-600 flex justify-center items-center">
+    <motion.div className="w-32 h-32 border-4 border-green-600 flex justify-center items-center" initial={{ scale: 0 }} animate={{ scale: 1 }}>
+      <div className="text-xl font-bold"><InlineMath math="q^2" /></div>
+    </motion.div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="absolute bottom-4 text-2xl font-bold"><BlockMath math="p^2 = 2q^2" /></motion.div>
+    <p className="absolute -bottom-8 text-sm text-slate-700 dark:text-slate-300">Looking at the areas</p>
+  </motion.div>
+);
+const Step2Viz = () => ( /* Shows the substitution */
+  <motion.div className="relative w-64 h-64 flex justify-center items-center">
+    <motion.div className="w-40 h-40 border-4 border-red-500 flex justify-center items-center" initial={{ scale: 0 }} animate={{ scale: 1 }}>
+      <div className="text-xl font-bold text-red-700 dark:text-red-300"><InlineMath math="q^2 = 2k^2" /></div>
+    </motion.div>
+    <p className="absolute -bottom-8 text-sm text-slate-700 dark:text-slate-300">Substituting <InlineMath math="p=2k"/></p>
+  </motion.div>
+);
+const Step3Viz = () => ( /* Shows the contradiction */
+  <motion.div className="flex flex-col items-center gap-4">
+    <div className="font-mono text-center p-4 bg-red-100 dark:bg-red-900/50 rounded-lg">
+      <p className="text-red-800 dark:text-red-200">p = 2k (p is even)</p>
+      <p className="text-red-800 dark:text-red-200">q = 2m (q is even)</p>
+    </div>
+    <p className="text-sm text-center text-slate-700 dark:text-slate-300">Both p and q share a factor of 2.</p>
+    <motion.div className="mt-4 p-4 bg-red-100 dark:bg-red-900/50 rounded-lg" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5 }}>
+      <p className="font-bold text-lg text-center text-red-800 dark:text-red-200">Contradiction!</p>
+    </motion.div>
+  </motion.div>
+);
+const Step4Viz = () => ( /* Shows the final conclusion */
+  <motion.div className="text-center">
+    <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">Our assumption was wrong!</p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-8 p-6 bg-green-100 dark:bg-green-900/50 rounded-lg">
+      <p className="text-xl font-semibold text-green-800 dark:text-green-200">Conclusion: <InlineMath math="\sqrt{2}"/> is Irrational ✅</p>
+    </motion.div>
+  </motion.div>
+);
+
+
+// This is a clever trick! We put all our step components into an array.
+// Now we can easily pick the one we want using its index (like visualizationComponents[0]).
+const visualizationComponents = [Step0Viz, Step1Viz, Step2Viz, Step3Viz, Step4Viz];
+
+// This component's only job is to pick the correct visualization from the array and animate it in.
+const GeometricProofVisualization = ({ currentStep }: { currentStep: number }) => {
+  const StepComponent = visualizationComponents[currentStep];
+
+  // 'AnimatePresence' is a cool tool from Framer Motion. It allows components to animate *out* when they're removed.
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       <motion.div
-        key={currentStep}
+        key={currentStep} // The 'key' is important! It tells React this is a *new* thing to animate in.
         className="flex justify-center items-center h-full w-full"
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.5 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.4 }}
       >
-        {currentStep === 0 && (
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
-            <motion.div
-              className="w-48 h-48 border-4 border-blue-600 relative transition-all duration-500" // Removed rounded-lg here
-            >
-              {/* Green rotated square (diagonal indicator) */}
-              <div className="absolute top-0 left-0 w-full h-full border-4 border-green-600 rotate-45 origin-center"></div> {/* Corrected: origin-center */}
-              
-              {/* Labels for the square */}
-              <motion.div
-                className="absolute w-full h-full" // Wrapper for positioning labels
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-              >
-                {/* Side 1 label */}
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-lg text-blue-800 dark:text-blue-200">
-                  <InlineMath math="q" />
-                </div>
-                {/* Side 2 label */}
-                <div className="absolute bottom-1/2 right-0 translate-x-10 text-lg text-blue-800 dark:text-blue-200">
-                  <InlineMath math="q" />
-                </div>
-                {/* Diagonal label */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xl font-bold text-green-800 dark:text-green-200" style={{ transform: 'translate(-50%, -50%) rotate(45deg)' }}>
-                  <InlineMath math="p" />
-                </div>
-              </motion.div>
-              <p className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-center text-slate-700 dark:text-slate-300">Initial Square (Sides <InlineMath math="q"/>, Diagonal <InlineMath math="p"/>)</p>
-            </motion.div>
-          </motion.div>
-        )}
-        {currentStep === 1 && (
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
-            <motion.div className="relative w-64 h-64 border-4 border-blue-600 flex justify-center items-center">
-              <motion.div
-                className="w-32 h-32 border-4 border-green-600 flex justify-center items-center"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8 }}
-              >
-                <div className="text-xl font-bold text-green-800 dark:text-green-200">
-                  <InlineMath math="q^2" />
-                </div>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute bottom-4 text-2xl font-bold text-slate-800 dark:text-slate-100"
-              >
-                <BlockMath math="p^2 = 2q^2" />
-              </motion.div>
-              <p className="absolute -bottom-8 text-sm text-center text-slate-700 dark:text-slate-300">Area relationships after squaring</p>
-            </motion.div>
-          </motion.div>
-        )}
-        {currentStep === 2 && (
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
-            <motion.div className="relative w-64 h-64 border-4 border-blue-600 flex justify-center items-center">
-              <motion.div
-                className="w-40 h-40 border-4 border-red-600 flex justify-center items-center"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8 }}
-              >
-                <div className="text-xl font-bold text-red-800 dark:text-red-200">
-                  <InlineMath math="q^2 = 2k^2" />
-                </div>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute bottom-4 text-2xl font-bold text-slate-800 dark:text-slate-100"
-              >
-                <BlockMath math="p = 2k \implies p^2 = 4k^2" />
-              </motion.div>
-              <p className="absolute -bottom-8 text-sm text-center text-slate-700 dark:text-slate-300">Substituting <InlineMath math="p=2k"/></p>
-            </motion.div>
-          </motion.div>
-        )}
-        {currentStep === 3 && (
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
-            <motion.div className="flex flex-col items-center">
-              <motion.div
-                className="w-48 h-48 rounded-lg border-4 border-red-600 relative flex justify-center items-center overflow-hidden"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                {/* Simplified drawing of lines for common factor */}
-                <div className="absolute w-full h-px bg-gray-600 top-1/2 -translate-y-1/2"></div>
-                <div className="absolute h-full w-px bg-gray-600 left-1/2 -translate-x-1/2"></div>
-                <p className="absolute text-xl font-bold text-red-800 dark:text-red-200">2</p>
-              </motion.div>
-              <p className="text-sm mt-4 text-center text-slate-700 dark:text-slate-300">Visualizing the common factor of 2 for both <InlineMath math="p"/> and <InlineMath math="q"/></p>
-              <motion.div
-                className="mt-6 p-4 bg-red-100 dark:bg-red-900 rounded-lg text-red-800 dark:text-red-200"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                <p className="font-bold text-lg text-center">
-                  Contradiction! <br/> <InlineMath math="p"/> and <InlineMath math="q"/> share a factor of 2.
-                </p>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-        {currentStep === 4 && (
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center text-center max-w-xl mx-auto">
-            <p className="text-2xl font-bold leading-relaxed text-blue-700 dark:text-blue-300">
-              The only way to resolve the contradiction is to reject our initial assumption.<br/>
-              Therefore, <InlineMath math="\sqrt{2}"/> must be irrational.
-            </p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-              className="mt-8 p-6 bg-green-100 dark:bg-green-900 rounded-lg text-green-800 dark:text-green-200 shadow-md"
-            >
-              <p className="text-xl font-semibold">
-                Proof Complete: <InlineMath math="\sqrt{2}"/> is Irrational! ✅
-              </p>
-            </motion.div>
-          </motion.div>
-        )}
+        {StepComponent && <StepComponent />}
       </motion.div>
     </AnimatePresence>
   );
 };
 
+
+// --- 3. THE MAIN SLIDE COMPONENT ---
+// This is the "boss" component that puts everything together.
 export default function ProvingIrrationalitySlide1() {
+  // 'useState' is a React Hook. It's like giving our component a memory.
+  // Here, we're asking it to remember a number called 'currentStep', starting at 0.
+  // 'setCurrentStep' is the *only* way we can update that number.
   const [currentStep, setCurrentStep] = useState(0);
+  const [localInteractions] = useState<Record<string, InteractionResponse>>({});
 
-  const proofSteps = [
-    {
-      title: "Step 1: The Assumption",
-      text: "We begin by assuming the opposite of what we want to prove. Let's assume that $\\sqrt{2}$ is a rational number. If it's rational, it can be written as a fraction $p/q$, where $p$ and $q$ are integers with no common factors (a simplified fraction).",
-      math: "\sqrt{2} = \\frac{p}{q}",
-      result: null
-    },
-    {
-      title: "Step 2: Squaring Both Sides",
-      text: "By squaring both sides of the equation, we can eliminate the square root. We see that $p^2$ is an even number, which means $p$ must also be even.",
-      math: "2 = \\frac{p^2}{q^2} \\implies 2q^2 = p^2",
-      result: null
-    },
-    {
-      title: "Step 3: A New Substitution",
-      text: "Since $p$ is even, we can write it as $2k$ for some integer $k$. We substitute this back into our equation to show that $q$ must also be even.",
-      math: "2q^2 = (2k)^2 \\implies 2q^2 = 4k^2 \\implies q^2 = 2k^2",
-      result: "This shows that $q^2$ is even, which means $q$ must also be even."
-    },
-    {
-      title: "Step 4: The Contradiction",
-      text: "We have concluded that both $p$ and $q$ are even. This means they share a common factor of 2. But this directly contradicts our initial assumption that the fraction $p/q$ was simplified and had no common factors. Our assumption must be false.",
-      math: "\\text{p is even and q is even}",
-      result: "This is a contradiction! Our initial assumption was wrong. Therefore, $\\sqrt{2}$ cannot be rational."
-    },
-    {
-      title: "Final Conclusion",
-      text: "Since our initial assumption led to a logical contradiction, the only possibility is that $\\sqrt{2}$ is not a rational number. It is, by definition, an irrational number.",
-      math: "\sqrt{2} \\text{ is irrational}",
-      result: null
-    }
-  ];
-
-  const currentStepContent = proofSteps[currentStep];
-
-  return (
-    <div className="min-h-screen transition-colors duration-300 flex flex-col justify-center items-center bg-slate-50 text-slate-800">
-      <div className="grid lg:grid-cols-2 gap-8 p-8 max-w-7xl mx-auto">
-
-        {/* Left Column: General Proof by Contradiction Explanation */}
-        <div className="space-y-6">
-          <div className="rounded-lg p-6 shadow-lg bg-white">
-            <h3 className="text-2xl font-bold text-blue-600 mb-4">
-              Proof by Contradiction
-            </h3>
-            <div className="space-y-4 text-lg">
-              <p className="leading-relaxed">
-                To prove that a number is irrational, we often use a method called **proof by contradiction**. This method involves three key steps:
-              </p>
-              <ol className="list-decimal list-inside space-y-2 pl-4">
-                <li>**Assume the Opposite:** We start by assuming the number is rational.</li>
-                <li>**Show a Contradiction:** We then follow a logical chain of reasoning that leads to a statement that is clearly false or impossible.</li>
-                <li>**Conclude:** Since our assumption led to a contradiction, the assumption must be false. Therefore, the original statement (that the number is irrational) must be true.</li>
-              </ol>
-              <p className="leading-relaxed mt-4">
-                Let's apply this method to prove that $\sqrt{2}$ is irrational, a famous proof dating back to the ancient Greeks.
-              </p>
-            </div>
-          </div>
+  const slideContent = (
+    // This is the main layout. It's a two-column grid on large screens.
+    <div className="min-h-screen flex justify-center items-center bg-slate-50 dark:bg-slate-900 p-4">
+      <div className="grid lg:grid-cols-2 gap-8 max-w-7xl w-full">
+        
+        {/* Left Column: The Static Introduction */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border dark:border-slate-700">
+          <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4">The Game Plan: Proof by Contradiction</h3>
+          <p className="text-slate-700 dark:text-slate-300">We'll use a sneaky method to prove our point. It has 3 main moves:</p>
+          <ol className="list-decimal list-inside space-y-2 mt-4 text-slate-700 dark:text-slate-300">
+              <li><strong>Assume the Opposite:</strong> First, we pretend our opponent is right.</li>
+              <li><strong>Show It's Impossible:</strong> We follow the logic until we find a major flaw.</li>
+              <li><strong>Declare Victory:</strong> The flaw proves our opponent must be wrong, so we must be right!</li>
+          </ol>
         </div>
 
-        {/* Right Column: Interactive Step-by-Step Proof with Visualization */}
-        <div className="space-y-6 flex flex-col justify-between">
-          <div className="rounded-lg p-6 shadow-lg flex-grow flex flex-col bg-white">
-            <h3 className="text-2xl font-bold text-blue-600 mb-6">
-              Proof for $\sqrt{2}$
-            </h3>
-
-            {/* Dynamic Content: Text and Math */}
-            <div className="flex-grow">
-              <AnimatePresence mode="wait">
-                <motion.div
+        {/* Right Column: The Interactive Stepper */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border dark:border-slate-700 flex flex-col">
+          <div className="flex-grow">
+            <AnimatePresence mode="wait">
+              <motion.div
                   key={currentStep}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
                   className="text-center"
-                >
-                  <h4 className="text-blue-700 font-medium text-lg mb-4">
-                    {currentStepContent.title}
-                  </h4>
-                  <p className="text-slate-700 leading-relaxed mb-6">
-                    {currentStepContent.text}
-                  </p>
-                  <div className="p-4 rounded-lg font-mono bg-gray-100 text-gray-800">
-                    <BlockMath math={currentStepContent.math} />
-                  </div>
-                  {currentStepContent.result && (
-                    <div className="mt-4 rounded-lg p-4 text-center transition-colors bg-green-100 text-green-800">
-                      <p className="font-semibold text-lg">{currentStepContent.result}</p>
-                    </div>
+              >
+                  <h4 className="text-blue-700 dark:text-blue-300 font-semibold text-lg mb-2">{proofSteps[currentStep].title}</h4>
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">{proofSteps[currentStep].text}</p>
+                  <div className="p-3 rounded-lg bg-slate-100 dark:bg-slate-900/50"><BlockMath math={proofSteps[currentStep].math} /></div>
+                  {proofSteps[currentStep].result && (
+                      <div className="mt-4 p-3 rounded-lg bg-green-100 dark:bg-green-900/50 font-semibold text-green-800 dark:text-green-200">
+                          {proofSteps[currentStep].result}
+                      </div>
                   )}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-            {/* Geometric Visualization Component */}
-            <div className="mt-8 flex-shrink-0 w-full h-64 flex justify-center items-center">
-              <GeometricProofVisualization currentStep={currentStep} />
-            </div>
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between items-center mt-8 pt-4 border-t border-gray-200">
-              <button
-                onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-                disabled={currentStep === 0}
-                className="px-6 py-3 rounded-full transition-all duration-300 transform active:scale-95 disabled:opacity-50 font-bold bg-gray-200 hover:bg-gray-300 text-gray-700 disabled:bg-gray-100"
-              >
-                ← Previous
-              </button>
-              <span className="text-sm font-semibold text-gray-500">
-                Step {currentStep + 1} of {proofSteps.length}
-              </span>
-              <button
-                onClick={() => setCurrentStep(Math.min(proofSteps.length - 1, currentStep + 1))}
-                disabled={currentStep === proofSteps.length - 1}
-                className="px-6 py-3 rounded-full transition-all duration-300 transform active:scale-95 disabled:opacity-50 font-bold bg-blue-600 hover:bg-blue-500 text-white disabled:bg-blue-200"
-              >
-                Next →
-              </button>
-            </div>
+          {/* The visualization area */}
+          <div className="h-64 mt-6 flex-shrink-0">
+            <GeometricProofVisualization currentStep={currentStep} />
+          </div>
+          
+          {/* The navigation buttons */}
+          <div className="flex justify-between items-center mt-6 pt-4 border-t dark:border-slate-700">
+            <button
+              onClick={() => setCurrentStep(currentStep - 1)}
+              disabled={currentStep === 0}
+              className="px-5 py-2 rounded-lg font-bold bg-slate-200 dark:bg-slate-700 disabled:opacity-40"
+            >
+              Back
+            </button>
+            <span className="text-sm font-semibold text-slate-500">Step {currentStep + 1} / {proofSteps.length}</span>
+            <button
+              onClick={() => setCurrentStep(currentStep + 1)}
+              disabled={currentStep === proofSteps.length - 1}
+              className="px-5 py-2 rounded-lg font-bold bg-blue-600 text-white disabled:opacity-40"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
     </div>
+  );
+
+  return (
+    // This 'Wrapper' is likely a component from your project that handles slide titles, etc.
+    <SlideComponentWrapper
+      slideId="irrationality-proof-sqrt2"
+      slideTitle="Proof by Contradiction: √2"
+      moduleId="irrational-number"
+      submoduleId="Proving-irrationality"
+      interactions={localInteractions}
+    >
+      {slideContent}
+    </SlideComponentWrapper>
   );
 }

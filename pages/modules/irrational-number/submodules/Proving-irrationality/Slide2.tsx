@@ -1,139 +1,144 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Interaction, InteractionResponse, TrackedInteraction } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
-import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
-import { InlineMath, BlockMath } from 'react-katex';
+import { InlineMath } from 'react-katex';
+import { Interaction, InteractionResponse } from '../../../common-components/concept';
 
-const proofVizSteps = [
+// --- Type Definitions for a Cleaner Codebase ---
+type VisualItem = {
+    id: number;
+    label: string;
+    color: string;
+    position: string; // Using Tailwind classes for positioning is cleaner
+};
+
+type ProofStep = {
+    title: string;
+    text: string;
+    visuals: VisualItem[];
+};
+
+// --- Updated Data with Clearer Labels ---
+const proofVizSteps: ProofStep[] = [
     {
-        title: "Start: Assumption",
-        text: "We assume $\\sqrt{2} = p/q$. We can simplify the fraction, meaning $p$ and $q$ can't both be even.",
-        visual: [
-            { id: 1, label: "$p/q$", color: "bg-blue-500", style: { top: "50%", left: "10%" } },
-            { id: 2, label: "Not both even", color: "bg-red-500", style: { top: "60%", left: "20%" } }
+        title: "Start: The Assumption",
+        text: "We assume $\\sqrt{2} = p/q$. The fraction is simplified, meaning $p$ and $q$ cannot both be even.",
+        visuals: [
+            { id: 1, label: "\\frac{p}{q}", color: "bg-blue-500", position: "top-1/3 left-1/2 -translate-x-1/2 text-2xl" },
+            { id: 2, label: "Rule: Not both even", color: "bg-amber-500", position: "top-2/3 left-1/2 -translate-x-1/2" }
         ]
     },
     {
-        title: "After Squaring",
-        text: "We get $p^2 = 2q^2$. This means $p^2$ is even, so $p$ must be even. So we know $p = 2k$.",
-        visual: [
-            { id: 1, label: "$p^2 = 2q^2$", color: "bg-purple-500", style: { top: "20%", left: "50%" } },
-            { id: 2, label: "$p$ is even", color: "bg-purple-500", style: { top: "30%", left: "55%" } },
+        title: "Clue #1: 'p' is Even",
+        text: "After squaring, we get $p^2 = 2q^2$. This means $p^2$ must be even, which proves that $p$ is also even.",
+        visuals: [
+            { id: 1, label: "p^2 = 2q^2", color: "bg-purple-500", position: "top-1/3 left-1/2 -translate-x-1/2 text-xl" },
+            { id: 2, label: "Finding: p is Even", color: "bg-sky-500", position: "top-2/3 left-1/2 -translate-x-1/2" },
         ]
     },
     {
-        title: "The Second Implication",
-        text: "Substitute $p = 2k$ into the equation. We get $q^2 = 2k^2$, meaning $q^2$ is even. Therefore, $q$ is also even.",
-        visual: [
-            { id: 1, label: "$q^2 = 2k^2$", color: "bg-purple-500", style: { top: "70%", left: "50%" } },
-            { id: 2, label: "$q$ is even", color: "bg-purple-500", style: { top: "80%", left: "55%" } },
+        title: "Clue #2: 'q' is Even",
+        text: "Substituting $p=2k$ back into the equation, we find that $q^2 = 2k^2$. This proves that $q$ must also be even.",
+        visuals: [
+            { id: 1, label: "q^2 = 2k^2", color: "bg-purple-500", position: "top-1/3 left-1/2 -translate-x-1/2 text-xl" },
+            { id: 2, label: "Finding: q is Even", color: "bg-sky-500", position: "top-2/3 left-1/2 -translate-x-1/2" },
         ]
     },
     {
-        title: "The Contradiction",
-        text: "Our result shows that both $p$ and $q$ are even. This directly contradicts our first assumption that the fraction $p/q$ was simplified. Thus, our initial assumption was false.",
-        visual: [
-            { id: 1, label: "$p$ is even", color: "bg-purple-500", style: { top: "20%", left: "10%" } },
-            { id: 2, label: "$q$ is even", color: "bg-purple-500", style: { top: "80%", left: "10%" } },
-            { id: 3, label: "CONTRACTION", color: "bg-red-600", style: { top: "50%", left: "50%" } }
+        title: "The Contradiction!",
+        text: "Our findings show that both $p$ and $q$ are even. This directly breaks our initial rule.",
+        visuals: [
+            { id: 1, label: "p is Even", color: "bg-sky-500", position: "top-1/4 left-1/4" },
+            { id: 2, label: "q is Even", color: "bg-sky-500", position: "top-1/4 right-1/4" },
+            { id: 3, label: "Rule: Not both even", color: "bg-amber-500", position: "top-1/2 left-1/2 -translate-x-1/2" },
+            { id: 4, label: "CONTRADICTION", color: "bg-red-600", position: "top-3/4 left-1/2 -translate-x-1/2 text-2xl shadow-lg" }
         ]
     }
 ];
 
-export default function ProvingIrrationalitySlide2() {
-    const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-    const [currentVizStep, setCurrentVizStep] = useState(0);
-    const { isDarkMode } = useThemeContext();
+// --- Child Components for better structure ---
 
-    const currentVizContent = proofVizSteps[currentVizStep];
+const VisualizationCanvas: React.FC<{ visuals: VisualItem[] }> = ({ visuals }) => (
+    <div className="bg-slate-800 rounded-xl p-6 shadow-lg relative min-h-[400px]">
+        <AnimatePresence>
+            {visuals.map(item => (
+                <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, scale: 0.7 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.7 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    className={`absolute p-3 rounded-lg font-bold text-white text-center ${item.color} ${item.position}`}
+                >
+                    {/* This is the fix for the un-rendered math bug */}
+                    <InlineMath>{item.label}</InlineMath>
+                </motion.div>
+            ))}
+        </AnimatePresence>
+    </div>
+);
 
-    const slideInteractions: Interaction[] = [
-        {
-            id: 'proof-visualization-intro',
-            conceptId: 'proof-visualization',
-            conceptName: 'Proof of √2 Visualization',
-            type: 'learning',
-            description: 'A visual walkthrough of the proof for the irrationality of √2'
-        }
-    ];
-
-    const handleInteractionComplete = (response: InteractionResponse) => {
-        setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
-    };
-
-    const slideContent = (
-        <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
-            <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
-                <div className={`rounded-lg p-6 shadow-lg ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                    <h3 className="text-xl font-medium text-blue-600 dark:text-blue-400 mb-4">
-                        Visualizing the Proof for $\sqrt{2}$
-                    </h3>
-                    <div className="space-y-4 text-lg">
-                        <p className="leading-relaxed">
-                            Sometimes, seeing the logical flow visually can make an abstract proof easier to grasp. This visualization walks through the key steps of the proof by contradiction.
-                        </p>
-                        <p className="leading-relaxed">
-                            Each step highlights a new logical conclusion that moves us closer to the final contradiction.
-                        </p>
-                    </div>
-                    
-                    <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <h4 className="text-blue-700 dark:text-blue-300 font-medium text-lg mb-2 text-center">
-                            {currentVizContent.title}
-                        </h4>
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-center">
-                            {currentVizContent.text}
-                        </p>
-                    </div>
-
-                    <div className="flex justify-between mt-4">
-                        <button
-                            onClick={() => setCurrentVizStep(Math.max(0, currentVizStep - 1))}
-                            disabled={currentVizStep === 0}
-                            className={`px-4 py-2 rounded-lg transition-colors ${
-                                isDarkMode
-                                    ? 'bg-slate-700 hover:bg-slate-600 text-white disabled:opacity-50'
-                                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700 disabled:opacity-50'
-                            }`}
+const ProofControlPanel: React.FC<{
+    step: ProofStep;
+    currentStepIndex: number;
+    totalSteps: number;
+    onNext: () => void;
+    onPrev: () => void;
+}> = ({ step, currentStepIndex, totalSteps, onNext, onPrev }) => {
+    return (
+        <div className="bg-slate-800 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+            <div>
+                <h3 className="text-xl font-bold text-white mb-3">
+                    {/* This is the fix for the KaTeX title error */}
+                    Visualizing the Proof for <InlineMath>\sqrt{2}</InlineMath>
+                </h3>
+                <p className="text-slate-400 mb-6">
+                    This visualization walks through the key steps of the proof by contradiction.
+                </p>
+                <div className="p-4 bg-blue-900/30 border-l-4 border-blue-500 rounded-lg">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentStepIndex}
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.3 }}
                         >
-                            ← Previous
-                        </button>
-                        <button
-                            onClick={() => setCurrentVizStep(Math.min(proofVizSteps.length - 1, currentVizStep + 1))}
-                            disabled={currentVizStep === proofVizSteps.length - 1}
-                            className={`px-4 py-2 rounded-lg transition-colors ${
-                                isDarkMode
-                                    ? 'bg-blue-700 hover:bg-blue-600 text-white disabled:opacity-50'
-                                    : 'bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50'
-                            }`}
-                        >
-                            Next →
-                        </button>
-                    </div>
-                </div>
-
-                <div className={`rounded-lg p-6 shadow-lg relative min-h-[400px] ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                    <AnimatePresence>
-                        {currentVizContent.visual.map(item => (
-                            <motion.div
-                                key={item.id}
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                transition={{ duration: 0.5 }}
-                                className={`absolute p-2 rounded-md font-semibold text-white ${item.color}`}
-                                style={item.style}
-                            >
-                                {item.label}
-                            </motion.div>
-                        ))}
+                            <h4 className="font-bold text-lg text-blue-300 mb-2">
+                                {step.title}
+                            </h4>
+                            {/* The text is wrapped in InlineMath to correctly parse LaTeX */}
+                            <p className="text-slate-300">
+                                <InlineMath>{step.text}</InlineMath>
+                            </p>
+                        </motion.div>
                     </AnimatePresence>
                 </div>
             </div>
+            <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-700">
+                <button onClick={onPrev} disabled={currentStepIndex === 0} className="px-5 py-2 rounded-lg font-bold bg-slate-700 hover:bg-slate-600 disabled:opacity-40">
+                    ← Previous
+                </button>
+                <span className="text-sm font-semibold text-slate-500">Step {currentStepIndex + 1} / {totalSteps}</span>
+                <button onClick={onNext} disabled={currentStepIndex === totalSteps - 1} className="px-5 py-2 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-40">
+                    Next →
+                </button>
+            </div>
         </div>
     );
+};
+
+// --- Main Component ---
+
+export default function ProvingIrrationalitySlide2() {
+    const [currentVizStep, setCurrentVizStep] = useState(0);
+    const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+
+    const handleNext = () => setCurrentVizStep(prev => Math.min(prev + 1, proofVizSteps.length - 1));
+    const handlePrev = () => setCurrentVizStep(prev => Math.max(0, prev - 1));
+    
+    const currentStepData = proofVizSteps[currentVizStep];
 
     return (
         <SlideComponentWrapper
@@ -143,7 +148,18 @@ export default function ProvingIrrationalitySlide2() {
             submoduleId="proving-irrationality"
             interactions={localInteractions}
         >
-            {slideContent}
+            <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-200 p-8">
+                <div className="grid lg:grid-cols-2 gap-8 max-w-7xl w-full">
+                    <ProofControlPanel
+                        step={currentStepData}
+                        currentStepIndex={currentVizStep}
+                        totalSteps={proofVizSteps.length}
+                        onNext={handleNext}
+                        onPrev={handlePrev}
+                    />
+                    <VisualizationCanvas visuals={currentStepData.visuals} />
+                </div>
+            </div>
         </SlideComponentWrapper>
     );
 }
