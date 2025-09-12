@@ -45,3 +45,16 @@ export const provingIrrationalitySlides: Slide[] = [
     content: null,
   },
 ];
+
+function ProvingIrrationalitySubmodule() {
+  return (
+    <div className="bg-gray-900 min-h-screen">
+      <h1>Proving Irrationality</h1>
+      <p>This is the default component for the Proving Irrationality submodule.</p>
+    </div>
+  );
+}
+
+export default ProvingIrrationalitySubmodule;
+
+ 
