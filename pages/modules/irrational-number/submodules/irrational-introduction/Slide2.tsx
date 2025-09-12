@@ -102,7 +102,7 @@ export default function IrrationalIntroSlide2() {
           <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
             Numbers that cannot be written as a simple fraction are called <span className="font-semibold text-blue-700 dark:text-blue-300">irrational numbers</span>. Their decimal representation goes on forever without repeating.
           </div>
-          <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
             <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Examples</div>
             <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
               <li>**Rational:** Integers ($5$), fractions ($1/2$), and terminating or repeating decimals ($0.5$, $0.333...$).</li>

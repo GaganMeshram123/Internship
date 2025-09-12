@@ -32,7 +32,7 @@ export default function IrrationalOperationsSlide() {
                 <span className="font-semibold text-blue-700 dark:text-blue-300">Operations with Irrational Numbers:</span> A set of numbers is considered "closed" under an operation if performing that operation on any two numbers from the set always results in a number that is also in the set.
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                 <div className="text-blue-700 dark:text-blue-300 font-medium mb-3">Key Insights</div>
                 <div className="space-y-3">
                   <div className="text-lg text-gray-700 dark:text-gray-300">
@@ -59,7 +59,7 @@ export default function IrrationalOperationsSlide() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                 <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Multiplication and Division</div>
                 <div className="space-y-2">
                   <div className="text-lg text-gray-700 dark:text-gray-300">

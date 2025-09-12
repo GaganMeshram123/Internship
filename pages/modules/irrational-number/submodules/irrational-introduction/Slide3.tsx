@@ -45,8 +45,8 @@ export default function IrrationalRepresentationsSlide() {
   const [zoomLevel, setZoomLevel] = useState(0);
   const [number, setNumber] = useState('1.41421356237...');
   const irrationalNumbers = useMemo(() => ([
-    { name: '$\sqrt{2}$', value: '1.41421356237309504880...' },
-    { name: '$\pi$', value: '3.14159265358979323846...' },
+    { name: '$\\sqrt{2}$', value: '1.41421356237309504880...' },
+    { name: '$\\pi$', value: '3.14159265358979323846...' },
     { name: '$e$', value: '2.71828182845904523536...' }
   ]), []);
 
@@ -133,14 +133,14 @@ export default function IrrationalRepresentationsSlide() {
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
                 <span className="font-semibold text-blue-700 dark:text-blue-300">Irrational numbers</span> are real numbers that cannot be represented as a simple fraction, like `p/q`. This is because their decimal expansions are both **infinite and non-repeating**. They cannot be fully written down, only approximated.
               </div>
-              <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                 <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Key Representations</div>
                 <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
                   <li>**Symbolic form**: Using special symbols like $\pi$ or $\sqrt{2}$. This is the most common way to represent them exactly.</li>
                   <li>**Decimal approximation**: A truncated decimal form like $3.14$ for $\pi$, used in calculations.</li>
                 </ul>
               </div>
-              <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+             <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                 <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Interact and Explore</div>
                 <div className="text-lg text-gray-700 dark:text-gray-300">
                   Select one of the irrational numbers on the right and **zoom in** to see more of its decimal places. Notice how the sequence of digits never settles into a repeating pattern, no matter how far you go.
@@ -150,14 +150,14 @@ export default function IrrationalRepresentationsSlide() {
           </TrackedInteraction>
         </div>
 
-        {/* Right column - Interactive figure and quick check */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg">
-          <h3 className="text-gray-900 dark:text-white font-medium mb-4">The Nature of Irrational Numbers</h3>
-          <div className="flex flex-col gap-4">
-            {InteractiveFigure()}
-          </div>
+        {/* Right column - Interactive figure and quick check -- UPDATED BELOW */}
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg flex flex-col gap-6">
+          <h3 className="text-gray-900 dark:text-white font-medium">The Nature of Irrational Numbers</h3>
+          
+          {InteractiveFigure()}
+          
           {/* Quick Check */}
-          <div className="bg-blue-100 dark:bg-blue-800 rounded-lg p-6 mt-6">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
             <h4 className="text-xl font-semibold mb-3 text-blue-700 dark:text-blue-300">Quick Check</h4>
             <p className="text-lg text-gray-800 dark:text-gray-200 mb-4">How is the decimal representation of an irrational number different from a rational number?</p>
             <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>

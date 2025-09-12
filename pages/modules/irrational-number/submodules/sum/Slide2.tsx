@@ -43,84 +43,84 @@ export default function IrrationalSumPropertiesSlide() {
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
+    setLocalInteractions((prev: Record<string, InteractionResponse>) => ({ ...prev, [response.interactionId]: response }));
   };
 
   const questions = [
     {
       id: 'sum-rational-irrational',
-      question: 'The sum of a rational number and an irrational number is always...',
+      question: '\\text{The sum of a rational number and an irrational number is always...}',
       options: [
-        { text: 'Rational', isCorrect: false },
-        { text: 'Irrational', isCorrect: true },
-        { text: 'Either rational or irrational', isCorrect: false },
-        { text: 'Zero', isCorrect: false }
+        { text: '\\text{Rational}', isCorrect: false },
+        { text: '\\text{Irrational}', isCorrect: true },
+        { text: '\\text{Either rational or irrational}', isCorrect: false },
+        { text: '\\text{Zero}', isCorrect: false }
       ],
       explanation: 'The sum of a rational and an irrational number always results in an irrational number. The rational part cannot cancel out the infinite, non-repeating decimal.'
     },
     {
       id: 'irrational-minus-irrational',
-      question: 'What is the result of $(\sqrt{5} + 3) - \sqrt{5}$?',
+      question: '\\text{What is the result of } (\\sqrt{5} + 3) - \\sqrt{5}\\text{?}',
       options: [
-        { text: 'An irrational number', isCorrect: false },
-        { text: 'A rational number', isCorrect: true },
-        { text: 'Cannot be determined', isCorrect: false },
-        { text: 'A negative number', isCorrect: false }
+        { text: '\\text{An irrational number}', isCorrect: false },
+        { text: '\\text{A rational number}', isCorrect: true },
+        { text: '\\text{Cannot be determined}', isCorrect: false },
+        { text: '\\text{A negative number}', isCorrect: false }
       ],
       explanation: 'The result simplifies to `3`, which is a rational number. This shows that the difference of two irrationals can be rational.'
     },
     {
       id: 'product-irrational',
-      question: 'Is the product of two irrational numbers, such as $\sqrt{2} \cdot \sqrt{8}$, always irrational?',
+      question: '\\text{Is the product of two irrational numbers, such as } \\sqrt{2} \\cdot \\sqrt{8}, \\text{ always irrational?}',
       options: [
-        { text: 'Yes, it is always irrational.', isCorrect: false },
-        { text: 'No, it can be rational.', isCorrect: true },
-        { text: 'Only if the numbers are the same.', isCorrect: false },
-        { text: 'The result is always 2.', isCorrect: false }
+        { text: '\\text{Yes, it is always irrational.}', isCorrect: false },
+        { text: '\\text{No, it can be rational.}', isCorrect: true },
+        { text: '\\text{Only if the numbers are the same.}', isCorrect: false },
+        { text: '\\text{The result is always 2.}', isCorrect: false }
       ],
-      explanation: 'No, the product of two irrationals can be rational. For example, $\sqrt{2} \cdot \sqrt{8} = \sqrt{16} = 4$, which is a rational number.'
+      explanation: 'No, the product of two irrationals can be rational. For example, $\\sqrt{2} \\cdot \\sqrt{8} = \\sqrt{16} = 4$, which is a rational number.'
     },
     {
       id: 'quotient-irrational',
-      question: 'Which of the following expressions results in a rational number?',
+      question: '\\text{Which of the following expressions results in a rational number?}',
       options: [
-        { text: '$\sqrt{12} / \sqrt{3}$', isCorrect: true },
-        { text: '$\sqrt{10} / \sqrt{5}$', isCorrect: false },
-        { text: '$\sqrt{7} + \sqrt{7}$', isCorrect: false },
-        { text: '$\pi / \pi^2$', isCorrect: false }
+        { text: '$\\sqrt{12} / \\sqrt{3}$', isCorrect: true },
+        { text: '$\\sqrt{10} / \\sqrt{5}$', isCorrect: false },
+        { text: '$\\sqrt{7} + \\sqrt{7}$', isCorrect: false },
+        { text: '$\\pi / \\pi^2$', isCorrect: false }
       ],
-      explanation: 'The expression $\sqrt{12} / \sqrt{3}$ simplifies to $\sqrt{12/3} = \sqrt{4} = 2$, which is a rational number.'
+      explanation: 'The expression $\\sqrt{12} / \\sqrt{3}$ simplifies to $\\sqrt{12/3} = \\sqrt{4} = 2$, which is a rational number.'
     },
     {
       id: 'pi-e-sum',
-      question: 'The sum of $\pi + e$ is...',
+      question: '\\text{The sum of } \\pi + e \\text{ is...}',
       options: [
-        { text: 'Rational', isCorrect: false },
-        { text: 'Irrational', isCorrect: true },
-        { text: 'Equal to a whole number', isCorrect: false },
-        { text: 'Not possible to determine', isCorrect: false }
+        { text: '\\text{Rational}', isCorrect: false },
+        { text: '\\text{Irrational}', isCorrect: true },
+        { text: '\\text{Equal to a whole number}', isCorrect: false },
+        { text: '\\text{Not possible to determine}', isCorrect: false }
       ],
-      explanation: 'The sum of $\pi$ (Pi) and $e$ (Euler\'s number) is an irrational number. While the sum of two irrationals *can* be rational, in this specific case, it remains irrational.'
+      explanation: "The sum of $\\pi$ (Pi) and $e$ (Euler's number) is an irrational number. While the sum of two irrationals *can* be rational, in this specific case, it remains irrational."
     },
     {
       id: 'rational-plus-irrational-true-false',
-      question: 'True or False: The sum of a rational number and an irrational number can sometimes be a rational number.',
+      question: '\\text{True or False: The sum of a rational number and an irrational number can sometimes be a rational number.}',
       options: [
-        { text: 'True', isCorrect: false },
-        { text: 'False', isCorrect: true }
+        { text: '\\text{True}', isCorrect: false },
+        { text: '\\text{False}', isCorrect: true }
       ],
       explanation: 'False. The sum of a rational and an irrational number is always irrational. The rational part cannot cancel out the non-repeating, non-terminating decimal of the irrational part.'
     },
     {
       id: 'complex-sum',
-      question: 'Evaluate the expression $(\sqrt{7} - 1) + (3 - \sqrt{7})$.',
+      question: '\\text{Evaluate the expression } (\\sqrt{7} - 1) + (3 - \\sqrt{7})\\text{.}',
       options: [
-        { text: '$2 - 2\sqrt{7}$', isCorrect: false },
+        { text: '$2 - 2\\sqrt{7}$', isCorrect: false },
         { text: '$2$', isCorrect: true },
-        { text: '$2\sqrt{7} - 2$', isCorrect: false },
+        { text: '$2\\sqrt{7} - 2$', isCorrect: false },
         { text: '$-2$', isCorrect: false }
       ],
-      explanation: 'By simplifying the expression, the two $\sqrt{7}$ terms cancel each other out, leaving you with $-1 + 3$, which equals $2$.'
+      explanation: 'By simplifying the expression, the two $\\sqrt{7}$ terms cancel each other out, leaving you with $-1 + 3$, which equals $2$.'
     }
   ];
 
@@ -176,13 +176,13 @@ export default function IrrationalSumPropertiesSlide() {
     {
       title: "Case 1: Irrational + Irrational = Rational",
       description: "The sum of two irrational numbers can be rational if their irrational parts cancel.",
-      math: "(5 + \sqrt{3}) + (2 - \sqrt{3}) = 7",
+      math: "(5 + \\sqrt{3}) + (2 - \\sqrt{3}) = 7",
       resultType: "Rational"
     },
     {
       title: "Case 2: Irrational + Irrational = Irrational",
       description: "This is the more common case when the irrational parts do not cancel out.",
-      math: "\sqrt{2} + \sqrt{3} \\approx 3.14626...",
+      math: "\\sqrt{2} + \\sqrt{3} \\approx 3.14626...",
       resultType: "Irrational"
     },
     {
@@ -217,30 +217,42 @@ export default function IrrationalSumPropertiesSlide() {
               <h3 className="text-xl font-medium text-blue-600 dark:text-blue-400 mb-4">
                 Properties of Irrational Sums
               </h3>
-              <div className="space-y-4 text-lg">
+              <div className="space-y-4 text-base">
                 <p className="leading-relaxed">
-                  When we perform addition or subtraction with irrational numbers, the result can be surprising. The set of irrational numbers is **not closed** under these operations.
+                  When we perform operations with irrational numbers, the results can be counter-intuitive. Unlike integers or rational numbers, the set of irrational numbers is <strong>not closed</strong> under addition or subtraction. This means that adding two irrational numbers doesn't guarantee an irrational result.
                 </p>
                 
-                <div className={`p-4 rounded-lg border-l-4 border-purple-500 ${
-                  isDarkMode 
-                    ? 'bg-slate-700' 
-                    : 'bg-purple-50'
-                }`}>
-                  <h5 className="font-medium text-purple-600 dark:text-purple-400 mb-2">Key Takeaway</h5>
-                  <p>
-                    The sum of two irrational numbers can be either **rational** or **irrational**.
-                  </p>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h5 className="font-medium text-blue-700 dark:text-blue-300 mb-2">Key Cases to Consider</h5>
+                  <ul className="space-y-3">
+                    <li>
+                      <strong>1. Irrational ± Irrational = Rational</strong>
+                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                        This occurs when the irrational parts are equal and opposite, causing them to cancel out.
+                        <br />
+                        <em>Example: <InlineMath math="(10 + \sqrt{5}) + (3 - \sqrt{5}) = 13" /></em>
+                      </p>
+                    </li>
+                    <li>
+                      <strong>2. Irrational ± Irrational = Irrational</strong>
+                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                        This is the more common outcome when the irrational parts do not cancel.
+                        <br />
+                        <em>Example: <InlineMath math="5\sqrt{7} - 2\sqrt{7} = 3\sqrt{7}" /></em>
+                      </p>
+                    </li>
+                  </ul>
                 </div>
 
-                <div className={`p-4 rounded-lg border-l-4 border-green-500 ${
-                  isDarkMode 
-                    ? 'bg-slate-700' 
-                    : 'bg-green-50'
-                }`}>
-                  <h5 className="font-medium text-green-600 dark:text-green-400 mb-2">A Special Rule</h5>
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                  <h5 className="font-medium text-blue-700 dark:text-blue-300 mb-2">A Special Rule: The Unbreakable Irrational</h5>
                   <p>
-                    However, the sum of a **rational** and an **irrational** number is always **irrational**.
+                    <strong>Rational ± Irrational = Always Irrational</strong>
+                  </p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                    <strong>Why?</strong> An irrational number has an infinite, non-repeating decimal. Adding a rational number only alters the digits but can never resolve the non-repeating pattern.
+                    <br />
+                    <em>Example: <InlineMath math="5 + \pi \approx 8.14159..." /></em>
                   </p>
                 </div>
               </div>
@@ -292,7 +304,7 @@ export default function IrrationalSumPropertiesSlide() {
                     </div>
                     
                     <p className="text-lg">
-                      {currentQuestion.question}
+                      <InlineMath math={currentQuestion.question} />
                     </p>
                     
                     <div className="space-y-2">
@@ -309,7 +321,7 @@ export default function IrrationalSumPropertiesSlide() {
                               : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-slate-600'
                           }`}
                         >
-                          {option.text}
+                          <InlineMath math={option.text} />
                         </button>
                       ))}
                     </div>
@@ -353,7 +365,6 @@ export default function IrrationalSumPropertiesSlide() {
             }`}>
               <h3 className="text-xl font-medium text-blue-600 dark:text-blue-400 mb-4">Interactive Sums and Differences</h3>
               
-              {/* Example Navigation */}
               <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <div className="flex justify-between items-center mb-3">
                   <button
@@ -368,8 +379,8 @@ export default function IrrationalSumPropertiesSlide() {
                     ← Previous
                   </button>
                   
-                  <h4 className="text-blue-700 dark:text-blue-300 font-medium mb-2">
-                    {currentExampleIndex + 1}. {currentExample?.title}
+                  <h4 className="text-blue-700 dark:text-blue-300 font-medium text-center">
+                    {currentExample?.title}
                   </h4>
                   
                   <button
@@ -392,7 +403,6 @@ export default function IrrationalSumPropertiesSlide() {
                 </div>
               </div>
 
-              {/* Main Display */}
               <div className={`mt-6 rounded-lg p-6 text-center text-3xl font-bold transition-colors ${
                 currentExample?.resultType === 'Rational'
                   ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
@@ -414,11 +424,25 @@ export default function IrrationalSumPropertiesSlide() {
                     ? 'text-green-700 dark:text-green-300'
                     : 'text-red-700 dark:text-red-300'
                 }`}>
-                    Result is **{currentExample?.resultType}**
+                    Result is <strong>{currentExample?.resultType}</strong>
                 </p>
               </div>
             </div>
           </TrackedInteraction>
+
+          {/* === NEW SECTION ADDED HERE === */}
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+              <h5 className="font-medium text-blue-700 dark:text-blue-300 mb-2">Deeper Dive: What Does "Not Closed" Mean?</h5>
+              <div className="text-base text-gray-700 dark:text-gray-300 space-y-2">
+                  <p>
+                      Think of a box labeled <strong>"Integers."</strong> If you add any two numbers from the box (e.g., 2 + 5 = 7), the result is always another integer inside the box. The set is <strong>closed</strong>.
+                  </p>
+                  <p>
+                      The box for <strong>"Irrational Numbers"</strong> is <strong>not closed</strong> because sometimes the result escapes! When you add <InlineMath math="(5 + \sqrt{3})"/> and <InlineMath math="(2 - \sqrt{3})"/>, the result is 7—a rational number that is outside the "Irrational Numbers" box.
+                  </p>
+              </div>
+          </div>
+
         </div>
       </div>
     </div>
