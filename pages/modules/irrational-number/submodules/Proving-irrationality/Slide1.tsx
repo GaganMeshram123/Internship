@@ -4,7 +4,6 @@ import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 
 // Interface to define the props for GeometricProofVisualization
-// This fixes the 'any' type error for currentStep
 interface GeometricProofProps {
   currentStep: number;
 }
@@ -29,63 +28,82 @@ const GeometricProofVisualization: React.FC<GeometricProofProps> = ({ currentSte
         {currentStep === 0 && (
           <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
             <motion.div
-              className="w-48 h-48 border-4 border-blue-600 rounded-lg relative transition-all duration-500"
+              className="w-48 h-48 border-4 border-blue-600 relative transition-all duration-500" // Removed rounded-lg here
             >
-              <div className="absolute top-0 left-0 w-full h-full border-4 border-green-600 rounded-lg rotate-45 transform-origin-center"></div>
+              {/* Green rotated square (diagonal indicator) */}
+              <div className="absolute top-0 left-0 w-full h-full border-4 border-green-600 rotate-45 origin-center"></div> {/* Corrected: origin-center */}
+              
+              {/* Labels for the square */}
               <motion.div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center"
+                className="absolute w-full h-full" // Wrapper for positioning labels
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
               >
-                {/* Fixed: Moved className to a wrapper div */}
-                <div><InlineMath math="1" /></div>
-                <div className="ml-16"><InlineMath math="1" /></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2"><InlineMath math="\sqrt{2}" /></div>
+                {/* Side 1 label */}
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-lg text-blue-800 dark:text-blue-200">
+                  <InlineMath math="q" />
+                </div>
+                {/* Side 2 label */}
+                <div className="absolute bottom-1/2 right-0 translate-x-10 text-lg text-blue-800 dark:text-blue-200">
+                  <InlineMath math="q" />
+                </div>
+                {/* Diagonal label */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xl font-bold text-green-800 dark:text-green-200" style={{ transform: 'translate(-50%, -50%) rotate(45deg)' }}>
+                  <InlineMath math="p" />
+                </div>
               </motion.div>
-              <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-sm text-center">Initial Square</p>
+              <p className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-sm text-center text-slate-700 dark:text-slate-300">Initial Square (Sides <InlineMath math="q"/>, Diagonal <InlineMath math="p"/>)</p>
             </motion.div>
           </motion.div>
         )}
         {currentStep === 1 && (
           <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
-            <motion.div className="relative w-64 h-64">
+            <motion.div className="relative w-64 h-64 border-4 border-blue-600 flex justify-center items-center">
               <motion.div
-                className="absolute w-32 h-32 border-4 border-green-600 rounded-lg"
-                initial={{ scale: 1 }}
-                animate={{ scale: 2 }}
-                transition={{ duration: 1 }}
-              ></motion.div>
+                className="w-32 h-32 border-4 border-green-600 flex justify-center items-center"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="text-xl font-bold text-green-800 dark:text-green-200">
+                  <InlineMath math="q^2" />
+                </div>
+              </motion.div>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold"
+                transition={{ delay: 0.8, duration: 0.5 }}
+                className="absolute bottom-4 text-2xl font-bold text-slate-800 dark:text-slate-100"
               >
-                <InlineMath math="2q^2 = p^2" />
+                <BlockMath math="p^2 = 2q^2" />
               </motion.div>
-              <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-sm text-center">Larger Square Area</p>
+              <p className="absolute -bottom-8 text-sm text-center text-slate-700 dark:text-slate-300">Area relationships after squaring</p>
             </motion.div>
           </motion.div>
         )}
         {currentStep === 2 && (
           <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
-            <motion.div className="relative w-64 h-64">
+            <motion.div className="relative w-64 h-64 border-4 border-blue-600 flex justify-center items-center">
               <motion.div
-                className="absolute w-40 h-40 border-4 border-red-600 rounded-lg"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
+                className="w-40 h-40 border-4 border-red-600 flex justify-center items-center"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8 }}
-              ></motion.div>
+              >
+                <div className="text-xl font-bold text-red-800 dark:text-red-200">
+                  <InlineMath math="q^2 = 2k^2" />
+                </div>
+              </motion.div>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold"
+                className="absolute bottom-4 text-2xl font-bold text-slate-800 dark:text-slate-100"
               >
-                <InlineMath math="2q^2 = 4k^2" />
+                <BlockMath math="p = 2k \implies p^2 = 4k^2" />
               </motion.div>
-              <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-sm text-center">The square becomes larger</p>
+              <p className="absolute -bottom-8 text-sm text-center text-slate-700 dark:text-slate-300">Substituting <InlineMath math="p=2k"/></p>
             </motion.div>
           </motion.div>
         )}
@@ -93,37 +111,46 @@ const GeometricProofVisualization: React.FC<GeometricProofProps> = ({ currentSte
           <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
             <motion.div className="flex flex-col items-center">
               <motion.div
-                className="w-48 h-48 rounded-lg border-4 border-red-600 relative"
+                className="w-48 h-48 rounded-lg border-4 border-red-600 relative flex justify-center items-center overflow-hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="w-1/2 h-full absolute left-0 top-0 border-r-2 border-gray-600"></div>
-                <div className="w-1/2 h-full absolute right-0 top-0 border-l-2 border-gray-600"></div>
-                <div className="w-full h-1/2 absolute left-0 top-0 border-b-2 border-gray-600"></div>
-                <div className="w-full h-1/2 absolute left-0 bottom-0 border-t-2 border-gray-600"></div>
+                {/* Simplified drawing of lines for common factor */}
+                <div className="absolute w-full h-px bg-gray-600 top-1/2 -translate-y-1/2"></div>
+                <div className="absolute h-full w-px bg-gray-600 left-1/2 -translate-x-1/2"></div>
+                <p className="absolute text-xl font-bold text-red-800 dark:text-red-200">2</p>
               </motion.div>
-              <p className="text-sm mt-2 text-center">Visualizing the common factor 2</p>
+              <p className="text-sm mt-4 text-center text-slate-700 dark:text-slate-300">Visualizing the common factor of 2 for both <InlineMath math="p"/> and <InlineMath math="q"/></p>
               <motion.div
-                className="mt-6 p-4 bg-red-100 rounded-lg text-red-800"
+                className="mt-6 p-4 bg-red-100 dark:bg-red-900 rounded-lg text-red-800 dark:text-red-200"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                <p className="font-bold text-lg">
-                  Contradiction! <br/> $p$ and $q$ share a factor of 2.
+                <p className="font-bold text-lg text-center">
+                  Contradiction! <br/> <InlineMath math="p"/> and <InlineMath math="q"/> share a factor of 2.
                 </p>
               </motion.div>
             </motion.div>
           </motion.div>
         )}
         {currentStep === 4 && (
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
-            <p className="text-xl font-bold text-center leading-relaxed">
+          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center text-center max-w-xl mx-auto">
+            <p className="text-2xl font-bold leading-relaxed text-blue-700 dark:text-blue-300">
               The only way to resolve the contradiction is to reject our initial assumption.<br/>
-              Therefore, $\sqrt{2}$ must be irrational.
+              Therefore, <InlineMath math="\sqrt{2}"/> must be irrational.
             </p>
-            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+              className="mt-8 p-6 bg-green-100 dark:bg-green-900 rounded-lg text-green-800 dark:text-green-200 shadow-md"
+            >
+              <p className="text-xl font-semibold">
+                Proof Complete: <InlineMath math="\sqrt{2}"/> is Irrational! ✅
+              </p>
+            </motion.div>
           </motion.div>
         )}
       </motion.div>
