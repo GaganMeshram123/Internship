@@ -4,126 +4,185 @@ import { Interaction, InteractionResponse, TrackedInteraction } from '../../../c
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
-import { InlineMath, BlockMath } from 'react-katex';
+import { InlineMath } from 'react-katex';
 
+// --- Type Definitions for the Visualization ---
+type NumberBlockState = {
+    id: 'a' | 'b' | 'r' | 'combined';
+    label: string;
+    type: 'Rational' | 'Irrational';
+    pan: 'left' | 'right';
+};
+
+type ProofStep = {
+    title: string;
+    explanation: string;
+    blocks: NumberBlockState[];
+    isContradiction: boolean;
+};
+
+// --- Data Structure for the Balancing Scale Visualization ---
+const proofForSum: ProofStep[] = [
+    {
+        title: "Step 1: The Assumption",
+        explanation: "We assume the opposite of what we want to prove. Let's place our assumption—that the sum 'a + b' is a rational number 'r'—onto a balanced scale.",
+        blocks: [
+            { id: 'a', label: 'a', type: 'Rational', pan: 'left' },
+            { id: 'b', label: 'b', type: 'Irrational', pan: 'left' },
+            { id: 'r', label: 'r', type: 'Rational', pan: 'right' },
+        ],
+        isContradiction: false
+    },
+    {
+        title: "Step 2: Isolate the Irrational",
+        explanation: "To analyze the irrational number 'b', we need to isolate it. We do this by removing 'a' from the left side and adding its opposite to the right to keep the scale balanced.",
+        blocks: [
+            { id: 'b', label: 'b', type: 'Irrational', pan: 'left' },
+            { id: 'r', label: 'r', type: 'Rational', pan: 'right' },
+            { id: 'a', label: '-a', type: 'Rational', pan: 'right' },
+        ],
+        isContradiction: false
+    },
+    {
+        title: "Step 3: Combine the Rationals",
+        explanation: "The difference of two rational numbers ('r' and 'a') is always another rational number. The two rational blocks on the right combine into a single rational block.",
+        blocks: [
+            { id: 'b', label: 'b', type: 'Irrational', pan: 'left' },
+            { id: 'combined', label: 'r - a', type: 'Rational', pan: 'right' },
+        ],
+        isContradiction: false
+    },
+    {
+        title: "Step 4: The Contradiction",
+        explanation: "The scale now shows an irrational number perfectly balanced by a rational number. This is a mathematical impossibility! Our initial assumption must have been false.",
+        blocks: [
+            { id: 'b', label: 'b', type: 'Irrational', pan: 'left' },
+            { id: 'combined', label: 'r - a', type: 'Rational', pan: 'right' },
+        ],
+        isContradiction: true
+    }
+];
+
+// --- Child Components for the New Design ---
+
+const ControlPanel: React.FC<{
+    step: ProofStep;
+    currentStepIndex: number;
+    totalSteps: number;
+    onNext: () => void;
+    onPrev: () => void;
+}> = ({ step, currentStepIndex, totalSteps, onNext, onPrev }) => (
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-md flex flex-col h-full">
+        <div>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Proof: Rational + Irrational = Irrational</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-6">We can prove this property using the logic of a balancing scale.</p>
+            <div className="bg-blue-50/60 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-700/50 rounded-xl px-4 py-3 min-h-[160px]">
+                <AnimatePresence mode="wait">
+                    <motion.div key={currentStepIndex} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} transition={{ duration: 0.3 }}>
+                        <h4 className="font-bold text-lg text-blue-800 dark:text-blue-300 mb-2">{step.title}</h4>
+                        <p className="text-slate-700 dark:text-slate-300">{step.explanation}</p>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+        </div>
+        <div className="mt-auto pt-6">
+            <div className="flex justify-between items-center">
+                <button onClick={onPrev} disabled={currentStepIndex === 0} className="px-5 py-2 rounded-lg font-bold text-white bg-slate-500 hover:bg-slate-600 dark:bg-slate-600 dark:hover:bg-slate-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">← Previous</button>
+                <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Step {currentStepIndex + 1} of {totalSteps}</span>
+                <button onClick={onNext} disabled={currentStepIndex === totalSteps - 1} className="px-5 py-2 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next →</button>
+            </div>
+        </div>
+    </div>
+);
+
+const NumberBlock: React.FC<{ block: NumberBlockState }> = ({ block }) => {
+    const color = block.type === 'Rational' ? 'bg-blue-500' : 'bg-purple-500';
+    return (
+        <motion.div
+            layoutId={block.id}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className={`w-24 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold shadow-lg ${color}`}
+        >
+            <span className="text-2xl"><InlineMath>{block.label}</InlineMath></span>
+            <span className="text-xs opacity-80">{block.type}</span>
+        </motion.div>
+    );
+};
+
+const BalancingScale: React.FC<{ step: ProofStep }> = ({ step }) => (
+    <div className="bg-slate-100 dark:bg-slate-900/70 rounded-xl p-6 shadow-inner relative min-h-[450px] flex flex-col items-center justify-center">
+        <div className="w-full h-full relative">
+            {/* Scale Base and Fulcrum */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-1/3 h-2 bg-slate-400 dark:bg-slate-600 rounded-t-md"></div>
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-2 h-[45%] bg-slate-400 dark:bg-slate-600"></div>
+
+            {/* Scale Beam */}
+            <motion.div
+                className="absolute top-1/2 left-0 w-full h-2 bg-slate-500 dark:bg-slate-700 rounded-full"
+                animate={{ rotate: step.isContradiction ? -4 : 0 }}
+                transition={{ type: 'spring', stiffness: 100, damping: 10 }}
+            >
+                {step.isContradiction && <motion.div className="absolute inset-0 bg-red-500 rounded-full" initial={{ opacity: 0 }} animate={{ opacity: [0, 0.5, 0] }} transition={{ repeat: Infinity, duration: 1 }} />}
+            </motion.div>
+
+            {/* Pan Hangers */}
+            <div className="absolute top-1/2 left-[15%] w-0.5 h-[15%] bg-slate-400 dark:bg-slate-600 -translate-y-full"></div>
+            <div className="absolute top-1/2 right-[15%] w-0.5 h-[15%] bg-slate-400 dark:bg-slate-600 -translate-y-full"></div>
+
+            {/* Left Pan */}
+            <div className="absolute top-[35%] left-[15%] -translate-x-1/2 w-1/3 h-24 bg-slate-200 dark:bg-slate-800 rounded-lg border-b-4 border-slate-400 dark:border-slate-600 flex items-center justify-center gap-2 p-2">
+                <AnimatePresence>
+                    {step.blocks.filter(b => b.pan === 'left').map(block => <NumberBlock key={block.id} block={block} />)}
+                </AnimatePresence>
+            </div>
+            
+            {/* Right Pan */}
+            <div className="absolute top-[35%] right-[15%] translate-x-1/2 w-1/3 h-24 bg-slate-200 dark:bg-slate-800 rounded-lg border-b-4 border-slate-400 dark:border-slate-600 flex items-center justify-center gap-2 p-2">
+                <AnimatePresence>
+                    {step.blocks.filter(b => b.pan === 'right').map(block => <NumberBlock key={block.id} block={block} />)}
+                </AnimatePresence>
+            </div>
+        </div>
+    </div>
+);
+
+// --- Main Slide Component ---
 export default function ProvingIrrationalitySlide4() {
     const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
     const [currentSumProofStep, setCurrentSumProofStep] = useState(0);
     const { isDarkMode } = useThemeContext();
 
-    const proofForSum = [
-        {
-            title: "Step 1: Assumption",
-            text: "Let's prove that if $a$ is a rational number and $b$ is an irrational number, then $a+b$ is always irrational. We assume the opposite: let's assume $a+b$ is rational.",
-            math: "\\text{Let } a = \\frac{p}{q} \\text{ (rational), } b = \\text{irrational}. \\text{ Assume } a+b = r = \\frac{m}{n} \\text{ (rational).}",
-            result: null
-        },
-        {
-            title: "Step 2: Isolate the Irrational",
-            text: "Our goal is to show that this leads to a contradiction. We can rearrange the equation to isolate the irrational number $b$.",
-            math: "b = r - a",
-            result: null
-        },
-        {
-            title: "Step 3: Express as a Fraction",
-            text: "Since $r$ and $a$ are both rational, they can be written as fractions. We can subtract these fractions.",
-            math: "b = \\frac{m}{n} - \\frac{p}{q} = \\frac{mq - np}{nq}",
-            result: "Since $m, n, p, q$ are integers, the numerator $mq-np$ and the denominator $nq$ are also integers. This means $b$ is a rational number."
-        },
-        {
-            title: "Step 4: The Contradiction",
-            text: "Our result states that $b$ is a rational number. This directly contradicts our initial given information that $b$ is an irrational number. Therefore, our assumption must be false.",
-            math: "\\text{b is rational} \\implies \\text{Contradiction!}",
-            result: "The assumption is false. Therefore, the sum of a rational and an irrational number must be irrational."
-        }
-    ];
-
-    const currentSumProofContent = proofForSum[currentSumProofStep];
-
-    const slideInteractions: Interaction[] = [
-        {
-            id: 'proof-sum-rational-irrational',
-            conceptId: 'proof-of-sum-irrationality',
-            conceptName: 'Proof for Rational + Irrational',
-            type: 'learning',
-            description: 'Following the step-by-step logic to prove that the sum of a rational and irrational number is irrational'
-        }
-    ];
+    const handleNext = () => setCurrentSumProofStep(prev => Math.min(prev + 1, proofForSum.length - 1));
+    const handlePrev = () => setCurrentSumProofStep(prev => Math.max(prev - 1, 0));
 
     const handleInteractionComplete = (response: InteractionResponse) => {
         setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
     };
 
+    const slideInteractions: Interaction[] = [{
+        id: 'proof-sum-rational-irrational',
+        conceptId: 'proof-of-sum-irrationality',
+        conceptName: 'Proof for Rational + Irrational',
+        type: 'learning',
+        description: 'Following the step-by-step logic to prove that the sum of a rational and irrational number is irrational'
+    }];
+
     const slideContent = (
-        <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
-            <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
-                <div className={`rounded-lg p-6 shadow-lg ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                    <h3 className="text-xl font-medium text-blue-600 dark:text-blue-400 mb-4">
-                        Proving that a Sum is Irrational
-                    </h3>
-                    <div className="space-y-4 text-lg">
-                        <p className="leading-relaxed">
-                            We've seen that the sum of two irrationals can be either rational or irrational. But what if we add a rational number to an irrational one? Let's use proof by contradiction to show that this sum is **always irrational**.
-                        </p>
-                        <p className="leading-relaxed">
-                            This proof is different from the $\sqrt{2}$ proof, but uses the same fundamental logic.
-                        </p>
-                    </div>
-
-                    <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <h4 className="text-blue-700 dark:text-blue-300 font-medium text-lg mb-2 text-center">
-                            {currentSumProofContent.title}
-                        </h4>
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-center">
-                            {currentSumProofContent.text}
-                        </p>
-                    </div>
-
-                    <div className="flex justify-between mt-4">
-                        <button
-                            onClick={() => setCurrentSumProofStep(Math.max(0, currentSumProofStep - 1))}
-                            disabled={currentSumProofStep === 0}
-                            className={`px-4 py-2 rounded-lg transition-colors ${
-                                isDarkMode
-                                    ? 'bg-slate-700 hover:bg-slate-600 text-white disabled:opacity-50'
-                                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700 disabled:opacity-50'
-                            }`}
-                        >
-                            ← Previous
-                        </button>
-                        <button
-                            onClick={() => setCurrentSumProofStep(Math.min(proofForSum.length - 1, currentSumProofStep + 1))}
-                            disabled={currentSumProofStep === proofForSum.length - 1}
-                            className={`px-4 py-2 rounded-lg transition-colors ${
-                                isDarkMode
-                                    ? 'bg-blue-700 hover:bg-blue-600 text-white disabled:opacity-50'
-                                    : 'bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50'
-                            }`}
-                        >
-                            Next →
-                        </button>
-                    </div>
-                </div>
-
-                <div className={`rounded-lg p-6 shadow-lg relative min-h-[400px] flex items-center justify-center ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={currentSumProofStep}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.5 }}
-                            className="text-center"
-                        >
-                            <BlockMath math={currentSumProofContent.math} />
-                            {currentSumProofContent.result && (
-                                <p className="mt-4 text-lg">
-                                    {currentSumProofContent.result}
-                                </p>
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
+        <div className={`min-h-screen p-8 transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                <ControlPanel
+                    step={proofForSum[currentSumProofStep]}
+                    currentStepIndex={currentSumProofStep}
+                    totalSteps={proofForSum.length}
+                    onNext={handleNext}
+                    onPrev={handlePrev}
+                />
+                <BalancingScale
+                    step={proofForSum[currentSumProofStep]}
+                />
             </div>
         </div>
     );
@@ -136,7 +195,9 @@ export default function ProvingIrrationalitySlide4() {
             submoduleId="proving-irrationality"
             interactions={localInteractions}
         >
-            {slideContent}
+            <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
+                {slideContent}
+            </TrackedInteraction>
         </SlideComponentWrapper>
     );
 }

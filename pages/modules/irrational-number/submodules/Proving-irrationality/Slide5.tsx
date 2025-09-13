@@ -1,243 +1,217 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse, TrackedInteraction } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
-import { InlineMath, BlockMath } from 'react-katex';
+import { InlineMath } from 'react-katex';
 
+// --- NEW: Component to correctly render text with optional LaTeX ---
+const RenderWithMath: React.FC<{ text: string }> = ({ text }) => {
+    // Split the text by the '$' delimiter to find math expressions
+    const parts = text.split('$');
+    return (
+        <span>
+            {parts.map((part, index) => 
+                // Every odd-indexed part was between '$', so it's a formula
+                index % 2 === 1 ? <InlineMath key={index} math={part} /> : <span key={index}>{part}</span>
+            )}
+        </span>
+    );
+};
+
+// --- Data for the Quiz (using '$' to denote math) ---
+const quizQuestions = [
+    {
+        id: 'q1-contradiction-step',
+        question: 'What is the first step in a proof by contradiction?',
+        options: [
+            { text: 'Assume the statement is true.', isCorrect: false },
+            { text: 'Show an example that proves the statement.', isCorrect: false },
+            { text: 'Assume the opposite of the statement is true.', isCorrect: true },
+            { text: 'Follow a logical chain of reasoning.', isCorrect: false }
+        ],
+        explanation: 'The first step is always to assume the opposite of what you want to prove, in order to find a contradiction.'
+    },
+    {
+        id: 'q2-contradiction-implication',
+        question: 'If a logical contradiction is found, what does that imply?',
+        options: [
+            { text: 'The proof is invalid.', isCorrect: false },
+            { text: 'The initial assumption was false.', isCorrect: true },
+            { text: 'The conclusion is always rational.', isCorrect: false },
+            { text: 'The original statement is false.', isCorrect: false }
+        ],
+        explanation: 'A contradiction proves your initial assumption was wrong. Therefore, the original statement must be true.'
+    },
+    {
+        id: 'q3-odd-even-logic',
+        question: 'In the proof for the irrationality of the square root of 2, if $p^2$ is an even number, what can you conclude about $p$?',
+        options: [
+            { text: '$p$ must also be an even number.', isCorrect: true },
+            { text: '$p$ must be an odd number.', isCorrect: false },
+            { text: '$p$ can be either even or odd.', isCorrect: false },
+            { text: '$p$ must be a prime number.', isCorrect: false }
+        ],
+        explanation: 'The square of an odd number is always odd. Therefore, if $p^2$ is even, $p$ must also be even.'
+    },
+    {
+        id: 'q4-sum-proof-contradiction',
+        question: 'In the proof that (rational + irrational) = irrational, what is the contradiction found?',
+        options: [
+            { text: 'The sum of two fractions is not a fraction.', isCorrect: false },
+            { text: 'The irrational number is shown to be rational.', isCorrect: true },
+            { text: 'The rational numbers are shown to be irrational.', isCorrect: false },
+            { text: 'The sum is equal to zero.', isCorrect: false }
+        ],
+        explanation: 'By assuming the sum is rational, algebraic manipulation forces the irrational number to equal a rational number, which is a contradiction.'
+    }
+];
+
+// --- Child Components ---
+
+const QuizProgress: React.FC<{ current: number, total: number }> = ({ current, total }) => (
+    <div className="flex gap-2 mb-4">
+        {Array.from({ length: total }).map((_, i) => (
+            <div
+                key={i}
+                className={`h-2 flex-1 rounded-full transition-colors ${i < current ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-700'}`}
+            />
+        ))}
+    </div>
+);
+
+const QuizSummary: React.FC<{ score: number, total: number, onRestart: () => void }> = ({ score, total, onRestart }) => {
+    const percentage = Math.round((score / total) * 100);
+    const summaryText = percentage >= 80 ? "Excellent work!" : percentage >= 50 ? "Good job!" : "Keep practicing!";
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center p-8"
+        >
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">{summaryText}</h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 mb-6">You scored</p>
+            <div className="text-6xl font-bold text-blue-600 dark:text-blue-400 mb-8">{score} / {total}</div>
+            <button
+                onClick={onRestart}
+                className="px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+            >
+                Restart Quiz
+            </button>
+        </motion.div>
+    );
+};
+
+// --- Main Slide Component ---
 export default function ProvingIrrationalitySlide5() {
     const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-    const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<string | null>(null);
-    const [showQuizFeedback, setShowQuizFeedback] = useState<boolean>(false);
-    const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([]);
-    const [score, setScore] = useState<number>(0);
-    const [isQuizComplete, setIsQuizComplete] = useState<boolean>(false);
+    const [answers, setAnswers] = useState<({ questionId: string, isCorrect: boolean } | null)[]>(Array(quizQuestions.length).fill(null));
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const [showFeedback, setShowFeedback] = useState(false);
     const { isDarkMode } = useThemeContext();
 
-    const questions = [
-        {
-            id: 'proof-contradiction-step',
-            question: 'What is the first step in a proof by contradiction?',
-            options: [
-                { id: 'opt1', text: 'Assume the statement is true.', isCorrect: false },
-                { id: 'opt2', text: 'Show an example that proves the statement.', isCorrect: false },
-                { id: 'opt3', text: 'Assume the opposite of the statement is true.', isCorrect: true },
-                { id: 'opt4', text: 'Follow a logical chain of reasoning.', isCorrect: false }
-            ],
-            explanation: 'The first step is always to assume the opposite of what you want to prove, in order to find a contradiction.'
-        },
-        {
-            id: 'conclude-from-contradiction',
-            question: 'If a logical contradiction is found in a proof by contradiction, what does that imply?',
-            options: [
-                { id: 'opt1', text: 'The proof is invalid.', isCorrect: false },
-                { id: 'opt2', text: 'The initial assumption was false.', isCorrect: true },
-                { id: 'opt3', text: 'The conclusion is always rational.', isCorrect: false },
-                { id: 'opt4', text: 'The original statement is false.', isCorrect: false }
-            ],
-            explanation: 'A contradiction means your initial assumption must be wrong. Therefore, the original statement you were trying to prove must be true.'
-        },
-        {
-            id: 'odd-and-even',
-            question: 'In the proof for $\\sqrt{2}$, if $p^2$ is an odd number, what can you conclude about $p$?',
-            options: [
-                { id: 'opt1', text: '$p$ is also an odd number.', isCorrect: true },
-                { id: 'opt2', text: '$p$ is an even number.', isCorrect: false },
-                { id: 'opt3', text: '$p$ can be either even or odd.', isCorrect: false },
-                { id: 'opt4', text: '$p$ must be irrational.', isCorrect: false }
-            ],
-            explanation: 'The square of an odd number is always odd, and the square of an even number is always even. Therefore, if $p^2$ is odd, $p$ must also be odd.'
-        },
-        {
-            id: 'sum-rational-irrational-proof',
-            question: 'In the proof that (rational + irrational) = irrational, what is the contradiction found?',
-            options: [
-                { id: 'opt1', text: 'The rational numbers turn out to be irrational.', isCorrect: false },
-                { id: 'opt2', text: 'The irrational number is shown to be rational.', isCorrect: true },
-                { id: 'opt3', text: 'The sum of two fractions cannot be a fraction.', isCorrect: false },
-                { id: 'opt4', text: 'The sum of a rational and irrational number is zero.', isCorrect: false }
-            ],
-            explanation: 'The proof assumes the sum is rational, which allows you to show that the irrational number must be rational. This is the contradiction.'
-        }
-    ];
+    const isQuizComplete = currentQuestionIndex >= quizQuestions.length;
+    const score = answers.filter(a => a?.isCorrect).length;
+    const currentQuestion = quizQuestions[currentQuestionIndex];
 
-    const currentQuestion = questions[currentQuestionIndex];
+    const handleRestart = () => {
+        setAnswers(Array(quizQuestions.length).fill(null));
+        setCurrentQuestionIndex(0);
+        setSelectedOption(null);
+        setShowFeedback(false);
+    };
 
-    const slideInteractions: Interaction[] = [
-        {
-            id: 'irrationality-quiz',
-            conceptId: 'irrationality-proof-quiz',
-            conceptName: 'Proof by Contradiction Quiz',
-            type: 'judging',
-            description: 'Testing understanding of proof by contradiction for irrationality'
-        }
-    ];
+    const handleAnswer = (option: { text: string, isCorrect: boolean }) => {
+        if (showFeedback) return;
+        setSelectedOption(option.text);
+        setShowFeedback(true);
+        const newAnswers = [...answers];
+        newAnswers[currentQuestionIndex] = { questionId: currentQuestion.id, isCorrect: option.isCorrect };
+        setAnswers(newAnswers);
+    };
 
+    const handleNext = () => {
+        setCurrentQuestionIndex(prev => prev + 1);
+        setSelectedOption(null);
+        setShowFeedback(false);
+    };
+    
     const handleInteractionComplete = (response: InteractionResponse) => {
         setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
     };
 
-    const handleQuizAnswer = (answerText: string) => {
-        setSelectedQuizAnswer(answerText);
-        setShowQuizFeedback(true);
-        const correctOption = currentQuestion.options.find(o => o.isCorrect);
-        const isCorrect = answerText === correctOption?.text;
-        if (!questionsAnswered[currentQuestionIndex]) {
-            if (isCorrect) {
-                setScore(prev => prev + 1);
-            }
-            setQuestionsAnswered(prev => {
-                const newAnswered = [...prev];
-                newAnswered[currentQuestionIndex] = true;
-                return newAnswered;
-            });
-        }
-        handleInteractionComplete({
-            interactionId: `irrationality-quiz-${currentQuestion.id}`,
-            value: answerText,
-            isCorrect,
-            timestamp: Date.now(),
-            conceptId: currentQuestion.id,
-            conceptName: currentQuestion.id,
-            conceptDescription: 'Proof by contradiction quiz question',
-            question: {
-                type: 'mcq',
-                question: currentQuestion.question,
-                options: currentQuestion.options.map(opt => opt.text)
-            }
-        });
-    };
-
-    const handleNextQuestion = () => {
-        const nextIndex = currentQuestionIndex + 1;
-        if (nextIndex >= questions.length) {
-            setIsQuizComplete(true);
-        } else {
-            setCurrentQuestionIndex(nextIndex);
-            setSelectedQuizAnswer(null);
-            setShowQuizFeedback(false);
-        }
-    };
-
     const slideContent = (
-        <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
-            <div className="grid grid-cols-1 gap-8 p-8 mx-auto">
-                <div className={`rounded-lg p-6 shadow-lg ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
-                    <h3 className="text-xl font-medium text-blue-600 dark:text-blue-400 mb-4">
-                        Challenge Quiz: Proving Irrationality
-                    </h3>
-                    <TrackedInteraction
-                        interaction={slideInteractions[0]}
-                        onInteractionComplete={handleInteractionComplete}
-                    >
-                        <div className="space-y-4">
-                            {isQuizComplete ? (
-                                <div className="text-center">
-                                    <h5 className="text-lg font-medium mb-4">Quiz Complete!</h5>
-                                    <p className="text-lg mb-4">
-                                        You scored {score} out of {questions.length} questions correctly.
-                                    </p>
-                                    <button
-                                        onClick={() => {
-                                            setCurrentQuestionIndex(0);
-                                            setSelectedQuizAnswer(null);
-                                            setShowQuizFeedback(false);
-                                            setQuestionsAnswered([]);
-                                            setScore(0);
-                                            setIsQuizComplete(false);
-                                        }}
-                                        className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+        <div className={`min-h-screen transition-colors duration-300 flex items-center justify-center p-4 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
+            <div className={`w-full max-w-2xl rounded-xl p-6 sm:p-8 border shadow-lg ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <AnimatePresence mode="wait">
+                    {isQuizComplete ? (
+                        <QuizSummary key="summary" score={score} total={quizQuestions.length} onRestart={handleRestart} />
+                    ) : (
+                        <motion.div
+                            key={currentQuestionIndex}
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -50 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <h3 className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2">Challenge Quiz</h3>
+                            <QuizProgress current={currentQuestionIndex} total={quizQuestions.length} />
+                            <p className="text-lg sm:text-xl font-semibold my-6 text-slate-800 dark:text-slate-200">
+                                <RenderWithMath text={currentQuestion.question} />
+                            </p>
+
+                            <div className="space-y-3">
+                                {currentQuestion.options.map((option) => {
+                                    const hasBeenSelected = selectedOption === option.text;
+                                    let buttonStyle = 'border-slate-300 dark:border-slate-600 hover:border-blue-500 dark:hover:border-blue-500';
+                                    if (showFeedback) {
+                                        if (option.isCorrect) {
+                                            buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200';
+                                        } else if (hasBeenSelected) {
+                                            buttonStyle = 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
+                                        }
+                                    }
+                                    return (
+                                        <button
+                                            key={option.text}
+                                            onClick={() => handleAnswer(option)}
+                                            disabled={showFeedback}
+                                            className={`w-full p-4 rounded-lg border-2 text-left font-medium transition-all duration-200 ${buttonStyle}`}
+                                        >
+                                            <RenderWithMath text={option.text} />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <AnimatePresence>
+                                {showFeedback && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                        animate={{ opacity: 1, height: 'auto', marginTop: '1.5rem' }}
+                                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                                        className="overflow-hidden"
                                     >
-                                        Restart Quiz
-                                    </button>
-                                </div>
-                            ) : (
-                                <div>
-                                    <div className="flex justify-between items-center mb-2">
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                                            Question {currentQuestionIndex + 1} of {questions.length}
-                                        </p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                                            Score: {score}/{questionsAnswered.filter(Boolean).length}
-                                        </p>
-                                    </div>
-                                    <p className="text-lg mb-4">{currentQuestion.question}</p>
-                                    <div className="space-y-2">
-                                        {currentQuestion.options.map((option) => {
-                                            const wasSelected = selectedQuizAnswer === option.text;
-                                            const isOptionCorrect = option.isCorrect;
-                                            let buttonClass = "w-full p-3 rounded-lg border-2 text-left transition-all ";
-                                            if (showQuizFeedback) {
-                                                if (wasSelected) {
-                                                    if (isOptionCorrect) {
-                                                        buttonClass += "border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200";
-                                                    } else {
-                                                        buttonClass += "border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200";
-                                                    }
-                                                } else if (isOptionCorrect) {
-                                                    buttonClass += "border-green-400 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300";
-                                                } else {
-                                                    buttonClass += "border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400";
-                                                }
-                                            } else {
-                                                buttonClass += "border-slate-300 dark:border-slate-600 hover:border-blue-300 cursor-pointer";
-                                            }
-                                            return (
-                                                <button
-                                                    key={option.id}
-                                                    onClick={() => handleQuizAnswer(option.text)}
-                                                    disabled={showQuizFeedback}
-                                                    className={buttonClass}
-                                                >
-                                                    <div className="flex items-center justify-between">
-                                                        <span><InlineMath math={option.text} /></span>
-                                                        {showQuizFeedback && (
-                                                            <span className="ml-2">
-                                                                {wasSelected && isOptionCorrect && "✅"}
-                                                                {wasSelected && !isOptionCorrect && "❌"}
-                                                                {!wasSelected && isOptionCorrect && "✓"}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                    {showQuizFeedback && (
-                                        <div className={`mt-4 p-4 rounded-lg ${
-                                            currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
-                                                ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                                                : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
-                                        }`}>
-                                            <div className={`font-semibold mb-2 ${
-                                                currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
-                                                    ? 'text-green-700 dark:text-green-300'
-                                                    : 'text-red-700 dark:text-red-300'
-                                            }`}>
-                                                {currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect ? 'Correct!' : 'Not quite right.'}
-                                            </div>
-                                            <div className={`text-sm mb-3 ${
-                                                currentQuestion.options.find(o => o.text === selectedQuizAnswer)?.isCorrect
-                                                    ? 'text-green-600 dark:text-green-400'
-                                                    : 'text-red-600 dark:text-red-400'
-                                            }`}>
-                                                {currentQuestion.explanation}
-                                            </div>
-                                            <button
-                                                onClick={handleNextQuestion}
-                                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                                            >
-                                                {currentQuestionIndex + 1 >= questions.length ? 'Finish Quiz' : 'Next Question'}
-                                            </button>
+                                        <div className="p-4 rounded-lg bg-slate-100 dark:bg-slate-900/50">
+                                            <p className="font-semibold mb-2 text-slate-800 dark:text-slate-200">Explanation</p>
+                                            <p className="text-slate-600 dark:text-slate-400">{currentQuestion.explanation}</p>
                                         </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </TrackedInteraction>
-                </div>
+                                        <button
+                                            onClick={handleNext}
+                                            className="mt-4 w-full p-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+                                        >
+                                            {currentQuestionIndex === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question'}
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
@@ -250,7 +224,15 @@ export default function ProvingIrrationalitySlide5() {
             submoduleId="proving-irrationality"
             interactions={localInteractions}
         >
-            {slideContent}
+            <TrackedInteraction interaction={{
+                id: 'irrationality-quiz',
+                conceptId: 'irrationality-proof-quiz',
+                conceptName: 'Proof by Contradiction Quiz',
+                type: 'judging',
+                description: 'Testing understanding of proof by contradiction for irrationality'
+            }} onInteractionComplete={handleInteractionComplete}>
+                {slideContent}
+            </TrackedInteraction>
         </SlideComponentWrapper>
     );
 }
