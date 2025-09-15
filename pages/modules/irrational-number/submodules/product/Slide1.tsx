@@ -4,6 +4,24 @@ import { Interaction, InteractionResponse, TrackedInteraction } from '../../../c
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 
+// Helper component to safely render text with markdown and LaTeX
+const RenderContent: React.FC<{ text: string }> = ({ text }) => {
+    const segments = text.split(/(\*\*.*?\*\*|\$.*?\$)/g).filter(Boolean);
+    return (
+        <>
+            {segments.map((segment, index) => {
+                if (segment.startsWith('**') && segment.endsWith('**')) {
+                    return <strong key={index}>{segment.slice(2, -2)}</strong>;
+                }
+                if (segment.startsWith('$') && segment.endsWith('$')) {
+                    return <InlineMath key={index}>{segment.slice(1, -1)}</InlineMath>;
+                }
+                return segment;
+            })}
+        </>
+    );
+};
+
 export default function IrrationalProductSlide() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
 
@@ -29,13 +47,13 @@ export default function IrrationalProductSlide() {
           <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
             <div className="space-y-4">
               <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                <span className="font-semibold text-blue-700 dark:text-blue-300">Multiplication of Irrational Numbers:</span> A common question is whether multiplying two irrational numbers always results in another irrational number. The answer is **no**.
+                <span className="font-semibold text-blue-700 dark:text-blue-300">Multiplication of Irrational Numbers:</span> A common question is whether multiplying two irrational numbers always results in another irrational number. The answer is <strong>no</strong>.
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                 <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">The Rule</div>
                 <div className="text-lg text-gray-700 dark:text-gray-300">
-                  The product of two irrational numbers can be either **rational** or **irrational**.
+                  The product of two irrational numbers can be either <strong>rational</strong> or <strong>irrational</strong>.
                 </div>
               </div>
 
@@ -48,7 +66,7 @@ export default function IrrationalProductSlide() {
                   <BlockMath math="\sqrt{2} \times \sqrt{8} = \sqrt{2 \times 8} = \sqrt{16} = 4" />
                 </div>
                 <div className="text-base text-gray-600 dark:text-gray-400 mt-2 p-2 bg-slate-50 dark:bg-slate-700/50 rounded-md">
-                  <strong>Why it works:</strong> The product becomes rational because multiplying the numbers inside the square roots ($2 \times 8$) results in a **perfect square** (16).
+                  <strong>Why it works:</strong> The product becomes rational because multiplying the numbers inside the square roots (2 × 8) results in a <strong>perfect square</strong> (16).
                 </div>
               </div>
               
@@ -61,21 +79,23 @@ export default function IrrationalProductSlide() {
                   <BlockMath math="\sqrt{2} \times \sqrt{3} = \sqrt{2 \times 3} = \sqrt{6}" />
                 </div>
                 <div className="text-base text-gray-600 dark:text-gray-400 mt-2">
-                  The result, <InlineMath math="\sqrt{6}" />, is an **irrational number** because 6 is not a perfect square.
+                  The result, <InlineMath math="\sqrt{6}" />, is an <strong>irrational number</strong> because 6 is not a perfect square.
                 </div>
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
-                <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Beyond Square Roots: The Case of $\pi$</div>
+                <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">
+                  <RenderContent text="Beyond Square Roots: The Case of $\pi$" />
+                </div>
                 <div className="text-lg text-gray-700 dark:text-gray-300">
-                  This principle isn't limited to square roots. When you multiply $\pi$ by itself, the result is $\pi^2$. While we can approximate it ($3.14... \times 3.14... \approx 9.86...$), $\pi^2$ is also a proven **irrational number**.
+                  <RenderContent text="This principle isn't limited to square roots. When you multiply $\pi$ by itself, the result is $\pi^2$. While we can approximate it ($3.14... \times 3.14... \approx 9.86...$), $\pi^2$ is also a proven **irrational number**." />
                 </div>
               </div>
               
               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                 <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Key Takeaway</div>
                 <div className="text-lg text-gray-700 dark:text-gray-300">
-                  The set of irrational numbers is not **"closed"** under multiplication. This surprising property distinguishes them from integers or rational numbers.
+                  The set of irrational numbers is not <strong>"closed"</strong> under multiplication. This surprising property distinguishes them from integers or rational numbers.
                 </div>
               </div>
             </div>
@@ -92,7 +112,7 @@ export default function IrrationalProductSlide() {
                 Product is Rational: <InlineMath math="\sqrt{2} \times \sqrt{8} = 4" />
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-300">
-                ($1.414... \times 2.828...$)
+                (1.414... × 2.828...)
               </div>
               <div className="w-full flex justify-center items-center h-24 text-2xl">
                 <InlineMath math="\sqrt{2}" />
@@ -109,7 +129,7 @@ export default function IrrationalProductSlide() {
                 Product is Irrational: <InlineMath math="\sqrt{2} \times \sqrt{3} = \sqrt{6}" />
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-300">
-                ($1.414... \times 1.732... = 2.449...$)
+                (1.414... × 1.732... = 2.449...)
               </div>
               <div className="w-full flex justify-center items-center h-24 text-2xl">
                 <InlineMath math="\sqrt{2}" />
@@ -124,22 +144,21 @@ export default function IrrationalProductSlide() {
           <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
             <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Deeper Dive: Transcendental Numbers</div>
             <div className="text-base text-gray-700 dark:text-gray-300">
-                Numbers like <InlineMath math="\sqrt{2}" /> are **algebraic** because they can be solutions to polynomial equations (e.g., $x^2 - 2 = 0$). Numbers like $\pi$ are **transcendental**—they are not solutions to any such equation. Understanding these properties is crucial in advanced physics and engineering.
+                <RenderContent text="Numbers like $\sqrt{2}$ are **algebraic** because they can be solutions to polynomial equations (e.g., $x^2 - 2 = 0$). Numbers like $\pi$ are **transcendental**—they are not solutions to any such equation. Understanding these properties is crucial in advanced physics and engineering." />
             </div>
           </div>
           
-          {/* === NEW SECTION: Important Points === */}
           <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
             <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Important Points</div>
             <ul className="list-disc pl-5 space-y-2 text-base text-gray-700 dark:text-gray-300">
                 <li>
-                    A **non-zero rational** number multiplied by an **irrational** number is always **irrational**. (e.g., $2 \times \pi = 2\pi$)
+                    A <strong>non-zero rational</strong> number multiplied by an <strong>irrational</strong> number is always <strong>irrational</strong>. (e.g., <InlineMath math="2 \times \pi = 2\pi" />)
                 </li>
                 <li>
-                    Any irrational number multiplied by **zero** results in **zero**, which is a rational number. (e.g., $\sqrt{3} \times 0 = 0$)
+                    Any irrational number multiplied by <strong>zero</strong> results in <strong>zero</strong>, which is a rational number. (e.g., <InlineMath math="\sqrt{3} \times 0 = 0" />)
                 </li>
                 <li>
-                    **Division** of two irrational numbers behaves just like multiplication—the result can be either rational or irrational.
+                    <strong>Division</strong> of two irrational numbers behaves just like multiplication—the result can be either rational or irrational.
                 </li>
             </ul>
           </div>

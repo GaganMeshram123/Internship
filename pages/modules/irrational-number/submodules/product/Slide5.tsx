@@ -1,153 +1,151 @@
-import { useState } from 'react';
-import { InlineMath, BlockMath } from 'react-katex';
-import 'katex/dist/katex.min.css';
-import { Interaction, InteractionResponse } from '../../../common-components/concept';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
-import { TrackedInteraction } from '../../../common-components/concept';
+import { Interaction, InteractionResponse, TrackedInteraction } from '../../../common-components/concept';
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 
-export default function IrrationalDivisionGeometrySlide() {
-  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-  const [sideLength, setSideLength] = useState(5); // Controls the size of the square
-
-  const diagonalLength = sideLength * Math.sqrt(2);
-  const ratio = Math.sqrt(2);
-
-  const slideInteractions: Interaction[] = [
+// --- Data for the slide ---
+const divisionExamples = [
     {
-      id: 'irrational-division-geometry-content',
-      conceptId: 'irrational-division-geometry',
-      conceptName: 'Irrational Ratios in Geometry',
-      type: 'learning',
-      description: 'Discovering constant irrational ratios through geometric shapes.'
+        title: "Irrational / Irrational (Rational Result)",
+        expression: "\\frac{\\sqrt{18}}{\\sqrt{2}}",
+        steps: ["\\sqrt{\\frac{18}{2}}", "\\sqrt{9}", "3"],
+        resultType: "Rational"
     },
     {
-      id: 'square-diagonal-interactive',
-      conceptId: 'square-diagonal-interactive',
-      conceptName: 'Square Diagonal Ratio Explorer',
-      type: 'learning',
-      description: 'Interactive exploration of the diagonal-to-side ratio of a square.'
-    }
-  ];
+        title: "Irrational / Irrational (Irrational Result)",
+        expression: "\\frac{\\sqrt{10}}{\\sqrt{2}}",
+        steps: ["\\sqrt{\\frac{10}{2}}", "\\sqrt{5}"],
+        resultType: "Irrational"
+    },
+    {
+        title: "Rational / Irrational",
+        expression: "\\frac{6}{\\sqrt{3}}",
+        steps: ["\\frac{6}{\\sqrt{3}} \\times \\frac{\\sqrt{3}}{\\sqrt{3}}", "\\frac{6\\sqrt{3}}{3}", "2\\sqrt{3}"],
+        resultType: "Irrational"
+    },
+];
+
+// --- Main Slide Component ---
+export default function IrrationalDivisionSlide() {
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+  const [currentExampleIndex, setCurrentExampleIndex] = useState(0);
+  const [showResult, setShowResult] = useState(false);
 
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions((prev: Record<string, InteractionResponse>) => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
   
-  const handleSliderChange = (value: number) => {
-    setSideLength(value);
-    handleInteractionComplete({
-        interactionId: 'square-diagonal-interactive',
-        value: `side-length-${value}`,
-        timestamp: Date.now()
-    });
-  }
+  const handleNext = () => {
+    setCurrentExampleIndex(prev => (prev + 1) % divisionExamples.length);
+    setShowResult(false);
+  };
 
-  return (
-    <SlideComponentWrapper
-      slideId="irrational-division-geometry-slide"
-      slideTitle="Division of Irrational Numbers"
-      moduleId="irrational-numbers"
-      submoduleId="division"
-      interactions={localInteractions}
-    >
-      <div className="w-full h-full bg-slate-50 dark:bg-slate-900/20 rounded-xl p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column: Explanation and Key Discovery */}
-          <div className="space-y-6 bg-white dark:bg-gray-800 rounded-lg p-6">
-            <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
-              <div className="space-y-4">
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                  Irrational numbers are deeply rooted in geometry. The ancient Greeks first discovered them when relating the sides of simple shapes, like a square's side to its diagonal.
-                </p>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                  Using the Pythagorean theorem (<InlineMath math="a^2 + b^2 = c^2" />), we can explore these geometric ratios and see how division leads to an irrational result.
-                </p>
+  const slideInteractions: Interaction[] = [
+    { id: 'irrational-division-concept', conceptId: 'irrational-division', conceptName: 'Division of Irrationals', type: 'learning', description: 'Understanding the outcomes of dividing irrational numbers.' },
+    { id: 'irrational-division-animation', conceptId: 'irrational-division-explorer', conceptName: 'Division Machine Explorer', type: 'learning', description: 'Interactive animation of irrational division.' }
+  ];
 
-                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
-                  <h4 className="text-blue-600 dark:text-blue-400 text-lg font-medium mb-3">
-                    The Key Discovery 💡
-                  </h4>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                    Notice that no matter how you change the side length of the square, the **ratio** of the diagonal to the side is **always** <InlineMath math="\sqrt{2}" />.
-                  </p>
-                  <p className="text-slate-600 dark:text-slate-400 mt-2">
-                    This constant, irrational ratio proved that not all numbers could be written as simple fractions.
-                  </p>
-                </div>
-              </div>
-            </TrackedInteraction>
-          </div>
-
-          {/* Right Column: Interactive Visualization */}
-          <div className="space-y-6 bg-white dark:bg-gray-800 rounded-lg p-6">
-            <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
-              <div>
-                <h3 className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                  Interactive Geometry
-                </h3>
-                <p className="text-slate-700 dark:text-slate-300 mb-4">
-                  Use the slider to change the square's side length and observe the calculations.
-                </p>
-              </div>
-
-              {/* Slider Control */}
-              <div className="space-y-2">
-                  <label htmlFor="side-length-slider" className="font-medium text-slate-700 dark:text-slate-300">
-                      Side Length (a): {sideLength.toFixed(1)} units
-                  </label>
-                  <input
-                      id="side-length-slider"
-                      type="range"
-                      min="1"
-                      max="10"
-                      step="0.1"
-                      value={sideLength}
-                      onChange={(e) => handleSliderChange(Number(e.target.value))}
-                      className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer dark:bg-blue-700"
-                  />
-              </div>
-
-              {/* Square Visualization */}
-              <div className="flex justify-center items-center h-48 my-4">
-                <div 
-                  className="relative bg-teal-100 dark:bg-teal-900/30 border-2 border-teal-500"
-                  style={{ width: `${sideLength * 15}px`, height: `${sideLength * 15}px` }}
-                >
-                  <div 
-                    className="absolute top-0 left-0 w-full h-full"
-                    style={{
-                        background: 'linear-gradient(to top right, transparent 49.5%, #8B5CF6 49.5%, #8B5CF6 50.5%, transparent 50.5%)'
-                    }}
-                  />
-                  <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-teal-700 dark:text-teal-300">a</span>
-                  <span className="absolute -left-6 top-1/2 -translate-y-1/2 text-teal-700 dark:text-teal-300">a</span>
-                  <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-bold text-purple-700 dark:text-purple-300">c</span>
-                </div>
-              </div>
-              
-              {/* Live Calculation Panel */}
-              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm space-y-3">
-                <div className="flex justify-between items-center font-mono">
-                  <span className="text-slate-700 dark:text-slate-300">Diagonal (<InlineMath math="c" />):</span>
-                  <span className="font-bold text-blue-600 dark:text-blue-400">{diagonalLength.toFixed(2)} units</span>
-                </div>
-                <div className="flex justify-between items-center font-mono">
-                  <span className="text-slate-700 dark:text-slate-300">Formula:</span>
-                  <span className="text-blue-600 dark:text-blue-400"><InlineMath math="c = a\sqrt{2}" /></span>
-                </div>
-                <hr className="border-blue-200 dark:border-blue-700" />
-                <div className="flex justify-between items-center font-mono text-lg">
-                  <span className="text-slate-800 dark:text-slate-100 font-semibold">Ratio (Division):</span>
-                  <span className="font-bold text-green-600 dark:text-green-400"><InlineMath math="\frac{c}{a} = \sqrt{2}" /></span>
-                </div>
-              </div>
-            </TrackedInteraction>
-          </div>
+  const LeftTheoryPanel = () => (
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full">
+      <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Division of Irrational Numbers</h2>
+      
+      <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm mb-6">
+        <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Scenario 1: Irrational ÷ Irrational</h3>
+        <p className="text-slate-600 dark:text-slate-400">
+          This is a "wild card" case. The result can be rational if the numbers simplify perfectly, but it is usually irrational.
+        </p>
+        <div className="mt-2 p-2 bg-slate-200 dark:bg-slate-700 rounded text-center">
+            <strong>Example:</strong> <InlineMath>{'\\frac{\\sqrt{18}}{\\sqrt{2}} = 3'}</InlineMath>
         </div>
       </div>
+
+      <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+        <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Scenario 2: Rational ÷ Irrational</h3>
+        <p className="text-slate-600 dark:text-slate-400">
+          The result is <strong>always irrational</strong> (unless the rational number is 0). You often need to "rationalize the denominator" to simplify.
+        </p>
+        <div className="mt-2 p-2 bg-slate-200 dark:bg-slate-700 rounded text-center">
+            <strong>Example:</strong> <InlineMath>{'\\frac{6}{\\sqrt{3}} = 2\\sqrt{3}'}</InlineMath>
+        </div>
+      </div>
+    </div>
+  );
+
+  const RightInteractionPanel = () => {
+    const example = divisionExamples[currentExampleIndex];
+    
+    return (
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex flex-col">
+        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Interactive: Division Machine</h3>
+        <p className="text-slate-600 dark:text-slate-400 mb-4">See how different division problems get sorted.</p>
+        
+        <div className="bg-slate-100 dark:bg-slate-900/70 rounded-lg p-4 flex-grow flex flex-col justify-between text-center">
+            <div>
+                <p className="text-sm text-slate-500">INPUT</p>
+                <div className="text-4xl my-2"><BlockMath>{example.expression}</BlockMath></div>
+            </div>
+
+            <div className="relative h-24">
+                <AnimatePresence>
+                {showResult && (
+                    <motion.div
+                        className="absolute left-1/2 -translate-x-1/2"
+                        initial={{ y: -50, opacity: 0 }}
+                        animate={{ y: 50, opacity: 1, transition: { type: 'spring', stiffness: 100, damping: 12, duration: 1 } }}
+                    >
+                         {/* FIX: Result block color is now always blue */}
+                         <div className="p-4 rounded-lg shadow-lg text-2xl font-bold bg-blue-600 text-white">
+                            <BlockMath>{example.steps[example.steps.length - 1]}</BlockMath>
+                        </div>
+                    </motion.div>
+                )}
+                </AnimatePresence>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-400 text-4xl">↓</div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                 {/* FIX: Bin colors are now a consistent blue when active */}
+                <div className={`p-3 rounded-lg border-2 transition-colors ${showResult && example.resultType === 'Rational' ? 'border-blue-500 bg-blue-100 dark:bg-blue-900/30' : 'border-slate-300 dark:border-slate-700'}`}>
+                    <h4 className="font-semibold text-blue-600 dark:text-blue-400">Rational Bin</h4>
+                </div>
+                <div className={`p-3 rounded-lg border-2 transition-colors ${showResult && example.resultType === 'Irrational' ? 'border-blue-500 bg-blue-100 dark:bg-blue-900/30' : 'border-slate-300 dark:border-slate-700'}`}>
+                    <h4 className="font-semibold text-blue-600 dark:text-blue-400">Irrational Bin</h4>
+                </div>
+            </div>
+        </div>
+        
+        <div className="mt-4 flex justify-center gap-4">
+            <button onClick={() => setShowResult(true)} disabled={showResult} className="w-1/2 px-5 py-3 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-colors">Process</button>
+            <button onClick={handleNext} className="w-1/2 px-5 py-3 rounded-lg font-bold text-white bg-slate-500 hover:bg-slate-600">Next Example</button>
+        </div>
+      </div>
+    );
+  };
+
+  const slideContent = (
+    <div className="min-h-screen p-4 sm:p-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+        <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
+          <LeftTheoryPanel />
+        </TrackedInteraction>
+        <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
+          <RightInteractionPanel />
+        </TrackedInteraction>
+      </div>
+    </div>
+  );
+
+  return (
+    <SlideComponentWrapper 
+      slideId="irrational-division"
+      slideTitle="Division of Irrational Numbers"
+      moduleId="irrational-numbers"
+      submoduleId="operations"
+      interactions={localInteractions}
+    >
+      {slideContent}
     </SlideComponentWrapper>
   );
 }

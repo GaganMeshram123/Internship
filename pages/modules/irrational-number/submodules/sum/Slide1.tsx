@@ -1,161 +1,156 @@
-import { useEffect, useRef, useState } from 'react';
-import { InlineMath, BlockMath } from 'react-katex';
-import 'katex/dist/katex.min.css';
-import { Interaction, InteractionResponse } from '../../../common-components/concept';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
+import { Interaction, InteractionResponse, TrackedInteraction } from '../../../common-components/concept';
+import 'katex/dist/katex.min.css';
+import { InlineMath } from 'react-katex';
+import { useThemeContext } from '@/lib/ThemeContext';
 
-export default function IrrationalSumsSlide() {
-  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+// --- Type Definitions ---
+type NumberType = 'Rational' | 'Irrational';
+type NumberObject = { label: string; type: NumberType; value: number | string };
 
-  const slideInteractions: Interaction[] = [
-    {
-      id: 'irrational-sums-concept',
-      conceptId: 'irrational-sums',
-      conceptName: 'Sums of Irrational Numbers',
-      type: 'learning',
-      description: 'Understanding that the sum of two irrational numbers can be rational or irrational'
-    }
-  ];
+// --- Data for the interactive part ---
+const numberPalette: NumberObject[] = [
+    { label: '5', type: 'Rational', value: 5 },
+    { label: '\\sqrt{2}', type: 'Irrational', value: 'sqrt(2)' },
+    { label: '-\\sqrt{2}', type: 'Irrational', value: '-sqrt(2)' },
+    { label: '\\pi', type: 'Irrational', value: 'pi' },
+];
 
-  const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
-  };
+// --- Main Slide Component ---
+export default function SumOfIrrationalsIntroSlide() {
+    const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+    const { isDarkMode } = useThemeContext();
+    const [slot1, setSlot1] = useState<NumberObject | null>(null);
+    const [slot2, setSlot2] = useState<NumberObject | null>(null);
 
-  return (
-    <SlideComponentWrapper
-      slideId="irrational-sums-intro"
-      slideTitle="Sums of Irrational Numbers"
-      moduleId="irrational-numbers"
-      submoduleId="sum"
-      interactions={localInteractions}
-    >
-      <div className="w-full h-full bg-slate-50 dark:bg-slate-900/20 rounded-xl p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left column - Explanation */}
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <div className="space-y-6">
-                {/* Main concept */}
-                <div>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                    When you add or subtract two irrational numbers, the result is not always irrational. This is a fundamental property that distinguishes irrational numbers from other sets, such as integers or rational numbers, which are "closed" under these operations.
-                  </p>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                    The key principle is that the "infinite, non-repeating" parts of the irrational numbers might cancel each other out.
-                  </p>
-                  <div className="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg mb-4">
-                    <p className="text-blue-700 dark:text-blue-300 leading-relaxed">
-                      <span className="font-semibold">Example:</span> "What is the sum of $\pi$ and $4-\pi$?"
-                    </p>
-                  </div>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                    <span className="font-semibold text-blue-600 dark:text-blue-400">Let's explore some scenarios!</span>
-                  </p>
+    const handleInteractionComplete = (response: InteractionResponse) => {
+        setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
+    };
+
+    const handleSelect = (num: NumberObject) => {
+        if (!slot1) setSlot1(num);
+        else if (!slot2) setSlot2(num);
+    };
+
+    const handleReset = () => {
+        setSlot1(null);
+        setSlot2(null);
+    };
+
+    const getResult = () => {
+        if (!slot1 || !slot2) return { text: '?', type: '' };
+
+        if (slot1.type === 'Rational' && slot2.type === 'Rational') {
+            return { text: 'Rational', type: 'Predictable' };
+        }
+        if (slot1.type !== slot2.type) {
+            return { text: 'Always Irrational', type: 'Predictable' };
+        }
+        // Both are irrational
+        if (slot1.value === 'sqrt(2)' && slot2.value === '-sqrt(2)') {
+            return { text: '0 (Rational)', type: 'Wild Card!' };
+        }
+        return { text: 'Irrational', type: 'Wild Card!' };
+    };
+
+    const result = getResult();
+
+    const slideInteractions: Interaction[] = [
+        { id: 'sum-of-irrationals-intro', conceptId: 'sum-of-irrationals', conceptName: 'Introduction to Sum of Irrationals', type: 'learning', description: 'Learning how irrational numbers behave under addition.' },
+        // FIX: Changed 'exploration' to 'learning' to match the expected InteractionType
+        { id: 'sum-builder-interaction', conceptId: 'sum-of-irrationals', conceptName: 'Sum of Irrationals Builder', type: 'learning', description: 'Interactively building sums to see the outcome.' }
+    ];
+
+    const slideContent = (
+        <div className={`min-h-screen p-4 sm:p-8 transition-colors duration-300 ${isDarkMode ? 'bg-slate-900' : 'bg-slate-100'}`}>
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                {/* Left Panel: Theory */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md">
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Sum of Irrational Numbers</h2>
+                    
+                    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm mb-6">
+                        <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Scenario 1: Rational + Irrational</h3>
+                        <p className="text-slate-600 dark:text-slate-400">
+                            When you add a rational number to an irrational number, the result is <strong className="font-semibold">always irrational</strong>. The rational number can't cancel out the infinite, non-repeating decimal of the irrational one.
+                        </p>
+                    </div>
+
+                    <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
+                        <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Scenario 2: Irrational + Irrational</h3>
+                        <p className="text-slate-600 dark:text-slate-400">
+                            This case is a <strong className="font-semibold">wild card</strong>. The sum can be rational if the irrational parts cancel out (e.g., <InlineMath>\sqrt{2} + (-\sqrt{2}) = 0</InlineMath>), but it's usually irrational (e.g., <InlineMath>\sqrt{2} + \pi</InlineMath>).
+                        </p>
+                    </div>
                 </div>
+                
+                {/* Right Panel: Interactive Builder */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md flex flex-col">
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Interactive: Equation Builder</h3>
+                    <p className="text-slate-600 dark:text-slate-400 mb-4">Select two numbers from the palette to see their sum.</p>
+                    
+                    <div className="bg-slate-100 dark:bg-slate-900/70 rounded-lg p-4 flex-grow flex flex-col justify-center items-center">
+                        {/* Equation Display */}
+                        <div className="flex items-center justify-center text-3xl font-bold mb-6">
+                            <AnimatePresence>
+                                <motion.div className={`w-28 h-16 flex items-center justify-center rounded-lg ${slot1 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-slate-300 dark:bg-slate-600 border-2 border-dashed'}`}>
+                                    {slot1 && <motion.span initial={{scale:0.5, opacity:0}} animate={{scale:1, opacity:1}}><InlineMath>{slot1.label}</InlineMath></motion.span>}
+                                </motion.div>
+                            </AnimatePresence>
+                            <span className="mx-4 text-slate-500">+</span>
+                            <AnimatePresence>
+                                <motion.div className={`w-28 h-16 flex items-center justify-center rounded-lg ${slot2 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-slate-300 dark:bg-slate-600 border-2 border-dashed'}`}>
+                                    {slot2 && <motion.span initial={{scale:0.5, opacity:0}} animate={{scale:1, opacity:1}}><InlineMath>{slot2.label}</InlineMath></motion.span>}
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
 
-                {/* Scenarios and examples */}
-                <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
-                  <h2 className="text-blue-600 dark:text-blue-400 text-xl font-medium mb-3">
-                    Irrational + Irrational = Rational
-                  </h2>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
-                    This happens when the decimal parts cancel out.
-                  </p>
-                  <div className="space-y-3 justify-center items-center">
-                    <div className="flex items-center justify-center">
-                      <span className="text-slate-700 dark:text-slate-300 text-center items-center">
-                        <BlockMath math="\sqrt{2} + (-\sqrt{2}) = 0" />
-                      </span>
+                        {/* Result Display */}
+                        {slot1 && slot2 && (
+                             <AnimatePresence>
+                                <motion.div initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} className="text-center">
+                                    <p className="text-sm text-slate-500 dark:text-slate-400">{result.type}</p>
+                                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{result.text}</p>
+                                </motion.div>
+                            </AnimatePresence>
+                        )}
                     </div>
-                    <div className="flex items-center justify-center">
-                      <span className="text-slate-700 dark:text-slate-300 text-center items-center">
-                        <BlockMath math="(3 + \sqrt{5}) + (2 - \sqrt{5}) = 5" />
-                      </span>
+                    
+                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <p className="text-center font-semibold text-slate-600 dark:text-slate-400 mb-2">Number Palette</p>
+                        <div className="flex justify-center gap-2">
+                            {numberPalette.map(num => (
+                                <button
+                                    key={num.label}
+                                    onClick={() => handleSelect(num)}
+                                    disabled={!!(slot1 && slot2)}
+                                    className="px-4 py-2 text-lg font-bold rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                    <InlineMath>{num.label}</InlineMath>
+                                </button>
+                            ))}
+                             <button onClick={handleReset} className="px-4 py-2 font-bold rounded-lg bg-slate-500 text-white hover:bg-slate-600">Reset</button>
+                        </div>
                     </div>
-                  </div>
                 </div>
-
-                <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
-                  <h2 className="text-blue-600 dark:text-blue-400 text-xl font-medium mb-3">
-                    Irrational + Irrational = Irrational
-                  </h2>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
-                    This is the more common result when the decimal parts do not cancel.
-                  </p>
-                  <div className="space-y-3 justify-center items-center">
-                    <div className="flex items-center justify-center">
-                      <span className="text-slate-700 dark:text-slate-300 text-center items-center">
-                        <BlockMath math="\sqrt{2} + \sqrt{3} \approx 3.146" />
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className="text-slate-700 dark:text-slate-300 text-center items-center">
-                        <BlockMath math="\pi + \pi = 2\pi" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-
-          {/* Right column - Visual summary */}
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-4">
-                Visualizing Sums
-              </h3>
-              <p className="text-slate-700 dark:text-slate-300 mb-4">
-                The visual summary below shows how the nature of the result depends entirely on the numbers being added or subtracted.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Visual for Rational Result */}
-                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 text-center">
-                  <div className="font-semibold text-lg text-green-700 dark:text-green-300 mb-2">
-                    Result: Rational
-                  </div>
-                  <BlockMath math="\sqrt{7} - \sqrt{7} = 0" />
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    <InlineMath math="\approx 2.6457..." />
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    <InlineMath math="\approx 2.6457..." />
-                  </div>
-                </div>
-
-                {/* Visual for Irrational Result */}
-                <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 text-center">
-                  <div className="font-semibold text-lg text-red-700 dark:text-red-300 mb-2">
-                    Result: Irrational
-                  </div>
-                  <BlockMath math="\sqrt{2} + 5 = 5 + \sqrt{2}" />
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    <InlineMath math="\approx 1.414..." />
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    <InlineMath math="5" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <p className="text-slate-700 dark:text-slate-300 mb-2">
-                  <span className="font-semibold">Important Rule:</span>
-                </p>
-                <div className="bg-purple-100 dark:bg-purple-900/20 p-4 rounded-lg">
-                  <p className="text-lg text-purple-700 dark:text-purple-300">
-                    The sum of a **rational** number and an **irrational** number is **always irrational**.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-    </SlideComponentWrapper>
-  );
+    );
+
+    return (
+        <SlideComponentWrapper
+            slideId="sum-of-irrationals-intro"
+            slideTitle="Introduction to Sum of Irrational Numbers"
+            moduleId="irrational-numbers"
+            submoduleId="operations" // Assuming a submoduleId
+            interactions={localInteractions}
+        >
+            <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
+            <TrackedInteraction interaction={slideInteractions[1]} onInteractionComplete={handleInteractionComplete}>
+                {slideContent}
+            </TrackedInteraction>
+            </TrackedInteraction>
+        </SlideComponentWrapper>
+    );
 }
