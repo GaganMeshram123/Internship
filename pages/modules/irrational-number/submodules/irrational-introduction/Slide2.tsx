@@ -55,17 +55,24 @@ const LeftTheoryPanel: React.FC = () => {
             </div>
         ),
         advanced: (
-             <div className="space-y-4 text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-                <div>
-                    <h4 className="font-bold text-xl text-slate-800 dark:text-slate-200 mb-2">Density Property</h4>
-                    <p>Irrational numbers are <strong className="text-blue-600 dark:text-blue-400">dense</strong>. This means between any two numbers on the number line, no matter how close, you can always find an irrational number.</p>
-                </div>
-                 <div>
-                    <h4 className="font-bold text-xl text-slate-800 dark:text-slate-200 mb-2">Classification</h4>
-                    <p>Irrationals like <InlineMath>\sqrt{2}</InlineMath> are <strong className="text-green-600">Algebraic</strong> (solutions to polynomial equations). Others like <InlineMath>\pi</InlineMath> and <InlineMath>e</InlineMath> are <strong className="text-purple-600">Transcendental</strong>, as they cannot be solutions to such equations.</p>
-                </div>
-            </div>
-        )
+  <div className="space-y-4 text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+    <div>
+      <h4 className="font-bold text-xl text-slate-800 dark:text-slate-200 mb-2">Density Property</h4>
+      <p>
+        Irrational numbers are <strong className="text-blue-600 dark:text-blue-400">dense</strong>. 
+        This means that between any two numbers on the number line, no matter how close, you can always find an irrational number.
+      </p>
+    </div>
+    <div>
+      <h4 className="font-bold text-xl text-slate-800 dark:text-slate-200 mb-2">Classification</h4>
+      <p>
+        Irrationals like the square root of 2 (√2) are <strong className="text-green-600">Algebraic</strong> (solutions to polynomial equations). 
+        Others like pi (π) and e are <strong className="text-purple-600">Transcendental</strong>, meaning they cannot be solutions to such equations.
+      </p>
+    </div>
+  </div>
+)
+
     };
 
     return (
