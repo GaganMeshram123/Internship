@@ -108,7 +108,7 @@ export default function IrrationalProductSlide() {
               <div className="p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                 <div className="text-blue-700 dark:text-blue-300 font-medium mb-2">Key Insight</div>
                 <div className="text-lg text-gray-700 dark:text-gray-300">
-                  The decimal parts of irrational numbers can sometimes combine perfectly to form a simple, non-infinite number. The **Area Model** on the right helps visualize this.
+                  The decimal parts of irrational numbers can sometimes combine perfectly to form a simple, non-infinite number. The Area Model on the right helps visualize this.
                 </div>
               </div>
               

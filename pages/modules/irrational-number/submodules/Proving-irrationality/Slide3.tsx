@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { Interaction, InteractionResponse, TrackedInteraction } from '../../../common-components/concept';
 import { useThemeContext } from '@/lib/ThemeContext';
+import { InlineMath } from "react-katex";
+import 'katex/dist/katex.min.css';
 
 // --- Main Slide Component ---
 export default function ProvingIrrationalitySlide3Simple() {
@@ -41,7 +43,10 @@ export default function ProvingIrrationalitySlide3Simple() {
                            We start by assuming the square root of 3 is rational. This means it can be written as a simplified fraction.
                         </p>
                         <div className="mt-2 p-2 bg-slate-200 dark:bg-slate-700 rounded text-center">
-                            <strong>Example:</strong> "The square root of 3 equals p divided by q."
+                           <p className="text-slate-600 dark:text-slate-400">
+  <strong>Example:</strong>{" "}
+  <InlineMath math="\sqrt{3} = \frac{p}{q}" />
+</p>
                         </div>
                     </div>
                 </div>
@@ -53,10 +58,15 @@ export default function ProvingIrrationalitySlide3Simple() {
                         <p className="text-slate-600 dark:text-slate-400">
                            Through algebra, we first prove that 'p' must be a multiple of 3. Then, using that fact, we prove that 'q' must also be a multiple of 3.
                         </p>
-                        <div className="mt-2 p-2 bg-slate-200 dark:bg-slate-700 rounded text-center space-y-1">
-                            <div>This shows 'p' is a multiple of 3: "p-squared equals 3 times q-squared"</div>
-                            <div>This shows 'q' is a multiple of 3: "q-squared equals 3 times k-squared"</div>
-                        </div>
+                       <div className="mt-2 p-2 bg-slate-200 dark:bg-slate-700 rounded text-center space-y-1">
+  <div>
+    This shows <InlineMath math="p^2 = 3q^2" /> which means <InlineMath math="p" /> is a multiple of 3.
+  </div>
+  <div>
+    This shows <InlineMath math="q^2 = 3k^2" /> which means <InlineMath math="q" /> is a multiple of 3.
+  </div>
+</div>
+
                     </div>
                     
                     <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
@@ -65,7 +75,11 @@ export default function ProvingIrrationalitySlide3Simple() {
                            This is the contradiction! If 'p' and 'q' are both multiples of 3, our fraction was not simplified. This means our initial assumption was wrong.
                         </p>
                          <div className="mt-2 p-2 bg-slate-200 dark:bg-slate-700 rounded text-center">
-                            <strong>Conclusion:</strong> The square root of 3 must be irrational.
+                          <p className="text-slate-600 dark:text-slate-400">
+  <strong>Conclusion:</strong>{" "}
+  <InlineMath math="\sqrt{3} \text{ is irrational}" />
+</p>
+
                          </div>
                     </div>
                 </div>
@@ -85,6 +99,6 @@ export default function ProvingIrrationalitySlide3Simple() {
             <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
                 {slideContent}
             </TrackedInteraction>
-        </SlideComponentWrapper>
+        </SlideComponentWrapper>  
     );
 }

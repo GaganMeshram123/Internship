@@ -39,10 +39,19 @@ const LeftTheoryPanel: React.FC = () => {
         operations: (
             <div className="space-y-4 text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
                 <div>
-                    <h4 className="font-bold text-xl text-slate-800 dark:text-slate-200 mb-2">Mixing Numbers</h4>
-                    <p className="mb-2"><strong className="text-blue-600 dark:text-blue-400">Rational + Irrational:</strong> The result is <strong className="text-purple-600 dark:text-purple-400">always irrational</strong> (e.g., <InlineMath>5 + \sqrt{2}</InlineMath>). The irrational number "wins."</p>
-                    <p><strong className="text-purple-600 dark:text-purple-400">Irrational + Irrational:</strong> The result is a wild card. It <strong className="text-amber-600">can be rational</strong> (e.g., <InlineMath>\sqrt{2} + (-\sqrt{2}) = 0</InlineMath>) or irrational.</p>
-                </div>
+    <h4 className="font-bold text-xl text-slate-800 dark:text-slate-200 mb-2">Mixing Numbers</h4>
+    <p className="mb-2">
+        <strong className="text-blue-600 dark:text-blue-400">Rational + Irrational:</strong> 
+        The result is <strong className="text-purple-600 dark:text-purple-400">always irrational</strong> 
+        (e.g., 5 + √2). The irrational number "wins."
+    </p>
+    <p>
+        <strong className="text-purple-600 dark:text-purple-400">Irrational + Irrational:</strong> 
+        The result is a wild card. It <strong className="text-amber-600">can be rational</strong> 
+        (e.g., √2 + (−√2) = 0) or irrational (e.g., √2 + √3).
+    </p>
+</div>
+
             </div>
         ),
         advanced: (

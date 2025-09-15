@@ -111,8 +111,11 @@ export default function IntroductionSlide() {
                     <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">An Ancient Discovery</h3>
                          <p className="text-slate-600 dark:text-slate-400">
-                            The first irrational number discovered was likely <InlineMath>\sqrt{2}</InlineMath>, the diagonal of a 1x1 square. This shattered the ancient Greek belief that all numbers could be described by simple fractions.
-                         </p>
+    The first irrational number discovered was likely <InlineMath math="\sqrt{2}" />, 
+    the diagonal of a 1x1 square. This shattered the ancient Greek belief that all numbers 
+    could be described by simple fractions.
+</p>
+
                     </div>
                 </div>
 
