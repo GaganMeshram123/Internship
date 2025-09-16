@@ -54,11 +54,11 @@ export default function SineCosineDomeSlide() {
             </div>
             <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4">
               <h4 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-1">The "Aha!" Moment: Connecting to SOH CAH TOA</h4>
-              <p>The <strong>Sine (height)</strong> is the side **Opposite** the angle, and the **Cosine (distance)** is the side **Adjacent** to the angle. The dome's radius is the **Hypotenuse** (with a value of 1).</p>
+              <p>The <strong>Sine (height)</strong> is the side Opposite the angle, and the Cosine (distance) is the side Adjacent to the angle. The dome's radius is the Hypotenuse (with a value of 1).</p>
             </div>
              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4">
               <h4 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-1">Beyond the Dome: Negative Values</h4>
-              <p>Pointing "West" (more than 90°) makes your horizontal distance **negative** (Cosine becomes negative). This is how trigonometry describes a full 360° rotation.</p>
+              <p>Pointing "West" (more than 90°) makes your horizontal distance negative (Cosine becomes negative). This is how trigonometry describes a full 360° rotation.</p>
             </div>
           </div>
         </div>
