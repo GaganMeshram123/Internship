@@ -46,6 +46,7 @@ const getModules = async () => {
     'trigonometry-basics',
     'vectors',
     'irrational-number',
+    'Intuitive-trigonometry',
     'work-energy-power-0001'
   ];
 
