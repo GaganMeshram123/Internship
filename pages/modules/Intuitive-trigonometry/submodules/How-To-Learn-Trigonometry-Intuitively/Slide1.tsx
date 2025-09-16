@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { Interaction, InteractionResponse, TrackedInteraction } from '../../../common-components/concept';
 import 'katex/dist/katex.min.css';
@@ -6,46 +7,107 @@ import { InlineMath } from 'react-katex';
 
 export default function TrigAsPercentagesSlide() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-
-  const slideInteractions: Interaction[] = [
-    { id: 'trig-as-percentages-concept', conceptId: 'trig-percentages', conceptName: 'Trigonometry as Percentages', type: 'learning', description: 'Understanding sine and cosine as percentages of a circle\'s radius.' }
-  ];
+  const [angle, setAngle] = useState(45); // Angle in degrees
 
   const handleInteractionComplete = (response: InteractionResponse) => {
     setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
+  
+  const slideInteractions: Interaction[] = [
+    { id: 'trig-as-percentages-concept', conceptId: 'trig-percentages', conceptName: 'Trigonometry as Percentages', type: 'learning', description: 'Understanding sine and cosine as percentages of a circle\'s radius.' }
+  ];
+
+  // Calculate sine and cosine
+  const cosine = Math.cos(angle * (Math.PI / 180));
+  const sine = Math.sin(angle * (Math.PI / 180));
 
   const slideContent = (
     <div className="min-h-screen p-4 sm:p-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Left Panel: Theory */}
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full">
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">A New Perspective: Trig as Percentages</h2>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Trigonometry as a GPS for a Circle 🌐</h2>
           <div className="space-y-4 text-lg text-slate-600 dark:text-slate-400">
-            <p>The most intuitive way to understand trigonometry is to think about a circle. Imagine you are at the center of a dome.</p>
+            <p>Trigonometry gives you the exact coordinates for any angle on a circle, expressed as a percentage of the circle's radius.</p>
             <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4">
-              <p><strong>Cosine (cos)</strong> is the percentage of your <strong>horizontal distance (x-axis)</strong> from the center.</p>
+              <p><strong>Cosine (cos)</strong> is your <strong>horizontal (East/West)</strong> position.</p>
             </div>
             <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4">
-              <p><strong>Sine (sin)</strong> is the percentage of your <strong>vertical distance (y-axis)</strong> from the center.</p>
+              <p><strong>Sine (sin)</strong> is your <strong>vertical (North/South)</strong> position.</p>
             </div>
-            <p>This is why <InlineMath>{'\\cos(0^\\circ) = 1'}</InlineMath> (100% horizontal) and <InlineMath>{'\\sin(90^\\circ) = 1'}</InlineMath> (100% vertical).</p>
+            {/* NEW: Added another example for clarity */}
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4">
+               <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Example: Looking West</h4>
+               <p>If you point straight behind you (180°), you are at your maximum distance West. Your horizontal position is -100% (<InlineMath>{'\\cos(180^\\circ) = -1'}</InlineMath>), and your vertical height is 0% (<InlineMath>{'\\sin(180^\\circ) = 0'}</InlineMath>).</p>
+            </div>
           </div>
         </div>
         
-        {/* Right Panel: Visualization */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex items-center justify-center">
-             <div className="relative w-64 h-64 border-2 border-slate-300 dark:border-slate-700 rounded-full flex items-center justify-center">
-                <div className="absolute w-full h-px bg-slate-300 dark:bg-slate-700"></div>
-                <div className="absolute h-full w-px bg-slate-300 dark:bg-slate-700"></div>
-                {/* Angle line */}
-                <div className="absolute w-1/2 h-0.5 bg-blue-500 top-1/2 left-1/2 origin-left transform -rotate-45"></div>
-                {/* Dotted lines */}
-                <div className="absolute top-[calc(50%+1.5rem)] left-[calc(50%-0.2rem)] w-[calc(35%+0.2rem)] border-t-2 border-dashed border-red-500"></div>
-                <div className="absolute left-[calc(50%+1.5rem)] top-[calc(50%-0.2rem)] h-[calc(35%+0.2rem)] border-l-2 border-dashed border-green-500 transform -rotate-180"></div>
-                <div className="absolute top-[86%] left-[70%] text-red-500 font-bold text-xl"><InlineMath>{'\\cos(\\theta)'}</InlineMath></div>
-                <div className="absolute top-[70%] left-[86%] text-green-500 font-bold text-xl rotate-90"><InlineMath>{'\\sin(\\theta)'}</InlineMath></div>
-             </div>
+        {/* Right Panel: Interactive Visualization */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Interactive Circle</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">Drag the slider to change the angle.</p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                {/* Circle Viz */}
+                <div className="relative w-48 h-48 flex-shrink-0">
+                    <div className="w-full h-full border-2 border-slate-300 dark:border-slate-700 rounded-full"></div>
+                    <div className="absolute top-1/2 left-0 w-full h-px bg-slate-300 dark:bg-slate-700"></div>
+                    <div className="absolute left-1/2 top-0 h-full w-px bg-slate-300 dark:bg-slate-700"></div>
+                    <motion.div 
+                        className="absolute top-1/2 left-1/2 w-1/2 h-0.5 bg-blue-500 origin-left"
+                        animate={{ rotate: -angle }}
+                    />
+                    <motion.div 
+                        className="absolute top-1/2 left-1/2 w-4 h-4 -m-2 bg-slate-900 dark:bg-white rounded-full border-2 border-blue-500"
+                        animate={{ rotate: -angle, x: '2400%' }}
+                    />
+                </div>
+
+                {/* Bars and Readouts */}
+                <div className="w-full sm:w-48 space-y-4">
+                    <div>
+                        <div className="flex justify-between font-mono text-sm">
+                            <span>Cosine (x)</span>
+                            <span>{cosine.toFixed(2)}</span>
+                        </div>
+                        <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4 mt-1">
+                            <motion.div 
+                                className="bg-blue-500 h-4 rounded-full"
+                                animate={{ width: `${(cosine + 1) / 2 * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                     <div>
+                        <div className="flex justify-between font-mono text-sm">
+                            <span>Sine (y)</span>
+                            <span>{sine.toFixed(2)}</span>
+                        </div>
+                        <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4 mt-1">
+                            <motion.div 
+                                className="bg-blue-500 h-4 rounded-full"
+                                animate={{ width: `${sine * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="mt-6">
+                <label htmlFor="angle-slider" className="font-medium text-slate-700 dark:text-slate-300">
+                    Angle: {angle}°
+                </label>
+                <input
+                    id="angle-slider"
+                    type="range"
+                    min="0"
+                    max="360"
+                    step="1"
+                    value={angle}
+                    onChange={(e) => setAngle(Number(e.target.value))}
+                    className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 mt-2"
+                />
+            </div>
         </div>
       </div>
     </div>
