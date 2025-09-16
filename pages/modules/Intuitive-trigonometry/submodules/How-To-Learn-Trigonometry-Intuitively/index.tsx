@@ -6,7 +6,11 @@ import UnitCircleRadiansSlide from './Slide2';
 import GraphingWavesSlide from './Slide3';
 import PythagoreanConnectionSlide from './Slide4';
 import EulersFormulaSlide from './Slide5';
+// NEW: Imports for the new slides
+import TangentSecantSlide from './Slide6';
+import CotangentCosecantSlide from './Slide7';
 
+// This array defines the order and content of the slides in this submodule.
 export const howToLearnTrigSlides: Slide[] = [
   {
     type: 'interactive',
@@ -36,6 +40,22 @@ export const howToLearnTrigSlides: Slide[] = [
     component: PythagoreanConnectionSlide,
     id: 'trig-intro-pythagorean'
   },
+  // --- NEW SLIDES ADDED HERE ---
+  {
+    type: 'interactive',
+    title: 'Tangent/Secant: The Wall',
+    content: '',
+    component: TangentSecantSlide,
+    id: 'trig-intro-tangent-secant'
+  },
+  {
+    type: 'interactive',
+    title: 'Cotangent/Cosecant: The Ceiling',
+    content: '',
+    component: CotangentCosecantSlide,
+    id: 'trig-intro-cotangent-cosecant'
+  },
+  // --- Euler's Formula moved to be the final, advanced topic ---
   {
     type: 'interactive',
     title: "Euler's Formula: The Big Picture",
