@@ -47,6 +47,7 @@ const getModules = async () => {
     'vectors',
     'irrational-number',
     'Intuitive-trigonometry',
+    'arithmetic',
     'work-energy-power-0001'
   ];
 
