@@ -54,7 +54,41 @@ export default function BigNumberOpsSlide() {
         </div>
     );
 
-    const RightInteractionPanel = () => (
+   const RightInteractionPanel = () => {
+    // Helper function to get tens and ones from a number
+    const getParts = (num: number) => ({
+        tens: Math.floor(num / 10),
+        ones: num % 10,
+    });
+
+    const partsA = getParts(problem.a);
+    const partsB = getParts(problem.b);
+    const result = operation === 'add' ? problem.a + problem.b : problem.a - problem.b;
+    const resultParts = getParts(result);
+
+    // Visual block components
+    const TensBlock = ({ i }: { i: number }) => (
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20, delay: i * 0.05 }}
+            className="w-4 h-12 bg-blue-500 rounded"
+        />
+    );
+    const OnesBlock = ({ i }: { i: number }) => (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20, delay: i * 0.05 }}
+            className="w-4 h-4 bg-black dark:bg-white rounded"
+        />
+    );
+
+    return (
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex flex-col">
             <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Interactive: Place Value Workshop</h3>
             <p className="text-slate-600 dark:text-slate-400 mb-4">Watch how the blocks regroup!</p>
@@ -66,20 +100,49 @@ export default function BigNumberOpsSlide() {
                 </div>
 
                 <div className="w-full text-center text-4xl font-bold text-slate-700 dark:text-slate-300">
-                    {problem.a} {operation === 'add' ? '+' : '-'} {problem.b} = {isSolved ? <span className="text-blue-600 dark:text-blue-400">{operation === 'add' ? problem.a + problem.b : problem.a - problem.b}</span> : '?'}
+                    {problem.a} {operation === 'add' ? '+' : '-'} {problem.b} = {isSolved ? <span className="text-blue-600 dark:text-blue-400">{result}</span> : '?'}
                 </div>
 
-                {/* Placeholder for block animation */}
-                <div className="flex-grow w-full flex items-center justify-center text-slate-400">
-                    <p>[Animation of base-10 blocks would go here]</p>
+                {/* Animated Blocks Area */}
+                <div className="w-full h-48 grid grid-cols-2 gap-4">
+                    {/* Tens Column */}
+                    <div className="flex flex-wrap gap-1 justify-center content-start border-r-2 border-slate-300 dark:border-slate-700 pr-2">
+                        <p className="w-full text-center text-sm font-semibold text-slate-500">Tens</p>
+                        <AnimatePresence>
+                        {isSolved 
+                            ? Array.from({ length: resultParts.tens }).map((_, i) => <TensBlock key={`res-t-${i}`} i={i} />)
+                            : <>
+                                {Array.from({ length: partsA.tens }).map((_, i) => <TensBlock key={`a-t-${i}`} i={i} />)}
+                                {Array.from({ length: partsB.tens }).map((_, i) => <TensBlock key={`b-t-${i}`} i={i} />)}
+                              </>
+                        }
+                        </AnimatePresence>
+                    </div>
+                    {/* Ones Column */}
+                    <div className="flex flex-wrap gap-1 justify-center content-start pl-2">
+                         <p className="w-full text-center text-sm font-semibold text-slate-500">Ones</p>
+                         <AnimatePresence>
+                         {isSolved 
+                            ? Array.from({ length: resultParts.ones }).map((_, i) => <OnesBlock key={`res-o-${i}`} i={i} />)
+                            : <>
+                                {Array.from({ length: partsA.ones }).map((_, i) => <OnesBlock key={`a-o-${i}`} i={i} />)}
+                                {Array.from({ length: partsB.ones }).map((_, i) => <OnesBlock key={`b-o-${i}`} i={i} />)}
+                              </>
+                        }
+                        </AnimatePresence>
+                    </div>
                 </div>
 
-                <button onClick={() => setIsSolved(true)} disabled={isSolved} className="w-full px-6 py-3 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50">
-                    Solve
+                <button 
+                    onClick={() => isSolved ? generateNewProblem(operation) : setIsSolved(true)} 
+                    className="w-full px-6 py-3 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700"
+                >
+                    {isSolved ? 'New Problem' : 'Solve'}
                 </button>
             </div>
         </div>
     );
+};
 
     const slideContent = (
         <div className={`min-h-screen p-4 sm:p-8`}>

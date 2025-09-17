@@ -37,7 +37,7 @@ export default function MultiplyFractionsSlide() {
             <div className="space-y-4">
                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Finding a "Part of a Part"</h3>
-                    <p className="text-slate-600 dark:text-slate-400">Multiplying fractions like "1/2 × 1/3" is the same as asking, "What is **half of one-third**?" We can visualize this with a chocolate bar!</p>
+                    <p className="text-slate-600 dark:text-slate-400">Multiplying fractions like "1/2 × 1/3" is the same as asking, "What is half of one-third?" We can visualize this with a chocolate bar!</p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">The Simple Rule</h3>

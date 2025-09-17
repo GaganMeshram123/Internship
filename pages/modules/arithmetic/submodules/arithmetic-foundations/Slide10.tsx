@@ -50,12 +50,12 @@ export default function UnderstandFractionsSlide() {
             <div className="space-y-4">
                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">What is a Fraction? 🍕</h3>
-                    <p className="text-slate-600 dark:text-slate-400">A fraction is a way to talk about a **piece of something**, instead of the whole thing. If you have a pizza, a fraction tells you how many slices you have.</p>
+                    <p className="text-slate-600 dark:text-slate-400">A fraction is a way to talk about a piece of something, instead of the whole thing. If you have a pizza, a fraction tells you how many slices you have.</p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">The Parts of a Fraction</h3>
-                    <p className="text-slate-600 dark:text-slate-400">The **bottom number (Denominator)** tells you how many equal slices the whole pizza is cut into.</p>
-                    <p className="text-slate-600 dark:text-slate-400 mt-2">The **top number (Numerator)** tells you how many of those slices you actually have.</p>
+                    <p className="text-slate-600 dark:text-slate-400">The bottom number (Denominator) tells you how many equal slices the whole pizza is cut into.</p>
+                    <p className="text-slate-600 dark:text-slate-400 mt-2">The top number (Numerator) tells you how many of those slices you actually have.</p>
                 </div>
             </div>
         </div>

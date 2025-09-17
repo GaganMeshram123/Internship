@@ -43,11 +43,11 @@ export default function PlaceValueSlide() {
             <div className="space-y-4">
                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">The "Houses" for Numbers</h3>
-                    <p className="text-slate-600 dark:text-slate-400">In a number like 23, the position of each digit is important. Think of them as living in different houses: the **Ones House** on the right and the **Tens House** on the left.</p>
+                    <p className="text-slate-600 dark:text-slate-400">In a number like 23, the position of each digit is important. Think of them as living in different houses: the Ones House on the right and the Tens House on the left.</p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Tens and Ones</h3>
-                    <p className="text-slate-600 dark:text-slate-400">The number <strong>23</strong> isn't "2" and "3". It means we have **2 groups of Ten** and **3 Ones**.</p>
+                    <p className="text-slate-600 dark:text-slate-400">The number <strong>23</strong> isn't "2" and "3". It means we have 2 groups of Ten and 3 Ones.</p>
                 </div>
             </div>
         </div>

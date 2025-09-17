@@ -26,15 +26,15 @@ export default function DecimalsSlide() {
             <div className="space-y-4">
                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">What is a Decimal?</h3>
-                    <p className="text-slate-600 dark:text-slate-400">The **decimal point** is a dot that separates whole numbers from parts of a number. It's like a special kind of fraction!</p>
+                    <p className="text-slate-600 dark:text-slate-400">The decimal point is a dot that separates whole numbers from parts of a number. It's like a special kind of fraction!</p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">The Money Connection 💰</h3>
-                    <p className="text-slate-600 dark:text-slate-400">The easiest way to understand decimals is with money. In the price **$1.35**: </p>
+                    <p className="text-slate-600 dark:text-slate-400">The easiest way to understand decimals is with money. In the price $1.35: </p>
                     <ul className="list-disc pl-5 mt-2 text-slate-600 dark:text-slate-400">
-                        <li>The **1** is for 1 whole dollar.</li>
-                        <li>The first spot after the dot is the **Tenths** place. The **3** is for 3 dimes (3 tenths of a dollar).</li>
-                        <li>The second spot is the **Hundredths** place. The **5** is for 5 pennies (5 hundredths of a dollar).</li>
+                        <li>The 1 is for 1 whole dollar.</li>
+                        <li>The first spot after the dot is the Tenths place. The 3 is for 3 dimes (3 tenths of a dollar).</li>
+                        <li>The second spot is the Hundredths place. The 5 is for 5 pennies (5 hundredths of a dollar).</li>
                     </ul>
                 </div>
             </div>
