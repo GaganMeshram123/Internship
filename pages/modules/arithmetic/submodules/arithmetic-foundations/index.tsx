@@ -8,7 +8,7 @@ import SubtractionSlide from './Slide3';
 import MultiplicationSlide from './Slide4';
 import DivisionSlide from './Slide5'; 
 // NEW: Import for the new slide
-import PlaceValueSlide from './Slide6';
+/* import PlaceValueSlide from './Slide6';
 import BigNumberOpsSlide from './Slide7';
 import MultiDigitMultiplySlide from './Slide8';
 import DivideWithRemaindersSlide from './Slide9';
@@ -19,7 +19,7 @@ import DecimalsSlide from './Slide13';
 import AddSubtractDecimalsSlide from './Slide14';
 import WordProblemsSlide from './Slide15';
 
-
+ */
 
 
 
@@ -54,9 +54,9 @@ export const arithmeticFoundationsSlides: Slide[] = [
     title: 'Dazzling Division: Sharing Fairly',
     component: DivisionSlide,
     id: 'arithmetic-division'
-  },
+  }
   // --- NEW SLIDE ADDED BELOW ---
-  {
+  /* {
     type: 'interactive',
     title: 'Understanding Place Value',
     component: PlaceValueSlide,
@@ -116,7 +116,7 @@ export const arithmeticFoundationsSlides: Slide[] = [
     title: 'Putting It All Together',
     component: WordProblemsSlide,
     id: 'arithmetic-word-problems'
-  }
+  } */
 ];
 
 function ArithmeticFoundationsSubmodule() {

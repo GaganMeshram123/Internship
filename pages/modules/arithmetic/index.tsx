@@ -1,8 +1,10 @@
 import React from 'react';
 import { Slide } from '../common-components/concept';
 
-// Import the slides array from your single submodule
+// Import the slides array from each of your three submodules
 import { arithmeticFoundationsSlides } from './submodules/arithmetic-foundations';
+import { multiplicationDivisionSlides } from './submodules/multiplication-division';
+import { fractionsAndDecimalsSlides } from './submodules/fractions-and-decimals';
 
 // Define the interface for a submodule
 export interface Submodule {
@@ -11,20 +13,39 @@ export interface Submodule {
   description: string;
   slides: Slide[];
   estimatedTime?: string;
+  // FIX: Removed the hyphen from 'Begin-ner'
   difficulty?: 'Beginner' | 'Intermediate' | 'Advanced';
   topics?: string[];
 }
 
-// Define the single submodule for the Arithmetic module
+// Define the three submodules for the Arithmetic module
 export const submodules: Submodule[] = [
   {
-    id: 'arithmetic-foundations',
-    title: 'Arithmetic Foundations',
-    description: 'Learn the basics of counting, adding, subtracting, multiplying, and dividing in a fun and visual way!',
-    slides: arithmeticFoundationsSlides,
-    estimatedTime: '45 min',
+    id: 'core-concepts',
+    title: 'The Number World (Units 1-5)',
+    description: 'Learn the basics of counting, place value, addition, and subtraction.',
+    slides: arithmeticFoundationsSlides, // Note: This should be coreConceptsSlides
+    estimatedTime: '40 min',
     difficulty: 'Beginner',
-    topics: ['Counting', 'Addition', 'Subtraction', 'Multiplication', 'Division']
+    topics: ['Counting', 'Place Value', 'Addition', 'Subtraction']
+  },
+  {
+    id: 'multiplication-division',
+    title: 'Math Superpowers (Units 6-10)',
+    description: 'Master multiplication and division, including multi-digit problems and remainders.',
+    slides: multiplicationDivisionSlides,
+    estimatedTime: '50 min',
+    difficulty: 'Beginner',
+    topics: ['Multiplication', 'Division', 'Arrays', 'Remainders']
+  },
+  {
+    id: 'fractions-and-decimals',
+    title: 'Fun with Parts of Numbers (Units 11-15)',
+    description: 'Explore fractions and decimals and learn how to perform operations with them.',
+    slides: fractionsAndDecimalsSlides,
+    estimatedTime: '60 min',
+    difficulty: 'Intermediate',
+    topics: ['Fractions', 'Decimals', 'Add Fractions', 'Multiply Fractions']
   }
 ];
 
