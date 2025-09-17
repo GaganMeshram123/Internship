@@ -14,6 +14,10 @@ import MultiDigitMultiplySlide from './Slide8';
 import DivideWithRemaindersSlide from './Slide9';
 import UnderstandFractionsSlide from './Slide10';
 import AddSubtractFractionsSlide from './Slide11';
+import MultiplyFractionsSlide from './Slide12';
+import DecimalsSlide from './Slide13';
+import AddSubtractDecimalsSlide from './Slide14';
+import WordProblemsSlide from './Slide15';
 
 
 
@@ -87,6 +91,31 @@ export const arithmeticFoundationsSlides: Slide[] = [
     title: 'Add and Subtract Fractions',
     component: AddSubtractFractionsSlide,
     id: 'arithmetic-add-subtract-fractions'
+  },
+   {
+    type: 'interactive',
+    title: 'Multiply Fractions',
+    component: MultiplyFractionsSlide,
+    id: 'arithmetic-multiply-fractions'
+  },
+   {
+    type: 'interactive',
+    title: 'All About Decimals',
+    component: DecimalsSlide,
+    id: 'arithmetic-decimals'
+  },
+  {
+    type: 'interactive',
+    title: 'Add and Subtract Decimals',
+    component: AddSubtractDecimalsSlide,
+   
+    id: 'arithmetic-add-subtract-decimals'
+  },
+  {
+    type: 'interactive',
+    title: 'Putting It All Together',
+    component: WordProblemsSlide,
+    id: 'arithmetic-word-problems'
   }
 ];
 
