@@ -62,6 +62,9 @@ export default function DivisionSlide() {
                 <p className="text-slate-600 dark:text-slate-400 mb-4">Press "Share" to deal the items!</p>
     
                 <div className="bg-slate-100 dark:bg-slate-900/70 rounded-lg p-4 flex-grow flex flex-col justify-between items-center min-h-[300px]">
+                    <p className="text-3xl font-bold text-slate-600 dark:text-slate-300 mb-2">
+                        {problem.dividend} ÷ {problem.divisor} = {isShared ? <span className="text-blue-600 dark:text-blue-400">{result}</span> : '?'}
+                    </p>
                     {/* Items to be shared */}
                     <div className="h-1/3 w-full flex flex-wrap justify-center items-center gap-1">
                         {!isShared && items.map(item => <div key={item.id} className="w-6 h-6 bg-blue-500 rounded-full" />)}
@@ -89,9 +92,7 @@ export default function DivisionSlide() {
                 </div>
 
                 <div className="mt-4 flex flex-col items-center">
-                    <p className="text-2xl font-bold text-slate-600 dark:text-slate-300 mb-2">
-                        {problem.dividend} ÷ {problem.divisor} = {isShared ? <span className="text-blue-600 dark:text-blue-400">{result}</span> : '?'}
-                    </p>
+                    
                     {!isShared ? (
                         <button onClick={() => setIsShared(true)} className="w-full px-6 py-3 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700">
                             Share
