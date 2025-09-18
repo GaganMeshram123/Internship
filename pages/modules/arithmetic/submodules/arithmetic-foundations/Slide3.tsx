@@ -50,22 +50,22 @@ export default function SubtractionSlide() {
         </div>
     );
 
-    const RightInteractionPanel = () => {
-        const result = problem.start - problem.subtract;
-        const items = Array.from({ length: problem.start }, (_, i) => ({ id: i }));
+ const RightInteractionPanel = () => {
+    const result = problem.start - problem.subtract;
+    const items = Array.from({ length: problem.start }, (_, i) => ({ id: i }));
 
-        return (
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex flex-col">
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Subtraction Playground</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4">Watch the items disappear!</p>
-    
-                <div className="bg-slate-100 dark:bg-slate-900/70 rounded-lg p-4 flex-grow flex flex-col justify-between items-center min-h-[250px] relative">
-                    <div className="w-full text-center text-3xl font-bold text-slate-500 dark:text-slate-400">
-                        {problem.start} - {problem.subtract} = {isSubtracted ? <span className="text-blue-600 dark:text-blue-400">{result}</span> : '?'}
-                    </div>
+    return (
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex flex-col">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Subtraction Playground</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">Let's launch the rockets!</p>
 
-                    <div className="flex flex-wrap justify-center items-center gap-2 my-4">
-                        <AnimatePresence>
+            <div className="bg-slate-100 dark:bg-slate-900/70 rounded-lg p-4 flex-grow flex flex-col justify-between items-center min-h-[250px] relative">
+                <div className="w-full text-center text-3xl font-bold text-slate-500 dark:text-slate-400">
+                    {problem.start} - {problem.subtract} = {isSubtracted ? <span className="text-blue-600 dark:text-blue-400">{result}</span> : '?'}
+                </div>
+
+                <div className="flex flex-wrap justify-center items-center gap-2 my-4">
+                    <AnimatePresence>
                         {items.map((item, index) => (
                             <motion.div
                                 key={item.id}
@@ -73,33 +73,35 @@ export default function SubtractionSlide() {
                                 initial={{ scale: 0.5, opacity: 0 }}
                                 animate={{ 
                                     scale: 1, 
-                                    opacity: (isSubtracted && index >= result) ? 0.2 : 1 
+                                    opacity: 1,
+                                    y: (isSubtracted && index >= result) ? -200 : 0, // Fly up
                                 }}
                                 exit={{ scale: 0.5, opacity: 0 }}
-                                transition={{ duration: 0.4 }}
+                                // Stagger the "blast off" animation
+                                transition={{ duration: 0.5, delay: (isSubtracted && index >= result) ? (problem.start - 1 - index) * 0.1 : index * 0.05 }}
                             >
-                                <div className={`w-10 h-10 rounded-full transition-colors ${isSubtracted && index >= result ? 'bg-slate-300 dark:bg-slate-700' : 'bg-blue-500'}`} />
+                                {/* Rocket Emoji 🚀 */}
+                                <div className="text-4xl">🚀</div>
                             </motion.div>
                         ))}
-                        </AnimatePresence>
-                    </div>
+                    </AnimatePresence>
+                </div>
 
-                    <div className="w-full">
-                        {!isSubtracted ? (
-                            <button onClick={() => setIsSubtracted(true)} className="w-full px-6 py-3 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700">
-                                Subtract
-                            </button>
-                        ) : (
-                            <button onClick={generateNewProblem} className="w-full px-6 py-3 rounded-lg font-bold text-white bg-slate-600 hover:bg-slate-700">
-                                Try Another!
-                            </button>
-                        )}
-                    </div>
+                <div className="w-full">
+                    {!isSubtracted ? (
+                        <button onClick={() => setIsSubtracted(true)} className="w-full px-6 py-3 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700">
+                            Launch!
+                        </button>
+                    ) : (
+                        <button onClick={generateNewProblem} className="w-full px-6 py-3 rounded-lg font-bold text-white bg-slate-600 hover:bg-slate-700">
+                            Reset
+                        </button>
+                    )}
                 </div>
             </div>
-        );
-    };
-
+        </div>
+    );
+};
     const slideContent = (
         <div className={`min-h-screen p-4 sm:p-8`}>
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
