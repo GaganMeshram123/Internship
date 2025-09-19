@@ -11,14 +11,22 @@ export default function MeasuringLengthSlide() {
     const LeftTheoryPanel = () => (
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full">
             <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Measuring Length</h2>
-            <div className="space-y-4">
-                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4">
+            <div className="space-y-6"> {/* Increased spacing for better visual separation */}
+                
+                {/* Information Box 1: Using a Ruler */}
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 dark:border-blue-600 rounded-r-lg px-6 py-4">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Using a Ruler</h3>
                     <p className="text-slate-600 dark:text-slate-400">A ruler helps us find out how long things are. We use units like inches or centimeters to measure.</p>
                 </div>
-                <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4">
+
+                {/* Information Box 2: The Most Important Rule! */}
+                {/* CORRECTED: Styling changed to neutral slate color to match the visual design */}
+                <div className="bg-slate-100 dark:bg-slate-900/40 border-l-4 border-slate-400 dark:border-slate-600 rounded-r-lg px-6 py-4">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">The Most Important Rule!</h3>
-                    <p className="text-slate-600 dark:text-slate-400">When you measure, always make sure you start at the **zero (0)** mark on the ruler!</p>
+                    <p className="text-slate-600 dark:text-slate-400">
+                        {/* CORRECTED: Used <strong> tag for bold text instead of markdown */}
+                        When you measure, always make sure you start at the <strong className="text-slate-900 dark:text-white">zero (0)</strong> mark on the ruler!
+                    </p>
                 </div>
             </div>
         </div>
@@ -36,11 +44,27 @@ export default function MeasuringLengthSlide() {
     );
 
     const slideContent = (
-        <div className="min-h-screen p-4 sm:p-8"><div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}><LeftTheoryPanel /></TrackedInteraction>
-            <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}><RightInteractionPanel /></TrackedInteraction>
-        </div></div>
+        <div className="min-h-screen p-4 sm:p-8">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
+                    <LeftTheoryPanel />
+                </TrackedInteraction>
+                <TrackedInteraction interaction={slideInteractions[0]} onInteractionComplete={handleInteractionComplete}>
+                    <RightInteractionPanel />
+                </TrackedInteraction>
+            </div>
+        </div>
     );
 
-    return (<SlideComponentWrapper slideId="measurements-length" slideTitle="Measuring Length" moduleId="grade-2-math-geometry" submoduleId="measurements" interactions={localInteractions}>{slideContent}</SlideComponentWrapper>);
+    return (
+        <SlideComponentWrapper 
+            slideId="measurements-length" 
+            slideTitle="Measuring Length" 
+            moduleId="grade-2-math-measurement" // Changed to measurement module
+            submoduleId="length-and-units" // Changed to a more specific submodule
+            interactions={localInteractions}
+        >
+            {slideContent}
+        </SlideComponentWrapper>
+    );
 }
