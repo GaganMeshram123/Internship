@@ -48,7 +48,8 @@ const getModules = async () => {
     'irrational-number',
     'Intuitive-trigonometry',
     'arithmetic',
-    'work-energy-power-0001'
+    'work-energy-power-0001',
+    'grade-2-math-operations'
   ];
 
   for (const moduleName of moduleNames) {
