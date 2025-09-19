@@ -49,6 +49,7 @@ const getModules = async () => {
     'Intuitive-trigonometry',
     'arithmetic',
     'work-energy-power-0001',
+    'grade-2-math-geometry',
     'grade-2-math-operations'
   ];
 
