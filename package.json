@@ -27,6 +27,7 @@
     "date-fns": "^4.1.0",
     "framer": "^2.4.1",
     "framer-motion": "^10.18.0",
+    "install": "^0.13.0",
     "katex": "^0.16.21",
     "lucide-react": "^0.511.0",
     "motion": "^12.6.2",
