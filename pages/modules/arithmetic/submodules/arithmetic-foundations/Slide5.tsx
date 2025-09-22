@@ -52,60 +52,107 @@ export default function DivisionSlide() {
         </div>
     );
 
-    const RightInteractionPanel = () => {
-        const result = problem.dividend / problem.divisor;
-        const items = Array.from({ length: problem.dividend }, (_, i) => ({ id: i }));
+   const RightInteractionPanel = () => {
+    const result = problem.dividend / problem.divisor;
 
-        return (
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex flex-col">
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Interactive: Sharing Machine</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4">Press "Share" to deal the items!</p>
-    
-                <div className="bg-slate-100 dark:bg-slate-900/70 rounded-lg p-4 flex-grow flex flex-col justify-between items-center min-h-[300px]">
-                    <p className="text-3xl font-bold text-slate-600 dark:text-slate-300 mb-2">
-                        {problem.dividend} ÷ {problem.divisor} = {isShared ? <span className="text-blue-600 dark:text-blue-400">{result}</span> : '?'}
-                    </p>
-                    {/* Items to be shared */}
-                    <div className="h-1/3 w-full flex flex-wrap justify-center items-center gap-1">
-                        {!isShared && items.map(item => <div key={item.id} className="w-6 h-6 bg-blue-500 rounded-full" />)}
-                    </div>
+    // ✅ keep track of where each ball is placed
+    const [balls, setBalls] = useState<{ id: number; box: number | null }[]>(
+        Array.from({ length: problem.dividend }, (_, i) => ({ id: i, box: null }))
+    );
 
-                    {/* Sharing Groups */}
-                    <div className="h-2/3 w-full grid gap-4" style={{ gridTemplateColumns: `repeat(${problem.divisor}, 1fr)`}}>
-                        {Array.from({ length: problem.divisor }).map((_, boxIndex) => (
-                            <div key={boxIndex} className="bg-white dark:bg-slate-800 rounded-lg border-2 border-dashed border-slate-400 p-2 flex flex-wrap gap-1 justify-center items-center">
-                                <AnimatePresence>
-                                {isShared && items.filter(item => item.id % problem.divisor === boxIndex).map(item => (
-                                    <motion.div
-                                        key={item.id}
-                                        initial={{ opacity: 0, scale: 0 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ delay: item.id * 0.1 }}
-                                    >
-                                        <div className="w-6 h-6 bg-blue-500 rounded-full" />
-                                    </motion.div>
-                                ))}
-                                </AnimatePresence>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+    const handleDragStart = (e: React.DragEvent, ballId: number) => {
+        e.dataTransfer.setData("ballId", ballId.toString());
+    };
 
-                <div className="mt-4 flex flex-col items-center">
-                    
-                    {!isShared ? (
-                        <button onClick={() => setIsShared(true)} className="w-full px-6 py-3 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700">
-                            Share
-                        </button>
-                    ) : (
-                        <button onClick={generateNewProblem} className="w-full px-6 py-3 rounded-lg font-bold text-white bg-slate-600 hover:bg-slate-700">
-                            Try Another!
-                        </button>
-                    )}
-                </div>
-            </div>
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault(); // allow dropping
+    };
+
+    const handleDrop = (e: React.DragEvent, boxIndex: number) => {
+        const ballId = parseInt(e.dataTransfer.getData("ballId"), 10);
+        setBalls(prev =>
+            prev.map(ball =>
+                ball.id === ballId ? { ...ball, box: boxIndex } : ball
+            )
         );
     };
+
+    const resetBalls = () => {
+        setBalls(Array.from({ length: problem.dividend }, (_, i) => ({ id: i, box: null })));
+    };
+
+    return (
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex flex-col">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+                Interactive: Sharing Machine
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                Drag the balls into the boxes!
+            </p>
+
+            <div className="bg-slate-100 dark:bg-slate-900/70 rounded-lg p-4 flex-grow flex flex-col justify-between items-center min-h-[300px]">
+                <p className="text-3xl font-bold text-slate-600 dark:text-slate-300 mb-2">
+                    {problem.dividend} ÷ {problem.divisor} ={" "}
+                    {balls.every(ball => ball.box !== null) ? (
+                        <span className="text-blue-600 dark:text-blue-400">{result}</span>
+                    ) : (
+                        "?"
+                    )}
+                </p>
+
+                {/* Unassigned balls */}
+                <div className="h-1/3 w-full flex flex-wrap justify-center items-center gap-1">
+                    {balls.filter(b => b.box === null).map(ball => (
+                        <div
+                            key={ball.id}
+                            className="w-6 h-6 bg-blue-500 rounded-full cursor-pointer"
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, ball.id)}
+                        />
+                    ))}
+                </div>
+
+                {/* Boxes */}
+                <div
+                    className="h-2/3 w-full grid gap-4"
+                    style={{ gridTemplateColumns: `repeat(${problem.divisor}, 1fr)` }}
+                >
+                    {Array.from({ length: problem.divisor }).map((_, boxIndex) => (
+                        <div
+                            key={boxIndex}
+                            className="bg-white dark:bg-slate-800 rounded-lg border-2 border-dashed border-slate-400 p-2 flex flex-wrap gap-1 justify-center items-center"
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, boxIndex)}
+                        >
+                            {balls.filter(b => b.box === boxIndex).map(ball => (
+                                <div
+                                    key={ball.id}
+                                    className="w-6 h-6 bg-blue-500 rounded-full"
+                                />
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="mt-4 flex flex-col items-center gap-2">
+                <button
+                    onClick={resetBalls}
+                    className="w-full px-6 py-3 rounded-lg font-bold text-white bg-blue-500 hover:bg-blue-600"
+                >
+                    Reset Balls
+                </button>
+                <button
+                    onClick={generateNewProblem}
+                    className="w-full px-6 py-3 rounded-lg font-bold text-white bg-slate-600 hover:bg-slate-700"
+                >
+                    Try Another!
+                </button>
+            </div>
+        </div>
+    );
+};
+
 
     const slideContent = (
         <div className={`min-h-screen p-4 sm:p-8`}>
