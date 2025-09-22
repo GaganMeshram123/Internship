@@ -14,11 +14,18 @@ export default function CountingSlide() {
     const [options, setOptions] = useState([2, 3, 4, 1]);
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+    const [selectedEmojis, setSelectedEmojis] = useState<number[]>([]);
+
+    const toggleEmoji = (index: number) => {
+        setSelectedEmojis((prev) =>
+            prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+        );
+    };
 
     const handleAnswer = (answer: number) => {
         if (selectedAnswer !== null) return; // Prevent answering more than once
 
-        const correct = answer === item.count;
+        const correct = answer === selectedEmojis.length;
         setSelectedAnswer(answer);
         setIsCorrect(correct);
     };
@@ -39,6 +46,7 @@ export default function CountingSlide() {
         setOptions(Array.from(newOptions).sort(() => Math.random() - 0.5));
         setSelectedAnswer(null);
         setIsCorrect(null);
+        setSelectedEmojis([]);
     };
 
     const slideInteractions: Interaction[] = [
@@ -69,22 +77,33 @@ export default function CountingSlide() {
     const RightInteractionPanel = () => (
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex flex-col">
             <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Let's Count!</h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-4">How many items do you see?</p>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">Click the emojis to select them and count!</p>
 
             <div className="bg-slate-100 dark:bg-slate-900/70 rounded-lg p-4 flex-grow flex items-center justify-center">
                 <div className="flex flex-wrap justify-center gap-4">
                     {Array.from({ length: item.count }).map((_, index) => (
-                        <motion.span 
+                        <motion.button
                             key={index}
-                            className="text-6xl"
+                            onClick={() => toggleEmoji(index)}
+                            className={`text-6xl p-2 rounded-lg transition-transform transform ${
+                                selectedEmojis.includes(index)
+                                    ? 'scale-110 bg-yellow-200'
+                                    : 'hover:scale-105'
+                            }`}
                             initial={{ scale: 0.5, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ delay: index * 0.1 }}
                         >
                             {item.emoji}
-                        </motion.span>
+                        </motion.button>
                     ))}
                 </div>
+            </div>
+
+            <div className="mt-4 text-center">
+                <p className="text-lg font-semibold text-slate-700 dark:text-slate-200">
+                    Selected Count: {selectedEmojis.length}
+                </p>
             </div>
 
             <div className="mt-4">
@@ -92,7 +111,7 @@ export default function CountingSlide() {
                     {options.map((num) => {
                         let buttonClass = "bg-slate-200 dark:bg-slate-700 hover:bg-slate-300";
                         if (selectedAnswer !== null) {
-                            if (num === item.count) {
+                            if (num === selectedEmojis.length) {
                                 buttonClass = "bg-green-500 text-white"; // Correct answer
                             } else if (num === selectedAnswer) {
                                 buttonClass = "bg-red-500 text-white"; // Incorrect selection
@@ -111,20 +130,20 @@ export default function CountingSlide() {
                     })}
                 </div>
                 <AnimatePresence>
-                {isCorrect !== null && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center mt-4"
-                    >
-                        <p className={`font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                            {isCorrect ? 'Great job!' : 'Not quite, try the next one!'}
-                        </p>
-                        <button onClick={handleNext} className="mt-2 px-6 py-2 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700">
-                            Next
-                        </button>
-                    </motion.div>
-                )}
+                    {isCorrect !== null && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-center mt-4"
+                        >
+                            <p className={`font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                                {isCorrect ? 'Great job!' : 'Not quite, try the next one!'}
+                            </p>
+                            <button onClick={handleNext} className="mt-2 px-6 py-2 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700">
+                                Next
+                            </button>
+                        </motion.div>
+                    )}
                 </AnimatePresence>
             </div>
         </div>
