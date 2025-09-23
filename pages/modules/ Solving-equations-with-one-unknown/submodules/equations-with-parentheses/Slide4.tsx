@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react'; // NEW: Import useState
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
-import { Interaction, TrackedInteraction } from '../../../common-components/concept';
+// NEW: Import necessary types
+import { Interaction, TrackedInteraction, InteractionResponse, MatchingPair } from '../../../common-components/concept';
+
+// NEW: Helper function to create the initial state object
+const createInitialInteractions = (interactions: Interaction[]): Record<string, InteractionResponse> => {
+    return interactions.reduce((acc, interaction) => {
+        acc[interaction.id] = {
+            interactionId: interaction.id,
+            value: '',
+            timestamp: 0,
+        };
+        return acc;
+    }, {} as Record<string, InteractionResponse>);
+};
 
 export default function CommonMistakesPractice() {
     const slideInteractions: Interaction[] = [{ id: 'common-mistakes-parens', conceptId: 'common-mistakes-parentheses', conceptName: 'Common Mistakes with Parentheses', type: 'learning' }];
+
+    // NEW: Create state to manage interactions
+    const [localInteractions, setLocalInteractions] = useState(() => createInitialInteractions(slideInteractions));
+
+    // NEW: Define the required handler function
+    const handleInteractionComplete = (response: InteractionResponse) => {
+        setLocalInteractions((prevInteractions: Record<string, InteractionResponse>) => ({
+            ...prevInteractions,
+            [response.interactionId]: response,
+        }));
+    };
 
     const slideContent = (
       <div className="p-8">
@@ -22,8 +46,19 @@ export default function CommonMistakesPractice() {
     );
 
     return (
-        <SlideComponentWrapper slideId="common-mistakes-parentheses" slideTitle="Common Mistakes and Practice" moduleId="solving-equations-one-unknown" submoduleId="equations-with-parentheses">
-            <TrackedInteraction interaction={slideInteractions[0]}>
+        <SlideComponentWrapper 
+            slideId="common-mistakes-parentheses" 
+            slideTitle="Common Mistakes and Practice" 
+            moduleId="solving-equations-one-unknown" 
+            submoduleId="equations-with-parentheses"
+            // FIX: Pass the interactions state object
+            interactions={localInteractions}
+        >
+            <TrackedInteraction 
+                interaction={slideInteractions[0]}
+                // FIX: Pass the interaction complete handler
+                onInteractionComplete={handleInteractionComplete}
+            >
                 {slideContent}
             </TrackedInteraction>
         </SlideComponentWrapper>
