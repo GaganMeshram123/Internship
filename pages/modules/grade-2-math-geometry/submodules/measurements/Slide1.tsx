@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react'; 
 import { motion, AnimatePresence } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { Interaction, InteractionResponse, TrackedInteraction } from '../../../common-components/concept';
@@ -16,7 +16,6 @@ const Ruler = ({ isBroken = false, constraintsRef }: { isBroken?: boolean, const
             dragConstraints={constraintsRef}
             className={`w-[300px] h-12 rounded-lg shadow-inner cursor-grab active:cursor-grabbing flex items-center justify-between px-2 font-mono select-none ${rulerBg} ${rulerText}`}
         >
-            {/* Simple tick marks for visual effect */}
             {Array.from({ length: isBroken ? 8 : 10 }).map((_, i) => (
                 <div key={i} className="flex flex-col items-center h-full pt-1">
                     <span className="text-xs">{isBroken ? i + 2 : i}</span>
@@ -26,7 +25,6 @@ const Ruler = ({ isBroken = false, constraintsRef }: { isBroken?: boolean, const
         </motion.div>
     );
 };
-
 
 // --- Main Slide Component ---
 export default function MeasuringLengthSlide() {
@@ -93,6 +91,12 @@ export default function MeasuringLengthSlide() {
 
     const RightInteractionPanel = ({ mode }: { mode: GameMode }) => {
          const constraintsRef = useRef<HTMLDivElement>(null);
+
+         // fake object lengths (in units)
+         const pencilLength = 6;
+         const crayonLength = 4;
+         const brokenStart = 2;
+
          return (
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md h-full flex flex-col">
                 <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Interactive: Ruler Tool</h3>
@@ -109,25 +113,52 @@ export default function MeasuringLengthSlide() {
                             {mode === 'measure' && (
                                 <>
                                     <p className="absolute top-4 text-slate-600 dark:text-slate-400">Drag the ruler to measure the pencil.</p>
-                                    <div className="text-6xl -rotate-45 mb-12">✏️</div>
+                                    <div className="text-6xl -rotate-45 mb-6">✏️</div>
                                     <Ruler constraintsRef={constraintsRef} />
+                                    <motion.p
+                                        className="mt-4 text-lg font-semibold text-blue-600 dark:text-blue-300"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                    >
+                                        Length = {pencilLength} units
+                                    </motion.p>
                                 </>
                             )}
-                             {mode === 'compare' && (
-                                <>
-                                    <p className="absolute top-4 text-slate-600 dark:text-slate-400">Measure both, then decide which is longer.</p>
-                                    <div className="flex items-center gap-16 mb-12">
-                                        <div className="text-6xl -rotate-45">✏️</div>
-                                        <div className="text-4xl">🖍️</div>
-                                    </div>
-                                    <Ruler constraintsRef={constraintsRef} />
+                            {mode === 'compare' && (
+  <>
+    <p className="text-slate-600 dark:text-slate-400 mb-6">
+      Measure both, then decide which is longer.
+    </p>
+    <div className="flex items-end gap-16 mb-12 mt-4">
+      <div className="text-6xl -rotate-45">✏️</div>
+      <div className="text-4xl">🖍️</div>
+    </div>
+    <Ruler constraintsRef={constraintsRef} />
+                                    <motion.p
+                                        className="mt-4 text-lg font-semibold text-green-600 dark:text-green-300"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                    >
+                                        {pencilLength > crayonLength
+                                            ? `The pencil is longer by ${pencilLength - crayonLength} units`
+                                            : pencilLength < crayonLength
+                                            ? `The crayon is longer by ${crayonLength - pencilLength} units`
+                                            : "Both are the same length"}
+                                    </motion.p>
                                 </>
                             )}
                             {mode === 'broken' && (
                                 <>
                                     <p className="absolute top-4 text-slate-600 dark:text-slate-400">Use the broken ruler to find the length.</p>
-                                    <div className="text-6xl -rotate-45 mb-12">✏️</div>
+                                    <div className="text-6xl -rotate-45 mb-6">✏️</div>
                                     <Ruler constraintsRef={constraintsRef} isBroken={true} />
+                                    <motion.p
+                                        className="mt-4 text-lg font-semibold text-purple-600 dark:text-purple-300"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                    >
+                                        Ends at 9, starts at {brokenStart} → Length = {9 - brokenStart} units
+                                    </motion.p>
                                 </>
                             )}
                         </motion.div>
