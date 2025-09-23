@@ -50,6 +50,7 @@ const getModules = async () => {
     'arithmetic',
     'work-energy-power-0001',
     'grade-2-math-geometry',
+    ' Solving-equations-with-one-unknown',
     'grade-2-math-operations'
   ];
 
