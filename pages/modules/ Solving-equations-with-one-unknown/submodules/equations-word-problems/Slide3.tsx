@@ -1,9 +1,10 @@
-import React, { useState } from 'react'; // NEW: Import useState
+import React, { useState } from 'react';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
-// NEW: Import necessary types
-import { Interaction, TrackedInteraction, InteractionResponse, MatchingPair } from '../../../common-components/concept';
+import { Interaction, TrackedInteraction, InteractionResponse } from '../../../common-components/concept';
+import 'katex/dist/katex.min.css';
+import { InlineMath } from 'react-katex';
 
-// NEW: Helper function to create the initial state object
+// Helper function to create the initial state object
 const createInitialInteractions = (interactions: Interaction[]): Record<string, InteractionResponse> => {
     return interactions.reduce((acc, interaction) => {
         acc[interaction.id] = {
@@ -18,10 +19,8 @@ const createInitialInteractions = (interactions: Interaction[]): Record<string, 
 export default function SolvingConsecutiveIntegerProblemsSlide() {
     const slideInteractions: Interaction[] = [{ id: 'consecutive-integer-concept', conceptId: 'solving-consecutive-integer-problems', conceptName: 'Solving Consecutive Integer Problems', type: 'learning' }];
 
-    // NEW: Create state to manage interactions
     const [localInteractions, setLocalInteractions] = useState(() => createInitialInteractions(slideInteractions));
 
-    // NEW: Define the required handler function
     const handleInteractionComplete = (response: InteractionResponse) => {
         setLocalInteractions((prevInteractions: Record<string, InteractionResponse>) => ({
             ...prevInteractions,
@@ -30,22 +29,61 @@ export default function SolvingConsecutiveIntegerProblemsSlide() {
     };
 
     const slideContent = (
-      <div className="p-8">
-        <h2 className="text-2xl font-bold mb-4">Example: Consecutive Integers</h2>
-        <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg">
-            <p className="mb-4"><strong>Problem:</strong> "The sum of three consecutive integers is 48. What are the integers?"</p>
-            <ol className="list-decimal pl-5 space-y-2">
-                <li><strong>Define variables:</strong> Let the first integer be 'x'. Since they are consecutive, the next is 'x + 1', and the third is 'x + 2'.</li>
-                <li><strong>Set up the equation:</strong> The sum is 48, so: `x + (x + 1) + (x + 2) = 48`.</li>
-                <li><strong>Solve the equation:</strong>
-                    <ul className="list-disc pl-5">
-                        <li>Combine like terms: `3x + 3 = 48`</li>
-                        <li>Subtract 3: `3x = 45`</li>
-                        <li>Divide by 3: `x = 15`</li>
-                    </ul>
-                </li>
-                <li><strong>Answer:</strong> The integers are 15, 16, and 17.</li>
-            </ol>
+      <div className="p-4 md:p-8 text-slate-900 dark:text-slate-100 h-full flex flex-col">
+        <h2 className="text-3xl font-bold text-center mb-6">
+          A Guide to Solving Consecutive Integer Problems 📝
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+          {/* Left Column: The Setup */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md flex flex-col">
+            <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-3">The Algebraic Setup</h3>
+            <p className="mb-4">Before solving, you need to know the "secret codes" to represent the numbers you're looking for.</p>
+            
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg p-4 mb-4">
+              <h4 className="font-semibold">Consecutive Integers</h4>
+              <p className="text-xs mb-2">Numbers in a row (e.g., 4, 5, 6)</p>
+              <ul className="list-none space-y-1">
+                  <li>First Number: <InlineMath>{'x'}</InlineMath></li>
+                  <li>Second Number: <InlineMath>{'x + 1'}</InlineMath></li>
+                  <li>Third Number: <InlineMath>{'x + 2'}</InlineMath></li>
+              </ul>
+            </div>
+            
+            <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg p-4">
+              <h4 className="font-semibold">Consecutive EVEN or ODD Integers</h4>
+              <p className="text-xs mb-2">Even/odd numbers in a row (e.g., 8, 10, 12 or 7, 9, 11)</p>
+              <ul className="list-none space-y-1">
+                  <li>First Number: <InlineMath>{'x'}</InlineMath></li>
+                  <li>Second Number: <InlineMath>{'x + 2'}</InlineMath></li>
+                  <li>Third Number: <InlineMath>{'x + 4'}</InlineMath></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Right Column: The Process */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md flex flex-col">
+            <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-3">The 5-Step Game Plan</h3>
+            <p className="mb-4">Follow these steps in order for any consecutive integer word problem.</p>
+            
+            <div className="space-y-4 flex-grow flex flex-col justify-center">
+              <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg shadow-sm">
+                <p><strong className="text-lg">1. Identify:</strong> What kind of integers are you looking for? (Consecutive, Even, or Odd?)</p>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg shadow-sm">
+                <p><strong className="text-lg">2. Translate:</strong> Use the "secret codes" to turn the word problem into an algebraic equation.</p>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg shadow-sm">
+                <p><strong className="text-lg">3. Solve:</strong> Find the value of <InlineMath>{'x'}</InlineMath>.</p>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg shadow-sm">
+                <p><strong className="text-lg">4. Answer:</strong> Use <InlineMath>{'x'}</InlineMath> to find **all** the numbers the question asks for. (Don't just stop at <InlineMath>{'x'}</InlineMath>!)</p>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg shadow-sm">
+                <p><strong className="text-lg">5. Check:</strong> Reread the problem and check if your final numbers work.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -56,12 +94,10 @@ export default function SolvingConsecutiveIntegerProblemsSlide() {
             slideTitle="Solving Consecutive Integer Problems" 
             moduleId="solving-equations-one-unknown" 
             submoduleId="equations-word-problems"
-            // FIX: Pass the interactions state object
             interactions={localInteractions}
         >
             <TrackedInteraction 
                 interaction={slideInteractions[0]}
-                // FIX: Pass the interaction complete handler
                 onInteractionComplete={handleInteractionComplete}
             >
                 {slideContent}
