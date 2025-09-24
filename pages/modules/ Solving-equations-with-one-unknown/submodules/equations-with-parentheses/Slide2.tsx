@@ -48,11 +48,11 @@ export default function SolvingWithParentheses() {
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md flex-grow">
               <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-400 mb-3">The Key: The Distributive Property</h3>
               <p>
-                This property unlocks parentheses. You **multiply the number outside** by **EVERYTHING inside**.
+                This property unlocks parentheses. You multiply the number outside by EVERYTHING inside.
               </p>
               <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-700 rounded-lg px-6 py-4 shadow-sm mt-4">
                 <p className="font-semibold text-blue-800 dark:text-blue-300">Analogy: Sharing Pizza 🍕</p>
-                <p>The number outside is delivering a pizza. It must be shared with **everyone** inside the house, not just the first person.</p>
+                <p>The number outside is delivering a pizza. It must be shared with everyone inside the house, not just the first person.</p>
                 <p className="text-center text-lg font-mono mt-2 p-2 bg-slate-200 dark:bg-slate-700 rounded"><InlineMath>{'a(b + c) = ab + ac'}</InlineMath></p>
               </div>
             </div>
