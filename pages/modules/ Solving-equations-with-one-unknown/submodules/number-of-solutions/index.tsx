@@ -9,25 +9,25 @@ import SummaryAndPracticeSlide from './Slide4';
 export const numberOfSolutionsSlides: Slide[] = [
   {
     type: 'interactive',
-    title: 'Case 1: One Solution',
+    title: ' How Many Answers? Exploring the Number of Solutions',
     component: OneSolutionSlide,
     id: 'one-solution'
   },
   {
     type: 'interactive',
-    title: 'Case 2: No Solution (Contradiction)',
+    title: 'Worked Examples: One, None, or Infinite?',
     component: NoSolutionSlide,
     id: 'no-solution'
   },
   {
     type: 'interactive',
-    title: 'Case 3: Infinite Solutions (Identity)',
+    title: 'Equation Architect: How to Build a "No Solution" Problem',
     component: InfiniteSolutionsSlide,
     id: 'infinite-solutions'
   },
   {
     type: 'interactive',
-    title: 'Summary and Practice',
+    title: 'Equation Architect: Building an "Infinite Solutions" Problem',
     component: SummaryAndPracticeSlide,
     id: 'solutions-summary'
   }

@@ -30,9 +30,9 @@ export default function CreatingInfiniteSolutions() {
 
     const slideContent = (
       <div className="p-4 md:p-8 text-slate-900 dark:text-slate-100 h-full flex flex-col">
-        <h2 className="text-3xl font-bold text-center mb-6">
+        {/* <h2 className="text-3xl font-bold text-center mb-6">
           Equation Architect: Building an "Infinite Solutions" Problem ✨
-        </h2>
+        </h2> */}
         <p className="text-center max-w-3xl mx-auto mb-6">
           An equation with infinite solutions is called an "identity." Let's learn the secret recipe to build one yourself by making both sides secretly identical.
         </p>

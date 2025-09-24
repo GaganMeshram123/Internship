@@ -30,10 +30,10 @@ export default function IntegerChallenge() {
 
     const slideContent = (
       <div className="p-4 md:p-8 text-slate-900 dark:text-slate-100 h-full flex flex-col">
-        <h2 className="text-3xl font-bold text-center mb-6">
+       {/*  <h2 className="text-3xl font-bold text-center mb-6">
           Sum of Integers Challenge 🧠
         </h2>
-        
+         */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
             {/* Left Column: Breaking Down the Problem */}
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-300 dark:border-slate-700 shadow-md flex flex-col">

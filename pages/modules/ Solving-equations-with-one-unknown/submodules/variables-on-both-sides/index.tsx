@@ -9,25 +9,25 @@ import VariableInDenominator from './Slide4';
 export const variablesOnBothSidesSlides: Slide[] = [
   {
     type: 'interactive',
-    title: 'Intro to Equations with Variables on Both Sides',
+    title: 'Introduction to Equations with Variables on Both Sides',
     component: IntroVariablesOnBothSides,
     id: 'intro-vars-both-sides'
   },
   {
     type: 'interactive',
-    title: 'Solving a Classic Problem',
+    title: 'Lets Solve Another Puzzle: Tackling Negatives!',
     component: SolvingClassicProblem,
     id: 'solving-classic-problem'
   },
   {
     type: 'interactive',
-    title: 'Tackling Equations with Fractions',
+    title: 'New Mission: Dont Fear the Fractions!',
     component: EquationsWithFractions,
     id: 'equations-with-fractions'
   },
   {
     type: 'interactive',
-    title: 'Variables in the Denominator',
+    title: 'Variable "Trapped" in the Denominator? Lets Free It!',
     component: VariableInDenominator,
     id: 'variable-in-denominator'
   }

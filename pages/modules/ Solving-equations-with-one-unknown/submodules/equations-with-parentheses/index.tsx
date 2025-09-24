@@ -9,25 +9,25 @@ import CommonMistakesPractice from './Slide4';
 export const equationsWithParenthesesSlides: Slide[] = [
   {
     type: 'interactive',
-    title: 'Intro to the Distributive Property',
+    title: '  Unlocking Equations: Dealing with Parentheses',
     component: IntroDistributiveProperty,
     id: 'intro-distributive-property'
   },
   {
     type: 'interactive',
-    title: 'Solving Equations with Parentheses',
+    title: 'Unlocking Equations: Dealing with Parentheses',
     component: SolvingWithParentheses,
     id: 'solving-with-parentheses'
   },
   {
     type: 'interactive',
-    title: 'Parentheses and Variables on Both Sides',
+    title: 'The Final Challenge: Parentheses & Variables on Both Sides',
     component: ParenthesesOnBothSides,
     id: 'parentheses-on-both-sides'
   },
   {
     type: 'interactive',
-    title: 'Common Mistakes and Practice',
+    title: 'Watch Out! Common Mistakes & Practice Time',
     component: CommonMistakesPractice,
     id: 'common-mistakes-parentheses'
   }

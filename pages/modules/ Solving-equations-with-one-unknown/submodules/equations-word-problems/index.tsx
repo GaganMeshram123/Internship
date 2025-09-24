@@ -9,25 +9,25 @@ import SolvingPerimeterProblemsSlide from './Slide4';
 export const equationsWordProblemsSlides: Slide[] = [
   {
     type: 'interactive',
-    title: 'Translating Words to Equations',
+    title: ' Number Detectives: Solving with Consecutive Integers',
     component: TranslatingWordsToEquationsSlide,
     id: 'translating-words-to-equations'
   },
   {
     type: 'interactive',
-    title: 'Solving Age Problems',
+    title: ' Sum of Integers Challenge ',
     component: SolvingAgeProblemsSlide,
     id: 'solving-age-problems'
   },
   {
     type: 'interactive',
-    title: 'Solving Consecutive Integer Problems',
+    title: 'A Guide to Solving Consecutive Integer Problems',
     component: SolvingConsecutiveIntegerProblemsSlide,
     id: 'solving-consecutive-integer-problems'
   },
   {
     type: 'interactive',
-    title: 'Solving Perimeter Problems',
+    title: 'Solving Perimeter Problems: Algebra in Action',
     component: SolvingPerimeterProblemsSlide,
     id: 'solving-perimeter-problems'
   }

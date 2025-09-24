@@ -30,9 +30,7 @@ export default function VariableInDenominator() {
 
     const slideContent = (
       <div className="p-4 md:p-8 text-slate-900 dark:text-slate-100 h-full flex flex-col">
-        <h2 className="text-3xl font-bold text-center mb-6 md:mb-8">
-          Variable "Trapped" in the Denominator? Let's Free It! 🚀
-        </h2>
+        
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
           {/* Left Column: The Setup & Strategy */}

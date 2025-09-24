@@ -30,9 +30,6 @@ export default function IntroVariablesOnBothSides() {
 
     const slideContent = (
       <div className="p-4 md:p-8 text-slate-900 dark:text-slate-100 h-full flex flex-col">
-        <h2 className="text-3xl font-bold text-center mb-6 md:mb-8">
-          Introduction to Equations with Variables on Both Sides 🤔
-        </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
           {/* Left Column: Core Concepts */}
@@ -99,7 +96,7 @@ export default function IntroVariablesOnBothSides() {
     return (
         <SlideComponentWrapper 
             slideId="intro-vars-both-sides" 
-            slideTitle="Intro to Equations with Variables on Both Sides" 
+            slideTitle="Introduction to Equations with Variables on Both Sides" 
             moduleId="solving-equations-one-unknown" 
             submoduleId="variables-on-both-sides"
             interactions={localInteractions}

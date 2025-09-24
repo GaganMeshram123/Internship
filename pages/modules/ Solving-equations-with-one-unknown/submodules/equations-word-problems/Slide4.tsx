@@ -30,9 +30,9 @@ export default function SolvingPerimeterProblemsSlide() {
 
     const slideContent = (
       <div className="p-4 md:p-8 text-slate-900 dark:text-slate-100 h-full flex flex-col">
-        <h2 className="text-3xl font-bold text-center mb-6">
+        {/* <h2 className="text-3xl font-bold text-center mb-6">
           Solving Perimeter Problems: Algebra in Action 📏
-        </h2>
+        </h2> */}
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
           {/* Left Column: The Basics */}
