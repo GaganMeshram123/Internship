@@ -13,28 +13,24 @@ export const graphingProportionalSlides: Slide[] = [
   {
     type: 'interactive',
     title: 'What is a Proportional Relationship?',
-    content: 'Introduction to y=kx and the constant of proportionality.',
     component: GraphingProportionalSlide1,
     id: 'what-is-proportional'
   },
   {
     type: 'interactive',
-    title: 'Graphing from a Table of Values',
-    content: 'How to create a table of (x, y) pairs and plot them on a graph.',
+    title: 'Proportionality in Action: Car Mileage',
     component: GraphingProportionalSlide2,
     id: 'graphing-from-table'
   },
   {
     type: 'interactive',
-    title: 'Characteristics of a Proportional Graph',
-    content: 'Understanding the two key features: a straight line and passing through the origin (0,0).',
+    title: 'Rates & Proportional Relationships',
     component: GraphingProportionalSlide3,
     id: 'graph-characteristics'
   },
   {
     type: 'interactive',
-    title: 'Interpreting the Graph',
-    content: 'Learning what a point (x, y) on the line means and how to find the unit rate.',
+    title: 'Graphing proportional relationships: unit rate',
     component: GraphingProportionalSlide4,
     id: 'interpreting-the-graph'
   },
