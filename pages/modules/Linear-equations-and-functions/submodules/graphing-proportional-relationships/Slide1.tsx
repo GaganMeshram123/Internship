@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import SlideComponentWrapper from '../../../../../common-components/SlideComponentWrapper';
-import { Interaction, TrackedInteraction, InteractionResponse } from '../../../../../common-components/concept';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
+import { Interaction, InteractionResponse, TrackedInteraction } from '../../../common-components/concept';
 import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
 
