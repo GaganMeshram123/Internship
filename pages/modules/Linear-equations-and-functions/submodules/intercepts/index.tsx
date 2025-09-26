@@ -12,28 +12,25 @@ import InterceptsAssessment from './Slide5'; // Assessment is the 5th slide
 export const interceptsSlides: Slide[] = [
   {
     type: 'interactive',
-    title: 'What Are Intercepts?',
+    title: 'Understanding Intercepts: A Step-by-Step Guide',
     component: InterceptsSlide1,
     id: 'what-are-intercepts'
   },
   {
     type: 'interactive',
     title: 'Finding Intercepts from a Graph',
-    content: 'How to visually identify the coordinates of the x- and y-intercepts from a graph.',
-    component: InterceptsSlide2,
+     component: InterceptsSlide2,
     id: 'finding-from-graph'
   },
   {
     type: 'interactive',
     title: 'Finding Intercepts from an Equation',
-    content: 'The algebraic method: Set y=0 to find the x-intercept, and set x=0 to find the y-intercept.',
     component: InterceptsSlide3,
     id: 'finding-from-equation'
   },
   {
     type: 'interactive',
     title: 'Graphing a Line Using Intercepts',
-    content: 'Using the two intercepts as two points to quickly and accurately draw a straight line.',
     component: InterceptsSlide4,
     id: 'graphing-using-intercepts'
   },
