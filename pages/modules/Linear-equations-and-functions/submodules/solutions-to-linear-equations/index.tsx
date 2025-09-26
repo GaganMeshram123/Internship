@@ -12,35 +12,31 @@ import SolutionsToLinearEquationsAssessment from './Slide5'; // Assessment is th
 export const solutionsToLinearSlides: Slide[] = [
   {
     type: 'interactive',
-    title: 'What is a Solution to a Linear Equation?',
-    content: 'Defining a solution as an ordered pair (x, y) that makes the equation true.',
+    title: 'Introduction to the Coordinate Plane: GPS for Math!',
     component: SolutionsToLinearEquationsSlide1,
     id: 'what-is-a-solution'
   },
   {
     type: 'interactive',
-    title: 'Verifying a Solution',
-    content: 'How to check if a given point (x, y) is a solution by substituting its values into the equation.',
+    title: 'How to Check if a Pair is a Solution',
     component: SolutionsToLinearEquationsSlide2,
     id: 'verifying-a-solution'
   },
   {
     type: 'interactive',
-    title: 'Finding a Solution',
-    content: 'How to find a valid solution by choosing a value for one variable and solving for the other.',
+    title: 'Worked Example: Finding a Solution',
     component: SolutionsToLinearEquationsSlide3,
     id: 'finding-a-solution'
   },
   {
     type: 'interactive',
-    title: 'Infinite Solutions and Their Graph',
-    content: 'Understanding that a line on a graph represents all possible solutions to its equation.',
+    title: 'Completing the Pair: Finding the Missing Piece',
     component: SolutionsToLinearEquationsSlide4,
     id: 'infinite-solutions-graph'
   },
   {
     type: 'question',
-    title: 'Solutions to Linear Equations Assessment',
+    title: 'Finding Complete Solutions & Practice',
     content: React.createElement(() => <SolutionsToLinearEquationsAssessment />),
     persistResponse: true,
     component: SolutionsToLinearEquationsAssessment,

@@ -13,7 +13,6 @@ export const interceptsSlides: Slide[] = [
   {
     type: 'interactive',
     title: 'What Are Intercepts?',
-    content: 'Defining the x-intercept and y-intercept as the points where a line crosses the axes.',
     component: InterceptsSlide1,
     id: 'what-are-intercepts'
   },
