@@ -6,11 +6,16 @@ import { graphingProportionalSlides } from './submodules/graphing-proportional-r
 import { solutionsToLinearSlides } from './submodules/solutions-to-linear-equations/index';
 import { interceptsSlides } from './submodules/intercepts/index';
 import { slopeSlides } from './submodules/slope/index';
-// Added imports for the new submodules
 import { introToSlopeInterceptSlides } from './submodules/intro-to-slope-intercept-form/index';
 import { graphingSlopeInterceptSlides } from './submodules/graphing-slope-intercept-form/index';
 import { writingSlopeInterceptSlides } from './submodules/writing-slope-intercept-equations/index';
 import { functionsSlides } from './submodules/functions/index';
+// Added imports for the new submodules
+import { linearModelsSlides } from './submodules/linear-models/index';
+import { comparingLinearFunctionsSlides } from './submodules/comparing-linear-functions/index';
+import { constructingLinearModelsSlides } from './submodules/constructing-linear-models/index';
+import { recognizingFunctionsSlides } from './submodules/recognizing-functions/index';
+import { linearAndNonlinearFunctionsSlides } from './submodules/linear-and-nonlinear-functions/index';
 
 
 // Define the interface for submodules, matching your existing structure
@@ -63,7 +68,6 @@ export const submodules: Submodule[] = [
     difficulty: 'Intermediate',
     topics: ['Rise over Run', 'Slope Formula', 'Positive/Negative Slope', 'Horizontal/Vertical Lines']
   },
-  // ----- NEW SUBMODULES ADDED BELOW -----
   {
     id: 'intro-to-slope-intercept-form',
     title: 'Intro to Slope-Intercept Form',
@@ -99,6 +103,52 @@ export const submodules: Submodule[] = [
     estimatedTime: '25 min',
     difficulty: 'Advanced',
     topics: ['Input/Output', 'Function Notation f(x)', 'Vertical Line Test', 'Domain and Range']
+  },
+    // ----- NEW SUBMODULES ADDED BELOW -----
+  {
+    id: 'linear-models',
+    title: 'Linear Models',
+    description: 'Learn how to use linear equations to model real-world situations, make predictions, and understand trends in data.',
+    slides: linearModelsSlides,
+    estimatedTime: '30 min',
+    difficulty: 'Advanced',
+    topics: ['Scatter Plots', 'Line of Best Fit', 'Making Predictions', 'Interpreting Slope and Intercept']
+  },
+  {
+    id: 'comparing-linear-functions',
+    title: 'Comparing Linear Functions',
+    description: 'Analyze and compare different linear functions, whether they are presented as equations, graphs, or tables of values.',
+    slides: comparingLinearFunctionsSlides,
+    estimatedTime: '25 min',
+    difficulty: 'Intermediate',
+    topics: ['Comparing Slopes', 'Comparing y-intercepts', 'Functions in Different Formats', 'Real-world Comparisons']
+  },
+  {
+    id: 'constructing-linear-models',
+    title: 'Constructing Real-World Linear Models',
+    description: 'Move from a real-world scenario to a mathematical equation. Learn to build linear models from word problems and data.',
+    slides: constructingLinearModelsSlides,
+    estimatedTime: '35 min',
+    difficulty: 'Advanced',
+    topics: ['From Word Problems to Equations', 'Identifying Variables', 'Finding Rate of Change', 'Initial Value']
+  },
+  {
+    id: 'recognizing-functions',
+    title: 'Recognizing Functions',
+    description: 'Develop a keen eye for identifying functions, whether they are represented as tables, graphs, or sets of ordered pairs.',
+    slides: recognizingFunctionsSlides,
+    estimatedTime: '15 min',
+    difficulty: 'Beginner',
+    topics: ['Definition of a Function', 'Tables', 'Mapping Diagrams', 'Ordered Pairs']
+  },
+  {
+    id: 'linear-and-nonlinear-functions',
+    title: 'Linear and Nonlinear Functions',
+    description: 'Learn to distinguish between linear functions (which form straight lines) and nonlinear functions (which form curves).',
+    slides: linearAndNonlinearFunctionsSlides,
+    estimatedTime: '20 min',
+    difficulty: 'Intermediate',
+    topics: ['Constant Rate of Change', 'Graphs of Nonlinear Functions', 'Equations of Nonlinear Functions', 'Identifying Patterns']
   }
 ];
 
