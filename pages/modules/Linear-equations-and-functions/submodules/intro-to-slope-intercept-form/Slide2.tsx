@@ -24,11 +24,13 @@ export default function IntroSlopeInterceptSlide2() {
             
             <div className="mt-4 space-y-4">
                 <div className="p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                    <h4 className="font-bold text-green-700 dark:text-green-300">Positive Slope (m > 0)</h4>
+                    {/* FIX: Replaced > with &gt; */}
+                    <h4 className="font-bold text-green-700 dark:text-green-300">Positive Slope (m &gt; 0)</h4>
                     <p className="text-sm">The line goes **UPHILL** from left to right. An equation like <InlineMath>{'y = 2x + 1'}</InlineMath> means for every 1 step right, you go 2 steps up.</p>
                 </div>
                 <div className="p-3 bg-red-50 dark:bg-red-900/30 rounded-lg">
-                    <h4 className="font-bold text-red-700 dark:text-red-300">Negative Slope (m < 0)</h4>
+                    {/* FIX: Replaced < with &lt; */}
+                    <h4 className="font-bold text-red-700 dark:text-red-300">Negative Slope (m &lt; 0)</h4>
                     <p className="text-sm">The line goes **DOWNHILL** from left to right. An equation like <InlineMath>{'y = -3x + 4'}</InlineMath> means for every 1 step right, you go 3 steps down.</p>
                 </div>
                  <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg">

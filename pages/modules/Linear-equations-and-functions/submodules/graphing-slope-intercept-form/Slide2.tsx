@@ -57,4 +57,4 @@ export default function GraphingSlopeInterceptSlide2() {
             </TrackedInteraction>
         </SlideComponentWrapper>
     );
-}
+} 
