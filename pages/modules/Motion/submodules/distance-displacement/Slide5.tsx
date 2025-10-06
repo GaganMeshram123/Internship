@@ -8,6 +8,10 @@ import { InlineMath } from 'react-katex';
 
 export default function DistanceDisplacementSlide5() {
   const { isDarkMode } = useThemeContext();
+  
+  // FIX 1: Declare the 'localInteractions' state variable.
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -39,7 +43,6 @@ export default function DistanceDisplacementSlide5() {
     }
   ];
 
-  // handleQuizAnswer and handleNextQuestion logic is the same
   const handleQuizAnswer = (answer: string) => { setSelectedAnswer(answer); setShowFeedback(true); if (answer === questions[currentQuestionIndex].correctAnswer) setScore(prev => prev + 1); };
   const handleNextQuestion = () => { const newAnsweredState = [...questionsAnswered]; newAnsweredState[currentQuestionIndex] = true; setQuestionsAnswered(newAnsweredState); setSelectedAnswer(''); setShowFeedback(false); if (currentQuestionIndex < questions.length - 1) setCurrentQuestionIndex(prev => prev + 1); else setIsQuizComplete(true); };
 
@@ -92,7 +95,6 @@ export default function DistanceDisplacementSlide5() {
 
         {/* Right Column - Concept Check Quiz */}
         <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-          {/* Quiz UI here, same structure */}
           <div className="flex justify-between items-center mb-4"><h3 className="text-xl font-semibold text-cyan-600 dark:text-cyan-400">Analyze the Journey</h3><div className="text-lg text-slate-600 dark:text-slate-400">Question {currentQuestionIndex + 1} of {questions.length}</div></div>
           <div className="flex space-x-2 mb-6">{questions.map((_, index) => (<div key={index} className={`h-2 flex-1 rounded ${index === currentQuestionIndex ? 'bg-cyan-500' : questionsAnswered[index] ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-600'}`}/>))}</div>
            {!isQuizComplete ? (
@@ -108,7 +110,14 @@ export default function DistanceDisplacementSlide5() {
   );
 
   return (
-    <SlideComponentWrapper slideId="dd-interactive-example" slideTitle="Interactive Example: Tracing a Path" moduleId="motion" submoduleId="distance-displacement">
+    <SlideComponentWrapper 
+      slideId="dd-interactive-example" 
+      slideTitle="Interactive Example: Tracing a Path" 
+      moduleId="motion" 
+      submoduleId="distance-displacement"
+      // FIX 2: Pass the 'localInteractions' state as a prop.
+      interactions={localInteractions}
+    >
       {slideContent}
     </SlideComponentWrapper>
   );

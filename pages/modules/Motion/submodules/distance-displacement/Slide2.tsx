@@ -7,6 +7,10 @@ import 'katex/dist/katex.min.css';
 
 export default function DistanceDisplacementSlide2() {
   const { isDarkMode } = useThemeContext();
+  
+  // FIX 1: Declare the 'localInteractions' state variable.
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -99,7 +103,6 @@ export default function DistanceDisplacementSlide2() {
 
         {/* Right Column - Concept Check Quiz */}
         <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-           {/* Quiz UI is identical to Slide1's logic, adapted for these questions */}
            <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-green-600 dark:text-green-400">Check Your Understanding</h3>
             <div className="text-lg text-slate-600 dark:text-slate-400">
@@ -143,7 +146,14 @@ export default function DistanceDisplacementSlide2() {
   );
 
   return (
-    <SlideComponentWrapper slideId="dd-what-is-distance" slideTitle="Understanding Distance (A Scalar Quantity)" moduleId="motion" submoduleId="distance-displacement">
+    <SlideComponentWrapper 
+      slideId="dd-what-is-distance" 
+      slideTitle="Understanding Distance (A Scalar Quantity)" 
+      moduleId="motion" 
+      submoduleId="distance-displacement"
+      // FIX 2: Pass the 'localInteractions' state as a prop.
+      interactions={localInteractions}
+    >
       {slideContent}
     </SlideComponentWrapper>
   );

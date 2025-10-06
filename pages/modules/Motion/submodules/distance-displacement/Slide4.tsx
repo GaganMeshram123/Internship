@@ -7,6 +7,10 @@ import 'katex/dist/katex.min.css';
 
 export default function DistanceDisplacementSlide4() {
   const { isDarkMode } = useThemeContext();
+  
+  // FIX 3a: Declare the 'localInteractions' state variable.
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -53,7 +57,6 @@ export default function DistanceDisplacementSlide4() {
     }
   ];
 
-  // handleQuizAnswer and handleNextQuestion logic is the same
   const handleQuizAnswer = (answer: string) => { setSelectedAnswer(answer); setShowFeedback(true); if (answer === questions[currentQuestionIndex].correctAnswer) setScore(prev => prev + 1); };
   const handleNextQuestion = () => { const newAnsweredState = [...questionsAnswered]; newAnsweredState[currentQuestionIndex] = true; setQuestionsAnswered(newAnsweredState); setSelectedAnswer(''); setShowFeedback(false); if (currentQuestionIndex < questions.length - 1) setCurrentQuestionIndex(prev => prev + 1); else setIsQuizComplete(true); };
 
@@ -102,20 +105,19 @@ export default function DistanceDisplacementSlide4() {
           <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
             <h3 className="text-xl font-semibold mb-4 text-orange-600 dark:text-orange-400">Key Scenarios</h3>
             <ul className="list-disc list-inside space-y-2 text-lg">
-                <li><strong className="text-green-500">Distance > Displacement:</strong> This happens on any path that isn't a straight line (e.g., a curved road, turning a corner).</li>
+                {/* FIX 1: Replaced '>' with its HTML entity '&gt;' to fix JSX parsing error */}
+                <li><strong className="text-green-500">Distance &gt; Displacement:</strong> This happens on any path that isn't a straight line (e.g., a curved road, turning a corner).</li>
                 <li><strong className="text-blue-500">Distance = Displacement:</strong> Only on a straight-line path with no change in direction.</li>
-                <li><strong className="text-red-500">Displacement = 0, but Distance > 0:</strong> Any round trip that ends where it began.</li>
+                {/* FIX 2: Replaced '>' with its HTML entity '&gt;' to fix JSX parsing error */}
+                <li><strong className="text-red-500">Displacement = 0, but Distance &gt; 0:</strong> Any round trip that ends where it began.</li>
             </ul>
           </div>
         </div>
 
         {/* Right Column - Concept Check Quiz */}
         <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-          {/* Quiz UI here, same structure */}
            <div className="flex justify-between items-center mb-4"><h3 className="text-xl font-semibold text-orange-600 dark:text-orange-400">Test Your Insight</h3><div className="text-lg text-slate-600 dark:text-slate-400">Question {currentQuestionIndex + 1} of {questions.length}</div></div>
            <div className="flex space-x-2 mb-6">{questions.map((_, index) => (<div key={index} className={`h-2 flex-1 rounded ${index === currentQuestionIndex ? 'bg-orange-500' : questionsAnswered[index] ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-600'}`}/>))}</div>
-            {!isQuizComplete ? (<>{/* Quiz questions and feedback logic */}</>) : (<>{/* Quiz complete UI */}</>)}
-            {/* The full quiz JSX from previous slides is omitted for brevity but would be inserted here */}
             {!isQuizComplete ? (
             <>
               <p className="text-lg mb-6 min-h-[6rem]">{questions[currentQuestionIndex].question}</p>
@@ -129,7 +131,14 @@ export default function DistanceDisplacementSlide4() {
   );
 
   return (
-    <SlideComponentWrapper slideId="dd-comparison" slideTitle="Comparing Distance and Displacement" moduleId="motion" submoduleId="distance-displacement">
+    <SlideComponentWrapper 
+      slideId="dd-comparison" 
+      slideTitle="Comparing Distance and Displacement" 
+      moduleId="motion" 
+      submoduleId="distance-displacement"
+      // FIX 3b: Pass the 'localInteractions' state as a prop.
+      interactions={localInteractions}
+    >
       {slideContent}
     </SlideComponentWrapper>
   );

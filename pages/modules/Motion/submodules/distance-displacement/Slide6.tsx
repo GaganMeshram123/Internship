@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react'; // Changed from 'React' to 'React, { useState }'
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import { InteractionResponse } from '../../../common-components/concept'; // Added missing import
 
-// This component will render the questions defined in the submodule's index.tsx
-// For this example, we will just display them. A real implementation would
-// involve state management and form handling for submissions.
+// FIX 1: Removed the import for CheckCircleIcon as the library is not available.
+// import { CheckCircleIcon } from '@heroicons/react/24/solid';
 
 const assessmentQuestions = [
   {
@@ -29,6 +28,9 @@ const assessmentQuestions = [
 
 export default function DistanceDisplacementAssessment() {
   const { isDarkMode } = useThemeContext();
+  
+  // FIX 2a: Declare the 'localInteractions' state variable.
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
 
   const slideContent = (
     <div className={`w-full min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
@@ -44,7 +46,6 @@ export default function DistanceDisplacementAssessment() {
                     <p className="font-semibold text-lg">
                         <span className="text-blue-500">Question {index + 1}:</span> {q.questionText}
                     </p>
-                     {/* In a real app, an upload button would go here */}
                     <div className="mt-4">
                         <button className="px-4 py-2 text-sm font-medium text-white bg-gray-500 rounded-md cursor-not-allowed" disabled>
                             Upload Your Work (UI Placeholder)
@@ -65,7 +66,14 @@ export default function DistanceDisplacementAssessment() {
   );
 
   return (
-    <SlideComponentWrapper slideId="dd-assessment" slideTitle="Distance & Displacement Assessment" moduleId="motion" submoduleId="distance-displacement">
+    <SlideComponentWrapper 
+      slideId="dd-assessment" 
+      slideTitle="Distance & Displacement Assessment" 
+      moduleId="motion" 
+      submoduleId="distance-displacement"
+      // FIX 2b: Pass the 'localInteractions' state as a prop.
+      interactions={localInteractions}
+    >
       {slideContent}
     </SlideComponentWrapper>
   );

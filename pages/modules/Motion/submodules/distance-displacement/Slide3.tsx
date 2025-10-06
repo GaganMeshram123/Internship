@@ -8,6 +8,10 @@ import { InlineMath, BlockMath } from 'react-katex';
 
 export default function DistanceDisplacementSlide3() {
   const { isDarkMode } = useThemeContext();
+
+  // FIX 1: Declare the 'localInteractions' state variable.
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -39,7 +43,6 @@ export default function DistanceDisplacementSlide3() {
     }
   ];
 
-  // handleQuizAnswer and handleNextQuestion logic is the same as Slide2
   const handleQuizAnswer = (answer: string) => { setSelectedAnswer(answer); setShowFeedback(true); if (answer === questions[currentQuestionIndex].correctAnswer) setScore(prev => prev + 1); };
   const handleNextQuestion = () => { const newAnsweredState = [...questionsAnswered]; newAnsweredState[currentQuestionIndex] = true; setQuestionsAnswered(newAnsweredState); setSelectedAnswer(''); setShowFeedback(false); if (currentQuestionIndex < questions.length - 1) setCurrentQuestionIndex(prev => prev + 1); else setIsQuizComplete(true); };
 
@@ -83,7 +86,6 @@ export default function DistanceDisplacementSlide3() {
 
         {/* Right Column - Concept Check Quiz */}
         <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-          {/* Quiz UI here, same structure as previous slides */}
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-purple-600 dark:text-purple-400">Check Your Understanding</h3>
             <div className="text-lg text-slate-600 dark:text-slate-400">Question {currentQuestionIndex + 1} of {questions.length}</div>
@@ -102,7 +104,14 @@ export default function DistanceDisplacementSlide3() {
   );
 
   return (
-    <SlideComponentWrapper slideId="dd-what-is-displacement" slideTitle="Understanding Displacement (A Vector Quantity)" moduleId="motion" submoduleId="distance-displacement">
+    <SlideComponentWrapper 
+      slideId="dd-what-is-displacement" 
+      slideTitle="Understanding Displacement (A Vector Quantity)" 
+      moduleId="motion" 
+      submoduleId="distance-displacement"
+      // FIX 2: Pass the 'localInteractions' state as a prop.
+      interactions={localInteractions}
+    >
       {slideContent}
     </SlideComponentWrapper>
   );
