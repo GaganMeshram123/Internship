@@ -26,7 +26,8 @@ export default function ProblemSolvingAssessment() {
     <div className={`w-full min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
       <div className={`max-w-4xl w-full p-8 space-y-8 ${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl shadow-lg`}>
         <div className="text-center">
-            <h2 className="text-3xl font-bold text-cyan-600 dark:text-cyan-400">Submodule Assessment</h2>
+            {/* STYLE UPDATE: Main heading style applied */}
+            <h2 className="text-3xl font-bold text-blue-500 dark:text-blue-400">Submodule Assessment</h2>
             <p className="text-lg mt-2 text-slate-600 dark:text-slate-300">Use the G.U.E.S.S. method to solve these problems.</p>
         </div>
 
@@ -34,7 +35,8 @@ export default function ProblemSolvingAssessment() {
             {assessmentQuestions.map((q, index) => (
                 <div key={q.id} className="p-4 border rounded-lg bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600">
                     <p className="font-semibold text-lg">
-                        <span className="text-cyan-500">Problem {index + 1}:</span> {q.questionText}
+                        {/* STYLE UPDATE: Span color changed to blue */}
+                        <span className="text-blue-600 dark:text-blue-400">Problem {index + 1}:</span> {q.questionText}
                     </p>
                     <div className="mt-4">
                         <button className="px-4 py-2 text-sm font-medium text-white bg-gray-500 rounded-md cursor-not-allowed" disabled>
@@ -46,7 +48,8 @@ export default function ProblemSolvingAssessment() {
         </div>
         
         <div className="text-center mt-8">
-            <button className="px-8 py-3 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
+            {/* STYLE UPDATE: Button color changed to blue */}
+            <button className="px-8 py-3 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
                 Submit Assessment
             </button>
         </div>

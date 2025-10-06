@@ -19,6 +19,7 @@ const assessmentQuestions = [
 ];
 
 export default function UCMotionAssessment() {
+  // FIX: Corrected the typo from 'useTheme-context()' to 'useThemeContext()'.
   const { isDarkMode } = useThemeContext();
   const [localInteractions, setLocalInteractions] = React.useState<Record<string, InteractionResponse>>({});
 
@@ -26,7 +27,7 @@ export default function UCMotionAssessment() {
     <div className={`w-full min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
       <div className={`max-w-4xl w-full p-8 space-y-8 ${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl shadow-lg`}>
         <div className="text-center">
-            <h2 className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">Submodule Assessment</h2>
+            <h2 className="text-3xl font-bold text-blue-500 dark:text-blue-400">Submodule Assessment</h2>
             <p className="text-lg mt-2 text-slate-600 dark:text-slate-300">Apply your conceptual understanding of circular motion.</p>
         </div>
 
@@ -34,7 +35,7 @@ export default function UCMotionAssessment() {
             {assessmentQuestions.map((q, index) => (
                 <div key={q.id} className="p-4 border rounded-lg bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600">
                     <p className="font-semibold text-lg">
-                        <span className="text-indigo-500">Question {index + 1}:</span> {q.questionText}
+                        <span className="text-blue-600 dark:text-blue-400">Question {index + 1}:</span> {q.questionText}
                     </p>
                     <div className="mt-4">
                         <button className="px-4 py-2 text-sm font-medium text-white bg-gray-500 rounded-md cursor-not-allowed" disabled>
@@ -46,7 +47,7 @@ export default function UCMotionAssessment() {
         </div>
         
         <div className="text-center mt-8">
-            <button className="px-8 py-3 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
+            <button className="px-8 py-3 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
                 Submit Assessment
             </button>
         </div>

@@ -1,20 +1,19 @@
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper'
-import { InteractionResponse } from '../../../common-components/concept'
-import { useThemeContext } from '@/lib/ThemeContext'
-import 'katex/dist/katex.min.css'
-import { InlineMath } from 'react-katex'
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
+import { InteractionResponse } from '../../../common-components/concept';
+import { useThemeContext } from '@/lib/ThemeContext';
+import 'katex/dist/katex.min.css';
+import { InlineMath } from 'react-katex';
 
 export default function DistanceDisplacementSlide1() {
-  const { isDarkMode } = useThemeContext()
-  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({})
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState<string>('')
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false])
-  const [score, setScore] = useState(0)
-  const [isQuizComplete, setIsQuizComplete] = useState(false)
+  const { isDarkMode } = useThemeContext();
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
+  const [score, setScore] = useState(0);
   
   const questions = [
     {
@@ -53,32 +52,32 @@ export default function DistanceDisplacementSlide1() {
       correctAnswer: 'A change in position over a period of time.',
       explanation: 'This is the precise scientific definition. If an object\'s position coordinates change from one moment to the next, it is in motion.'
     }
-  ]
+  ];
+
+  const isQuizComplete = currentQuestionIndex >= questions.length;
 
   const handleQuizAnswer = (answerText: string) => {
-    setSelectedAnswer(answerText)
-    setShowFeedback(true)
+    setSelectedAnswer(answerText);
+    setShowFeedback(true);
     
-    const currentQuestion = questions[currentQuestionIndex]
+    const currentQuestion = questions[currentQuestionIndex];
     if (answerText === currentQuestion.correctAnswer) {
-      setScore(prev => prev + 1)
+      setScore(prev => prev + 1);
     }
-  }
+  };
 
   const handleNextQuestion = () => {
-    const newAnsweredState = [...questionsAnswered]
-    newAnsweredState[currentQuestionIndex] = true
-    setQuestionsAnswered(newAnsweredState)
+    const newAnsweredState = [...questionsAnswered];
+    newAnsweredState[currentQuestionIndex] = true;
+    setQuestionsAnswered(newAnsweredState);
     
-    setSelectedAnswer('')
-    setShowFeedback(false)
+    setSelectedAnswer('');
+    setShowFeedback(false);
     
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1)
-    } else {
-      setIsQuizComplete(true)
+    if (currentQuestionIndex < questions.length) {
+      setCurrentQuestionIndex(prev => prev + 1);
     }
-  }
+  };
 
   const slideContent = (
     <div className={`w-full min-h-screen ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'} transition-colors duration-300`}>
@@ -124,19 +123,20 @@ export default function DistanceDisplacementSlide1() {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Concept Check</h3>
             <div className="text-lg text-slate-600 dark:text-slate-400">
-              Question {currentQuestionIndex + 1} of {questions.length}
+              Question {isQuizComplete ? questions.length : currentQuestionIndex + 1} of {questions.length}
             </div>
           </div>
 
+          {/* STYLE UPDATE: Step indicator logic changed */}
           <div className="flex space-x-2 mb-6">
             {questions.map((_, index) => (
               <div
                 key={index}
                 className={`h-2 flex-1 rounded ${
-                  index === currentQuestionIndex
+                  index < currentQuestionIndex
                     ? 'bg-blue-500'
-                    : questionsAnswered[index]
-                    ? 'bg-green-500'
+                    : index === currentQuestionIndex
+                    ? 'bg-blue-500'
                     : 'bg-slate-300 dark:bg-slate-600'
                 }`}
               />
@@ -155,13 +155,10 @@ export default function DistanceDisplacementSlide1() {
                     key={index}
                     onClick={() => handleQuizAnswer(option)}
                     disabled={showFeedback}
+                    // STYLE UPDATE: Logic for answer feedback colors changed
                     className={`w-full p-3 rounded-lg border-2 text-left transition-all text-base md:text-lg ${
-                      selectedAnswer === option
-                        ? showFeedback
-                          ? option === questions[currentQuestionIndex].correctAnswer
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                      showFeedback && selectedAnswer === option
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
                         : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
                     } ${showFeedback ? 'cursor-default' : 'cursor-pointer'}`}
                     whileHover={!showFeedback ? { scale: 1.02 } : {}}
@@ -174,15 +171,12 @@ export default function DistanceDisplacementSlide1() {
 
               <AnimatePresence>
                 {showFeedback && (
+                  // STYLE UPDATE: Feedback box uses blue color
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    className={`mt-4 p-4 rounded-lg ${
-                      selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                        ? 'bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700'
-                        : 'bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700'
-                    }`}
+                    className={`mt-4 p-4 rounded-lg bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700`}
                   >
                     <div className="font-bold text-lg mb-2">
                       {selectedAnswer === questions[currentQuestionIndex].correctAnswer ? 'Correct!' : 'Not quite...'}
