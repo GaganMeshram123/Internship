@@ -52,7 +52,8 @@ const getModules = async () => {
     'grade-2-math-geometry',
     'Linear-equations-and-functions',
     ' Solving-equations-with-one-unknown',
-    'grade-2-math-operations'
+    'grade-2-math-operations',
+    'Motion'
   ];
 
   for (const moduleName of moduleNames) {
