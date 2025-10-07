@@ -1,9 +1,126 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { InteractionResponse } from '../../../common-components/concept';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
+
+// --- NEW COMPONENT: An animated visual for calculating distance ---
+const DistancePathAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
+    const [step, setStep] =useState(0); // 0: initial, 1: first leg, 2: second leg, 3: final
+    const totalSteps = 3;
+
+    const textColor = isDarkMode ? '#cbd5e1' : '#475569';
+    const lineColor = isDarkMode ? '#64748b' : '#94a3b8';
+    const pathColor = isDarkMode ? '#f87171' : '#ef4444'; // Red for the path
+
+    // Grid properties
+    const gridSpacing = 30;
+    const startX = 40;
+    const startY = 130;
+    
+    // Path coordinates
+    const point0 = { x: startX, y: startY };
+    const point1 = { x: startX + 4 * gridSpacing, y: startY };
+    const point2 = { x: point1.x, y: startY - 3 * gridSpacing };
+
+    // For the animated counter
+    const count = useMotionValue(0);
+    const rounded = useTransform(count, latest => Math.round(latest));
+
+    const handleNext = () => {
+        const newStep = Math.min(step + 1, totalSteps);
+        setStep(newStep);
+
+        if (newStep === 1) {
+            animate(count, 4, { duration: 1 });
+        } else if (newStep === 2) {
+            animate(count, 7, { duration: 0.75 });
+        }
+    };
+
+    const handleReset = () => {
+        setStep(0);
+        count.set(0);
+    };
+
+    return (
+        <div className="h-full flex flex-col">
+            <div className="relative w-full h-48">
+                <svg viewBox="0 0 250 160" className="w-full h-full">
+                    {/* Grid */}
+                    <path
+                        d="M 10 10 V 150 H 240"
+                        fill="none"
+                        stroke={isDarkMode ? '#475569' : '#e2e8f0'}
+                        strokeWidth="1"
+                    />
+                    
+                    {/* Path Tracing */}
+                    <AnimatePresence>
+                        {step >= 1 && (
+                            <motion.path
+                                d={`M ${point0.x} ${point0.y} L ${point1.x} ${point1.y}`}
+                                stroke={pathColor} strokeWidth="3"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 1, ease: 'easeInOut' }}
+                            />
+                        )}
+                        {step >= 2 && (
+                             <motion.path
+                                d={`M ${point1.x} ${point1.y} L ${point2.x} ${point2.y}`}
+                                stroke={pathColor} strokeWidth="3"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 0.75, ease: 'easeInOut' }}
+                            />
+                        )}
+                    </AnimatePresence>
+
+                    {/* Path Labels */}
+                    {step >= 1 && <text x={point0.x + 60} y={point0.y + 15} textAnchor="middle" fontSize="10" fill={textColor}>4m</text>}
+                    {step >= 2 && <text x={point2.x + 10} y={point1.y - 45} fontSize="10" fill={textColor}>3m</text>}
+
+                    {/* Moving Dot */}
+                    <AnimatePresence>
+                        {step > 0 && (
+                            <motion.circle
+                                r="5" fill={pathColor}
+                                initial={{ x: point0.x, y: point0.y }}
+                                animate={{ 
+                                    x: step >= 1 ? point1.x : point0.x, 
+                                    y: step >= 2 ? point2.y : (step === 1 ? point1.y : point0.y) 
+                                }}
+                                transition={{ duration: step === 1 ? 1 : 0.75, ease: 'easeInOut' }}
+                            />
+                        )}
+                    </AnimatePresence>
+                    <text x={point0.x - 10} y={point0.y + 5} fontSize="10" fill={textColor}>Start</text>
+                </svg>
+            </div>
+            <div className="text-center">
+                <div className="text-lg font-semibold">
+                    Total Distance: <motion.span className="text-2xl font-bold text-blue-500">{rounded}</motion.span> m
+                </div>
+                 {step === 3 && (
+                    <motion.p className="font-mono text-blue-500 dark:text-blue-400 mt-2" initial={{opacity:0}} animate={{opacity:1}}>
+                        4m + 3m = 7m
+                    </motion.p>
+                )}
+            </div>
+             <div className="flex items-center justify-center space-x-4 mt-4">
+                <motion.button onClick={handleNext} disabled={step === totalSteps} className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 text-white font-bold px-4 py-2 text-sm rounded-lg" whileHover={{ scale: step < totalSteps ? 1.05 : 1}} whileTap={{ scale: step < totalSteps ? 0.95 : 1 }}>
+                    {step === 0 ? 'Start' : 'Next Step'}
+                </motion.button>
+                <motion.button onClick={handleReset} className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-4 py-2 text-sm rounded-lg" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    Reset
+                </motion.button>
+            </div>
+        </div>
+    );
+};
+
 
 export default function DistanceDisplacementSlide2() {
   const { isDarkMode } = useThemeContext();
@@ -44,7 +161,7 @@ export default function DistanceDisplacementSlide2() {
     setSelectedAnswer(answer);
     setShowFeedback(true);
     if (answer === questions[currentQuestionIndex].correctAnswer) {
-      setScore(prev => prev + 1);
+      setScore((prev: number) => prev + 1);
     }
   };
 
@@ -55,7 +172,7 @@ export default function DistanceDisplacementSlide2() {
     setSelectedAnswer('');
     setShowFeedback(false);
     if (currentQuestionIndex < questions.length) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev: number) => prev + 1);
     }
   };
 
@@ -64,7 +181,6 @@ export default function DistanceDisplacementSlide2() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
         <div className="space-y-6">
           <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-            {/* STYLE UPDATE: Main heading style applied */}
             <h3 className="text-2xl font-bold mb-4 text-blue-500">What is Distance?</h3>
             <p className="text-lg leading-relaxed mb-4">
               <strong>Distance</strong> is the total length of the path an object travels. Think of it as how many steps you take on a journey, regardless of the direction you are going.
@@ -75,12 +191,10 @@ export default function DistanceDisplacementSlide2() {
           </div>
 
           <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-            {/* STYLE UPDATE: Subheading style applied */}
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Distance is a Scalar</h3>
             <p className="text-lg leading-relaxed mb-4">
               Distance is a <strong>scalar quantity</strong>. This means it only has a <strong>magnitude</strong> (a size or numerical value) and no direction.
             </p>
-            {/* STYLE UPDATE: Info box color changed to blue */}
             <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border-l-4 border-blue-400">
               <p className="text-lg font-medium text-blue-800 dark:text-blue-200">
                 <strong>Example:</strong> Saying "I walked 5 kilometers" describes a distance. It doesn't say *where* you walked.
@@ -89,33 +203,25 @@ export default function DistanceDisplacementSlide2() {
           </div>
 
           <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-             {/* STYLE UPDATE: Subheading style applied */}
              <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Calculating Total Distance</h3>
-             <p className="text-lg leading-relaxed">
-                To find the total distance, you simply add up the lengths of all the individual parts of the journey.
-            </p>
-            <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-700 rounded-lg">
-                <p className="font-mono text-center">Path: 4m East, then 3m North</p>
-                <p className="font-mono text-center text-2xl mt-2">Total Distance = 4m + 3m = 7m</p>
-            </div>
+             {/* --- Static content replaced with animation --- */}
+             <DistancePathAnimation isDarkMode={isDarkMode} />
           </div>
         </div>
 
         {/* Right Column - Concept Check Quiz */}
         <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-           {/* STYLE UPDATE: Subheading style applied */}
            <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Check Your Understanding</h3>
             <div className="text-lg text-slate-600 dark:text-slate-400">
               Question {isQuizComplete ? questions.length : currentQuestionIndex + 1} of {questions.length}
             </div>
-          </div>
-           {/* STYLE UPDATE: Step indicator logic changed */}
+           </div>
            <div className="flex space-x-2 mb-6">
             {questions.map((_, index) => (
               <div key={index} className={`h-2 flex-1 rounded ${index < currentQuestionIndex ? 'bg-blue-500' : index === currentQuestionIndex ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-600'}`} />
             ))}
-          </div>
+           </div>
 
           {!isQuizComplete ? (
             <>
@@ -126,7 +232,6 @@ export default function DistanceDisplacementSlide2() {
                     key={index} 
                     onClick={() => handleQuizAnswer(option)} 
                     disabled={showFeedback}
-                    // STYLE UPDATE: Logic for answer feedback colors changed
                     className={`w-full p-3 rounded-lg border-2 text-left transition-all text-base md:text-lg ${
                       showFeedback && selectedAnswer === option
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
@@ -141,7 +246,6 @@ export default function DistanceDisplacementSlide2() {
               </div>
               <AnimatePresence>
                 {showFeedback && (
-                  // STYLE UPDATE: Feedback box uses blue color
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className={`mt-4 p-4 rounded-lg bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700`}>
                     <div className="font-bold text-lg mb-2">{selectedAnswer === questions[currentQuestionIndex].correctAnswer ? 'Correct!' : 'Not Quite...'}</div>
                     <div className="text-base">{questions[currentQuestionIndex].explanation}</div>
@@ -153,7 +257,6 @@ export default function DistanceDisplacementSlide2() {
           ) : (
             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
               <div className="text-4xl mb-4">✅</div>
-              {/* STYLE UPDATE: Heading color applied */}
               <div className="text-2xl font-bold mb-2 text-blue-600 dark:text-blue-400">Concept Mastered!</div>
               <div className="text-lg text-slate-600 dark:text-slate-400">You scored {score} out of {questions.length}</div>
             </motion.div>
