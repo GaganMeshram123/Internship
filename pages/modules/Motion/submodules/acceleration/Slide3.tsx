@@ -1,130 +1,169 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { InteractionResponse } from '../../../common-components/concept';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 
-// --- NEW COMPONENT: An animated visual for Acceleration Vectors ---
+// --- TYPE DEFINITIONS for TypeScript ---
+type EasingName = 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' | 'circIn' | 'circOut' | 'circInOut' | 'backIn' | 'backOut' | 'backInOut' | 'anticipate';
+
+type Scenario = {
+    id: string;
+    title: string;
+    desc: string;
+    vDirection: 1 | -1;
+    carStart: number;
+    carEnd: number;
+    velStart: number;
+    velEnd: number;
+    aDirection: 0 | 1 | -1;
+    ease: EasingName;
+    duration: number;
+};
+
+// --- DATA-DRIVEN ANIMATION SCENARIOS (Zero Acceleration ADDED) ---
+const scenarios: Scenario[] = [
+    {
+        id: 'idle',
+        title: "Click 'Start'",
+        desc: "Visualize the concepts of acceleration.",
+        vDirection: 1, carStart: 50, carEnd: 50, velStart: 0, velEnd: 0, aDirection: 0, ease: 'linear', duration: 0
+    },
+    {
+        id: 'pos_v_pos_a',
+        title: "Positive Acceleration",
+        desc: "Speeding up in the positive direction (v →, a →).",
+        vDirection: 1, carStart: 50, carEnd: 300, velStart: 0, velEnd: 80, aDirection: 1, ease: 'easeIn', duration: 2.5
+    },
+    {
+        id: 'pos_v_neg_a',
+        title: "Negative Acceleration",
+        desc: "Slowing down in the positive direction (v →, a ←).",
+        vDirection: 1, carStart: 50, carEnd: 200, velStart: 80, velEnd: 10, aDirection: -1, ease: 'easeOut', duration: 2.5
+    },
+    // --- NEW SCENARIO ADDED HERE ---
+    {
+        id: 'zero_accel',
+        title: "Zero Acceleration",
+        desc: "Constant velocity (uniform motion). No acceleration.",
+        vDirection: 1, carStart: 50, carEnd: 300, velStart: 50, velEnd: 50, aDirection: 0, ease: 'linear', duration: 2.5
+    },
+    {
+        id: 'neg_v_neg_a',
+        title: "Negative Acceleration",
+        desc: "Speeding up in the negative direction (v ←, a ←).",
+        vDirection: -1, carStart: 350, carEnd: 100, velStart: 0, velEnd: 80, aDirection: -1, ease: 'easeIn', duration: 2.5
+    },
+    {
+        id: 'neg_v_pos_a',
+        title: "Positive Acceleration",
+        desc: "Slowing down in the negative direction (v ←, a →).",
+        vDirection: -1, carStart: 350, carEnd: 250, velStart: 80, velEnd: 10, aDirection: 1, ease: 'easeOut', duration: 2.5
+    },
+];
+
+// --- INTERACTIVE ANIMATION COMPONENT ---
 const VectorArrowAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
-    const [step, setStep] = useState(0); // 0: initial, 1: positive, 2: negative, 3: zero
-    const totalSteps = 3;
+    const [scenarioIndex, setScenarioIndex] = useState(0);
 
     const textColor = isDarkMode ? '#cbd5e1' : '#475569';
     const lineColor = isDarkMode ? '#64748b' : '#94a3b8';
     const velocityColor = '#3b82f6'; // Blue
     const accelerationColor = isDarkMode ? '#f87171' : '#ef4444'; // Red
     
-    const carX = useMotionValue(50);
-    const velocityWidth = useMotionValue(0);
+    const carX = useMotionValue(scenarios[0].carStart);
+    const velocityWidth = useMotionValue(scenarios[0].velStart);
 
-    const runAnimation = (newStep: number) => {
-        setStep(newStep);
-        carX.set(50);
-        velocityWidth.set(0);
+    const runAnimation = (newIndex: number) => {
+        const scenario = scenarios[newIndex];
+        if (!scenario || newIndex === 0) {
+            handleReset();
+            return;
+        };
 
-        if (newStep === 1) { // Positive Acceleration
-            animate(velocityWidth, 80, { duration: 2.5, ease: "easeIn" });
-            animate(carX, 300, { duration: 2.5, ease: "easeIn" });
-        } else if (newStep === 2) { // Negative Acceleration
-            velocityWidth.set(80); // Start fast
-            animate(velocityWidth, 10, { duration: 2.5, ease: "easeOut" });
-            animate(carX, 200, { duration: 2.5, ease: "easeOut" });
-        } else if (newStep === 3) { // Zero Acceleration
-            velocityWidth.set(50); // Constant speed
-            animate(carX, 300, { duration: 2.5, ease: "linear" });
-        }
+        setScenarioIndex(newIndex);
+        carX.set(scenario.carStart);
+        velocityWidth.set(scenario.velStart);
+        
+        animate(velocityWidth, scenario.velEnd, { duration: scenario.duration, ease: scenario.ease });
+        animate(carX, scenario.carEnd, { duration: scenario.duration, ease: scenario.ease });
     };
     
     const handleReset = () => {
-        setStep(0);
         carX.stop();
         velocityWidth.stop();
-        carX.set(50);
-        velocityWidth.set(0);
+        setScenarioIndex(0);
+        carX.set(scenarios[0].carStart);
+        velocityWidth.set(scenarios[0].velStart);
     };
 
-    const VectorArrow = ({ x, width, color, label }: {x: any, width: any, color: string, label: string}) => (
-        <motion.g style={{ x }}>
-            <motion.path d={`M 0 0 L ${width.get()} 0`} stroke={color} strokeWidth="3" markerEnd={`url(#arrow-${label})`} />
-            <text y="-5" x={width.get() / 2} textAnchor="middle" fill={color} fontSize="12">{label}</text>
-            <defs>
-                <marker id={`arrow-${label}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                    <path d="M 0 0 L 10 5 L 0 10 z" fill={color} />
-                </marker>
-            </defs>
-        </motion.g>
-    );
-
-    const messages: {[key: number]: {title: string, desc: string}} = {
-        1: { title: "Positive Acceleration", desc: "Vectors in same direction: object speeds up." },
-        2: { title: "Negative Acceleration", desc: "Vectors in opposite directions: object slows down." },
-        3: { title: "Zero Acceleration", desc: "No acceleration vector: velocity is constant." },
-    };
+    const currentScenario = scenarios[scenarioIndex];
 
     return (
         <div className="h-full flex flex-col">
-            <h3 className="text-2xl font-bold text-blue-500">Visualizing Acceleration Vectors</h3>
+            <h3 className="text-2xl font-bold text-blue-500 mb-2">Visualizing Acceleration Vectors</h3>
             
             <div className="relative w-full h-48 flex-grow flex flex-col justify-center">
-                 <svg viewBox="0 0 400 100" className="w-full h-full">
-                    {/* Number Line */}
+                <svg viewBox="0 0 400 100" className="w-full h-full">
                     <line x1="10" y1="80" x2="390" y2="80" stroke={lineColor} strokeWidth="1" />
 
-                    {/* Car */}
-                    <motion.g style={{ x: carX }} y="55">
+                    <motion.g 
+                        style={{ x: carX, y: 55, scaleX: currentScenario.vDirection }}
+                    >
                         <rect x="-20" y="0" width="40" height="20" rx="3" fill={textColor} />
                         <circle cx="-10" cy="20" r="5" fill={textColor} />
                         <circle cx="10" cy="20" r="5" fill={textColor} />
                     </motion.g>
 
-                    {/* Vector Arrows */}
-                    <g transform="translate(0, 30)">
-                        <VectorArrow x={carX} width={velocityWidth} color={velocityColor} label="v" />
-                    </g>
-                    <g transform="translate(0, 15)">
-                        <AnimatePresence>
-                        {step === 1 && (
-                            <motion.g initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} style={{ x: carX }}>
-                                <path d="M 0 0 L 40 0" stroke={accelerationColor} strokeWidth="3" markerEnd="url(#arrow-a)"/>
-                                <text y="-5" x="20" textAnchor="middle" fill={accelerationColor} fontSize="12">a</text>
-                            </motion.g>
-                        )}
-                        {step === 2 && (
-                            <motion.g initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} style={{ x: carX }}>
-                                <path d="M 0 0 L -40 0" stroke={accelerationColor} strokeWidth="3" markerEnd="url(#arrow-a-neg)"/>
-                                <text y="-5" x="-20" textAnchor="middle" fill={accelerationColor} fontSize="12">a</text>
-                            </motion.g>
-                        )}
-                        </AnimatePresence>
-                         <defs>
-                            <marker id="arrow-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill={accelerationColor} /></marker>
-                            <marker id="arrow-a-neg" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 10 0 L 0 5 L 10 10 z" fill={accelerationColor} /></marker>
-                        </defs>
-                    </g>
-                 </svg>
+                    {/* Velocity Arrow */}
+                    <motion.g style={{ x: carX, y: 30 }}>
+                        <motion.line 
+                             stroke={velocityColor} 
+                             strokeWidth="3"
+                             initial={{pathLength: 0}} animate={{pathLength: 1}}
+                             d={`M 0 0 L ${velocityWidth.get() * currentScenario.vDirection} 0`}
+                        />
+                        <motion.path 
+                            fill={velocityColor}
+                            d={currentScenario.vDirection === 1 ? "M 0 0 L -5 -4 L -5 4 z" : "M 0 0 L 5 -4 L 5 4 z"}
+                            style={{ x: velocityWidth.get() * currentScenario.vDirection }}
+                         />
+                         <motion.text y="-5" textAnchor="middle" fill={velocityColor} fontSize="12" style={{ x: (velocityWidth.get() * currentScenario.vDirection) / 2 }}>v</motion.text>
+                    </motion.g>
+
+                    {/* Acceleration Arrow */}
+                    <AnimatePresence>
+                    {currentScenario.aDirection !== 0 && (
+                         <motion.g 
+                            key={currentScenario.id}
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            style={{ x: carX, y: 15 }}
+                         >
+                            <path d={`M 0 0 L ${40 * currentScenario.aDirection} 0`} stroke={accelerationColor} strokeWidth="3" />
+                            <path d={currentScenario.aDirection === 1 ? "M 40 0 L 35 -4 L 35 4 z" : "M -40 0 L -35 -4 L -35 4 z"} fill={accelerationColor}/>
+                            <text y="-5" x={20 * currentScenario.aDirection} textAnchor="middle" fill={accelerationColor} fontSize="12">a</text>
+                        </motion.g>
+                    )}
+                    </AnimatePresence>
+                </svg>
             </div>
-             <div className="text-center h-10 mt-2">
+             <div className="text-center h-12 mt-2">
                 <AnimatePresence mode="wait">
-                    <motion.div key={step} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
-                        {step === 0 && <p className="text-sm text-slate-500 dark:text-slate-400">Click 'Start' to visualize the concepts.</p>}
-                        {messages[step] && (
-                            <>
-                                <p className="font-bold text-blue-500">{messages[step].title}</p>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">{messages[step].desc}</p>
-                            </>
-                        )}
+                    <motion.div key={currentScenario.id} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
+                        <p className="font-bold text-blue-500">{currentScenario.title}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{currentScenario.desc}</p>
                     </motion.div>
                 </AnimatePresence>
              </div>
              <div className="flex items-center justify-center space-x-4 mt-2">
-                <motion.button onClick={() => runAnimation(step + 1)} disabled={step >= totalSteps} className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 text-white font-bold px-4 py-2 text-sm rounded-lg" whileHover={{ scale: step < totalSteps ? 1.05 : 1}} whileTap={{ scale: step < totalSteps ? 0.95 : 1 }}>
-                    {step === 0 ? 'Start' : 'Next Example'}
+                <motion.button onClick={() => runAnimation(scenarioIndex + 1)} disabled={scenarioIndex >= scenarios.length - 1} className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 text-white font-bold px-4 py-2 text-sm rounded-lg" whileHover={{ scale: scenarioIndex < scenarios.length - 1 ? 1.05 : 1}} whileTap={{ scale: scenarioIndex < scenarios.length - 1 ? 0.95 : 1 }}>
+                    {scenarioIndex === 0 ? 'Start' : 'Next Example'}
                 </motion.button>
                 <motion.button onClick={handleReset} className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-4 py-2 text-sm rounded-lg" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     Reset
                 </motion.button>
-            </div>
+             </div>
         </div>
     );
 };
@@ -197,24 +236,24 @@ export default function AccelerationSlide3() {
           <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Positive Acceleration</h3>
             <p className="text-lg leading-relaxed">
-              This generally means the object is <strong>speeding up</strong> in the positive direction. The acceleration vector points in the same direction as the velocity vector.
+              This can mean speeding up in the positive direction (v →, a →) OR slowing down in the negative direction (v ←, a →).
             </p>
           </div>
 
           <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Negative Acceleration</h3>
             <p className="text-lg leading-relaxed">
-              This generally means the object is <strong>slowing down</strong> (decelerating) while moving in the positive direction. The acceleration vector points in the opposite direction to the velocity vector.
+              This can mean slowing down in the positive direction (v →, a ←) OR speeding up in the negative direction (v ←, a ←).
             </p>
           </div>
           
            <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Zero Acceleration</h3>
              <p className="text-lg leading-relaxed">
-               This means the velocity is <strong>constant</strong>. The object is in "uniform motion."
+              This means the velocity is <strong>constant</strong>. The object is in "uniform motion."
             </p>
             <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-700 rounded-lg">
-               <p className="font-semibold text-center text-lg">Important: Zero acceleration does NOT mean zero velocity! An object can be moving very fast with zero acceleration.</p>
+             <p className="font-semibold text-center text-lg">Important: Zero acceleration does NOT mean zero velocity! An object can be moving very fast with zero acceleration.</p>
             </div>
            </div>
         </div>
