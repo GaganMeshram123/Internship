@@ -5,101 +5,127 @@ import { InteractionResponse } from '../../../common-components/concept';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 
-// --- NEW COMPONENT: An animated visual for Rate of Motion ---
+// --- REVISED COMPONENT with Corrected Emoji Direction ---
 const RateOfMotionAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
-    const [step, setStep] = useState(0); // 0: initial, 1: race, 2: calcs, 3: conclusion
-    const totalSteps = 3;
+    const [step, setStep] = useState(0); // 0: initial, 1: countdown, 2: race, 3: calcs, 4: conclusion
+    const totalSteps = 4;
+    const [countdown, setCountdown] = useState(3);
 
     const textColor = isDarkMode ? '#cbd5e1' : '#475569';
     const lineColor = isDarkMode ? '#475569' : '#e2e8f0';
-    const highlightColor = '#3b82f6';
     
     const carX = useMotionValue(30);
     const cyclistX = useMotionValue(30);
     const timer = useMotionValue(0);
+    const [timerDisplay, setTimerDisplay] = useState("0.0");
 
     useEffect(() => {
-        const unsubscribe = timer.on("change", latest => {
-            // No need to do anything here unless you want side effects
-        });
-        return unsubscribe;
+        timer.on("change", latest => setTimerDisplay(latest.toFixed(1)));
+        return () => timer.clearListeners();
     }, [timer]);
 
+    const runCountdown = () => {
+        setStep(1);
+        let count = 3;
+        setCountdown(count);
+        const interval = setInterval(() => {
+            count--;
+            setCountdown(count);
+            if (count <= 0) {
+                clearInterval(interval);
+                setTimeout(runRace, 300); // Short delay after GO!
+            }
+        }, 700);
+    };
+
+    const runRace = () => {
+        setStep(2);
+        animate(carX, 350, { duration: 4, ease: "easeOut" });
+        animate(cyclistX, 110, { duration: 4, ease: "linear" });
+        animate(timer, 4, { duration: 4, ease: "linear", onComplete: () => setStep(3) });
+    };
 
     const handleNext = () => {
         const newStep = Math.min(step + 1, totalSteps);
         setStep(newStep);
-        if (newStep === 1) {
-            animate(carX, 350, { duration: 4, ease: "linear" });
-            animate(cyclistX, 110, { duration: 4, ease: "linear" });
-            animate(timer, 4, { duration: 4, ease: "linear" });
-        }
     };
 
     const handleReset = () => {
         setStep(0);
+        setCountdown(3);
         carX.set(30);
         cyclistX.set(30);
         timer.set(0);
     };
 
-    const CarIcon = () => <path d="M13.2,1.2H2.8C2.2,1.2,1.8,1.7,1.8,2.2v5.5c0,0.6,0.5,1,1,1h1c0.3,0,0.5,0.2,0.5,0.5v1.2c0,0.3,0.2,0.5,0.5,0.5h1.2 c0.3,0,0.5-0.2,0.5-0.5V9.2c0-0.3,0.2-0.5,0.5-0.5h3.1c0.3,0,0.5,0.2,0.5,0.5v1.2c0,0.3,0.2,0.5,0.5,0.5h1.2c0.3,0,0.5-0.2,0.5-0.5 V9.2c0-0.3,0.2-0.5,0.5-0.5h1c0.6,0,1-0.5,1-1V2.2C14.2,1.7,13.8,1.2,13.2,1.2z M3.8,6.8c-0.6,0-1-0.5-1-1s0.5-1,1-1s1,0.5,1,1 S4.3,6.8,3.8,6.8z M12.2,6.8c-0.6,0-1-0.5-1-1s0.5-1,1-1s1,0.5,1,1S12.8,6.8,12.2,6.8z M13.2,3.2H2.8V2.2h10.5V3.2z" transform="scale(1.8) translate(-1, -1)" />;
-    const CyclistIcon = () => <path d="M12.2,6.8C12.9,6.8,13.5,6.3,13.5,5.5S12.9,4.2,12.2,4.2S11,4.8,11,5.5S11.5,6.8,12.2,6.8z M6,2.8 c0.6,0,1.2,0.3,1.5,0.8L8,4.2H9.2l-1-1.8C7.8,1.8,7,1.2,6,1.2C4.2,1.2,2.8,2.8,2.8,4.8S4.2,8.2,6,8.2c0.9,0,1.8-0.4,2.2-1.2L9,6 H7.8l-0.5,0.8C7,7.1,6.5,7.2,6,7.2c-1.2,0-2.2-1-2.2-2.5S4.8,2.8,6,2.8z M10.8,9.5c-0.6,0-1-0.5-1-1s0.5-1,1-1s1,0.5,1,1S11.3,9.5,10.8,9.5z M13.2,9.5c-0.6,0-1-0.5-1-1s0.5-1,1-1s1,0.5,1,1S13.8,9.5,13.2,9.5z" transform="scale(1.8) translate(0, 0)" />;
+    const countdownVariants = {
+        hidden: { scale: 0.5, opacity: 0 },
+        visible: { scale: 1, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 15 } },
+        exit: { scale: 1.5, opacity: 0 }
+    };
 
     return (
         <div className="h-full flex flex-col">
             <h3 className="text-2xl font-bold text-blue-500">Visualizing Rate of Motion</h3>
-             <div className="my-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-center">
+            <div className="my-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-center">
                 <span className="font-semibold text-lg">Timer: </span>
-                <span className="font-mono text-xl font-bold text-blue-500">{timer.get().toFixed(1)}s</span>
+                <span className="font-mono text-xl font-bold text-blue-500">{timerDisplay}s</span>
             </div>
-            <div className="relative w-full h-48 flex-grow">
-                 <svg viewBox="0 0 400 120" className="w-full h-full">
-                    {/* Road and markers */}
-                    <path d="M 0 60 H 400" stroke={lineColor} strokeWidth="20" />
-                    <path d="M 0 60 H 400" stroke="white" strokeWidth="1" strokeDasharray="10 5" />
+            <div className="relative w-full h-48 flex-grow overflow-hidden">
+                <AnimatePresence>
+                    {step === 1 && (
+                        <motion.div key={countdown} variants={countdownVariants} initial="hidden" animate="visible" exit="exit" className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-8xl font-bold text-blue-500">{countdown > 0 ? countdown : 'GO!'}</span>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                <svg viewBox="0 0 400 120" className="w-full h-full">
+                    <path d="M 0 60 H 400" stroke={lineColor} strokeWidth="25" />
+                    <path d="M 0 60 H 400" stroke={isDarkMode ? '#fff' : '#000'} strokeWidth="1" strokeDasharray="10 5" opacity="0.5" />
                     {[0, 20, 40, 60, 80].map(d => (
                          <g key={d}>
                             <text x={30 + d * 4} y="95" textAnchor="middle" fontSize="10" fill={textColor}>{d}m</text>
-                            <line x1={30 + d * 4} y1="70" x2={30 + d * 4} y2="80" stroke={lineColor} />
+                            <line x1={30 + d * 4} y1="72.5" x2={30 + d * 4} y2="82.5" stroke={lineColor} />
                          </g>
                     ))}
-                    {/* Car */}
-                    <motion.g style={{ x: carX }}>
-                        <g transform="translate(0, 20)"><CarIcon /></g>
-                    </motion.g>
-                    {/* Cyclist */}
-                     <motion.g style={{ x: cyclistX }}>
-                        <g transform="translate(0, 75)"><CyclistIcon /></g>
-                    </motion.g>
-                 </svg>
-                 <AnimatePresence>
-                 {step >= 2 && (
-                    <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="absolute top-0 w-full">
-                        <div className="absolute p-2 rounded bg-slate-200/80 dark:bg-slate-800/80 text-xs" style={{left: `${(350 + 30)/400 * 100}%`}}>
-                            <p>Dist: 80m, Time: 4s</p>
-                            <p className="font-bold">Rate: 20 m/s</p>
+                    <text x="380" y="40" fontSize="24">🏁</text>
+                    
+                    {step === 2 && Array.from({length: 3}).map((_, i) => (
+                        <motion.line key={i} x1={carX.get() - 20} y1={60} x2={carX.get() - 40} y2={60} stroke={textColor} strokeWidth={1.5} initial={{opacity:0}} animate={{opacity:[0, 0.8, 0], x1: carX.get(), x2: carX.get() - 50}} transition={{duration: 0.5, repeat: Infinity, delay: i * 0.1}} />
+                    ))}
+                    
+                    {/* FIX: Added scaleX: -1 to flip the emojis to face right */}
+                    <motion.text style={{ x: carX, scaleX: -1 }} y="68" fontSize="24" textAnchor="middle">🏎️</motion.text>
+                    <motion.text style={{ x: cyclistX, scaleX: -1 }} y="68" fontSize="24" textAnchor="middle">🚴</motion.text>
+                </svg>
+                <AnimatePresence>
+                {step >= 3 && (
+                    <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.2}} className="absolute top-0 w-full">
+                        <div className="absolute p-2 rounded-lg bg-slate-200/80 dark:bg-slate-800/80 text-xs" style={{transform: `translateX(${carX.get() - 80}px)`}}>
+                            <p>Dist: 80m, Time: 4.0s</p>
+                            <p className="font-bold">Rate: 20 m/s <motion.span initial={{scale:0}} animate={{scale:1}}>🚀</motion.span></p>
+                            <motion.div initial={{y: 20, opacity: 0}} animate={{y:0, opacity:1}} className="absolute -top-6 left-1/2 -translate-x-1/2 text-2xl">🏆</motion.div>
                         </div>
-                         <div className="absolute p-2 rounded bg-slate-200/80 dark:bg-slate-800/80 text-xs" style={{top: '80px', left: `${(110 + 30)/400 * 100}%`}}>
-                            <p>Dist: 20m, Time: 4s</p>
-                            <p className="font-bold">Rate: 5 m/s</p>
+                         <div className="absolute p-2 rounded-lg bg-slate-200/80 dark:bg-slate-800/80 text-xs" style={{top: '80px', transform: `translateX(${cyclistX.get() - 80}px)`}}>
+                            <p>Dist: 20m, Time: 4.0s</p>
+                            <p className="font-bold">Rate: 5 m/s <motion.span initial={{scale:0}} animate={{scale:1}}>🐢</motion.span></p>
                         </div>
                     </motion.div>
-                 )}
-                 </AnimatePresence>
+                )}
+                </AnimatePresence>
             </div>
-             <div className="text-center h-6 mt-2">
+            <div className="text-center h-6 mt-2">
                  <AnimatePresence mode="wait">
                     <motion.p key={step} className="text-sm text-slate-500 dark:text-slate-400" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
-                        {step === 0 && "Click 'Start Race' to begin."}
-                        {step === 1 && "The race is in progress..."}
-                        {step === 2 && "Let's calculate the rate of motion for each."}
-                        {step === 3 && "The car had a higher rate (speed)!"}
+                        {step <= 1 && "Click 'Start Race' to begin."}
+                        {step === 2 && "The race is in progress..."}
+                        {step === 3 && "Let's calculate the rate of motion."}
+                        {step === 4 && "The car had the higher rate (speed)!"}
                     </motion.p>
                  </AnimatePresence>
-             </div>
-             <div className="flex items-center justify-center space-x-4 mt-2">
-                <motion.button onClick={handleNext} disabled={step === 1 || step === totalSteps} className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 text-white font-bold px-4 py-2 text-sm rounded-lg" whileHover={{ scale: (step !== 1 && step < totalSteps) ? 1.05 : 1}} whileTap={{ scale: (step !== 1 && step < totalSteps) ? 0.95 : 1 }}>
+            </div>
+            <div className="flex items-center justify-center space-x-4 mt-2">
+                <motion.button onClick={step === 0 ? runCountdown : handleNext} disabled={step === 1 || step === 2} className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 text-white font-bold px-4 py-2 text-sm rounded-lg" whileHover={{ scale: (step !== 1 && step !== 2) ? 1.05 : 1}} whileTap={{ scale: (step !== 1 && step !== 2) ? 0.95 : 1 }}>
                     {step === 0 ? 'Start Race' : 'Next'}
                 </motion.button>
                 <motion.button onClick={handleReset} className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-4 py-2 text-sm rounded-lg" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -123,12 +149,7 @@ export default function AvgSpeedVelocitySlide1() {
     {
       id: 'rate-of-motion-q1',
       question: 'To describe how fast an object is moving, what two quantities do you absolutely need to measure?',
-      options: [
-        'The object\'s weight and size',
-        'The distance it traveled and the time it took',
-        'The direction it went and its starting position',
-        'The object\'s color and the weather'
-      ],
+      options: [ 'The object\'s weight and size', 'The distance it traveled and the time it took', 'The direction it went and its starting position', 'The object\'s color and the weather' ],
       correctAnswer: 'The distance it traveled and the time it took',
       explanation: 'Rate of motion (speed or velocity) is all about how distance or position changes over time. You need both measurements to calculate it.'
     },
@@ -200,7 +221,6 @@ export default function AvgSpeedVelocitySlide1() {
           </div>
         </div>
         
-        {/* --- Right Column - NOW CONTAINS ANIMATION AND QUIZ --- */}
         <div className="space-y-6">
             <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                 <RateOfMotionAnimation isDarkMode={isDarkMode} />
@@ -214,9 +234,7 @@ export default function AvgSpeedVelocitySlide1() {
                   onClick={() => handleQuizAnswer(option)} 
                   disabled={showFeedback}
                   className={`w-full p-3 rounded-lg border-2 text-left transition-all text-base md:text-lg ${
-                    showFeedback && selectedAnswer === option
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
-                      : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                    showFeedback && selectedAnswer === option ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
                   } ${showFeedback ? 'cursor-default' : 'cursor-pointer'}`}
                   whileHover={!showFeedback ? { scale: 1.02 } : {}} 
                   whileTap={!showFeedback ? { scale: 0.98 } : {}}

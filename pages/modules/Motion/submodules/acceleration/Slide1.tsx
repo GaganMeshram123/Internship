@@ -5,7 +5,7 @@ import { InteractionResponse } from '../../../common-components/concept';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 
-// --- Animation component for the Three Ways to Accelerate ---
+// --- REVISED COMPONENT with Conditional Roads ---
 const AccelerationDemo = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const [step, setStep] = useState(0); // 0: initial, 1: speed up, 2: slow down, 3: change direction
     const totalSteps = 3;
@@ -18,27 +18,14 @@ const AccelerationDemo = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const [speedDisplay, setSpeedDisplay] = useState("0");
     const [direction, setDirection] = useState("East");
     
-    // FIX: State to hold the SVG transform attribute for the car
     const [carTransform, setCarTransform] = useState("translate(50, 45)");
 
     useEffect(() => {
-        const unsubscribe = speed.on("change", (latest) => {
-            setSpeedDisplay(latest.toFixed(0));
-        });
-        return unsubscribe;
-    }, [speed]);
-
-    const runAnimation = (newStep: number) => {
-        setStep(newStep);
-        if (newStep === 1) { // Speed Up
-            setDirection("East");
-            animate(speed, 20, { duration: 2 });
-            animate(50, 350, { duration: 2, onUpdate: (latest) => setCarTransform(`translate(${latest}, 45)`), onComplete: () => setStep(1.5) });
-        } else if (newStep === 2) { // Slow Down
-            animate(speed, 5, { duration: 2 });
-            animate(50, 350, { duration: 2, onUpdate: (latest) => setCarTransform(`translate(${latest}, 45)`), onComplete: () => setStep(2.5) });
-        } else if (newStep === 3) { // Change Direction
-            speed.set(10); // Set a constant speed for the turn
+        speed.on("change", (latest) => setSpeedDisplay(latest.toFixed(0)));
+        
+        // This useEffect handles the path animation AFTER the path is rendered
+        if (step === 3) {
+            speed.set(10);
             const path = document.querySelector("#car-turn-path") as SVGPathElement;
             if (path) {
                 const pathLength = path.getTotalLength();
@@ -57,6 +44,22 @@ const AccelerationDemo = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     onComplete: () => setStep(3.5)
                 });
             }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [step]);
+
+    const runAnimation = (newStep: number) => {
+        setStep(newStep); // This triggers the useEffect if newStep is 3
+        if (newStep === 1) { // Speed Up
+            setDirection("East");
+            setCarTransform("translate(50, 45)");
+            animate(speed, 20, { duration: 2 });
+            animate(50, 350, { duration: 2, onUpdate: (latest) => setCarTransform(`translate(${latest}, 45)`), onComplete: () => setStep(1.5) });
+        } else if (newStep === 2) { // Slow Down
+            setCarTransform("translate(50, 45)");
+            speed.set(20);
+            animate(speed, 5, { duration: 2 });
+            animate(50, 350, { duration: 2, ease: "easeOut", onUpdate: (latest) => setCarTransform(`translate(${latest}, 45)`), onComplete: () => setStep(2.5) });
         }
     };
     
@@ -93,11 +96,16 @@ const AccelerationDemo = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </div>
             <div className="relative w-full h-40 flex-grow">
                  <svg viewBox="0 0 400 120" className="w-full h-full overflow-visible">
-                    {/* Roads */}
-                    <path d="M 0 50 H 400" stroke={roadColor} strokeWidth="10" />
-                    <path id="car-turn-path" d="M 50 100 A 80 80 0 0 1 180 30" stroke={roadColor} strokeWidth="10" fill="none" />
-
-                    {/* Car - now using transform attribute */}
+                    <AnimatePresence>
+                        {/* Conditionally render STRAIGHT road */}
+                        {(step === 1 || step === 1.5 || step === 2 || step === 2.5) && (
+                             <motion.path key="straight" d="M 0 50 H 400" stroke={roadColor} strokeWidth="10" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}/>
+                        )}
+                        {/* Conditionally render CURVED road */}
+                        {(step === 3 || step === 3.5) && (
+                            <motion.path key="curved" id="car-turn-path" d="M 50 100 A 80 80 0 0 1 180 30" stroke={roadColor} strokeWidth="10" fill="none" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}/>
+                        )}
+                    </AnimatePresence>
                     <g transform={carTransform}>
                          <path d="M10 0 L-10 0 L-15 5 L-10 10 L10 10 L15 5 Z" fill={carColor}/>
                     </g>
@@ -105,7 +113,7 @@ const AccelerationDemo = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </div>
              <div className="text-center h-10 mt-2">
                 <AnimatePresence mode="wait">
-                    <motion.div key={step} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
+                    <motion.div key={Math.floor(step)} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
                         {step === 0 && <p className="text-sm text-slate-500 dark:text-slate-400">Click 'Start' to see the types of acceleration.</p>}
                         {currentMessage && (
                             <>
@@ -216,7 +224,6 @@ export default function AccelerationSlide1() {
           </div>
         </div>
         
-        {/* --- Right Column - NOW CONTAINS ANIMATION AND QUIZ --- */}
         <div className="space-y-6">
             <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                 <AccelerationDemo isDarkMode={isDarkMode} />
@@ -233,9 +240,7 @@ export default function AccelerationSlide1() {
                     onClick={() => handleQuizAnswer(option)} 
                     disabled={showFeedback}
                     className={`w-full p-3 my-1 rounded-lg border-2 text-left transition-all text-base md:text-lg ${
-                      showFeedback && selectedAnswer === option
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                      showFeedback && selectedAnswer === option ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
                     } ${showFeedback ? 'cursor-default' : 'cursor-pointer'}`}
                     whileHover={!showFeedback ? { scale: 1.02 } : {}} 
                     whileTap={!showFeedback ? { scale: 0.98 } : {}}

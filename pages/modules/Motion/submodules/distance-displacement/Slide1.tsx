@@ -6,7 +6,7 @@ import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
 
-// --- FINAL REVISED COMPONENT with increased button margin ---
+// --- FINAL REVISED COMPONENT with definitive positioning fix ---
 const SimpleNumberLineAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const [step, setStep] = useState(0); 
     const totalSteps = 3;
@@ -18,7 +18,6 @@ const SimpleNumberLineAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
     
     const treeColor = isDarkMode ? '#22c55e' : '#16a34a';
     const mailboxColor = isDarkMode ? '#ef4444' : '#dc2626';
-    const personColor = highlightColor;
 
     const treePos = 10;
     const mailboxPos = 40;
@@ -55,12 +54,12 @@ const SimpleNumberLineAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
     const TreeIcon = () => <path d="M12 1.5A2.5 2.5 0 009.5 4h-3A2.5 2.5 0 004 6.5V9h8V6.5A2.5 2.5 0 009.5 4h-3A2.5 2.5 0 004 1.5H3v13h10V1.5h-1z" fill={treeColor} />;
     const MailboxIcon = () => <path d="M14 4H2a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-4zM4 12V8h1V6H4V5h4v1h1v2H9v4H7V9H5v3H4zm9-1a1 1 0 11-2 0V7a1 1 0 112 0v4z" fill={mailboxColor} />;
+    
     const PersonIcon = () => (
         <motion.g transformOrigin="center" animate={{ scaleX: isFlipped ? -1 : 1 }}>
-            <g fill={personColor}>
-                <circle cx="8" cy="4" r="3.5" />
-                <path d="M12 7H4a1 1 0 00-1 1v7h2.5v-5h3v5h2.5V8a1 1 0 00-1-1z" />
-            </g>
+            <text x="0" y="0" fontSize="24" textAnchor="middle" dominantBaseline="middle">
+                🚶
+            </text>
         </motion.g>
     );
 
@@ -78,37 +77,39 @@ const SimpleNumberLineAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     <AnimatePresence>
                         {step >= 1 && (
                             <motion.svg key="scene" className="absolute w-full h-full" viewBox="0 0 400 150" initial="hidden" animate="visible" exit="exit" variants={fadeVariants}>
-                                <defs>
-                                    <marker id="arrow-right" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7">
-                                        <path d="M 0 0 L 10 5 L 0 10 z" fill={lineColor} />
-                                    </marker>
-                                    <marker id="arrow-left" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="7" markerHeight="7">
-                                        <path d="M 10 0 L 0 5 L 10 10 z" fill={lineColor} />
-                                    </marker>
-                                </defs>
-                                <line x1="10" y1="60" x2="390" y2="60" stroke={lineColor} strokeWidth="3" markerEnd="url(#arrow-right)" markerStart="url(#arrow-left)" />
-                                
-                                {[-20, -10, 0, 10, 20, 30, 40].map(pos => (
-                                    <g key={pos}>
-                                        <line x1={posToPx(pos)} y1="55" x2={posToPx(pos)} y2="65" stroke={lineColor} strokeWidth="2" />
-                                        <text x={posToPx(pos)} y="80" textAnchor="middle" fontSize="12" fill={textColor}>{`${pos}m`}</text>
-                                    </g>
-                                ))}
-                                <text x={posToPx(0)} y="47" textAnchor="middle" fontSize="12" fill={highlightColor} fontWeight="bold">Origin</text>
-                                
-                                <g transform={`translate(${posToPx(treePos) - 10}, 28) scale(1.5)`}><TreeIcon /></g>
-                                <g transform={`translate(${posToPx(mailboxPos) - 10}, 28) scale(1.5)`}><MailboxIcon /></g>
+                                {/* FIX: Wrapped all visual elements in a group and translated it down */}
+                                <g transform="translate(0, 25)">
+                                    <defs>
+                                        <marker id="arrow-right-final" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7">
+                                            <path d="M 0 0 L 10 5 L 0 10 z" fill={lineColor} />
+                                        </marker>
+                                        <marker id="arrow-left-final" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="7" markerHeight="7">
+                                            <path d="M 10 0 L 0 5 L 10 10 z" fill={lineColor} />
+                                        </marker>
+                                    </defs>
+                                    <line x1="10" y1="60" x2="390" y2="60" stroke={lineColor} strokeWidth="3" markerEnd="url(#arrow-right-final)" markerStart="url(#arrow-left-final)" />
+                                    
+                                    {[-20, -10, 0, 10, 20, 30, 40].map(pos => (
+                                        <g key={pos}>
+                                            <line x1={posToPx(pos)} y1="55" x2={posToPx(pos)} y2="65" stroke={lineColor} strokeWidth="2" />
+                                            <text x={posToPx(pos)} y="80" textAnchor="middle" fontSize="12" fill={textColor}>{`${pos}m`}</text>
+                                        </g>
+                                    ))}
+                                    <text x={posToPx(0)} y="47" textAnchor="middle" fontSize="12" fill={highlightColor} fontWeight="bold">Origin</text>
+                                    
+                                    <g transform={`translate(${posToPx(treePos) - 10}, 28) scale(1.5)`}><TreeIcon /></g>
+                                    <g transform={`translate(${posToPx(mailboxPos) - 10}, 28) scale(1.5)`}><MailboxIcon /></g>
 
-                                <motion.g style={{ x: personX }} transform="translate(-8, 28) scale(1.8)">
-                                    <PersonIcon />
-                                </motion.g>
+                                    <motion.g style={{ x: personX }} transform="translate(0, 40)">
+                                        <PersonIcon />
+                                    </motion.g>
+                                </g>
                             </motion.svg>
                         )}
                     </AnimatePresence>
                 </div>
             </div>
             
-            {/* FIX: Increased bottom margin to mb-4 for more space */}
             <div className="text-center h-12 flex items-center justify-center mt-4 mb-4">
                 <AnimatePresence mode="wait">
                      <motion.p key={step} className="text-xl text-slate-500 dark:text-slate-400" initial="hidden" animate="visible" exit="exit" variants={fadeVariants}>

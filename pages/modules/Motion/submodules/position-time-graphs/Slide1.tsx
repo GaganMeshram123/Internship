@@ -5,7 +5,7 @@ import { InteractionResponse } from '../../../common-components/concept';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 
-// --- NEW COMPONENT: An illustrative SVG graph ---
+// --- UPDATED COMPONENT: Graph shifted right to create more margin for the Y-axis label ---
 const SimplePositionTimeGraph = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const textColor = isDarkMode ? '#cbd5e1' : '#475569';
   const lineColor = isDarkMode ? '#64748b' : '#94a3b8';
@@ -15,9 +15,9 @@ const SimplePositionTimeGraph = ({ isDarkMode }: { isDarkMode: boolean }) => {
     <div className="mt-6">
       <svg viewBox="0 0 300 200" className="w-full h-auto" aria-labelledby="graphTitle">
         <title id="graphTitle">A simple position-time graph showing constant positive velocity.</title>
-        {/* Axis Lines */}
-        <line x1="30" y1="170" x2="280" y2="170" stroke={lineColor} strokeWidth="2" markerEnd="url(#arrow)" />
-        <line x1="30" y1="170" x2="30" y2="20" stroke={lineColor} strokeWidth="2" markerEnd="url(#arrow)" />
+        {/* Axis Lines (Shifted right by 10 units) */}
+        <line x1="40" y1="170" x2="290" y2="170" stroke={lineColor} strokeWidth="2" markerEnd="url(#arrow)" />
+        <line x1="40" y1="170" x2="40" y2="20" stroke={lineColor} strokeWidth="2" markerEnd="url(#arrow)" />
 
         {/* Arrowhead Definition */}
         <defs>
@@ -26,35 +26,35 @@ const SimplePositionTimeGraph = ({ isDarkMode }: { isDarkMode: boolean }) => {
           </marker>
         </defs>
 
-        {/* Axis Labels */}
-        <text x="155" y="195" textAnchor="middle" fill={textColor} fontSize="14">Time (t) in seconds</text>
-        <text x="15" y="100" textAnchor="middle" transform="rotate(-90 15 100)" fill={textColor} fontSize="14">Position (x) in meters</text>
+        {/* Axis Labels (Restored full label, shifted right) */}
+        <text x="165" y="195" textAnchor="middle" fill={textColor} fontSize="14">Time (t) in seconds</text>
+        <text x="15" y="105" textAnchor="middle" transform="rotate(-90 15 105)" fill={textColor} fontSize="14">Position (x) in meters</text>
 
-        {/* Ticks and Gridlines */}
+        {/* Ticks and Gridlines (Shifted right) */}
         <g fontSize="10" fill={textColor} textAnchor="middle">
-          <text x="30" y="185">0</text>
-          <text x="155" y="185">5s</text>
-          <text x="280" y="185">10s</text>
+          <text x="40" y="185">0</text>
+          <text x="165" y="185">5s</text>
+          <text x="290" y="185">10s</text>
         </g>
         <g fontSize="10" fill={textColor} textAnchor="end">
-          <text x="25" y="175">0m</text>
-          <text x="25" y="95">5m</text>
-          <text x="25" y="20">10m</text>
+          <text x="35" y="175">0m</text>
+          <text x="35" y="95">5m</text>
+          <text x="35" y="20">10m</text>
         </g>
         
-        {/* The motion graph line */}
-        <line x1="30" y1="170" x2="280" y2="20" stroke={highlightColor} strokeWidth="2.5" />
+        {/* The motion graph line (Shifted right) */}
+        <line x1="40" y1="170" x2="290" y2="20" stroke={highlightColor} strokeWidth="2.5" />
 
-        {/* Annotation: Highlight a point */}
-        <circle cx="155" cy="95" r="4" fill={highlightColor} />
-        <text x="160" y="90" fill={highlightColor} fontSize="12" fontWeight="bold">(5s, 5m)</text>
-        <text x="160" y="105" fill={highlightColor} fontSize="10">At 5s, position is 5m.</text>
+        {/* Annotation: Highlight a point (Shifted right) */}
+        <circle cx="165" cy="95" r="4" fill={highlightColor} />
+        <text x="190" y="90" fill={highlightColor} fontSize="12" fontWeight="bold">(5s, 5m)</text>
+        <text x="190" y="105" fill={highlightColor} fontSize="10">At 5s, position is 5m.</text>
 
-        {/* Annotation: Slope */}
-        <path d="M 155 170 L 155 95 L 30 95" stroke={highlightColor} strokeWidth="1" strokeDasharray="3 3" fill="none" />
-        <text x="92.5" y="85" textAnchor="middle" fill={highlightColor} fontSize="12" fontWeight="bold">Slope = Velocity</text>
-        <text x="160" y="132.5" fill={highlightColor} fontSize="10">Δx (rise)</text>
-        <text x="92.5" y="165" textAnchor="middle" fill={highlightColor} fontSize="10">Δt (run)</text>
+        {/* Annotation: Slope (Recalculated and shifted right) */}
+        <path d="M 165 170 L 165 95 L 40 95" stroke={highlightColor} strokeWidth="1" strokeDasharray="3 3" fill="none" />
+        <text x="102.5" y="80" textAnchor="middle" fill={highlightColor} fontSize="12" fontWeight="bold">Slope = Velocity</text>
+        <text x="170" y="132.5" fill={highlightColor} fontSize="10">Δx (rise)</text>
+        <text x="102.5" y="165" textAnchor="middle" fill={highlightColor} fontSize="10">Δt (run)</text>
 
       </svg>
     </div>
@@ -110,7 +110,7 @@ export default function PositionTimeGraphsSlide1() {
     }
   };
 
-  const handleNextQuestion = () => { 
+  const handleNextQuestion = () => {
     const newAnsweredState = [...questionsAnswered]; 
     newAnsweredState[currentQuestionIndex] = true; 
     setQuestionsAnswered(newAnsweredState); 
@@ -150,7 +150,7 @@ export default function PositionTimeGraphsSlide1() {
 
             <div className="bg-blue-50 dark:bg-blue-900/30 p-4 mt-6 rounded-lg border-l-4 border-blue-400">
              <p className="text-lg font-medium text-blue-800 dark:text-blue-200">
-               <strong>Key Idea:</strong> The graph shows *where* an object is at *any given time*.
+                <strong>Key Idea:</strong> The graph shows *where* an object is at *any given time*.
              </p>
             </div>
           </div>
