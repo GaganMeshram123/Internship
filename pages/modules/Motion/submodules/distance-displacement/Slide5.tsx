@@ -183,7 +183,7 @@ export default function DistanceDisplacementSlide5() {
 
   const slideContent = (
     <div className={`w-full min-h-screen ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto /* max-w-7xl */">
         <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg space-y-6`}>
            <h3 className="text-2xl font-bold text-blue-500">Putting It All Together</h3>
           <p className="text-lg leading-relaxed">
