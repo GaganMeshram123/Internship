@@ -1,102 +1,127 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { InteractionResponse } from '../../../common-components/concept';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
 
-// --- Simplified, cleaner animation component ---
+// --- FINAL REVISED COMPONENT with increased button margin ---
 const SimpleNumberLineAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
-    const [step, setStep] = useState(0); // 0: initial, 1: number line, 2: positions, 3: motion
+    const [step, setStep] = useState(0); 
     const totalSteps = 3;
+    const [isFlipped, setIsFlipped] = useState(false);
 
     const textColor = isDarkMode ? '#cbd5e1' : '#475569';
     const lineColor = isDarkMode ? '#64748b' : '#94a3b8';
     const highlightColor = '#3b82f6';
-    const ballColor = isDarkMode ? '#f87171' : '#ef4444'; // Red
+    
+    const treeColor = isDarkMode ? '#22c55e' : '#16a34a';
+    const mailboxColor = isDarkMode ? '#ef4444' : '#dc2626';
+    const personColor = highlightColor;
 
-    const posToPx = (pos: number) => 40 + (pos + 10) * 8; // Mapping meters to pixels
-    const initialPos = 10;
-    const finalPos = 40;
+    const treePos = 10;
+    const mailboxPos = 40;
+    const finalPos = -20;
+    
+    const posToPx = (pos: number) => 140 + pos * 6;
+    
+    const personX = useMotionValue(posToPx(treePos));
+
+    const handleNext = () => {
+        const newStep = Math.min(step + 1, totalSteps);
+        setStep(newStep);
+
+        if (newStep === 2) {
+             setIsFlipped(false);
+             animate(personX, posToPx(mailboxPos), { duration: 2.5, ease: "easeInOut" });
+        } else if (newStep === 3) {
+             setIsFlipped(true);
+             animate(personX, posToPx(finalPos), { duration: 4, ease: "easeInOut" });
+        }
+    };
+
+    const handleReset = () => {
+        setStep(0);
+        setIsFlipped(false);
+        personX.set(posToPx(treePos));
+    };
 
     const fadeVariants = {
         hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { duration: 0.5 } },
+        visible: { opacity: 1, transition: { duration: 0.5, delay: 0.2 } },
         exit: { opacity: 0 }
     };
 
-    const Pointer = ({ label, pos, y = 20 }: { label: string, pos: number, y?: number }) => (
-        <motion.g initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <line x1={posToPx(pos)} y1={y + 25} x2={posToPx(pos)} y2={45} stroke={textColor} strokeWidth="1" />
-            <circle cx={posToPx(pos)} cy={y + 15} r="10" stroke={textColor} fill={isDarkMode ? '#334155' : '#f1f5f9'} />
-            <text x={posToPx(pos)} y={y + 19} textAnchor="middle" fontSize="10" fill={textColor} fontWeight="bold">{label}</text>
+    const TreeIcon = () => <path d="M12 1.5A2.5 2.5 0 009.5 4h-3A2.5 2.5 0 004 6.5V9h8V6.5A2.5 2.5 0 009.5 4h-3A2.5 2.5 0 004 1.5H3v13h10V1.5h-1z" fill={treeColor} />;
+    const MailboxIcon = () => <path d="M14 4H2a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-4zM4 12V8h1V6H4V5h4v1h1v2H9v4H7V9H5v3H4zm9-1a1 1 0 11-2 0V7a1 1 0 112 0v4z" fill={mailboxColor} />;
+    const PersonIcon = () => (
+        <motion.g transformOrigin="center" animate={{ scaleX: isFlipped ? -1 : 1 }}>
+            <g fill={personColor}>
+                <circle cx="8" cy="4" r="3.5" />
+                <path d="M12 7H4a1 1 0 00-1 1v7h2.5v-5h3v5h2.5V8a1 1 0 00-1-1z" />
+            </g>
         </motion.g>
     );
 
-    return (
-        <div className="h-full flex flex-col">
-            <h3 className="text-2xl font-bold mb-4 text-blue-500">Interactive Visualization</h3>
-            <div className="relative w-full h-48 flex items-center justify-center overflow-hidden">
-                <AnimatePresence>
-                    {step >= 1 && (
-                        <motion.svg key="number-line-base" className="absolute w-full h-full" initial="hidden" animate="visible" exit="exit" variants={fadeVariants}>
-                            <line x1="10" y1="50" x2="390" y2="50" stroke={lineColor} strokeWidth="2" markerEnd="url(#num-arrow)" markerStart="url(#num-arrow-left)" />
-                            <defs>
-                                <marker id="num-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill={lineColor} /></marker>
-                                <marker id="num-arrow-left" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 10 0 L 0 5 L 10 10 z" fill={lineColor} /></marker>
-                            </defs>
-                            
-                            {/* Ticks and Labels */}
-                            {[-10, 0, 10, 20, 30, 40].map(pos => (
-                                <g key={pos}>
-                                    <line x1={posToPx(pos)} y1="45" x2={posToPx(pos)} y2="55" stroke={lineColor} strokeWidth="1.5" />
-                                    <text x={posToPx(pos)} y="70" textAnchor="middle" fontSize="10" fill={textColor}>{`${pos}m`}</text>
-                                </g>
-                            ))}
-                            <motion.text x={posToPx(0)} y="85" textAnchor="middle" fontSize="10" fill={highlightColor} fontWeight="bold" initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.5}}>
-                                Origin
-                            </motion.text>
-                        </motion.svg>
-                    )}
+    const messages: {[key: number]: string} = {
+        1: "Let's set the scene: a person starts at the tree (+10m).",
+        2: "Motion: The person walks from the tree to the mailbox (+40m).",
+        3: "Motion continues: They walk back past the origin to -20m.",
+    };
 
-                    {step >= 2 && (
-                        <motion.svg key="positions" className="absolute w-full h-full" initial="hidden" animate="visible" exit="exit" variants={fadeVariants}>
-                            <Pointer label="A" pos={initialPos} />
-                            <Pointer label="B" pos={finalPos} />
-                        </motion.svg>
-                    )}
-                    
-                    {step === 3 && (
-                        <motion.svg key="motion" className="absolute w-full h-full">
-                           <motion.circle 
-                                cy="50" r="5" fill={ballColor}
-                                initial={{ cx: posToPx(initialPos) }}
-                                animate={{ cx: posToPx(finalPos) }}
-                                transition={{ duration: 2, ease: "easeInOut" }}
-                            />
-                        </motion.svg>
-                    )}
-                </AnimatePresence>
-                
-                {/* Textual feedback area */}
-                <div className="absolute bottom-0 w-full text-center">
-                    <AnimatePresence mode="wait">
-                         <motion.p key={step} className="text-lg text-slate-500 dark:text-slate-400" initial="hidden" animate="visible" exit="exit" variants={fadeVariants}>
-                            {step === 0 && "Click Start to begin."}
-                            {step === 1 && "This is our number line, with the Origin at 0m."}
-                            {step === 2 && "Let's define an Initial Position (A) and a Final Position (B)."}
-                            {step === 3 && "Motion is the change in position from A to B."}
-                        </motion.p>
+    return (
+        <div className="flex flex-col h-full justify-between">
+            <div>
+                <h3 className="text-2xl font-bold mb-4 text-blue-500">Interactive Visualization</h3>
+                <div className="relative w-full h-48">
+                    <AnimatePresence>
+                        {step >= 1 && (
+                            <motion.svg key="scene" className="absolute w-full h-full" viewBox="0 0 400 150" initial="hidden" animate="visible" exit="exit" variants={fadeVariants}>
+                                <defs>
+                                    <marker id="arrow-right" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7">
+                                        <path d="M 0 0 L 10 5 L 0 10 z" fill={lineColor} />
+                                    </marker>
+                                    <marker id="arrow-left" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="7" markerHeight="7">
+                                        <path d="M 10 0 L 0 5 L 10 10 z" fill={lineColor} />
+                                    </marker>
+                                </defs>
+                                <line x1="10" y1="60" x2="390" y2="60" stroke={lineColor} strokeWidth="3" markerEnd="url(#arrow-right)" markerStart="url(#arrow-left)" />
+                                
+                                {[-20, -10, 0, 10, 20, 30, 40].map(pos => (
+                                    <g key={pos}>
+                                        <line x1={posToPx(pos)} y1="55" x2={posToPx(pos)} y2="65" stroke={lineColor} strokeWidth="2" />
+                                        <text x={posToPx(pos)} y="80" textAnchor="middle" fontSize="12" fill={textColor}>{`${pos}m`}</text>
+                                    </g>
+                                ))}
+                                <text x={posToPx(0)} y="47" textAnchor="middle" fontSize="12" fill={highlightColor} fontWeight="bold">Origin</text>
+                                
+                                <g transform={`translate(${posToPx(treePos) - 10}, 28) scale(1.5)`}><TreeIcon /></g>
+                                <g transform={`translate(${posToPx(mailboxPos) - 10}, 28) scale(1.5)`}><MailboxIcon /></g>
+
+                                <motion.g style={{ x: personX }} transform="translate(-8, 28) scale(1.8)">
+                                    <PersonIcon />
+                                </motion.g>
+                            </motion.svg>
+                        )}
                     </AnimatePresence>
                 </div>
             </div>
+            
+            {/* FIX: Increased bottom margin to mb-4 for more space */}
+            <div className="text-center h-12 flex items-center justify-center mt-4 mb-4">
+                <AnimatePresence mode="wait">
+                     <motion.p key={step} className="text-xl text-slate-500 dark:text-slate-400" initial="hidden" animate="visible" exit="exit" variants={fadeVariants}>
+                        {messages[step] || "Click Start to begin."}
+                    </motion.p>
+                </AnimatePresence>
+            </div>
 
-            <div className="flex items-center justify-center space-x-4 mt-4">
-                <motion.button onClick={() => setStep(s => Math.min(s + 1, totalSteps))} disabled={step === totalSteps} className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 text-white font-bold px-5 py-2 rounded-lg transition-colors" whileHover={{ scale: step < totalSteps ? 1.05 : 1 }} whileTap={{ scale: step < totalSteps ? 0.95 : 1 }}>
+            <div className="flex items-center justify-center space-x-4">
+                <motion.button onClick={handleNext} disabled={step >= totalSteps} className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 text-white font-bold px-5 py-2 rounded-lg" whileHover={{ scale: step < totalSteps ? 1.05 : 1 }} whileTap={{ scale: step < totalSteps ? 0.95 : 1 }}>
                     {step === 0 ? 'Start' : 'Next'}
                 </motion.button>
-                <motion.button onClick={() => setStep(0)} className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-5 py-2 rounded-lg transition-colors" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <motion.button onClick={handleReset} className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-5 py-2 rounded-lg" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     Reset
                 </motion.button>
             </div>
@@ -167,7 +192,6 @@ export default function DistanceDisplacementSlide1() {
     <div className={`w-full min-h-screen ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'} transition-colors duration-300`}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
         
-        {/* Left Column - Theory */}
         <div className="space-y-6">
           <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
             <h3 className="text-2xl font-bold mb-4 text-blue-500">The Starting Point: Position</h3>
@@ -202,14 +226,11 @@ export default function DistanceDisplacementSlide1() {
           </div>
         </div>
 
-        {/* --- Right Column - NOW CONTAINS ANIMATION AND QUIZ --- */}
         <div className="space-y-6">
-            {/* Animation Box */}
             <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
               <SimpleNumberLineAnimation isDarkMode={isDarkMode} />
             </div>
 
-            {/* Concept Check Quiz Box */}
             <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Concept Check</h3>
