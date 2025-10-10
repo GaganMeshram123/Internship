@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { InteractionResponse } from '../../../common-components/concept';
-import { useThemeContext } from '@/lib/Themed';
+import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 
 // --- TYPE DEFINITIONS for this component ---

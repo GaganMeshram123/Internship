@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { InteractionResponse } from '../../../common-components/concept';
-import { useThemeContext } from '@/lib/Themed';
+import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 
 // This component acts as a container or title card for the assessment.

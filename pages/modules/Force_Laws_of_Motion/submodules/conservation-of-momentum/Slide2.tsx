@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { InteractionResponse } from '../../../common-components/concept';
-import { useThemeContext } from '@/lib/Themed';
+import { useThemeContext } from '@/lib/ThemeContext';
 import { InlineMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 
