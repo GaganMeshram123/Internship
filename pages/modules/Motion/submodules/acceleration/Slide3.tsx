@@ -42,7 +42,6 @@ const scenarios: Scenario[] = [
         desc: "Slowing down in the positive direction (v →, a ←).",
         vDirection: 1, carStart: 50, carEnd: 200, velStart: 80, velEnd: 10, aDirection: -1, ease: 'easeOut', duration: 2.5
     },
-    // --- NEW SCENARIO ADDED HERE ---
     {
         id: 'zero_accel',
         title: "Zero Acceleration",
@@ -100,6 +99,8 @@ const VectorArrowAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
     const currentScenario = scenarios[scenarioIndex];
 
+    const velocityLabelX = (velocityWidth.get() * currentScenario.vDirection) / 2;
+
     return (
         <div className="h-full flex flex-col">
             <h3 className="text-2xl font-bold text-blue-500 mb-2">Visualizing Acceleration Vectors</h3>
@@ -119,30 +120,30 @@ const VectorArrowAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     {/* Velocity Arrow */}
                     <motion.g style={{ x: carX, y: 30 }}>
                         <motion.line 
-                             stroke={velocityColor} 
-                             strokeWidth="3"
-                             initial={{pathLength: 0}} animate={{pathLength: 1}}
-                             d={`M 0 0 L ${velocityWidth.get() * currentScenario.vDirection} 0`}
+                            stroke={velocityColor} 
+                            strokeWidth="3"
+                            initial={{pathLength: 0}} animate={{pathLength: 1}}
+                            d={`M 0 0 L ${velocityWidth.get() * currentScenario.vDirection} 0`}
                         />
                         <motion.path 
                             fill={velocityColor}
                             d={currentScenario.vDirection === 1 ? "M 0 0 L -5 -4 L -5 4 z" : "M 0 0 L 5 -4 L 5 4 z"}
                             style={{ x: velocityWidth.get() * currentScenario.vDirection }}
                          />
-                         <motion.text y="-5" textAnchor="middle" fill={velocityColor} fontSize="12" style={{ x: (velocityWidth.get() * currentScenario.vDirection) / 2 }}>v</motion.text>
+                        <motion.text y="-5" textAnchor="middle" fill={velocityColor} fontSize="14" style={{ x: velocityLabelX }}>v</motion.text>
                     </motion.g>
 
                     {/* Acceleration Arrow */}
                     <AnimatePresence>
                     {currentScenario.aDirection !== 0 && (
-                         <motion.g 
+                        <motion.g 
                             key={currentScenario.id}
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             style={{ x: carX, y: 15 }}
-                         >
+                        >
                             <path d={`M 0 0 L ${40 * currentScenario.aDirection} 0`} stroke={accelerationColor} strokeWidth="3" />
                             <path d={currentScenario.aDirection === 1 ? "M 40 0 L 35 -4 L 35 4 z" : "M -40 0 L -35 -4 L -35 4 z"} fill={accelerationColor}/>
-                            <text y="-5" x={20 * currentScenario.aDirection} textAnchor="middle" fill={accelerationColor} fontSize="12">a</text>
+                            <motion.text y="-5" x={20 * currentScenario.aDirection} textAnchor="middle" fill={accelerationColor} fontSize="14">a</motion.text>
                         </motion.g>
                     )}
                     </AnimatePresence>
