@@ -1,4 +1,4 @@
- import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { InteractionResponse } from '../../../common-components/concept';
@@ -132,7 +132,8 @@ export default function NewtonsFirstLawSlide3() {
     const slideContent = (
         <div className={`w-full h-full ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl h-full">
-                <div className="space-y-6 flex flex-col justify-center">
+                {/* --- THIS IS THE MODIFIED LINE --- */}
+                <div className="space-y-6 flex flex-col justify-start">
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                         <h3 className="text-2xl font-bold mb-4 text-blue-500">Net Force (ΣF)</h3>
                         <p className="text-lg leading-relaxed">The <strong>Net Force</strong> is the overall force acting on an object once all individual forces are combined. It's the sum of all pushes and pulls.</p>
