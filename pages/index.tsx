@@ -53,7 +53,8 @@ const getModules = async () => {
     'Linear-equations-and-functions',
     ' Solving-equations-with-one-unknown',
     'grade-2-math-operations',
-    'Motion'
+    'Motion',
+    'Force_Laws_of_Motion',
   ];
 
   for (const moduleName of moduleNames) {
