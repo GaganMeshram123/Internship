@@ -107,25 +107,26 @@ export default function NewtonsSecondLawSlide2() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl h-full">
                 
                 {/* --- Left Column: Explanations --- */}
-                <div className="space-y-6 flex flex-col justify-center">
+                {/* CHANGED: justify-center to justify-start */}
+                <div className="space-y-6 flex flex-col justify-start">
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                         <h3 className="text-2xl font-bold mb-4 text-blue-500">What is Net Force?</h3>
                         <p className="text-lg leading-relaxed mb-4">
-                           Objects often have multiple forces acting on them at once. The <strong>Net Force</strong> (<InlineMath>{'F_{net}'}</InlineMath> or <InlineMath>{'\\Sigma F'}</InlineMath>) is the vector sum of all these individual forces.
+                            Objects often have multiple forces acting on them at once. The <strong>Net Force</strong> (<InlineMath>{'F_{net}'}</InlineMath> or <InlineMath>{'\\Sigma F'}</InlineMath>) is the vector sum of all these individual forces.
                         </p>
                         <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-700 rounded-lg">
-                           <p className="font-semibold text-center text-lg">An object's acceleration depends ONLY on its mass and the <strong>net force</strong> acting on it.</p>
+                            <p className="font-semibold text-center text-lg">An object's acceleration depends ONLY on its mass and the <strong>net force</strong> acting on it.</p>
                         </div>
                     </div>
                     
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Combining Forces</h3>
                         <p className="text-lg leading-relaxed">
-                           In one dimension, calculating net force is straightforward:
+                            In one dimension, calculating net force is straightforward:
                         </p>
                         <ul className="list-disc list-inside space-y-2 text-lg mt-2">
-                           <li>Forces in the <strong>same direction</strong> add together.</li>
-                           <li>Forces in <strong>opposite directions</strong> subtract from each other.</li>
+                            <li>Forces in the <strong>same direction</strong> add together.</li>
+                            <li>Forces in <strong>opposite directions</strong> subtract from each other.</li>
                         </ul>
                     </div>
 
@@ -138,7 +139,8 @@ export default function NewtonsSecondLawSlide2() {
                 </div>
                 
                 {/* --- Right Column: Interactive Simulation --- */}
-                <div className="flex items-center justify-center">
+                {/* CHANGED: items-center to items-start */}
+                <div className="flex items-start justify-center">
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg w-full`}>
                         <NetForceSimulation isDarkMode={isDarkMode} />
                     </div>

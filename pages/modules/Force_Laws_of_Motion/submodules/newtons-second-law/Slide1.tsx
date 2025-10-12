@@ -60,9 +60,9 @@ const FmaSimulation = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
                     {/* Force Vector */}
                      <motion.g style={{ x: blockX, y: 65 }}>
-                         <path d={`M -20 0 L ${-20 - force} 0`} stroke={forceColor} strokeWidth="3" />
-                         <path d={`M ${-20 - force} 0 L ${-25 - force} -4 L ${-25 - force} 4 Z`} fill={forceColor}/>
-                    </motion.g>
+                          <path d={`M -20 0 L ${-20 - force} 0`} stroke={forceColor} strokeWidth="3" />
+                          <path d={`M ${-20 - force} 0 L ${-25 - force} -4 L ${-25 - force} 4 Z`} fill={forceColor}/>
+                      </motion.g>
                 </svg>
             </div>
              <div className="grid grid-cols-3 gap-2 mt-4 text-center">
@@ -100,11 +100,12 @@ export default function NewtonsSecondLawSlide1() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl h-full">
                 
                 {/* --- Left Column: Explanations --- */}
-                <div className="space-y-6 flex flex-col justify-center">
+                {/* CHANGED: justify-center to justify-start */}
+                <div className="space-y-6 flex flex-col justify-start">
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                         <h3 className="text-2xl font-bold mb-4 text-blue-500">Newton's Second Law</h3>
                         <p className="text-lg leading-relaxed mb-4">
-                           This law provides the connection between force, mass, and acceleration. It is one of the most important equations in all of physics.
+                            This law provides the connection between force, mass, and acceleration. It is one of the most important equations in all of physics.
                         </p>
                         <div className="text-center text-3xl font-bold p-4 bg-slate-100 dark:bg-slate-700 rounded-lg">
                             <InlineMath>{'F_{net} = m \\cdot a'}</InlineMath>
@@ -114,9 +115,9 @@ export default function NewtonsSecondLawSlide1() {
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Components</h3>
                         <ul className="list-disc list-inside space-y-2 text-lg">
-                           <li><strong>Force (F):</strong> A push or pull, measured in Newtons (N).</li>
-                           <li><strong>Mass (m):</strong> The amount of matter in an object, measured in kilograms (kg).</li>
-                           <li><strong>Acceleration (a):</strong> The rate of change in velocity, measured in meters per second squared (m/s²).</li>
+                            <li><strong>Force (F):</strong> A push or pull, measured in Newtons (N).</li>
+                            <li><strong>Mass (m):</strong> The amount of matter in an object, measured in kilograms (kg).</li>
+                            <li><strong>Acceleration (a):</strong> The rate of change in velocity, measured in meters per second squared (m/s²).</li>
                         </ul>
                     </div>
 
@@ -129,7 +130,8 @@ export default function NewtonsSecondLawSlide1() {
                 </div>
                 
                 {/* --- Right Column: Interactive Simulation --- */}
-                <div className="flex items-center justify-center">
+                {/* CHANGED: items-center to items-start */}
+                <div className="flex items-start justify-center">
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg w-full`}>
                         <FmaSimulation isDarkMode={isDarkMode} />
                     </div>

@@ -7,7 +7,7 @@ import 'katex/dist/katex.min.css';
 
 // --- TYPE DEFINITIONS for this component ---
 type Example = {
-    id: 'car' | 'tablecloth' | 'ketchup' | 'space';
+    id: 'car' | 'tablecloth' | 'ketchup' | 'massInertia' | 'bus';
     title: string;
     description: string;
     AnimationComponent: React.FC<{ isDarkMode: boolean }>;
@@ -71,12 +71,68 @@ const KetchupAnimation: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => 
     );
 };
 
+const MassInertiaAnimation: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
+    const objectColor = isDarkMode ? '#cbd5e1' : '#475569';
+    const textColor = isDarkMode ? '#e2e8f0' : '#334155';
+    const forceColor = '#f59e0b'; // Amber color for force
+
+    return (
+        <motion.svg viewBox="0 0 200 100" key="mass-inertia">
+            {/* Bicycle */}
+            <motion.g initial={{ x: 0 }} animate={{ x: 50 }} transition={{ duration: 2, delay: 0.5, ease: 'linear' }}>
+                <circle cx="15" cy="35" r="5" stroke={objectColor} strokeWidth="1.5" fill="none" />
+                <circle cx="35" cy="35" r="5" stroke={objectColor} strokeWidth="1.5" fill="none" />
+                <line x1="15" y1="35" x2="25" y2="25" stroke={objectColor} strokeWidth="1.5" />
+                <line x1="25" y1="25" x2="35" y2="35" stroke={objectColor} strokeWidth="1.5" />
+                <line x1="25" y1="25" x2="28" y2="20" stroke={objectColor} strokeWidth="1.5" />
+            </motion.g>
+            <motion.text x="25" y="55" fill={textColor} fontSize="8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}>Less Mass</motion.text>
+             {/* Small force arrow for bicycle */}
+            <motion.path d="M 75 30 L 85 30 M 75 30 L 80 27 M 75 30 L 80 33" stroke={forceColor} strokeWidth="2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}/>
+
+            {/* Truck */}
+            <motion.g initial={{ x: 0 }} animate={{ x: 50 }} transition={{ duration: 2, delay: 0.5, ease: 'linear' }}>
+                <rect x="110" y="70" width="40" height="20" rx="3" fill={objectColor} />
+                <rect x="100" y="80" width="10" height="10" rx="2" fill={objectColor} />
+                <circle cx="115" cy="90" r="5" fill={isDarkMode ? '#475569' : '#fff'} stroke={objectColor} strokeWidth="1" />
+                <circle cx="145" cy="90" r="5" fill={isDarkMode ? '#475569' : '#fff'} stroke={objectColor} strokeWidth="1" />
+            </motion.g>
+            <motion.text x="125" y="65" fill={textColor} fontSize="8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}>More Mass</motion.text>
+            {/* Large force arrow for truck */}
+            <motion.path d="M 150 75 L 180 75 M 150 75 L 160 70 M 150 75 L 160 80" stroke={forceColor} strokeWidth="3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}/>
+        </motion.svg>
+    );
+};
+
+const BusAnimation: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
+    const busColor = isDarkMode ? '#cbd5e1' : '#475569';
+    return (
+        <motion.svg viewBox="0 0 200 100" key="bus">
+            <motion.g initial={{ x: 20 }} animate={{ x: 100 }} transition={{ duration: 2, ease: 'easeOut', delay: 0.5 }}>
+                 {/* Bus Body */}
+                <rect x="0" y="30" width="80" height="50" rx="5" fill="none" stroke={busColor} strokeWidth="2" />
+                <rect x="10" y="35" width="20" height="15" fill={isDarkMode ? '#475569' : '#e2e8f0'} />
+                <rect x="50" y="35" width="20" height="15" fill={isDarkMode ? '#475569' : '#e2e8f0'} />
+                <circle cx="15" cy="80" r="8" fill={isDarkMode ? '#475569' : '#fff'} stroke={busColor} strokeWidth="2" />
+                <circle cx="65" cy="80" r="8" fill={isDarkMode ? '#475569' : '#fff'} stroke={busColor} strokeWidth="2" />
+
+                {/* Person inside - lurches backward */}
+                <motion.g initial={{ x: 0 }} animate={{ x: -10 }} transition={{ duration: 0.5, ease: 'easeOut', delay: 0.5 }}>
+                    <circle cx="40" cy="50" r="5" fill="#3b82f6" />
+                    <rect x="35" y="55" width="10" height="20" fill="#3b82f6" />
+                </motion.g>
+            </motion.g>
+        </motion.svg>
+    );
+};
 
 // --- DATA for the carousel ---
 const examples: Example[] = [
     { id: 'car', title: 'Sudden Stop in a Car', description: "When a car stops suddenly, your body's inertia makes it continue to move forward. This is why seatbelts are crucial for safety.", AnimationComponent: CarAnimation },
     { id: 'tablecloth', title: 'The Tablecloth Trick', description: "The dishes on the table have inertia. If the tablecloth is pulled quickly enough, the dishes resist the change in motion and stay in place.", AnimationComponent: TableclothAnimation },
-    { id: 'ketchup', title: 'Shaking a Ketchup Bottle', description: "When you swing the bottle down and stop it suddenly, the ketchup inside continues moving downwards due to its inertia, forcing it out of the bottle.", AnimationComponent: KetchupAnimation },
+    { id: 'ketchup', title: 'Shaking a Ketchup Bottle', description: "When you swing the bottle down and stop it suddenly, the ketchup inside continues moving downwards due to its inertia, forcing it out.", AnimationComponent: KetchupAnimation },
+    { id: 'massInertia', title: 'Inertia and Mass', description: "The more mass an object has, the more inertia it has. This means it's harder to change its motion. It's much easier to stop a rolling bicycle than a moving truck!", AnimationComponent: MassInertiaAnimation },
+    { id: 'bus', title: 'You on a Bus', description: "If you're on a bus that suddenly moves, you feel thrown backward. That's your body's inertia trying to stay at rest while the bus moves from under you.", AnimationComponent: BusAnimation },
 ];
 
 
