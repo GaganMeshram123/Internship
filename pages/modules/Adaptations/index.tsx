@@ -24,7 +24,7 @@ export const submodules: Submodule[] = [
   {
     id: 'introduction-to-adaptations',
     title: 'Introduction to Adaptations',
-    [cite_start]description: 'Learn the fundamental concept of adaptation as an inherited characteristic [cite: 16] [cite_start]that helps organisms survive and reproduce in their environment[cite: 16].',
+    description: 'Learn the fundamental concept of adaptation as an inherited characteristic that helps organisms survive and reproduce in their environment.',
     slides: introductionToAdaptationsSlides,
     estimatedTime: '10 min',
     difficulty: 'Beginner',
@@ -33,7 +33,7 @@ export const submodules: Submodule[] = [
   {
     id: 'animal-adaptations',
     title: 'Animal Adaptations',
-    [cite_start]description: 'Explore the two main types of animal adaptations: structural (physical body parts like camouflage) [cite: 35, 42] [cite_start]and behavioral (actions like migration or hibernation)[cite: 39, 81, 88].',
+     description: 'Explore the two main types of animal adaptations: structural (physical body parts like camouflage) and behavioral (actions like migration or hibernation).',
     slides: animalAdaptationsSlides,
     estimatedTime: '20 min',
     difficulty: 'Beginner',
@@ -42,7 +42,7 @@ export const submodules: Submodule[] = [
   {
     id: 'plant-adaptations',
     title: 'Plant Adaptations',
-    [cite_start]description: 'Discover how plants adapt with structures like thorns [cite: 113, 117][cite_start], behaviors like tropism (response to stimuli) [cite: 164][cite_start], and survival strategies like dormancy[cite: 184].',
+    description: 'Discover how plants adapt with structures like thorns, behaviors like tropism (response to stimuli), and survival strategies like dormancy.',
     slides: plantAdaptationsSlides,
     estimatedTime: '15 min',
     difficulty: 'Beginner',
@@ -51,7 +51,7 @@ export const submodules: Submodule[] = [
   {
     id: 'plant-life-cycle',
     title: 'Plant Life Cycle & Reproduction',
-    [cite_start]description: 'Understand the reproductive cycle of plants as a key process for species survival, covering stages from germination and pollination to fertilization and seed dispersal[cite: 203, 207, 210, 211, 212].',
+    description: 'Understand the reproductive cycle of plants as a key process for species survival, covering stages from germination and pollination to fertilization and seed dispersal.',
     slides: plantLifeCycleSlides,
     estimatedTime: '10 min',
     difficulty: 'Beginner',

@@ -7,8 +7,8 @@ export const introductionToAdaptationsSlides: Slide[] = [
   {
     type: 'interactive',
     title: 'What Are Adaptations?',
-    content: 'An adaptation is an inherited characteristic that helps an organism survive and reproduce in its environment.',
-    component: IntroAdaptationsSlide1,
+   /*  content: 'An adaptation is an inherited characteristic that helps an organism survive and reproduce in its environment.',
+    */ component: IntroAdaptationsSlide1,
     id: 'what-are-adaptations'
   },
   {
