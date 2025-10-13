@@ -55,6 +55,8 @@ const getModules = async () => {
     'grade-2-math-operations',
     'Motion',
     'Force_Laws_of_Motion',
+    'Adaptations',
+    'olympiad-8-bio-nervous-system'
   ];
 
   for (const moduleName of moduleNames) {
