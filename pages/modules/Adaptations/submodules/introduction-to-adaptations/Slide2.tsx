@@ -160,17 +160,17 @@ export default function IntroAdaptationsSlide2() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Behavioral vs. Structural</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Diverse Adaptations</h3>
             <div className="flex justify-center">
               <img 
-                src="https://onepointlearning.com/wp-content/uploads/2023/02/Types-Adaptation-in-plants.png"
-                alt="Examples of structural and behavioral adaptations in plants and animals"
+                src="https://letstalkscience.ca/sites/default/files/2020-01/Animal_adaptations.jpg"
+                alt="A collage of different animals showcasing various structural and behavioral adaptations."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              A bear's thick fur is a <strong>structural</strong> adaptation, while its hibernation is a <strong>behavioral</strong> adaptation to survive winter.
+              Animals have developed a wide range of adaptations to thrive in their unique environments.
             </p>
           </div>
 

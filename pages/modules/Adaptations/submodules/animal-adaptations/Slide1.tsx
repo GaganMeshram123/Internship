@@ -43,7 +43,7 @@ export default function AnimalAdaptationsSlide1() {
         'To communicate with other animals'
       ],
       correctAnswer: 'To blend in with the environment for protection or hunting',
-      explanation: 'Correct! Camouflage is about blending in with the environment, which helps animals hide from predators or sneak up on prey. [cite: 42, 43, 44]'
+      explanation: 'Correct! Camouflage is about blending in with the environment, which helps animals hide from predators or sneak up on prey.'
     },
     {
       id: 'mimicry-benefit-question',
@@ -55,7 +55,7 @@ export default function AnimalAdaptationsSlide1() {
         'To help it fly at the same speed as Monarchs'
       ],
       correctAnswer: 'To fool predators into thinking it is poisonous',
-      explanation: 'Correct! [cite_start]Predators learn to avoid the poisonous Monarch, so by looking like one, the harmless Viceroy gains protection. [cite: 49, 53, 54]'
+      explanation: 'Correct! Predators learn to avoid the poisonous Monarch, so by looking like one, the harmless Viceroy gains protection.'
     }
   ];
   
@@ -118,16 +118,16 @@ export default function AnimalAdaptationsSlide1() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Structural: Camouflage/Coloration</h2>
             <p className="text-lg leading-relaxed">
-              [cite_start]Camouflage is the structural adaptation of blending in with the environment, not just with color, but also with texture and pattern. [cite: 42]
+              Camouflage is the structural adaptation of blending in with the environment, not just with color, but also with texture and pattern.
             </p>
             <ul className="mt-4 space-y-2 text-lg">
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">✓</span>
-                [cite_start]<span><strong>For Protection:</strong> It helps prey, like a camouflaged frog, hide from predators. [cite: 42, 44]</span>
+                <span><strong>For Protection:</strong> It helps prey, like a camouflaged frog, hide from predators.</span>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">✓</span>
-                [cite_start]<span><strong>For Hunting:</strong> It helps predators, like a tiger with stripes, sneak up on their prey. [cite: 42, 43]</span>
+                <span><strong>For Hunting:</strong> It helps predators, like a tiger with stripes, sneak up on their prey.</span>
               </li>
             </ul>
           </div>
@@ -135,14 +135,14 @@ export default function AnimalAdaptationsSlide1() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">Structural: Mimicry</h3>
             <p className="text-lg leading-relaxed">
-              [cite_start]Mimicry is the adaptation of copying another organism's behavior or appearance for protection. [cite: 48, 49]
+              Mimicry is the adaptation of copying another organism's behavior or appearance for protection.
             </p>
             <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700 space-y-3">
                 <p className="text-lg">
-                    <strong>Butterfly Example:</strong> The harmless Viceroy butterfly mimics the appearance of the poisonous Monarch butterfly. [cite_start]Predators who avoid the Monarch will also avoid the Viceroy. [cite: 49, 53, 54]
+                    <strong>Butterfly Example:</strong> The harmless Viceroy butterfly mimics the appearance of the poisonous Monarch butterfly. Predators who avoid the Monarch will also avoid the Viceroy.
                 </p>
                 <p className="text-lg">
-                    <strong>Snake Example:</strong> The venomous Coral snake has a distinct color pattern. [cite_start]Harmless snakes, like the Kingsnake, mimic this pattern to trick predators into thinking they are also dangerous. [cite: 30, 31, 32, 33]
+                    <strong>Snake Example:</strong> The venomous Coral snake has a distinct color pattern. Harmless snakes, like the Kingsnake, mimic this pattern to trick predators into thinking they are also dangerous.
                 </p>
             </div>
           </div>
@@ -151,17 +151,17 @@ export default function AnimalAdaptationsSlide1() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Can You Spot the Animal?</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Masters of Disguise</h3>
             <div className="flex justify-center">
               <img 
-                src="https://smartclass4kids.com/wp-content/uploads/2020/09/Animal_Adaptations.png"
-                alt="Various animals demonstrating camouflage and mimicry"
+                src="https://letstalkscience.ca/sites/default/files/2020-01/Animal_adaptations.jpg"
+                alt="A collage showing an owl, stick insect, chameleon, and flounder demonstrating camouflage."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Animals like the leaf insect, chameleon, and tiger use camouflage and mimicry to survive.
+              These animals are all masters of camouflage, blending into their surroundings to hunt or hide.
             </p>
           </div>
 
