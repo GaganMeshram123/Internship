@@ -116,7 +116,7 @@ export default function AnimalAdaptationsSlide1() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Structural: Camouflage/Coloration</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Structural: Camouflage & Coloration</h2>
             <p className="text-lg leading-relaxed">
               Camouflage is the structural adaptation of blending in with the environment, not just with color, but also with texture and pattern.
             </p>
@@ -133,7 +133,7 @@ export default function AnimalAdaptationsSlide1() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">Structural: Mimicry</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Structural: Mimicry</h3>
             <p className="text-lg leading-relaxed">
               Mimicry is the adaptation of copying another organism's behavior or appearance for protection.
             </p>
@@ -151,17 +151,17 @@ export default function AnimalAdaptationsSlide1() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Masters of Disguise</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Can You Spot the Animal?</h3>
             <div className="flex justify-center">
               <img 
-                src="https://letstalkscience.ca/sites/default/files/2020-01/Animal_adaptations.jpg"
-                alt="A collage showing an owl, stick insect, chameleon, and flounder demonstrating camouflage."
+                src="https://smartclass4kids.com/wp-content/uploads/2020/09/Animal_Adaptations.png"
+                alt="Various animals demonstrating camouflage and mimicry"
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              These animals are all masters of camouflage, blending into their surroundings to hunt or hide.
+              Animals like the leaf insect, chameleon, and tiger use camouflage and mimicry to survive.
             </p>
           </div>
 

@@ -128,14 +128,14 @@ export default function AnimalAdaptationsSlide3() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">Behavioral: Survival Instincts</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Behavioral: Survival Instincts</h2>
             <p className="text-lg leading-relaxed">
               Behavioral adaptations are ways an organism acts to survive. These instincts are pre-programmed and cannot be seen on the body.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-sky-500 dark:text-sky-400">Migration & Hibernation</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Migration & Hibernation</h3>
             <p className="text-lg leading-relaxed mb-2">
               <strong>Migration</strong> is the seasonal movement of animals (like geese or whales) in response to changes in climate or food availability.
             </p>
@@ -145,7 +145,7 @@ export default function AnimalAdaptationsSlide3() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-emerald-500 dark:text-emerald-400">Group Living & Defense</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Group Living & Defense</h3>
              <p className="text-lg leading-relaxed mb-2">
                <strong>Living in a Group</strong>, like a pride of lions, provides more eyes to watch for predators and offers protection.
             </p>
@@ -168,7 +168,7 @@ export default function AnimalAdaptationsSlide3() {
               />
             </div>
              <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-                Animals display a wide range of behaviors to survive in their environments.
+               Animals display a wide range of behaviors to survive in their environments.
             </p>
           </div>
 

@@ -43,19 +43,19 @@ export default function AnimalAdaptationsSlide2() {
         'Filtering water'
       ],
       correctAnswer: 'Cutting meat',
-      explanation: 'Correct! [cite_start]Sharp teeth are a structural adaptation for meat-eaters to cut their food. [cite: 62, 63]'
+      explanation: 'Correct! Sharp teeth are a structural adaptation for meat-eaters to cut their food.'
     },
     {
-        id: 'beak-question',
-        question: 'A bird with a short, stout beak, like a finch, is most likely adapted for what kind of diet?',
-        options: [
-            'Tearing meat',
-            'Sipping nectar',
-            'Cracking open hard seeds',
-            'Filtering water'
-        ],
-        correctAnswer: 'Cracking open hard seeds',
-        explanation: 'Correct! [cite_start]Birds like finches have strong, cone-shaped beaks that are structurally adapted for cracking open seeds. [cite: 27]'
+      id: 'beak-question',
+      question: 'A bird with a short, stout beak, like a finch, is most likely adapted for what kind of diet?',
+      options: [
+          'Tearing meat',
+          'Sipping nectar',
+          'Cracking open hard seeds',
+          'Filtering water'
+      ],
+      correctAnswer: 'Cracking open hard seeds',
+      explanation: 'Correct! Birds like finches have strong, cone-shaped beaks that are structurally adapted for cracking open seeds.'
     }
   ];
   
@@ -116,53 +116,53 @@ export default function AnimalAdaptationsSlide2() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Structural: Body Parts</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Structural: Body Parts</h2>
             <p className="text-lg leading-relaxed">
               Animals have specific body parts adapted for locomotion, eating, defense, and sensing their environment.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-rose-500 dark:text-rose-400">Teeth and Beaks</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Teeth and Beaks</h3>
             <ul className="space-y-2 text-lg">
               <li className="flex items-start">
-                <span className="font-bold text-rose-500 mr-2">•</span>
+                <span className="font-bold text-blue-500 mr-2">•</span>
                 <div><strong>Flat Teeth:</strong> Adapted for plant-eaters to grind their food.</div>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-rose-500 mr-2">•</span>
+                <span className="font-bold text-blue-500 mr-2">•</span>
                 <div><strong>Sharp Teeth:</strong> Adapted for meat-eaters to cut their food.</div>
               </li>
                <li className="flex items-start">
-                <span className="font-bold text-rose-500 mr-2">•</span>
+                <span className="font-bold text-blue-500 mr-2">•</span>
                 <div><strong>Bird Beaks:</strong> The shape of a bird's beak is adapted for its specific diet, like a finch's stout beak for cracking seeds.</div>
               </li>
             </ul>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-amber-500 dark:text-amber-400">Eye Placement</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Eye Placement</h3>
             <ul className="space-y-2 text-lg">
               <li className="flex items-start">
-                <span className="font-bold text-amber-500 mr-2">•</span>
+                <span className="font-bold text-blue-500 mr-2">•</span>
                 <div><strong>Predator:</strong> Eyes face forward to find prey.</div>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-amber-500 mr-2">•</span>
+                <span className="font-bold text-blue-500 mr-2">•</span>
                 <div><strong>Prey:</strong> Eyes are on the side of the head for a wider field of view to spot danger.</div>
               </li>
             </ul>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-sky-500 dark:text-sky-400">Limbs for Movement</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Limbs for Movement</h3>
              <ul className="space-y-2 text-lg">
               <li className="flex items-start">
-                <span className="font-bold text-sky-500 mr-2">•</span>
+                <span className="font-bold text-blue-500 mr-2">•</span>
                 <div><strong>Bent Hind Legs:</strong> Help prey escape and predators catch food.</div>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-sky-500 mr-2">•</span>
+                <span className="font-bold text-blue-500 mr-2">•</span>
                 <div><strong>Wings and Flippers:</strong> Limbs adapted for specialized movement like flying or swimming.</div>
               </li>
             </ul>

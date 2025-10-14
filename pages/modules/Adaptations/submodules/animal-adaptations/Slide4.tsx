@@ -128,14 +128,14 @@ export default function AnimalAdaptationsSlide4() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">Other Behavioral Adaptations</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Other Behavioral Adaptations</h2>
             <p className="text-lg leading-relaxed">
               Beyond migration and hibernation, animals display other clever behaviors to survive and thrive.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-teal-500 dark:text-teal-400">Social Behaviors</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Social Behaviors</h3>
             <p className="text-lg leading-relaxed mb-2">
               <strong>Living in a Group:</strong> Some animals live in groups for protection, as more eyes make it easier to watch for predators. Examples include fish and lions.
             </p>
@@ -145,7 +145,7 @@ export default function AnimalAdaptationsSlide4() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-cyan-500 dark:text-cyan-400">Tool Use & Defense</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Tool Use & Defense</h3>
             <p className="text-lg leading-relaxed mb-2">
                <strong>Tool Use:</strong> This is when an animal manipulates an object to perform a specific task. Monkeys, otters, and some birds are known to use tools.
             </p>
@@ -155,7 +155,7 @@ export default function AnimalAdaptationsSlide4() {
           </div>
         </div>
 
-        {/* Right Column - Image and Quiz */}
+        {/* Right Column - Images and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Social & Parental Care</h3>
