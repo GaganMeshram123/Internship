@@ -43,19 +43,19 @@ export default function AnimalAdaptationsSlide2() {
         'Filtering water'
       ],
       correctAnswer: 'Cutting meat',
-      explanation: 'Correct! Sharp teeth are a structural adaptation for meat-eaters (predators) to cut their food. [cite: 62]'
+      explanation: 'Correct! [cite_start]Sharp teeth are a structural adaptation for meat-eaters to cut their food. [cite: 62, 63]'
     },
     {
-      id: 'eyes-question',
-      question: 'Why do predators, like owls and cougars, have eyes facing forward?',
-      options: [
-        'To look in two directions at once',
-        'To see better at night',
-        'To help them find prey',
-        'To see a wider area around them'
-      ],
-      correctAnswer: 'To help them find prey',
-      explanation: 'Exactly! Predators have eyes facing forward to provide excellent depth perception, which is crucial for locating and tracking prey. [cite: 68, 69, 70]'
+        id: 'beak-question',
+        question: 'A bird with a short, stout beak, like a finch, is most likely adapted for what kind of diet?',
+        options: [
+            'Tearing meat',
+            'Sipping nectar',
+            'Cracking open hard seeds',
+            'Filtering water'
+        ],
+        correctAnswer: 'Cracking open hard seeds',
+        explanation: 'Correct! [cite_start]Birds like finches have strong, cone-shaped beaks that are structurally adapted for cracking open seeds. [cite: 27]'
     }
   ];
   
@@ -118,27 +118,24 @@ export default function AnimalAdaptationsSlide2() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Structural: Body Parts</h2>
             <p className="text-lg leading-relaxed">
-              Animals have specific body parts adapted for locomotion, eating, and sensing their environment.
+              Animals have specific body parts adapted for locomotion, eating, defense, and sensing their environment.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-sky-500 dark:text-sky-400">Bent Hind Legs</h3>
-            <p className="text-lg leading-relaxed">
-              This adaptation is for locomotion and protection. [cite: 58] Prey run fast to escape, and predators run fast to catch prey. [cite: 56, 57]
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-rose-500 dark:text-rose-400">Teeth</h3>
+            <h3 className="text-xl font-semibold mb-4 text-rose-500 dark:text-rose-400">Teeth and Beaks</h3>
             <ul className="space-y-2 text-lg">
               <li className="flex items-start">
                 <span className="font-bold text-rose-500 mr-2">•</span>
-                <div><strong>Flat Teeth:</strong> Adapted for plant-eaters to grind their food. [cite: 60, 61]</div>
+                <div><strong>Flat Teeth:</strong> Adapted for plant-eaters to grind their food.</div>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-rose-500 mr-2">•</span>
-                <div><strong>Sharp Teeth:</strong> Adapted for meat-eaters to cut their food. [cite: 62, 63]</div>
+                <div><strong>Sharp Teeth:</strong> Adapted for meat-eaters to cut their food.</div>
+              </li>
+               <li className="flex items-start">
+                <span className="font-bold text-rose-500 mr-2">•</span>
+                <div><strong>Bird Beaks:</strong> The shape of a bird's beak is adapted for its specific diet, like a finch's stout beak for cracking seeds.</div>
               </li>
             </ul>
           </div>
@@ -148,11 +145,25 @@ export default function AnimalAdaptationsSlide2() {
             <ul className="space-y-2 text-lg">
               <li className="flex items-start">
                 <span className="font-bold text-amber-500 mr-2">•</span>
-                <div><strong>Predator:</strong> Eyes face forward to find prey. [cite: 68, 69, 70]</div>
+                <div><strong>Predator:</strong> Eyes face forward to find prey.</div>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-amber-500 mr-2">•</span>
-                <div><strong>Prey:</strong> Eyes are on the side of the head for a wider field of view to spot danger. [cite: 66, 67]</div>
+                <div><strong>Prey:</strong> Eyes are on the side of the head for a wider field of view to spot danger.</div>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-sky-500 dark:text-sky-400">Limbs for Movement</h3>
+             <ul className="space-y-2 text-lg">
+              <li className="flex items-start">
+                <span className="font-bold text-sky-500 mr-2">•</span>
+                <div><strong>Bent Hind Legs:</strong> Help prey escape and predators catch food.</div>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-sky-500 mr-2">•</span>
+                <div><strong>Wings and Flippers:</strong> Limbs adapted for specialized movement like flying or swimming.</div>
               </li>
             </ul>
           </div>
@@ -161,17 +172,17 @@ export default function AnimalAdaptationsSlide2() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Eyes of a Predator</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Adapted for Survival</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/Kz9fB8E.jpeg" // Sourced from Page 12 of the document
-                alt="An owl with large, forward-facing eyes, a classic predator adaptation."
+                src="https://cdn0.animalwised.com/en/posts/7/8/8/what_is_adaptation_of_animals_2887_0_600.jpg"
+                alt="A collection of animals showing different structural adaptations."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              An owl's forward-facing eyes give it excellent depth perception for hunting. [cite: 68]
+              Animals have diverse body parts adapted to their specific needs for survival.
             </p>
           </div>
 
