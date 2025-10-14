@@ -9,7 +9,7 @@ export default function AnimalAdaptationsSlide3() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -20,7 +20,7 @@ export default function AnimalAdaptationsSlide3() {
       conceptId: 'animal-adaptation-understanding',
       conceptName: 'Animal Survival Instincts Quiz',
       type: 'judging',
-      description: 'Testing understanding of migration and hibernation'
+      description: 'Testing understanding of migration, hibernation, and group living'
     }
   ];
 
@@ -43,11 +43,23 @@ export default function AnimalAdaptationsSlide3() {
         'To learn a new language'
       ],
       correctAnswer: 'To respond to changes in climate or food availability',
-      explanation: 'Correct! [cite_start]Migration is the seasonal movement of animals in response to changes in climate, food availability, or to ensure successful reproduction. [cite: 81, 82, 83]'
+      explanation: 'Correct! Migration is the seasonal movement of animals in response to changes in climate, food availability, or to ensure successful reproduction.'
+    },
+    {
+      id: 'group-living-question',
+      question: 'What is a primary benefit for animals like lions living in a group?',
+      options: [
+          'To have less competition for food',
+          'For better protection from predators',
+          'To learn how to build shelters',
+          'To ensure they never have to migrate'
+      ],
+      correctAnswer: 'For better protection from predators',
+      explanation: 'Correct! Living in a group provides safety in numbers, with more eyes to watch out for danger.'
     },
     {
       id: 'hibernation-question',
-      question: 'What happens to an animals body during hibernation?',
+      question: 'What happens to an animal\'s body during hibernation?',
       options: [
         'It speeds up all body processes',
         'It becomes inactive and all body processes slow down',
@@ -55,7 +67,7 @@ export default function AnimalAdaptationsSlide3() {
         'It continues to eat large quantities of food'
       ],
       correctAnswer: 'It becomes inactive and all body processes slow down',
-      explanation: 'Exactly! [cite_start]Hibernation is a winter survival technique where an animal becomes inactive and all its body processes slow down to conserve energy. [cite: 88]'
+      explanation: 'Exactly! Hibernation is a winter survival technique where an animal becomes inactive and all its body processes slow down to conserve energy.'
     }
   ];
   
@@ -118,27 +130,27 @@ export default function AnimalAdaptationsSlide3() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">Behavioral: Survival Instincts</h2>
             <p className="text-lg leading-relaxed">
-              [cite_start]Behavioral adaptations are ways an organism acts to survive in its environment. [cite: 39] [cite_start]These instincts are pre-programmed and cannot be seen on the body. [cite: 75, 76]
+              Behavioral adaptations are ways an organism acts to survive. These instincts are pre-programmed and cannot be seen on the body.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-sky-500 dark:text-sky-400">Migration</h3>
+            <h3 className="text-xl font-semibold mb-4 text-sky-500 dark:text-sky-400">Migration & Hibernation</h3>
             <p className="text-lg leading-relaxed mb-2">
-              [cite_start]Migration is the seasonal or periodic movement of animals in response to changes in climate, food availability, or to ensure reproduction. [cite: 81, 82, 83]
+              <strong>Migration</strong> is the seasonal movement of animals (like geese or whales) in response to changes in climate or food availability.
             </p>
-            <p className="text-lg text-slate-600 dark:text-slate-400">
-              [cite_start]Examples include geese, whales, and salmon. [cite: 86]
+            <p className="text-lg leading-relaxed">
+              <strong>Hibernation</strong> is a state of inactivity where body processes slow down to conserve energy during winter. Examples include bears and bats.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-indigo-500 dark:text-indigo-400">Hibernation</h3>
-            <p className="text-lg leading-relaxed mb-2">
-              [cite_start]This is an adaptive winter survival technique where an animal becomes inactive and all its body processes slow down. [cite: 88] [cite_start]This helps conserve energy when food is scarce. [cite: 89]
+            <h3 className="text-xl font-semibold mb-4 text-emerald-500 dark:text-emerald-400">Group Living & Defense</h3>
+             <p className="text-lg leading-relaxed mb-2">
+               <strong>Living in a Group</strong>, like a pride of lions, provides more eyes to watch for predators and offers protection.
             </p>
-            <p className="text-lg text-slate-600 dark:text-slate-400">
-              [cite_start]Examples include bears, chipmunks, and bats. [cite: 89]
+             <p className="text-lg leading-relaxed">
+               <strong>Defensive Actions</strong> include playing dead, making warning calls, or using threatening gestures to scare off predators.
             </p>
           </div>
         </div>
@@ -146,17 +158,17 @@ export default function AnimalAdaptationsSlide3() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Journey South</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Instincts for Survival</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/3Z7wVjJ.jpeg" // Sourced from Page 6 of the document
-                alt="A flock of geese migrating in a V-formation against a sunset sky."
+                src="https://wildlifeinformer.com/wp-content/uploads/2023/01/photo-collage-of-different-type-of-animals.jpg" 
+                alt="A collage of different animals showcasing behavioral adaptations like migration and group living."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              [cite_start]Geese flying south for the winter is a classic example of migration, a behavioral adaptation. [cite: 10]
+             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
+                Animals display a wide range of behaviors to survive in their environments.
             </p>
           </div>
 

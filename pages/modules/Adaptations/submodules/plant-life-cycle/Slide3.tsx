@@ -9,7 +9,7 @@ export default function PlantLifeCycleSlide3() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -44,6 +44,18 @@ export default function PlantLifeCycleSlide3() {
       ],
       correctAnswer: 'So they can grow with less competition from each other',
       explanation: 'Correct! Seeds need to spread out so that they can grow with less competition for resources like sunlight, water, and nutrients.'
+    },
+    {
+        id: 'dispersal-water-question',
+        question: 'A coconut floating in the ocean is an example of which type of seed dispersal?',
+        options: [
+            'By wind',
+            'By bursting',
+            'By animals',
+            'By water'
+        ],
+        correctAnswer: 'By water',
+        explanation: 'Correct! Coconuts are adapted to be buoyant, allowing them to float on water and travel to new islands or coastlines.'
     },
     {
       id: 'cycle-end-question',
@@ -116,23 +128,30 @@ export default function PlantLifeCycleSlide3() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Completing the Cycle</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Completing the Cycle</h2>
             <p className="text-lg leading-relaxed">
               After fertilization, the plant has successfully created seeds. The final stages of the life cycle involve spreading these seeds and starting the growth process anew.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-sky-500 dark:text-sky-400">Seed Dispersal</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Seed Dispersal</h3>
             <p className="text-lg leading-relaxed">
-              Seeds need to spread out so that they can grow with less competition from each other and the parent plant. This is achieved through methods like wind, water, and animals.
+              Seeds spread out to grow with less competition. This is achieved through methods like:
             </p>
+            <ul className="list-disc list-inside mt-2 space-y-1 text-lg">
+                <li><strong>Wind:</strong> Seeds with wings or parachutes.</li>
+                <li><strong>Animals:</strong> By attaching to fur or being eaten in fruits.</li>
+                <li><strong>Water:</strong> Buoyant seeds like coconuts float to new locations.</li>
+                <li><strong>Bursting:</strong> Pods mechanically shoot seeds out.</li>
+                <li><strong>Humans:</strong> Through agriculture and gardening.</li>
+            </ul>
           </div>
           
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-lime-600 dark:text-lime-500">Germination</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Germination</h3>
             <p className="text-lg leading-relaxed">
-              The life cycle begins again with germination. This is when the seeds, having reached a suitable place, start to grow into a new plant.
+              The life cycle begins again with germination. This is when the seed, having reached a suitable place, starts to grow into a new plant.
             </p>
           </div>
         </div>
@@ -140,18 +159,18 @@ export default function PlantLifeCycleSlide3() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">A New Beginning</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Dispersal & Germination</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/bXfB8O7.jpeg" // Sourced from Page 37 of the document
-                alt="A bean seed germinating and sprouting a new plant from the soil."
+                src="https://cdn.savemyexams.com/uploads/2023/08/dispersal-and-germination-of-seeds-.png"
+                alt="Diagram showing seed dispersal and the process of germination."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
              <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Germination marks the start of a new plant's life, completing the cycle.
-            </p>
+               Germination marks the start of a new plant's life, completing the cycle.
+             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">

@@ -9,7 +9,7 @@ export default function PlantAdaptationsSlide2() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -43,10 +43,22 @@ export default function PlantAdaptationsSlide2() {
         'Bursting from a pod'
       ],
       correctAnswer: 'Carried by wind',
-      explanation: 'Correct! Seeds with features like parachutes or wings are adapted to be carried away from the parent plant by the wind[cite: 151].'
+      explanation: 'Correct! Seeds with features like parachutes or wings are adapted to be carried away from the parent plant by the wind.'
     },
     {
-      id: 'dispersal-animal',
+      id: 'dispersal-attachment',
+      question: 'A seed with tiny hooks or barbs is most likely adapted for which type of dispersal?',
+      options: [
+        'Wind Dispersal',
+        'Water Dispersal',
+        'Animal Dispersal (by attachment)',
+        'Mechanical Dispersal (by bursting)'
+      ],
+      correctAnswer: 'Animal Dispersal (by attachment)',
+      explanation: 'Correct! Seeds with hooks or barbs are adapted to attach to an animal\'s fur, allowing them to be carried to new locations.'
+    },
+    {
+      id: 'dispersal-animal-ingestion',
       question: 'A plant produces a sweet, fleshy fruit like a cherry. How does this help its seeds disperse?',
       options: [
         'The fruit helps the seed float on water',
@@ -55,7 +67,7 @@ export default function PlantAdaptationsSlide2() {
         'The fruit helps the seed catch the wind'
       ],
       correctAnswer: 'Animals eat the fruit and disperse the seed in their feces',
-      explanation: 'Exactly! The fruit protects the seed and encourages animals to eat it. The seed then passes through the animal\'s digestive system and is deposited in a new location[cite: 122, 153].'
+      explanation: 'Exactly! The fruit protects the seed and encourages animals to eat it. The seed then passes through the animal\'s digestive system and is deposited in a new location.'
     }
   ];
   
@@ -112,23 +124,28 @@ export default function PlantAdaptationsSlide2() {
   const dispersalMethods = [
     {
       method: 'By Wind',
-      description: 'Seeds have wings or parachutes to travel on air currents[cite: 151].',
+      description: 'Seeds like dandelions or maple have wings or parachutes to travel on air currents.',
       color: '#38bdf8' // sky-400
     },
     {
       method: 'By Animals',
-      description: 'Carried on fur or eaten and passed through feces[cite: 151, 153].',
+      description: 'Some seeds use hooks to attach to fur, while others are eaten (like berries) and passed through feces.',
       color: '#fb923c' // orange-400
     },
     {
       method: 'By Water',
-      description: 'Seeds are buoyant and can float to new locations[cite: 152].',
+      description: 'Seeds like coconuts are buoyant and can float to new locations.',
       color: '#3b82f6' // blue-500
     },
     {
       method: 'By Bursting',
-      description: 'The plant mechanically throws or shoots the seeds[cite: 155].',
+      description: 'The plant mechanically throws or shoots the seeds from a pod.',
       color: '#ef4444' // red-500
+    },
+    {
+        method: 'By Humans',
+        description: 'Humans disperse seeds through agriculture and gardening.',
+        color: '#8b5cf6' // violet-500
     }
   ];
 
@@ -139,9 +156,9 @@ export default function PlantAdaptationsSlide2() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Seed Dispersal: The Plant's Journey</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Seed Dispersal: The Plant's Journey</h2>
             <p className="text-lg leading-relaxed">
-              For plants to survive, their seeds must be dispersed or spread out away from the parent plant[cite: 127]. This prevents overcrowding and competition for resources like sunlight, water, and soil nutrients.
+              For plants to survive, their seeds must be dispersed or spread out away from the parent plant. This prevents overcrowding and competition for resources.
             </p>
           </div>
 
@@ -164,17 +181,17 @@ export default function PlantAdaptationsSlide2() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Carried by the Wind</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Methods of Dispersal</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/G5yUa2r.jpeg" // Sourced from Page 29 of the document
-                alt="Dandelion seeds with parachutes being carried by the wind"
+                src="https://wonderattheworld.com/wp-content/uploads/2022/03/Plants-to-use-for-adaptation-studies.png"
+                alt="A collage showing different seed dispersal methods like wind, water, and animals."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Dandelion seeds are a perfect example of adaptation for wind dispersal[cite: 151].
+              Plants have evolved many clever ways to ensure their seeds travel to new places.
             </p>
           </div>
 

@@ -52,7 +52,7 @@ export default function PlantAdaptationsSlide4() {
         'They never lose their leaves',
         'They only grow in the winter',
         'They lose their leaves all at once in the fall',
-        'They lose their leaves throughout the year'
+        'They lose their leaves gradually throughout the year'
       ],
       correctAnswer: 'They lose their leaves throughout the year',
       explanation: 'Exactly! Unlike trees that lose all their leaves in the fall, evergreens lose their leaves gradually all throughout the year, so they always appear green.'
@@ -116,33 +116,29 @@ export default function PlantAdaptationsSlide4() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">Plant Behaviors: Dormancy</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Plant Behaviors: Dormancy</h2>
             <p className="text-lg leading-relaxed">
-              [cite_start]Dormancy is a behavioral adaptation where a plant enters a state of rest or inactivity. Many plants go dormant in the winter as a survival technique. [cite: 184, 186, 187]
+              Dormancy is a behavioral adaptation where a plant enters a state of rest or inactivity. Many plants go dormant in the winter as a survival technique.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-orange-500 dark:text-orange-400">Preparing for Winter</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Tree Dormancy</h3>
             <p className="text-lg leading-relaxed mb-2">
-              [cite_start]Fall is the time when plants prepare for dormancy. [cite: 187] To survive the cold, many trees have adapted to:
+              Fall is the time when plants prepare for dormancy. To survive the cold, many trees lose their leaves and stop taking in water to prevent freezing.
             </p>
-            <ul className="space-y-2 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-orange-500 mr-2">🍂</span>
-                [cite_start]<div><strong>Lose their leaves:</strong> This is a seasonal change to survive winter. [cite: 188, 194]</div>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">💧</span>
-                [cite_start]<div><strong>Stop taking in water:</strong> This prevents the xylem (water-carrying tubes) from freezing and getting damaged. [cite: 195]</div>
-              </li>
-            </ul>
+            <p className="text-lg leading-relaxed">
+                Trees like pines and holly are called evergreens because they don't lose all their leaves at once; instead, they lose them gradually throughout the year.
+            </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-emerald-600 dark:text-emerald-500">Evergreens</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Other Forms of Dormancy</h3>
             <p className="text-lg leading-relaxed">
-              [cite_start]Trees like pines and holly are called evergreens. [cite: 196, 197] [cite_start]They don't lose all their leaves at once; instead, they lose them gradually throughout the year. [cite: 196]
+                <strong>Seed Dormancy:</strong> Seeds remain inactive until conditions are right for germination, allowing them to survive until they find a suitable place to grow.
+            </p>
+             <p className="text-lg leading-relaxed mt-2">
+                <strong>Bulb Dormancy:</strong> Plants like tulips survive the winter as bulbs underground, sprouting only when the weather warms up in the spring.
             </p>
           </div>
         </div>
@@ -150,17 +146,17 @@ export default function PlantAdaptationsSlide4() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Autumn Colors</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Seasonal Changes</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/GzB9o9W.jpeg" // Sourced from Page 35 of the document
-                alt="Trees with colorful autumn leaves preparing for dormancy"
+                src="https://dr282zn36sxxg.cloudfront.net/datastreams/f-d%3A1964eb6184c2932ea8afccd6dd11d4ebd37da4545d2dc86ff0977567%2BIMAGE_TINY%2BIMAGE_TINY.1"
+                alt="A tree showing the seasonal changes from summer green to autumn colors and winter dormancy."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              [cite_start]The changing leaf colors in fall signal that trees are preparing for winter dormancy. [cite: 187]
+              The changing leaf colors in fall signal that trees are preparing for winter dormancy.
             </p>
           </div>
 

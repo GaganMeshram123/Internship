@@ -47,15 +47,15 @@ export default function PlantLifeCycleSlide2() {
     },
     {
       id: 'fertilization-question',
-      question: 'How do seeds develop in a plant?',
+      question: 'What is the process called when male sex cells from pollen fuse with female sex cells in the ovule?',
       options: [
-        'When the plant gets enough sunlight',
-        'When the male and female sex cells fuse',
-        'When the seed is spread to a new location',
-        'When the flower first blooms'
+        'Pollination',
+        'Germination',
+        'Fertilization',
+        'Dormancy'
       ],
-      correctAnswer: 'When the male and female sex cells fuse',
-      explanation: 'Exactly! Seeds develop during fertilization, which is when the male sex cells (from pollen) fuse with the female sex cells.'
+      correctAnswer: 'Fertilization',
+      explanation: 'Exactly! Fertilization is the fusion of male and female sex cells, which leads to the development of a seed.'
     }
   ];
   
@@ -116,23 +116,23 @@ export default function PlantLifeCycleSlide2() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Key Stages of Reproduction</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Key Stages of Reproduction</h2>
             <p className="text-lg leading-relaxed">
               After a plant grows and develops a flower, two critical stages must happen to produce a seed: pollination and fertilization.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-amber-500 dark:text-amber-400">Pollination</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Pollination</h3>
             <p className="text-lg leading-relaxed">
               Pollination is the process where pollen is carried from the anther (male part of the flower) to the stigma (female part). This can happen via wind, water, or animals like insects and birds.
             </p>
           </div>
           
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-rose-500 dark:text-rose-400">Fertilization</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Fertilization</h3>
             <p className="text-lg leading-relaxed">
-              Seeds develop when the male sex cells (from the pollen) fuse with the female sex cells (in the ovule). This fusion is called fertilization and leads to the formation of a seed.
+              Seeds develop when the male sex cells (from pollen) fuse with the female sex cells (in the ovule). This fusion is called fertilization, which leads to the formation of a seed. After fertilization, a fruit often forms to protect the seed.
             </p>
           </div>
         </div>
@@ -140,18 +140,18 @@ export default function PlantLifeCycleSlide2() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">A Pollinator in Action</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Process of Pollination</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/gKk9B4O.jpeg" // Sourced from Page 3 of the document
-                alt="A hummingbird pollinating a flower by drinking nectar."
+                src="https://leafylearning.co.uk/wp-content/uploads/2021/05/1.-Sequence-of-Pollination-803x1024@2x.png"
+                alt="Diagram showing the process of pollination and fertilization in a flower."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
              <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              This hummingbird helps with pollination as it moves from flower to flower.
-            </p>
+               This diagram shows how pollen travels from the anther to the stigma to fertilize the ovules.
+             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">

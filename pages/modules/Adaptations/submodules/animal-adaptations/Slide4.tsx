@@ -9,7 +9,7 @@ export default function AnimalAdaptationsSlide4() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -20,7 +20,7 @@ export default function AnimalAdaptationsSlide4() {
       conceptId: 'animal-adaptation-understanding',
       conceptName: 'Animal Social & Tool Use Quiz',
       type: 'judging',
-      description: 'Testing understanding of group living and tool use'
+      description: 'Testing understanding of group living, tool use, and other behaviors'
     }
   ];
 
@@ -35,7 +35,7 @@ export default function AnimalAdaptationsSlide4() {
   const questions: QuizQuestion[] = [
     {
       id: 'group-living-question',
-      question: 'What is a major advantage for animals living in a group? [cite: 91]',
+      question: 'What is a major advantage for animals living in a group?',
       options: [
         'It is easier to find a mate',
         'There is less competition for food',
@@ -43,19 +43,31 @@ export default function AnimalAdaptationsSlide4() {
         'It allows them to hibernate together'
       ],
      correctAnswer: 'There are more eyes to watch out for predators',
-      explanation: 'Correct! [cite_start]Living in a group provides better protection because there are more individuals to watch for danger. [cite: 91]'
+      explanation: 'Correct! Living in a group provides better protection because there are more individuals to watch for danger.'
+    },
+    {
+      id: 'tool-use-question',
+      question: 'A sea otter using a rock to crack open a seashell is an example of which behavioral adaptation?',
+      options: [
+        'Playing Dead',
+        'Migration',
+        'Tool Use',
+        'Hibernation'
+      ],
+      correctAnswer: 'Tool Use',
+      explanation: 'Correct! Tool use is when an animal manipulates an object to perform a specific task, like an otter using a rock to get food.'
     },
     {
       id: 'playing-dead-question',
-      question: 'Why would an animal like a possum "play dead"? [cite: 99]',
+      question: 'Why would an animal like a possum "play dead"?',
       options: [
         'To attract a mate',
         'To trick predators and escape bodily harm',
         'To conserve energy during the winter',
-        'To signal to other possums that there is no food'
+        'To signal that there is no food'
       ],
        correctAnswer: 'To trick predators and escape bodily harm',
-      explanation: 'Exactly! [cite_start]By pretending they are dead, some animals can escape being harmed by predators who may lose interest in them. [cite: 99]'
+      explanation: 'Exactly! By pretending they are dead, some animals can escape being harmed by predators who may lose interest.'
     }
   ];
   
@@ -123,23 +135,22 @@ export default function AnimalAdaptationsSlide4() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-teal-500 dark:text-teal-400">Living in a Group</h3>
-            <p className="text-lg leading-relaxed">
-              Some animals live in groups for protection. [cite_start]Having more eyes in the group makes it easier to watch out for predators[cite: 91]. [cite_start]Examples include fish, wildebeest, and lions[cite: 92].
+            <h3 className="text-xl font-semibold mb-4 text-teal-500 dark:text-teal-400">Social Behaviors</h3>
+            <p className="text-lg leading-relaxed mb-2">
+              <strong>Living in a Group:</strong> Some animals live in groups for protection, as more eyes make it easier to watch for predators. Examples include fish and lions.
+            </p>
+             <p className="text-lg leading-relaxed">
+              <strong>Communication:</strong> Animals use warning calls, mating dances, and threatening gestures to communicate, attract mates, and scare off predators.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-cyan-500 dark:text-cyan-400">Tool Use</h3>
-            <p className="text-lg leading-relaxed">
-              [cite_start]This is when an animal manipulates an object to perform a specific task[cite: 94, 95, 96, 97]. [cite_start]Monkeys, otters, and some birds are known to use tools[cite: 97].
+            <h3 className="text-xl font-semibold mb-4 text-cyan-500 dark:text-cyan-400">Tool Use & Defense</h3>
+            <p className="text-lg leading-relaxed mb-2">
+               <strong>Tool Use:</strong> This is when an animal manipulates an object to perform a specific task. Monkeys, otters, and some birds are known to use tools.
             </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-500 dark:text-gray-400">Playing Dead</h3>
             <p className="text-lg leading-relaxed">
-              [cite_start]By pretending that they are dead, some animals can escape bodily harm from predators[cite: 99]. [cite_start]This is a defense mechanism used by animals like possums and some snakes[cite: 99].
+              <strong>Playing Dead:</strong> By pretending they are dead, animals like possums can escape bodily harm from predators.
             </p>
           </div>
         </div>
@@ -147,17 +158,17 @@ export default function AnimalAdaptationsSlide4() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">A Clever Defense</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Social & Parental Care</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/K1L7mP2.jpeg" // Sourced from Page 20 of the document
-                alt="A possum playing dead on the ground as a defense mechanism."
+                src="https://geniebook.com/cms/storage/app/media/Primary%20Science%20Image/Adaptations-In-Animals-Img5-800x534.webp"
+                alt="A bird feeding its chick, an example of social and instinctual behavior."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              [cite_start]A possum playing dead is a behavioral adaptation to trick predators into leaving it alone[cite: 99].
+              Behaviors like parental care are instincts that help ensure the survival of the next generation.
             </p>
           </div>
 

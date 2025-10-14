@@ -9,7 +9,7 @@ export default function PlantAdaptationsSlide3() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -20,7 +20,7 @@ export default function PlantAdaptationsSlide3() {
       conceptId: 'plant-adaptation-understanding',
       conceptName: 'Plant Tropism Quiz',
       type: 'judging',
-      description: 'Testing understanding of plant behavioral adaptations like tropism'
+      description: 'Testing understanding of plant behavioral adaptations like tropism and dormancy'
     }
   ];
 
@@ -43,19 +43,31 @@ export default function PlantAdaptationsSlide3() {
         'Positive gravitropism'
       ],
       correctAnswer: 'Positive phototropism',
-      explanation: 'Correct! Phototropism is when a plant senses and grows toward light. [cite_start]Since it grows toward the stimulus, it is a positive tropism. [cite: 166, 167]'
+      explanation: 'Correct! Phototropism is when a plant senses and grows toward light. Since it grows toward the stimulus, it is a positive tropism.'
     },
     {
       id: 'gravitropism-question',
-      question: 'Which part of a plant shows positive gravitropism?',
+      question: 'A plant\'s roots growing downward, deep into the soil, is an example of what?',
       options: [
-        'The leaves',
-        'The stem',
-        'The flower',
-        'The roots'
+        'Negative phototropism',
+        'Positive gravitropism',
+        'Negative gravitropism',
+        'Positive phototropism'
       ],
-      correctAnswer: 'The roots',
-      explanation: 'Exactly! [cite_start]Roots grow downward, toward the force of gravity, which is known as positive gravitropism. [cite: 178, 181, 182] [cite_start]Stems grow up, showing negative gravitropism. [cite: 173, 180]'
+      correctAnswer: 'Positive gravitropism',
+      explanation: 'Exactly! Roots grow downward toward the force of gravity, which is known as positive gravitropism. Stems grow upward, showing negative gravitropism.'
+    },
+    {
+      id: 'dormancy-question',
+      question: 'Why do many deciduous trees lose their leaves in the fall?',
+      options: [
+        'To help them grow taller',
+        'To prepare for a period of winter dormancy',
+        'To attract animals for seed dispersal',
+        'To get more sunlight on their bark'
+      ],
+      correctAnswer: 'To prepare for a period of winter dormancy',
+      explanation: 'Correct! Losing leaves is a behavioral adaptation to conserve water and energy as the tree enters dormancy to survive the winter.'
     }
   ];
   
@@ -116,51 +128,44 @@ export default function PlantAdaptationsSlide3() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">Plant Behaviors: Tropism</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Plant Behaviors: Tropism</h2>
             <p className="text-lg leading-relaxed">
-              [cite_start]Plants have behaviors that help them survive. [cite: 163] [cite_start]A key plant behavior is <strong>tropism</strong>: the movement of a plant toward or away from a stimulus. [cite: 164] [cite_start]Moving toward a stimulus is positive, while moving away is negative. [cite: 164]
+              Plants have behaviors that help them survive. A key plant behavior is <strong>tropism</strong>: the movement of a plant toward or away from a stimulus. Moving toward a stimulus is positive, while moving away is negative.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-amber-500 dark:text-amber-400">Phototropism: Responding to Light</h3>
-            <p className="text-lg leading-relaxed">
-              [cite_start]This is when a plant's shoots (stems and leaves) sense and grow toward a light source. [cite: 166] [cite_start]This is a <strong>positive tropism</strong> because it helps the plant get more light for photosynthesis. [cite: 167]
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-lime-600 dark:text-lime-500">Gravitropism: Responding to Gravity</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Types of Tropism</h3>
             <p className="text-lg leading-relaxed mb-2">
-              [cite_start]This is how a plant's growth changes in response to the direction of gravity. [cite: 172]
+              <strong>Phototropism:</strong> This is when a plant's shoots (stems and leaves) sense and grow toward a light source. This is a <strong>positive tropism</strong> because it helps the plant get more light for photosynthesis.
             </p>
-            <ul className="space-y-2 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-red-500 mr-2">↑</span>
-                [cite_start]<div><strong>Negative Gravitropism:</strong> Shoots (stems & leaves) grow upward, against the force of gravity. [cite: 173, 180]</div>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-green-500 mr-2">↓</span>
-                [cite_start]<div><strong>Positive Gravitropism:</strong> Roots grow downward, toward the force of gravity. [cite: 178, 181]</div>
-              </li>
-            </ul>
+            <p className="text-lg leading-relaxed">
+              <strong>Gravitropism:</strong> This is how a plant's growth changes in response to gravity. Shoots grow upward (negative), while roots grow downward (positive).
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dormancy: A Period of Rest</h3>
+            <p className="text-lg leading-relaxed">
+                Dormancy is a behavioral adaptation where a plant enters a state of rest to survive unfavorable conditions, like winter. Many trees lose their leaves in the fall to conserve water and prevent freezing.
+            </p>
           </div>
         </div>
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Responding to Stimuli</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Responding to Gravity</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/r03CApL.jpeg" // Sourced from Page 32 of the document
-                alt="Plant shoots bending toward a light source to demonstrate phototropism"
+                src="https://plantlet.org/wp-content/uploads/2020/03/images20.jpg"
+                alt="A plant in a tipped-over pot showing its stem growing upwards (negative gravitropism)."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              These plant shoots are demonstrating positive phototropism by growing towards the light.
+              This tipped-over plant demonstrates gravitropism, with its stem growing up and roots growing down.
             </p>
           </div>
 
@@ -241,7 +246,7 @@ export default function PlantAdaptationsSlide3() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
-                        {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Complete Quiz'}
+                        {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Submodule Complete!'}
                       </motion.button>
                     </motion.div>
                   )}

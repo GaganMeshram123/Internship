@@ -9,7 +9,7 @@ export default function PlantLifeCycleSlide1() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -35,7 +35,7 @@ export default function PlantLifeCycleSlide1() {
   const questions: QuizQuestion[] = [
     {
       id: 'reproduction-definition',
-       question: 'What is plant reproduction? [cite: 202]',
+      question: 'What is plant reproduction?',
       options: [
         'The process of a plant growing taller',
         'The process by which a plant produces seeds to make a new plant',
@@ -43,19 +43,31 @@ export default function PlantLifeCycleSlide1() {
         'The process of a plant losing its leaves in winter'
       ],
       correctAnswer: 'The process by which a plant produces seeds to make a new plant',
-      explanation: 'Correct! [cite_start]Reproduction is the process by which a plant produces seeds to make a new plant. [cite: 202]'
+      explanation: 'Correct! Reproduction is the process by which a plant produces seeds to make a new plant.'
+    },
+    {
+      id: 'pollination-definition',
+      question: 'What is the process called when pollen is carried from the anther to the stigma of a flower?',
+      options: [
+          'Germination',
+          'Fertilisation',
+          'Pollination',
+          'Seed Dispersal'
+      ],
+      correctAnswer: 'Pollination',
+      explanation: 'Correct! Pollination is the crucial step where pollen is transferred between flower parts, which is necessary for fertilization to occur.'
     },
     {
       id: 'germination-definition',
-     question: 'What is germination? [cite: 207]',
+      question: 'What is germination?',
       options: [
         'When a flower develops on a plant',
         'When seeds spread out to new locations',
-        'When seeds start to grow after reaching a suitable place',
-        'When pollen is carried from one flower to another'
+        'When a seed starts to grow after reaching a suitable place',
+        'When pollen fuses with female sex cells'
       ],
-      correctAnswer: 'When seeds start to grow after reaching a suitable place',
-      explanation: 'Exactly! [cite_start]Germination is the first stage of the life cycle, where seeds start to grow when they reach a suitable place. [cite: 207]'
+      correctAnswer: 'When a seed starts to grow after reaching a suitable place',
+      explanation: 'Exactly! Germination is the first stage of the life cycle, where a seed starts to grow once conditions are right.'
     }
   ];
   
@@ -110,11 +122,11 @@ export default function PlantLifeCycleSlide1() {
   };
 
   const lifeCycleStages = [
-     { name: 'Germination', description: 'The seed starts to grow. [cite: 207]', color: '#a16207' },
-     { name: 'Flower', description: 'The plant grows and develops a flower. [cite: 206]', color: '#be123c' },
-     { name: 'Pollination', description: 'Pollen is carried from the anther to the stigma. [cite: 210]', color: '#f59e0b' },
-     { name: 'Fertilisation', description: 'Seeds develop when pollen fuses with female sex cells. [cite: 212, 213]', color: '#16a34a' },
-     { name: 'Seed Dispersal', description: 'Seeds spread out to grow with less competition. [cite: 211]', color: '#3b82f6' },
+     { name: 'Germination', description: 'The seed starts to grow when it reaches a suitable place with enough water and warmth.', color: '#a16207' },
+     { name: 'Flower', description: 'The plant grows and develops a flower, which contains the reproductive parts.', color: '#be123c' },
+     { name: 'Pollination', description: 'Pollen is carried from the anther to the stigma, often by wind or insects.', color: '#f59e0b' },
+     { name: 'Fertilisation', description: 'Seeds develop after pollen fuses with female sex cells. The fruit then forms to protect the seed.', color: '#16a34a' },
+     { name: 'Seed Dispersal', description: 'Seeds are spread out by wind, water, or animals to grow with less competition.', color: '#3b82f6' },
   ];
 
   const slideContent = (
@@ -124,9 +136,9 @@ export default function PlantLifeCycleSlide1() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            [cite_start]<h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">The Life Cycle of a Plant [cite: 201, 209]</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The Life Cycle of a Plant</h2>
             <p className="text-lg leading-relaxed">
-              [cite_start]Reproduction is the process by which a plant produces seeds to make a new plant[cite: 202]. [cite_start]This life cycle shows the different stages in plant reproduction[cite: 203].
+              Reproduction is the process by which a plant produces seeds to make a new plant. This life cycle shows the different stages in plant reproduction.
             </p>
           </div>
 
@@ -149,13 +161,13 @@ export default function PlantLifeCycleSlide1() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            [cite_start]<h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Apple Tree Life Cycle [cite: 216]</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Annual Life Cycle</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/G4Y5Q5L.png" // Sourced from Page 39 of the document
-                alt="Diagram showing the life cycle of an apple tree from seed to fruit."
+                src="https://cduebooks.pressbooks.pub/app/uploads/sites/135/2022/12/annual-life-cycle.png"
+                alt="Diagram showing the annual life cycle of a plant from seed to flower and back to seed."
                 className="max-w-full h-auto rounded-lg"
-                style={{ width: '100%', maxWidth: '450px', height: 'auto' }}
+                style={{ width: '100%', maxWidth: '450px', height: 'auto', mixBlendMode: isDarkMode ? 'difference' : 'normal' }}
               />
             </div>
           </div>

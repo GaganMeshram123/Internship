@@ -9,7 +9,7 @@ export default function PlantAdaptationsSlide1() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -46,8 +46,20 @@ export default function PlantAdaptationsSlide1() {
       explanation: 'Correct! Thorns, spikes, and poisons are structural adaptations that help protect plants from being eaten by animals.'
     },
     {
+        id: 'seed-dispersal',
+        question: 'A dandelion seed having a parachute-like structure is an adaptation for what type of dispersal?',
+        options: [
+            'Water Dispersal',
+            'Wind Dispersal',
+            'Animal Dispersal',
+            'Mechanical Dispersal'
+        ],
+        correctAnswer: 'Wind Dispersal',
+        explanation: 'Correct! Seeds with parachute or wing-like structures are adapted to be carried away from the parent plant by the wind.'
+    },
+    {
       id: 'plant-food',
-      question: 'Why do some plants, especially in shady environments, have very large leaves?',
+      question: 'Why do some plants in shady environments have very large leaves?',
       options: [
         'To look more appealing',
         'To capture more sunlight for photosynthesis',
@@ -55,7 +67,7 @@ export default function PlantAdaptationsSlide1() {
         'To catch more rainwater'
       ],
       correctAnswer: 'To capture more sunlight for photosynthesis',
-      explanation: 'Exactly! The larger the leaves, the more sun they can capture. This is a crucial adaptation for making glucose (food) through photosynthesis, especially in low-light conditions.'
+      explanation: 'Exactly! The larger the leaves, the more sun they can capture. This is a crucial adaptation for making food through photosynthesis, especially in low-light conditions.'
     }
   ];
   
@@ -112,18 +124,15 @@ export default function PlantAdaptationsSlide1() {
   const structuralAdaptations = [
     {
       category: 'For Protection',
-      examples: ['Thorns', 'Spikes', 'Bad taste', 'Poisons'],
-      color: '#ef4444' // red-500
+      examples: ['Thorns and spikes', 'Bad taste or poisons', 'Warning coloration'],
     },
     {
       category: 'For Obtaining Food/Resources',
-      examples: ['Large leaves to capture sun', 'Catching animals for minerals', 'Special roots for water'],
-      color: '#22c55e' // green-500
+      examples: ['Large leaves to capture sun', 'Carnivorous plants catch animals for minerals', 'Floatation devices for water plants'],
     },
     {
-      category: 'For Environment',
-      examples: ['Flexibility to withstand wind', 'Floatation devices for water plants', 'Water storage in stems (cacti)'],
-      color: '#3b82f6' // blue-500
+      category: 'For Seed Dispersal',
+      examples: ['Parachutes or wings for wind dispersal', 'Hooks that attach to animal fur', 'Fruits that animals eat'],
     }
   ];
 
@@ -134,19 +143,19 @@ export default function PlantAdaptationsSlide1() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-emerald-600 dark:text-emerald-400">Structural Plant Adaptations</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Structural Plant Adaptations</h2>
             <p className="text-lg leading-relaxed">
-              Like animals, plants have structural adaptations—physical features or parts of their bodies—that help them survive. These adaptations can help with protection, getting food, and dealing with environmental challenges.
+              Like animals, plants have physical features that help them survive. These adaptations can help with protection, getting food, and dealing with environmental challenges.
             </p>
           </div>
 
           {structuralAdaptations.map((adaptation, index) => (
             <div key={index} className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-semibold mb-4" style={{ color: adaptation.color }}>{adaptation.category}</h3>
+              <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">{adaptation.category}</h3>
               <ul className="space-y-2">
                 {adaptation.examples.map((example, exIndex) => (
                   <li key={exIndex} className="flex items-center text-lg">
-                    <svg className="w-5 h-5 mr-3 flex-shrink-0" fill={adaptation.color} viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
+                    <svg className="w-5 h-5 mr-3 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
                     <span>{example}</span>
                   </li>
                 ))}
@@ -158,17 +167,17 @@ export default function PlantAdaptationsSlide1() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">A Prickly Defense</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">A Carnivorous Adaptation</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/L7E1nCS.jpeg" // Sourced from Page 25 of the document
-                alt="A plant with sharp thorns on its stem"
+                src="https://bam.files.bbci.co.uk/bam/live/content/z7bjtfr/small"
+                alt="A Venus flytrap, a carnivorous plant, with its trap-like leaves."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The thorns on this plant are a physical adaptation to protect it from being eaten by herbivores.
+              Carnivorous plants like this Venus flytrap have adapted to catch insects for essential minerals.
             </p>
           </div>
 
