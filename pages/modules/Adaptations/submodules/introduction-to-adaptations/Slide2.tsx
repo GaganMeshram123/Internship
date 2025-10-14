@@ -47,12 +47,12 @@ export default function IntroAdaptationsSlide2() {
     },
     {
       id: 'behavioral-example',
-      question: 'Birds flying south for the winter is an example of which type of adaptation?',
+      question: 'Geese flying south for the winter is an example of which type of adaptation?',
       options: [
         'Structural',
-        'Physical',
         'Behavioral',
-        'Instinctual (but not an adaptation)'
+        'Physical',
+        'Temporary'
       ],
       correctAnswer: 'Behavioral',
       explanation: 'Exactly! Behavioral adaptations are ways an organism acts to survive. Migration is an instinctual behavior that helps birds find food and better weather.'
@@ -109,8 +109,9 @@ export default function IntroAdaptationsSlide2() {
     }
   };
 
-  const structuralExamples = ['Camouflage', 'Mimicry', 'Sharp Teeth & Claws', 'Bent Hind Legs'];
-  const behavioralExamples = ['Migration', 'Hibernation', 'Warning Calls', 'Hunting in Packs'];
+  // Expanded examples based on the document
+  const structuralExamples = ['Camouflage & Mimicry', 'Specialized Teeth (Sharp or Flat)', 'Eye Position (Predator vs. Prey)', 'Flippers and Wings'];
+  const behavioralExamples = ['Migration & Hibernation', 'Mating Dances', 'Tool Use', 'Playing Dead & Threatening Gestures'];
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
@@ -121,14 +122,14 @@ export default function IntroAdaptationsSlide2() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Two Main Types of Adaptations</h2>
             <p className="text-lg leading-relaxed">
-              [cite_start]All adaptations can be categorized as either <strong>structural</strong> or <strong>behavioral</strong>[cite: 17]. [cite_start]Structural adaptations are physical features, while behavioral adaptations are the ways an organism acts[cite: 35, 39].
+              All adaptations can be categorized as either <strong>structural</strong> or <strong>behavioral</strong>. Structural adaptations are physical features, while behavioral adaptations are the ways an organism acts.
             </p>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-emerald-600 dark:text-emerald-400">Structural Adaptations</h3>
             <p className="text-lg leading-relaxed mb-4">
-              [cite_start]These are actual body parts or colorations that help an organism survive in their environment[cite: 35]. [cite_start]You can see these adaptations on the organism's body[cite: 74].
+              These are actual body parts or colorations that help an organism survive in their environment. You can see these adaptations on the organism's body.
             </p>
             <ul className="space-y-2">
               {structuralExamples.map((example, index) => (
@@ -143,7 +144,7 @@ export default function IntroAdaptationsSlide2() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">Behavioral Adaptations</h3>
             <p className="text-lg leading-relaxed mb-4">
-              [cite_start]These are the ways an organism acts or reacts to help it survive[cite: 39, 76]. [cite_start]These are instincts, or pre-programmed behaviors, that are not visible on the body[cite: 75, 77].
+              These are the ways an organism acts or reacts to help it survive. These are instincts, or pre-programmed behaviors, that are not visible on the body.
             </p>
             <ul className="space-y-2">
               {behavioralExamples.map((example, index) => (
@@ -162,14 +163,14 @@ export default function IntroAdaptationsSlide2() {
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Behavioral vs. Structural</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/L1iF7aN.jpeg" // Sourced from Page 6 of the document
-                alt="A bear hibernating"
+                src="https://onepointlearning.com/wp-content/uploads/2023/02/Types-Adaptation-in-plants.png"
+                alt="Examples of structural and behavioral adaptations in plants and animals"
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              [cite_start]A bear's thick fur is a <strong>structural</strong> adaptation, while its hibernation is a <strong>behavioral</strong> adaptation to survive winter[cite: 88].
+              A bear's thick fur is a <strong>structural</strong> adaptation, while its hibernation is a <strong>behavioral</strong> adaptation to survive winter.
             </p>
           </div>
 

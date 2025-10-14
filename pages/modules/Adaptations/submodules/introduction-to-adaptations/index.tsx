@@ -14,8 +14,8 @@ export const introductionToAdaptationsSlides: Slide[] = [
   {
     type: 'interactive',
     title: 'Types of Adaptations',
-    content: 'Adaptations can be either structural (physical body parts) or behavioral (the way an organism acts).',
-    component: IntroAdaptationsSlide2,
+    /* content: 'Adaptations can be either structural (physical body parts) or behavioral (the way an organism acts).',
+     */component: IntroAdaptationsSlide2,
     id: 'types-of-adaptations'
   }
 ];

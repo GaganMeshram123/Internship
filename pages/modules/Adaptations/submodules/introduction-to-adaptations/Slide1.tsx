@@ -38,12 +38,12 @@ export default function IntroAdaptationsSlide1() {
       question: 'What is an adaptation?',
       options: [
         'A behavior an animal learns during its lifetime',
-        'An inherited characteristic that helps an organism survive and reproduce [cite: 16]',
+        'An inherited characteristic that helps an organism survive and reproduce',
         'A temporary change to fit a new environment',
         'A physical injury that an animal recovers from'
       ],
-      correctAnswer: 'An inherited characteristic that helps an organism survive and reproduce [cite: 16]',
-      explanation: 'Correct! [cite_start]Adaptations are inherited characteristics that help an organism survive in its changing environment long enough to successfully reproduce[cite: 16].'
+      correctAnswer: 'An inherited characteristic that helps an organism survive and reproduce',
+      explanation: 'Correct! Adaptations are inherited characteristics that help an organism survive in its changing environment long enough to successfully reproduce.'
     },
     {
       id: 'adaptation-purpose',
@@ -51,11 +51,11 @@ export default function IntroAdaptationsSlide1() {
       options: [
         'To make an animal stronger than all others',
         'To allow an organism to change its species',
-        'To help an organism survive long enough to reproduce [cite: 16]',
+        'To help an organism survive long enough to reproduce',
         'To make an organism look different'
       ],
-      correctAnswer: 'To help an organism survive long enough to reproduce [cite: 16]',
-      explanation: 'Exactly! [cite_start]The primary purpose of any adaptation is to enhance an organism\'s ability to survive in its environment so it can pass on its genes to the next generation[cite: 16].'
+      correctAnswer: 'To help an organism survive long enough to reproduce',
+      explanation: 'Exactly! The primary purpose of any adaptation is to enhance an organism\'s ability to survive in its environment so it can pass on its genes to the next generation.'
     }
   ];
   
@@ -112,22 +112,22 @@ export default function IntroAdaptationsSlide1() {
   const adaptationFeatures = [
     {
       title: 'Inherited',
-      description: 'Adaptations are passed down from parents to offspring through genes[cite: 4, 16].',
+      description: 'Adaptations are passed down from parents to offspring through genes.',
       color: '#3b82f6'
     },
     {
       title: 'For Survival',
-      description: 'They increase an organism\'s chances of surviving in its specific environment[cite: 16].',
+      description: 'They increase an organism\'s chances of surviving in its specific environment.',
       color: '#10b981'
     },
     {
       title: 'Aids Reproduction',
-      description: 'The ultimate goal is to live long enough to reproduce successfully[cite: 16].',
+      description: 'The ultimate goal is to live long enough to reproduce successfully.',
       color: '#8b5cf6'
     },
     {
       title: 'Environmental Fit',
-      description: 'All living things change to better fit their environment through adaptations[cite: 2].',
+      description: 'All living things change to better fit their environment through adaptations.',
       color: '#f59e0b'
     }
   ];
@@ -140,10 +140,10 @@ export default function IntroAdaptationsSlide1() {
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <p className="text-lg leading-relaxed mb-4">
-              [cite_start]An adaptation is an <strong>inherited characteristic</strong> that helps an organism survive long enough to reproduce more successfully in its changing environment[cite: 16].
+              An adaptation is an <strong>inherited characteristic</strong> that helps an organism survive long enough to reproduce more successfully in its changing environment.
             </p>
             <p className="text-lg leading-relaxed">
-              All living things, from animals to plants, have adaptations. [cite_start]They are the answer to questions like "Why do tigers have stripes?" or "Why do waterlilies float?"[cite: 2, 6, 11].
+              All living things, from animals to plants, have adaptations. They are the answer to questions like "Why do tigers have stripes?" or "Why do waterlilies float?".
             </p>
           </div>
 
@@ -185,7 +185,7 @@ export default function IntroAdaptationsSlide1() {
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Blending In</h3>
             <div className="flex justify-center">
               <img 
-                src="https://i.imgur.com/T0bCj4F.jpeg" // A royalty-free image of a chameleon
+                src="https://cdn0.thedailyeco.com/en/posts/7/8/0/biological_adaptation_definition_types_and_examples_87_600_square.jpg"
                 alt="Chameleon demonstrating camouflage"
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{
@@ -196,7 +196,7 @@ export default function IntroAdaptationsSlide1() {
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              [cite_start]A chameleon's ability to change color is a classic example of a structural adaptation called camouflage[cite: 36, 42].
+              A chameleon's ability to change color is a classic example of a structural adaptation called camouflage.
             </p>
           </div>
 
