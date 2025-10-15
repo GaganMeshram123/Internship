@@ -16,8 +16,18 @@ type Example = {
 // --- MINI-ANIMATION COMPONENTS ---
 const CarAnimation: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
     const carColor = isDarkMode ? '#cbd5e1' : '#475569';
+    const textColor = isDarkMode ? '#e2e8f0' : '#334155';
+
     return (
         <motion.svg viewBox="0 0 200 100" key="car">
+            {/* Braking Force Arrow and Label - appears at the end */}
+            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }}>
+                {/* Arrow */}
+                <path d="M 135 85 L 115 85 M 120 80 L 115 85 L 120 90" stroke="#f59e0b" strokeWidth="2" fill="none" />
+                {/* Label */}
+                <text x="125" y="98" textAnchor="middle" fontSize="8" fill={textColor}>Braking Force</text>
+            </motion.g>
+
             <motion.g initial={{ x: 20 }} animate={{ x: 100 }} transition={{ duration: 1.5, ease: 'easeOut', delay: 0.5 }}>
                 {/* Car Body */}
                 <path d="M 0 50 L 10 30 L 60 30 L 70 50 Z" fill={carColor} />
@@ -28,11 +38,20 @@ const CarAnimation: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
                 <motion.g initial={{ x: 0 }} animate={{ x: 10 }} transition={{ duration: 0.3, ease: 'easeOut', delay: 2.0 }}>
                     <circle cx="35" cy="35" r="5" fill="#3b82f6" />
                     <rect x="30" y="40" width="10" height="15" fill="#3b82f6" />
+
+                    {/* Inertia Arrow and Label for the person */}
+                     <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+                         {/* Arrow */}
+                        <path d="M 45 35 L 55 35 M 50 32 L 55 35 L 50 38" stroke="#3b82f6" strokeWidth="1.5" fill="none" />
+                        {/* Label */}
+                        <text x="50" y="28" textAnchor="middle" fontSize="8" fill={textColor}>Inertia</text>
+                    </motion.g>
                 </motion.g>
             </motion.g>
         </motion.svg>
     );
 };
+
 
 const TableclothAnimation: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
     const tableColor = isDarkMode ? '#64748b' : '#94a3b8';
@@ -128,7 +147,7 @@ const BusAnimation: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
 
 // --- DATA for the carousel ---
 const examples: Example[] = [
-    { id: 'car', title: 'Sudden Stop in a Car', description: "When a car stops suddenly, your body's inertia makes it continue to move forward. This is why seatbelts are crucial for safety.", AnimationComponent: CarAnimation },
+    { id: 'car', title: 'Sudden Stop in a Car', description: "When a car stops suddenly, your body's inertia makes it continue to move forward. This is why seatbelts are crucial for safety. The opposite is also true: when the car accelerates, you feel pushed back as your body resists moving from rest!", AnimationComponent: CarAnimation },
     { id: 'tablecloth', title: 'The Tablecloth Trick', description: "The dishes on the table have inertia. If the tablecloth is pulled quickly enough, the dishes resist the change in motion and stay in place.", AnimationComponent: TableclothAnimation },
     { id: 'ketchup', title: 'Shaking a Ketchup Bottle', description: "When you swing the bottle down and stop it suddenly, the ketchup inside continues moving downwards due to its inertia, forcing it out.", AnimationComponent: KetchupAnimation },
     { id: 'massInertia', title: 'Inertia and Mass', description: "The more mass an object has, the more inertia it has. This means it's harder to change its motion. It's much easier to stop a rolling bicycle than a moving truck!", AnimationComponent: MassInertiaAnimation },
@@ -170,7 +189,7 @@ export default function NewtonsFirstLawSlide4() {
                         <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                             <h3 className="text-2xl font-bold mb-4 text-blue-500">Inertia is Everywhere</h3>
                             <p className="text-lg leading-relaxed">
-                                Newton's First Law isn't just a textbook concept—it's constantly at play in the world around us. Once you know what to look for, you'll see examples of inertia everywhere.
+                                Newton's First Law isn't just a textbook concept—it's constantly at play in the world around us. <strong>In short, inertia is an object's resistance to any change in its motion.</strong> Once you know what to look for, you'll see examples of inertia everywhere.
                             </p>
                         </div>
                         

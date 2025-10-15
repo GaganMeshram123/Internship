@@ -5,30 +5,54 @@ import { InteractionResponse } from '../../../common-components/concept';
 import { useThemeContext } from '@/lib/ThemeContext';
 import 'katex/dist/katex.min.css';
 
-// --- INTERACTIVE ANIMATION: TUG OF WAR ---
+// --- NEW: Simple Force Diagram Components ---
+const BalancedForceDiagram = () => (
+    <svg viewBox="0 0 100 20" className="w-24 h-5 mx-auto mt-2">
+        <rect x="30" y="5" width="40" height="10" fill="none" stroke="currentColor" strokeOpacity="0.5" />
+        <path d="M 30 10 L 0 10 M 0 10 L 5 7 M 0 10 L 5 13" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M 70 10 L 100 10 M 100 10 L 95 7 M 100 10 L 95 13" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+);
+const UnbalancedForceDiagram = () => (
+    <svg viewBox="0 0 120 20" className="w-32 h-5 mx-auto mt-2">
+        <rect x="40" y="5" width="40" height="10" fill="none" stroke="currentColor" strokeOpacity="0.5" />
+        <path d="M 40 10 L 10 10 M 10 10 L 15 7 M 10 10 L 15 13" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M 80 10 L 120 10 M 120 10 L 115 7 M 120 10 L 115 13" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+);
+
+
+// --- INTERACTIVE ANIMATION: TUG OF WAR (ENHANCED) ---
 const TugOfWarAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const [teamA, setTeamA] = useState(2);
     const [teamB, setTeamB] = useState(2);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [statusText, setStatusText] = useState('');
     
     const blockX = useMotionValue(200);
-    const FORCE_PER_PLAYER = 25;
+    const FORCE_PER_PLAYER = 10; // Simplified to 10 N per player
 
     const netForce = (teamB - teamA) * FORCE_PER_PLAYER;
     
-    // Theme-based colors
     const textColor = isDarkMode ? '#cbd5e1' : '#475569';
-    const teamAColor = '#3b82f6'; // Blue
-    const teamBColor = '#ef4444'; // Red
+    const teamAColor = '#3b82f6';
+    const teamBColor = '#ef4444';
+    const netForceColor = isDarkMode ? '#fde047' : '#facc15'; // Yellow
 
     const runAnimation = () => {
         if (isAnimating) return;
+        setStatusText('');
         setIsAnimating(true);
-        const endX = 200 + netForce * 1.5; // Scale the movement
+        
+        if (netForce === 0) {
+            setStatusText('Forces are balanced! No change in motion.');
+            animate(blockX, [200, 201, 199, 200], { duration: 0.4, onComplete: () => setIsAnimating(false) });
+            return;
+        }
+
+        const endX = 200 + netForce * 1.5;
         animate(blockX, endX, {
-            type: 'spring',
-            damping: 15,
-            stiffness: 100,
+            type: 'spring', damping: 15, stiffness: 100,
             onComplete: () => setIsAnimating(false)
         });
     };
@@ -36,6 +60,7 @@ const TugOfWarAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const handleReset = () => {
         blockX.stop();
         setIsAnimating(false);
+        setStatusText('');
         setTeamA(2);
         setTeamB(2);
         blockX.set(200);
@@ -43,12 +68,7 @@ const TugOfWarAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
     
     const Player = ({ color, x, y }: { color: string, x: number, y: number }) => (
         <g transform={`translate(${x}, ${y})`}>
-            <circle cx="0" cy="-5" r="5" fill={color} />
-            <line x1="0" y1="0" x2="0" y2="10" stroke={color} strokeWidth="2" />
-            <line x1="0" y1="5" x2="-5" y2="2" stroke={color} strokeWidth="2" />
-            <line x1="0" y1="5" x2="5" y2="2" stroke={color} strokeWidth="2" />
-            <line x1="0" y1="10" x2="-5" y2="15" stroke={color} strokeWidth="2" />
-            <line x1="0" y1="10" x2="5" y2="15" stroke={color} strokeWidth="2" />
+            <circle cx="0" cy="-5" r="5" fill={color} /><line x1="0" y1="0" x2="0" y2="10" stroke={color} strokeWidth="2" /><line x1="0" y1="5" x2="-5" y2="2" stroke={color} strokeWidth="2" /><line x1="0" y1="5" x2="5" y2="2" stroke={color} strokeWidth="2" /><line x1="0" y1="10" x2="-5" y2="15" stroke={color} strokeWidth="2" /><line x1="0" y1="10" x2="5" y2="15" stroke={color} strokeWidth="2" />
         </g>
     );
 
@@ -57,38 +77,36 @@ const TugOfWarAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
             <h3 className="text-2xl font-bold text-blue-500 mb-2">Tug of War</h3>
             <div className="relative w-full h-48 flex-grow flex flex-col justify-center">
                 <svg viewBox="0 0 400 100" className="w-full h-full">
-                    {/* Players */}
+                    {/* NEW: Net Force Arrow */}
+                    <AnimatePresence>
+                    {isAnimating && netForce !== 0 && (
+                        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            <path d={`M 200 25 L ${200 + netForce * 1.5} 25`} stroke={netForceColor} strokeWidth="3" />
+                            <path d={`M ${200 + netForce * 1.5} 25 L ${200 + netForce * 1.5 - (netForce > 0 ? 6 : -6)} 21 L ${200 + netForce * 1.5 - (netForce > 0 ? 6 : -6)} 29 Z`} fill={netForceColor}/>
+                            <text x={200 + netForce * 0.75} y="18" textAnchor="middle" fontSize="10" fill={netForceColor}>Net Force: {Math.abs(netForce)}N</text>
+                        </motion.g>
+                    )}
+                    </AnimatePresence>
+
                     {Array.from({ length: teamA }).map((_, i) => <Player key={`a${i}`} color={teamAColor} x={110 - i * 20} y={70} />)}
                     {Array.from({ length: teamB }).map((_, i) => <Player key={`b${i}`} color={teamBColor} x={290 + i * 20} y={70} />)}
                     
-                    {/* Block and Ropes */}
                     <motion.g style={{ x: blockX }}>
                         <rect x="-20" y="60" width="40" height="20" rx="3" fill={textColor} />
                         <line x1="-20" y1="70" x2={-100} y2="70" stroke={textColor} strokeWidth="2" />
                         <line x1="20" y1="70" x2={200} y2="70" stroke={textColor} strokeWidth="2" />
-
-                        {/* Force Vectors */}
-                        <AnimatePresence>
-                        {isAnimating && (
-                            <>
-                                <motion.g initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} exit={{ scaleX: 0 }} style={{ transformOrigin: 'right' }}>
-                                    <path d={`M -25 50 L ${-25 - teamA * FORCE_PER_PLAYER} 50`} stroke={teamAColor} strokeWidth="3" />
-                                    <path d={`M ${-25 - teamA * FORCE_PER_PLAYER} 50 L ${-30 - teamA * FORCE_PER_PLAYER} 46 L ${-30 - teamA * FORCE_PER_PLAYER} 54 Z`} fill={teamAColor}/>
-                                </motion.g>
-                                <motion.g initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} exit={{ scaleX: 0 }} style={{ transformOrigin: 'left' }}>
-                                    <path d={`M 25 50 L ${25 + teamB * FORCE_PER_PLAYER} 50`} stroke={teamBColor} strokeWidth="3" />
-                                    <path d={`M ${25 + teamB * FORCE_PER_PLAYER} 50 L ${20 + teamB * FORCE_PER_PLAYER} 46 L ${20 + teamB * FORCE_PER_PLAYER} 54 Z`} fill={teamBColor}/>
-                                </motion.g>
-                            </>
-                        )}
-                        </AnimatePresence>
                     </motion.g>
                 </svg>
             </div>
-            <div className="flex justify-around items-center text-center mt-2">
+            {/* NEW: Added quantified force and status text */}
+            <div className="text-center h-6 mb-2">
+                {statusText && <p className="text-sm italic text-green-500">{statusText}</p>}
+            </div>
+            <div className="flex justify-around items-center text-center">
                 <div>
                     <p className="font-bold" style={{ color: teamAColor }}>Team A</p>
-                    <div className="flex items-center space-x-2">
+                    <p className="text-sm font-mono">{teamA * FORCE_PER_PLAYER} N</p>
+                    <div className="flex items-center space-x-2 mt-1">
                         <button onClick={() => setTeamA(v => Math.max(v - 1, 0))} className="px-2 rounded bg-slate-200 dark:bg-slate-700">-</button>
                         <span className="font-mono text-lg w-4">{teamA}</span>
                         <button onClick={() => setTeamA(v => Math.min(v + 1, 5))} className="px-2 rounded bg-slate-200 dark:bg-slate-700">+</button>
@@ -96,7 +114,8 @@ const TugOfWarAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 </div>
                 <div>
                     <p className="font-bold" style={{ color: teamBColor }}>Team B</p>
-                     <div className="flex items-center space-x-2">
+                    <p className="text-sm font-mono">{teamB * FORCE_PER_PLAYER} N</p>
+                    <div className="flex items-center space-x-2 mt-1">
                         <button onClick={() => setTeamB(v => Math.max(v - 1, 0))} className="px-2 rounded bg-slate-200 dark:bg-slate-700">-</button>
                         <span className="font-mono text-lg w-4">{teamB}</span>
                         <button onClick={() => setTeamB(v => Math.min(v + 1, 5))} className="px-2 rounded bg-slate-200 dark:bg-slate-700">+</button>
@@ -132,19 +151,34 @@ export default function NewtonsFirstLawSlide3() {
     const slideContent = (
         <div className={`w-full h-full ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl h-full">
-                {/* --- THIS IS THE MODIFIED LINE --- */}
                 <div className="space-y-6 flex flex-col justify-start">
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
                         <h3 className="text-2xl font-bold mb-4 text-blue-500">Net Force (ΣF)</h3>
                         <p className="text-lg leading-relaxed">The <strong>Net Force</strong> is the overall force acting on an object once all individual forces are combined. It's the sum of all pushes and pulls.</p>
                     </div>
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Balanced Forces (ΣF = 0)</h3>
-                        <p className="text-lg leading-relaxed">When forces are balanced, they cancel each other out. The net force is zero, and there is <strong>no change in motion</strong>. The object remains in equilibrium (at rest or in uniform motion).</p>
+                        <h3 className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Balanced Forces (ΣF = 0)</h3>
+                        <p className="text-lg leading-relaxed">When forces are balanced, they cancel each other out. The net force is zero, and there is <strong>no change in motion</strong>. The object remains in equilibrium.</p>
+                        <BalancedForceDiagram /> {/* NEW */}
                     </div>
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Unbalanced Forces (ΣF ≠ 0)</h3>
+                        <h3 className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Unbalanced Forces (ΣF ≠ 0)</h3>
                         <p className="text-lg leading-relaxed">When forces are unbalanced, there is a net force in one direction. This non-zero net force is what causes an object to <strong>accelerate</strong> (change its velocity).</p>
+                        <UnbalancedForceDiagram /> {/* NEW */}
+                    </div>
+                    {/* --- NEW: Real World Examples Card --- */}
+                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
+                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Real-World Examples</h3>
+                        <p className="font-bold text-lg">Balanced:</p>
+                        <ul className="list-disc list-inside space-y-1 text-base mb-2">
+                           <li>📖 A book resting on a table.</li>
+                           <li>🚗 A car at a constant speed on a highway.</li>
+                        </ul>
+                        <p className="font-bold text-lg">Unbalanced:</p>
+                        <ul className="list-disc list-inside space-y-1 text-base">
+                           <li>🍎 An apple falling from a tree.</li>
+                           <li>🚀 A rocket launching into space.</li>
+                        </ul>
                     </div>
                 </div>
                 

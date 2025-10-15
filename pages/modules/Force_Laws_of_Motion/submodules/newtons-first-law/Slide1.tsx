@@ -44,6 +44,9 @@ const InertiaAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const lineColor = isDarkMode ? '#64748b' : '#94a3b8';
     const forceColor = isDarkMode ? '#f87171' : '#ef4444'; // Red
 
+    // NEW: Find the unselected scenario for visual comparison
+    const unselectedScenario = scenarios.find(s => s.id !== selectedScenario.id);
+
     const runAnimation = () => {
         if (isAnimating) return;
         setShowPredictionPrompt(false);
@@ -94,7 +97,7 @@ const InertiaAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
                         <h4 className="text-xl font-bold text-white mb-4 text-center">What do you think will happen?</h4>
                         <p className="text-slate-300 text-center mb-6">Consider the object's mass and the applied force.</p>
                         <motion.button onClick={runAnimation} className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-2 rounded-lg" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                           Run Simulation
+                            Run Simulation
                         </motion.button>
                     </motion.div>
                 )}
@@ -103,6 +106,14 @@ const InertiaAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
             <div className="relative w-full h-48 flex-grow flex flex-col justify-center">
                 <svg viewBox="0 0 400 100" className="w-full h-full">
                     <line x1="10" y1="80" x2="390" y2="80" stroke={lineColor} strokeWidth="1" strokeDasharray="4" />
+                    
+                    {/* NEW: Render the unselected object as a "ghost" for comparison */}
+                    {unselectedScenario && (
+                        <g style={{ transform: `translateX(${unselectedScenario.startX}px) translateY(60px)`, opacity: 0.2 }}>
+                            {unselectedScenario.id === 'ball' ? <Ball /> : <Boulder />}
+                        </g>
+                    )}
+
                     <motion.g style={{ x: objectX, y: 60 }} initial={{ scale: 0 }} animate={{ scale: 1 }} key={selectedScenario.id}>
                         {selectedScenario.id === 'ball' ? <Ball /> : <Boulder />}
                     </motion.g>
@@ -120,11 +131,11 @@ const InertiaAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </div>
             <div className="text-center h-12 mt-2 flex items-center justify-center px-4">
                  <AnimatePresence>
-                    {observationText && (
-                        <motion.p className="text-sm italic text-green-500 dark:text-green-400" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                            {observationText}
-                        </motion.p>
-                    )}
+                     {observationText && (
+                         <motion.p className="text-sm italic text-green-500 dark:text-green-400" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                             {observationText}
+                         </motion.p>
+                     )}
                  </AnimatePresence>
             </div>
             <div className="flex justify-center space-x-2 mb-4">
@@ -145,34 +156,80 @@ const InertiaAnimation = ({ isDarkMode }: { isDarkMode: boolean }) => {
     );
 };
 
-// --- NEW QUIZ COMPONENT ---
+// --- MODIFIED QUIZ COMPONENT to handle multiple questions ---
 const QuizComponent = () => {
     const { isDarkMode } = useThemeContext();
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const question = {
-        text: "An object's inertia depends primarily on its...",
-        options: ["Speed", "Mass", "Color", "Weight"],
-        correctAnswerIndex: 1,
-    };
+    const [score, setScore] = useState(0);
+    const [isQuizComplete, setIsQuizComplete] = useState(false);
+
+    const questions = [
+        {
+            text: "An object's inertia depends primarily on its...",
+            options: ["Speed", "Mass", "Color", "Weight"],
+            correctAnswerIndex: 1,
+            feedback: "Correct! Inertia is an intrinsic property of matter, determined by its mass."
+        },
+        {
+            text: "A train and a small car are both moving at 30 km/h. Which is harder to stop and why?",
+            options: [
+                "The car, because it has rubber tires.",
+                "The train, because it has more inertia.",
+                "They are equally hard to stop.",
+                "The train, because it is longer."
+            ],
+            correctAnswerIndex: 1,
+            feedback: "Exactly! The train has far more mass, and therefore much more inertia, making it harder to stop."
+        }
+    ];
+
+    const currentQuestion = questions[currentQuestionIndex];
+
     const handleSelectOption = (index: number) => {
         if (isSubmitted) return;
         setSelectedOption(index);
     };
+
     const handleSubmit = () => {
         if (selectedOption === null) return;
+        if (selectedOption === currentQuestion.correctAnswerIndex) {
+            setScore(prev => prev + 1);
+        }
         setIsSubmitted(true);
     };
-    const isCorrect = selectedOption === question.correctAnswerIndex;
+
+    const handleNextQuestion = () => {
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(prev => prev + 1);
+            setSelectedOption(null);
+            setIsSubmitted(false);
+        } else {
+            setIsQuizComplete(true);
+        }
+    };
+
+    if (isQuizComplete) {
+        return (
+            <div className="text-center">
+                <h3 className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</h3>
+                <p className="text-lg">You scored {score} out of {questions.length}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Quick Check</h3>
-            <p className="mb-4 text-lg">{question.text}</p>
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Quick Check</h3>
+                <p className="text-sm text-slate-500">Question {currentQuestionIndex + 1} of {questions.length}</p>
+            </div>
+            <p className="mb-4 text-lg">{currentQuestion.text}</p>
             <div className="space-y-3">
-                {question.options.map((option, index) => {
+                {currentQuestion.options.map((option, index) => {
                     const isSelected = selectedOption === index;
-                    const isCorrectAnswer = index === question.correctAnswerIndex;
+                    const isCorrectAnswer = index === currentQuestion.correctAnswerIndex;
                     let buttonClass = isDarkMode ? 'bg-slate-700 hover:bg-slate-600' : 'bg-slate-200 hover:bg-slate-300';
                     if (isSelected && !isSubmitted) buttonClass = 'bg-blue-600 text-white';
                     if (isSubmitted && isCorrectAnswer) buttonClass = 'bg-green-600 text-white';
@@ -186,8 +243,13 @@ const QuizComponent = () => {
                 {!isSubmitted ? (
                     <motion.button onClick={handleSubmit} disabled={selectedOption === null} className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 text-white font-bold px-5 py-2 rounded-lg" whileHover={{ scale: selectedOption !== null ? 1.05 : 1 }} whileTap={{ scale: selectedOption !== null ? 0.95 : 1 }}>Check Answer</motion.button>
                 ) : (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                        {isCorrect ? (<p className="text-green-500 font-bold">Correct! Inertia is a measure of mass.</p>) : (<p className="text-red-500 font-bold">Not quite. Inertia is determined by an object's mass.</p>)}
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-between w-full">
+                        <p className={`font-bold ${selectedOption === currentQuestion.correctAnswerIndex ? 'text-green-500' : 'text-red-500'}`}>
+                            {selectedOption === currentQuestion.correctAnswerIndex ? "Correct!" : "Not quite."}
+                        </p>
+                        <motion.button onClick={handleNextQuestion} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2 rounded-lg" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'See Results'}
+                        </motion.button>
                     </motion.div>
                 )}
             </div>
@@ -206,14 +268,38 @@ export default function NewtonsFirstLawSlide1() {
                 
                 {/* --- Left Column: Explanations --- */}
                 <div className="space-y-6 flex flex-col justify-center">
-                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}><h3 className="text-2xl font-bold mb-4 text-blue-500">The Concept of Inertia</h3><p className="text-lg leading-relaxed mb-4">Inertia is the natural resistance of any physical object to a change in its state of motion. In simpler terms, it's the tendency of things to keep doing what they're already doing.</p></div>
-                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}><h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Inertia and Mass</h3><p className="text-lg leading-relaxed">The amount of inertia an object has depends on its mass. More mass means more inertia. This is why it's much harder to start pushing a heavy car than a light shopping cart.</p></div>
-                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}><h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Try it out!</h3><p className="text-lg leading-relaxed">Use the interactive animation to see this in action. Select an object and a force level, then click "Apply Force" to see how hard it is to change its motion.</p></div>
-                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}><h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Real-World Examples</h3><ul className="list-disc list-inside space-y-2 text-lg"><li>🚌 When a bus stops suddenly, your body continues to move forward due to its inertia.</li><li>🚗 Seatbelts provide an external force to counteract your body's inertia in a crash.</li><li>🍅 Shaking a ketchup bottle uses inertia to get the ketchup moving out of the bottle.</li></ul></div>
+                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
+                        <h3 className="text-2xl font-bold mb-4 text-blue-500">The Concept of Inertia</h3>
+                        <p className="text-lg leading-relaxed mb-4">Inertia is the natural resistance of any physical object to a change in its state of motion. In simpler terms, it's the tendency of things to keep doing what they're already doing.</p>
+                        {/* NEW: Explicitly linking to Newton's First Law */}
+                        <p className="text-lg leading-relaxed font-semibold">This concept is also known as Newton's First Law of Motion.</p>
+                    </div>
+                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
+                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Inertia and Mass</h3>
+                        <p className="text-lg leading-relaxed">The amount of inertia an object has depends on its mass. More mass means more inertia. This is why it's much harder to start pushing a heavy car than a light shopping cart.</p>
+                        {/* NEW: Mass vs. Weight clarification */}
+                        <div className="mt-4 p-3 border-l-4 border-amber-500 bg-amber-500/10 text-amber-200">
+                           <p className="font-semibold">Good to know: Mass vs. Weight</p>
+                           <p className="text-sm">Mass is the amount of matter in an object, while weight is the force of gravity on that mass. An object's inertia depends on its mass, not its weight.</p>
+                        </div>
+                    </div>
+                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
+                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Try it out!</h3>
+                        <p className="text-lg leading-relaxed">Use the interactive animation to see this in action. Select an object and a force level, then click "Apply Force" to see how hard it is to change its motion.</p>
+                    </div>
+                    <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
+                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Real-World Examples</h3>
+                        {/* NEW: Added more examples */}
+                        <ul className="list-disc list-inside space-y-2 text-lg">
+                           <li>🚌 When a bus stops suddenly, your body continues to move forward due to its inertia.</li>
+                           <li>🚗 Seatbelts provide an external force to counteract your body's inertia in a crash.</li>
+                           <li>🍅 Shaking a ketchup bottle uses inertia to get the ketchup moving out of the bottle.</li>
+                           <li>🍽️ A magician can pull a tablecloth from under dishes because the dishes' inertia keeps them at rest.</li>
+                        </ul>
+                    </div>
                 </div>
                 
                 {/* --- Right Column: Interactive Elements --- */}
-                {/* MODIFIED: Changed to flex-col and added space-y-8 to stack the cards */}
                 <div className="flex flex-col items-center justify-start pt-8 md:pt-0 space-y-8">
                     {/* Card 1: Animation */}
                     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg w-full`}>
