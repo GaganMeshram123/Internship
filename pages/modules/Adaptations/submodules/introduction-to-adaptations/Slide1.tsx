@@ -113,22 +113,18 @@ export default function IntroAdaptationsSlide1() {
     {
       title: 'Inherited',
       description: 'Adaptations are passed down from parents to offspring through genes.',
-      color: '#3b82f6'
     },
     {
       title: 'For Survival',
       description: 'They increase an organism\'s chances of surviving in its specific environment.',
-      color: '#10b981'
     },
     {
       title: 'Aids Reproduction',
       description: 'The ultimate goal is to live long enough to reproduce successfully.',
-      color: '#8b5cf6'
     },
     {
       title: 'Environmental Fit',
       description: 'All living things change to better fit their environment through adaptations.',
-      color: '#f59e0b'
     }
   ];
 
@@ -157,8 +153,7 @@ export default function IntroAdaptationsSlide1() {
                 >
                   <div className="flex items-start gap-3">
                     <div 
-                      className="w-3 h-3 rounded-full mt-2 flex-shrink-0"
-                      style={{ backgroundColor: feature.color }}
+                      className="w-3 h-3 rounded-full mt-2 flex-shrink-0 bg-blue-500"
                     />
                     <div className="flex-1">
                       <div className="font-semibold text-lg mb-1">{feature.title}:</div>

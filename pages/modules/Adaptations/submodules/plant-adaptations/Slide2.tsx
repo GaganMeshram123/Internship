@@ -125,27 +125,22 @@ export default function PlantAdaptationsSlide2() {
     {
       method: 'By Wind',
       description: 'Seeds like dandelions or maple have wings or parachutes to travel on air currents.',
-      color: '#38bdf8' // sky-400
     },
     {
       method: 'By Animals',
       description: 'Some seeds use hooks to attach to fur, while others are eaten (like berries) and passed through feces.',
-      color: '#fb923c' // orange-400
     },
     {
       method: 'By Water',
       description: 'Seeds like coconuts are buoyant and can float to new locations.',
-      color: '#3b82f6' // blue-500
     },
     {
       method: 'By Bursting',
       description: 'The plant mechanically throws or shoots the seeds from a pod.',
-      color: '#ef4444' // red-500
     },
     {
-        method: 'By Humans',
-        description: 'Humans disperse seeds through agriculture and gardening.',
-        color: '#8b5cf6' // violet-500
+      method: 'By Humans',
+      description: 'Humans disperse seeds through agriculture and gardening.',
     }
   ];
 
@@ -167,9 +162,9 @@ export default function PlantAdaptationsSlide2() {
             <div className="space-y-4">
               {dispersalMethods.map((method, index) => (
                 <div key={index} className="flex items-start">
-                  <div className="w-2 h-2 rounded-full mt-2.5 mr-3 flex-shrink-0" style={{ backgroundColor: method.color }}></div>
+                  <div className="w-2 h-2 rounded-full mt-2.5 mr-3 flex-shrink-0 bg-blue-500"></div>
                   <div>
-                    <p className="font-semibold text-lg" style={{ color: method.color }}>{method.method}</p>
+                    <p className="font-semibold text-lg">{method.method}</p>
                     <p className="text-lg text-slate-600 dark:text-slate-400">{method.description}</p>
                   </div>
                 </div>
@@ -181,17 +176,17 @@ export default function PlantAdaptationsSlide2() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Methods of Dispersal</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Dispersal & Germination</h3>
             <div className="flex justify-center">
               <img 
-                src="https://wonderattheworld.com/wp-content/uploads/2022/03/Plants-to-use-for-adaptation-studies.png"
-                alt="A collage showing different seed dispersal methods like wind, water, and animals."
+                src="https://cdn.savemyexams.com/uploads/2023/08/dispersal-and-germination-of-seeds-.png"
+                alt="A diagram showing seed dispersal by wind and animals, and the process of germination."
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Plants have evolved many clever ways to ensure their seeds travel to new places.
+              Plants have evolved many clever ways to ensure their seeds travel to new places to germinate.
             </p>
           </div>
 

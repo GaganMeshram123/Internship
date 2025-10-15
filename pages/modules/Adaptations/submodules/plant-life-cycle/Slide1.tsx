@@ -122,11 +122,11 @@ export default function PlantLifeCycleSlide1() {
   };
 
   const lifeCycleStages = [
-     { name: 'Germination', description: 'The seed starts to grow when it reaches a suitable place with enough water and warmth.', color: '#a16207' },
-     { name: 'Flower', description: 'The plant grows and develops a flower, which contains the reproductive parts.', color: '#be123c' },
-     { name: 'Pollination', description: 'Pollen is carried from the anther to the stigma, often by wind or insects.', color: '#f59e0b' },
-     { name: 'Fertilisation', description: 'Seeds develop after pollen fuses with female sex cells. The fruit then forms to protect the seed.', color: '#16a34a' },
-     { name: 'Seed Dispersal', description: 'Seeds are spread out by wind, water, or animals to grow with less competition.', color: '#3b82f6' },
+     { name: 'Germination', description: 'The seed starts to grow when it reaches a suitable place with enough water and warmth.' },
+     { name: 'Flower', description: 'The plant grows and develops a flower, which contains the reproductive parts.' },
+     { name: 'Pollination', description: 'Pollen is carried from the anther to the stigma, often by wind or insects.' },
+     { name: 'Fertilisation', description: 'Seeds develop after pollen fuses with female sex cells. The fruit then forms to protect the seed.' },
+     { name: 'Seed Dispersal', description: 'Seeds are spread out by wind, water, or animals to grow with less competition.' },
   ];
 
   const slideContent = (
@@ -147,7 +147,7 @@ export default function PlantLifeCycleSlide1() {
             <div className="space-y-4">
               {lifeCycleStages.map((stage) => (
                 <div key={stage.name} className="flex items-start">
-                  <div className="w-3 h-3 rounded-full mt-2 mr-3 flex-shrink-0" style={{ backgroundColor: stage.color }}></div>
+                  <div className="w-3 h-3 rounded-full mt-2 mr-3 flex-shrink-0 bg-blue-500"></div>
                   <div>
                     <p className="font-semibold text-lg">{stage.name}</p>
                     <p className="text-lg text-slate-600 dark:text-slate-400">{stage.description}</p>

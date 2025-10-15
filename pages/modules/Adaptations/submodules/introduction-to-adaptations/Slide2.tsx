@@ -109,7 +109,6 @@ export default function IntroAdaptationsSlide2() {
     }
   };
 
-  // Expanded examples based on the document
   const structuralExamples = ['Camouflage & Mimicry', 'Specialized Teeth (Sharp or Flat)', 'Eye Position (Predator vs. Prey)', 'Flippers and Wings'];
   const behavioralExamples = ['Migration & Hibernation', 'Mating Dances', 'Tool Use', 'Playing Dead & Threatening Gestures'];
 
@@ -127,14 +126,14 @@ export default function IntroAdaptationsSlide2() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-emerald-600 dark:text-emerald-400">Structural Adaptations</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Structural Adaptations</h3>
             <p className="text-lg leading-relaxed mb-4">
               These are actual body parts or colorations that help an organism survive in their environment. You can see these adaptations on the organism's body.
             </p>
             <ul className="space-y-2">
               {structuralExamples.map((example, index) => (
                 <li key={index} className="flex items-center text-lg">
-                  <svg className="w-5 h-5 mr-3 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
+                  <svg className="w-5 h-5 mr-3 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
                   <span>{example}</span>
                 </li>
               ))}
@@ -142,14 +141,14 @@ export default function IntroAdaptationsSlide2() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">Behavioral Adaptations</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Behavioral Adaptations</h3>
             <p className="text-lg leading-relaxed mb-4">
               These are the ways an organism acts or reacts to help it survive. These are instincts, or pre-programmed behaviors, that are not visible on the body.
             </p>
             <ul className="space-y-2">
               {behavioralExamples.map((example, index) => (
                 <li key={index} className="flex items-center text-lg">
-                   <svg className="w-5 h-5 mr-3 text-purple-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
+                   <svg className="w-5 h-5 mr-3 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
                   <span>{example}</span>
                 </li>
               ))}
