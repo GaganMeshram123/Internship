@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+// Fix 1: Correct the import paths
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
@@ -106,10 +107,12 @@ export default function TranslationsSlide5() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Translating Shapes: Example</h2>
             <p className="text-lg leading-relaxed">
-              Let's translate $\triangle ABC$ using the rule $(x, y) \to (x - 5, y + 3)$.
+              {/* Fix 2a: Wrap notation in {"..."} */}
+              Let's translate {"$\\triangle ABC$"} using the rule $(x, y) \to (x - 5, y + 3)$.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              This is the same as the vector $\langle -5, 3 \rangle$.
+              {/* Fix 2b: Wrap notation in {"..."} */}
+              This is the same as the vector {"$\\langle -5, 3 \\rangle$"}
             </p>
           </div>
 
@@ -127,12 +130,14 @@ export default function TranslationsSlide5() {
               Now, apply the rule $(x-5, y+3)$ to each point:
             </p>
             <ul className="mt-4 space-y-2 text-lg font-mono">
-              <li>$A' = (2-5, 2+3) \to \mathbf{A'(-3, 5)}$</li>
-              <li>$B' = (5-5, 0+3) \to \mathbf{B'(0, 3)}$</li>
-              <li>$C' = (4-5, -1+3) \to \mathbf{C'(-1, 2)}$</li>
+               {/* Fix 2c: Wrap notation in {"..."} */}
+              <li>{"$A' = (2-5, 2+3) \\to \\mathbf{A'(-3, 5)}$"}</li>
+              <li>{"$B' = (5-5, 0+3) \\to \\mathbf{B'(0, 3)}$"}</li>
+              <li>{"$C' = (4-5, -1+3) \\to \\mathbf{C'(-1, 2)}$"}</li>
             </ul>
              <p className="text-lg leading-relaxed mt-4 font-bold">
-              The new image is $\triangle A'B'C'$.
+               {/* Fix 2d: Wrap notation in {"..."} */}
+              The new image is {"$\\triangle A'B'C'$"}
             </p>
           </div>
         </div>
@@ -150,7 +155,8 @@ export default function TranslationsSlide5() {
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The blue $\triangle ABC$ is translated to the green $\triangle A'B'C'$.
+               {/* Fix 2e: Wrap notation in {"..."} */}
+              The blue {"$\\triangle ABC$"} is translated to the green {"$\\triangle A'B'C'$"}
             </p>
           </div>
 

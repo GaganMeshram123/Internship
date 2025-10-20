@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+// Fix 1: Correct the import paths
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
+
 import { useThemeContext } from '@/lib/ThemeContext';
 
 export default function DilationsSlide2() {
@@ -55,7 +57,8 @@ export default function DilationsSlide2() {
         '$k = 5$'
       ],
       correctAnswer: '$k = 3$',
-      explanation: "Correct! The formula is $k = \frac{\text{image length}}{\text{pre-image length}}$. So, $k = 15 / 5 = 3$. Since $k > 1$, it's an enlargement."
+      // Fix 2a: Format the formula for JSX
+      explanation: "Correct! The formula is k = (image length) / (pre-image length). So, k = 15 / 5 = 3. Since k > 1, it's an enlargement."
     }
   ];
   
@@ -124,7 +127,8 @@ export default function DilationsSlide2() {
               You can find it by dividing the length of a side on the <strong>image</strong> by the length of the matching side on the <strong>pre-image</strong>.
             </p>
             <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg font-mono text-center font-bold">$k = \frac{\text{image length}}{\text{pre-image length}}$</p>
+              {/* Fix 2b: Format the formula string for JSX */}
+              <p className="text-lg font-mono text-center font-bold">{"$k = \\frac{\\text{image length}}{\\text{pre-image length}}$"}</p>
             </div>
           </div>
 
@@ -136,11 +140,13 @@ export default function DilationsSlide2() {
             <ul className="mt-4 space-y-3 text-lg">
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">►</span>
-                <span><strong>Enlargement:</strong> The shape gets bigger. This happens when $|k| > 1$. (e.g., $k=2, k=5, k=-3$)</span>
+                {/* Fix 3a: Use HTML entity for > */}
+                <span><strong>Enlargement:</strong> The shape gets bigger. This happens when $|k| &gt; 1$. (e.g., $k=2, k=5, k=-3$)</span>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">►</span>
-                <span><strong>Reduction:</strong> The shape gets smaller. This happens when $0 < |k| < 1$. (e.g., $k=0.5, k=1/3, k=-0.25$)</span>
+                 {/* Fix 3b: Use HTML entities for < */}
+                <span><strong>Reduction:</strong> The shape gets smaller. This happens when $0 &lt; |k| &lt; 1$. (e.g., $k=0.5, k=1/3, k=-0.25$)</span>
               </li>
             </ul>
           </div>
@@ -159,7 +165,8 @@ export default function DilationsSlide2() {
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              If $k > 1$, the image is larger. If $0 < k < 1$, the image is smaller.
+               {/* Fix 4: Use HTML entities */}
+              If $k &gt; 1$, the image is larger. If $0 &lt; k &lt; 1$, the image is smaller.
             </p>
           </div>
 

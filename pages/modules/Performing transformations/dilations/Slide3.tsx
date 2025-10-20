@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+// Fix 1: Correct the import paths
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
@@ -133,11 +134,13 @@ export default function DilationsSlide3() {
             <ul className="mt-4 space-y-3 text-lg">
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">►</span>
-                <span><strong>Enlargement ($k > 1$):</strong> Points move *away from* the center.</span>
+                 {/* Fix 2a: Use HTML entity for > */}
+                <span><strong>Enlargement ($k &gt; 1$):</strong> Points move *away from* the center.</span>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">►</span>
-                <span><strong>Reduction ($0 < k < 1$):</strong> Points move *toward* the center.</span>
+                 {/* Fix 2b: Use HTML entities for < */}
+                <span><strong>Reduction ($0 &lt; k &lt; 1$):</strong> Points move *toward* the center.</span>
               </li>
             </ul>
              <p className="text-lg leading-relaxed mt-4">
