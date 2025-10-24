@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+// Fix 1: Correct the import paths
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-export default function ReflectionsSlide1() {
+export default function IntroToEuclideanGeometrySlide3() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]); // Two questions
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
   
   const slideInteractions: Interaction[] = [
     {
-      id: 'reflecting-points-quiz',
-      conceptId: 'reflection-definition',
-      conceptName: 'Reflection Definition',
+      id: 'geometry-terms-quiz',
+      conceptId: 'geometry-vocabulary',
+      conceptName: 'Geometry Vocabulary Quiz',
       type: 'judging',
-      description: 'Testing understanding of the properties of reflection'
+      description: 'Testing understanding of basic geometry terms'
     }
   ];
 
@@ -34,16 +35,28 @@ export default function ReflectionsSlide1() {
 
   const questions: QuizQuestion[] = [
     {
-      id: 'reflection-property-q1',
-      question: 'If you connect a pre-image point (P) to its image point (P\'), what is true about the line of reflection?',
+      id: 'point-line-q1',
+      question: 'What is a straight path that goes on forever in BOTH directions?',
       options: [
-        'It is parallel to the segment PP\'.',
-        'It is the perpendicular bisector of the segment PP\'.',
-        'It passes through both P and P\'.',
-        'It is half the length of the segment PP\'.'
+        'Point',
+        'Line',
+        'Line Segment',
+        'Ray'
       ],
-      correctAnswer: 'It is the perpendicular bisector of the segment PP\'.',
-      explanation: "Correct! The line of reflection acts like a mirror. It is 'perpendicular' (meets at 90°) to the segment connecting P and P', and it 'bisects' it (cuts it in half)."
+      correctAnswer: 'Line',
+      explanation: 'Correct! A Line (like ⃡AB) is a 1D path that extends infinitely in both directions.'
+    },
+    {
+      id: 'ray-segment-q2',
+      question: 'What do we call a piece of a line with ONE endpoint?',
+      options: [
+        'Line',
+        'Line Segment',
+        'Ray',
+        'Plane'
+      ],
+      correctAnswer: 'Ray',
+      explanation: "Correct! A Ray (like ⃗AB) starts at one point (A) and goes on forever in one direction (through B)."
     }
   ];
   
@@ -67,12 +80,12 @@ export default function ReflectionsSlide1() {
     }
 
     handleInteractionComplete({
-      interactionId: `reflecting-points-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `geometry-terms-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'reflection-definition',
-      conceptName: 'Reflection Definition',
+      conceptId: 'geometry-vocabulary',
+      conceptName: 'Geometry Vocabulary Quiz',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -104,45 +117,55 @@ export default function ReflectionsSlide1() {
         {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Rigid Move 3: Reflection</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The Language of Geometry</h2>
             <p className="text-lg leading-relaxed">
-              A <strong>Reflection</strong> is the formal name for a "flip."
+              To talk about shapes, we need a common language. These are the basic "words" of geometry.
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              A reflection flips a figure across a "mirror line" called the <strong>line of reflection</strong>.
-            </p>
-            <p className="text-lg leading-relaxed mt-4">
-              The new figure (image) is a mirror image of the original (pre-image). This *does* change the shape's <strong>orientation</strong> (it's flipped!).
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Key Property of Reflections</h3>
-            <p className="text-lg leading-relaxed">
-              Every point on the image is the <strong>same distance</strong> from the line of reflection as its corresponding point on the pre-image.
-            </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-               <p className="text-lg font-bold">
-                The line of reflection is the <strong>perpendicular bisector</strong> of the segment connecting any point ($P$) to its image ($P'$).
-              </p>
-            </div>
+            <ul className="mt-4 space-y-3 text-lg">
+              <li className="flex items-start">
+                <span className="font-bold text-emerald-500 mr-2">·</span>
+                {/* Fix 2: Wrap notation in {"..."} */}
+                <span><strong>Point:</strong> A single location. We label it with a capital letter. (e.g., Point A)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-emerald-500 mr-2">↔</span>
+                {/* Fix 2: Wrap notation in {"..."} */}
+                <span><strong>Line:</strong> A straight path that goes on forever in both directions. (e.g., Line {"$\\overleftrightarrow{AB}$"})</span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-emerald-500 mr-2">―</span>
+                {/* Fix 2: Wrap notation in {"..."} */}
+                <span><strong>Line Segment:</strong> A piece of a line with two endpoints. (e.g., Segment {"$\\overline{AB}$"})</span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-emerald-500 mr-2">→</span>
+                 {/* Fix 2: Wrap notation in {"..."} */}
+                <span><strong>Ray:</strong> A piece of a line with one endpoint. (e.g., Ray {"$\\overrightarrow{AB}$"})</span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-emerald-500 mr-2">Plane:</span>
+                 {/* Fix 2: Wrap notation in {"..."} */}
+                <span><strong>Plane:</strong> A flat surface (like this screen) that goes on forever. (e.g., Plane M)</span>
+              </li>
+            </ul>
           </div>
         </div>
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The "Flip"</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing the Terms</h3>
             <div className="flex justify-center">
               <img 
-                src="https://via.placeholder.com/500x300.png?text=Point+P+reflecting+to+P'"
-                alt="A diagram showing a line of reflection, a point P on one side, and a point P' on the other, with a dashed line connecting them"
+                src="https://via.placeholder.com/500x300.png?text=Points,+Lines,+Segments,+Rays"
+                alt="A diagram showing examples of a point, a line, a line segment, and a ray"
                 className="max-w-full h-auto rounded-lg shadow-md"
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The segment $\overline{PP'}$ is cut in half at a $90^\circ$ angle by the line of reflection.
+               {/* Fix 2: Wrap notation in {"..."} */}
+              Notice the arrows! {"$\\overleftrightarrow{AB}$"} has two arrows, {"$\\overrightarrow{AB}$"} has one, and {"$\\overline{AB}$"} has none.
             </p>
           </div>
 
@@ -231,13 +254,13 @@ export default function ReflectionsSlide1() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">🪞</div>
+                <div className="text-3xl mb-4">📝</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? 'You see the properties clearly!' : 'Great job!'}
+                  {score === questions.length ? 'You\'re a vocabulary expert!' : 'Great job!'}
                 </div>
               </motion.div>
             )}
@@ -249,10 +272,10 @@ export default function ReflectionsSlide1() {
 
   return (
     <SlideComponentWrapper 
-      slideId="reflecting-points"
-      slideTitle="Reflecting Points"
+      slideId="terms-and-labels"
+      slideTitle="Terms & Labels in Geometry"
       moduleId="performing-transformations"
-      submoduleId="reflections"
+      submoduleId="intro-to-euclidean-geometry"
       interactions={localInteractions}
     >
       {slideContent}

@@ -46,7 +46,7 @@ export const dilationsSlides: Slide[] = [
     id: 'dilations-find-error'
   },
   {
-    type:A: 'interactive',
+    type: 'interactive', // This was the line with the typo (removed "A:")
     title: 'Performing Transformations FAQ',
     component: Slide7,
     id: 'transformations-faq'
