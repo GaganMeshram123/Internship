@@ -134,17 +134,45 @@ export default function DilationsSlide3() {
             <ul className="mt-4 space-y-3 text-lg">
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">►</span>
-                 {/* Fix 2a: Use HTML entity for > */}
+                {/* Use HTML entity for > */}
                 <span><strong>Enlargement ($k &gt; 1$):</strong> Points move *away from* the center.</span>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">►</span>
-                 {/* Fix 2b: Use HTML entities for < */}
+                {/* Use HTML entities for < */}
                 <span><strong>Reduction ($0 &lt; k &lt; 1$):</strong> Points move *toward* the center.</span>
               </li>
             </ul>
              <p className="text-lg leading-relaxed mt-4">
-              Often, the center of dilation is the <strong>origin (0,0)</strong>, which makes the math easy: $(x, y) \to (kx, ky)$.
+               Often, the center of dilation is the <strong>origin (0,0)</strong>, which makes the math easy: $(x, y) \to (kx, ky)$.
+             </p>
+          </div>
+
+          {/* NEW BLOCK: Dilation with a Non-Origin Center */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dilation with a Non-Origin Center 🎯</h3>
+            <p className="text-lg leading-relaxed">
+              To dilate a point $A(x, y)$ when the center is $C(a, b)$ (not the origin), follow these three steps:
+            </p>
+            
+            <ul className="mt-4 space-y-3 text-lg">
+              <li className="flex items-start">
+                <span className="font-bold text-blue-500 mr-2">1.</span>
+                <span><strong>Translate to Origin:</strong> Subtract the center: $(x - a, y - b)$</span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-blue-500 mr-2">2.</span>
+                <span><strong>Dilate:</strong> Multiply the result by $k$: $(k(x - a), k(y - b))$</span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-blue-500 mr-2">3.</span>
+                {/* FIX: Ensure the entire formula is a single string literal */}
+                <span>{"<strong>Translate Back:</strong> Add the center back: $\\mathbf{A'} = (k(x - a) + a, k(y - b) + b)$"}</span>
+              </li>
+            </ul>
+            
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4">
+              Example: Dilating $A(4, 10)$ by $k=2$ with $C(1, 4)$ results in $A'(7, 16)$.
             </p>
           </div>
         </div>

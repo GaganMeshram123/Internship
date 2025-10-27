@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+// motion and AnimatePresence are no longer strictly needed for this component's JSX
+// but might still be used by the quiz feedback
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
@@ -9,7 +11,8 @@ export default function IntroToEuclideanGeometrySlide2() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  // --- UPDATED FOR 4 QUESTIONS ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -32,6 +35,7 @@ export default function IntroToEuclideanGeometrySlide2() {
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY (4 TOTAL) ---
   const questions: QuizQuestion[] = [
     {
       id: 'euclid-book-q1',
@@ -44,6 +48,42 @@ export default function IntroToEuclideanGeometrySlide2() {
       ],
       correctAnswer: 'Elements',
       explanation: "That's right! Euclid's 'Elements' is one of the most influential books in history and set the foundation for geometry for over 2000 years."
+    },
+    {
+      id: 'euclid-title-q2',
+      question: 'Why is Euclid often called the "Father of Geometry"?',
+      options: [
+        'He invented triangles and circles.',
+        'He was the first math teacher in Greece.',
+        'He collected all the known geometric knowledge of his time into one "rulebook."',
+        'He was the king of Alexandria.'
+      ],
+      correctAnswer: 'He collected all the known geometric knowledge of his time into one "rulebook."',
+      explanation: 'Correct! He earned this title by organizing all the geometric proofs and rules of his time into his 13-volume book, "Elements."'
+    },
+    {
+      id: 'euclid-method-q3',
+      question: 'What is the main method Euclid used in his book, "Elements"?',
+      options: [
+        'He wrote stories about famous mathematicians.',
+        'He built up the entire system of geometry using logical proof from simple definitions.',
+        'He only wrote down problems for students to solve.',
+        'He guessed the rules based on measuring shapes.'
+      ],
+      correctAnswer: 'He built up the entire system of geometry using logical proof from simple definitions.',
+      explanation: 'Exactly! He started with simple, "obvious" definitions (like what a point is) and logically proved every other rule from there.'
+    },
+    {
+      id: 'euclid-volumes-q4',
+      question: 'The "rulebook" Euclid wrote was massive. How many volumes (or books) did it contain?',
+      options: [
+        '2',
+        '5',
+        '13',
+        '50'
+      ],
+      correctAnswer: '13',
+      explanation: "That's right! It was a huge 13-volume collection that covered planes, 3D shapes, and number theory."
     }
   ];
   
@@ -103,6 +143,7 @@ export default function IntroToEuclideanGeometrySlide2() {
         
         {/* Left Column - Content */}
         <div className="space-y-6">
+          
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Euclid: The Father of Geometry</h2>
             <p className="text-lg leading-relaxed">
@@ -126,20 +167,35 @@ export default function IntroToEuclideanGeometrySlide2() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
+          
+          {/* --- CONTENT ADDED TO THIS BLOCK --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Euclid of Alexandria</h3>
-            <div className="flex justify-center">
-              <img 
-                src="https://via.placeholder.com/500x300.png?text=Bust+of+Euclid"
-                alt="A classical bust or statue representing Euclid"
-                className="max-w-full h-auto rounded-lg shadow-md"
-                style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-              />
-            </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              A depiction of Euclid, who lived around 300 BCE.
+            
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">
+              Key Ideas from "Elements"
+            </h3>
+            
+            <p className="text-lg leading-relaxed">
+              Euclid's genius was starting with a few simple rules, called <strong>postulates</strong> or <strong>axioms</strong>, that were so obvious everyone agreed they were true.
             </p>
+
+            <h4 className="text-lg font-semibold mt-4 mb-2 text-slate-700 dark:text-slate-300">The 5 "Obvious" Rules</h4>
+            <ul className="list-decimal list-inside space-y-1 text-base">
+              <li>A straight line can be drawn between any two points.</li>
+              <li>Any straight line segment can be extended indefinitely.</li>
+              <li>A circle can be drawn with any center and any radius.</li>
+              {/* You can add 4 and 5 if you like */}
+            </ul>
+
+            <h4 className="text-lg font-semibold mt-4 mb-2 text-slate-700 dark:text-slate-300">Why It Matters Today 🌎</h4>
+            <ul className="list-disc list-inside space-y-1 text-base">
+              <li><strong>Engineering:</strong> Designing stable bridges and buildings.</li>
+              <li><strong>Computer Graphics:</strong> Creating 3D worlds in video games.</li>
+              <li><strong>Navigation:</strong> GPS satellites use this geometry.</li>
+            </ul>
+
           </div>
+          {/* --- END CARD --- */}
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
@@ -232,7 +288,7 @@ export default function IntroToEuclideanGeometrySlide2() {
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? 'You know your history!' : 'Great job!'}
+                  {score === questions.length ? 'Perfect! You know your history!' : 'Great job!'}
                 </div>
               </motion.div>
             )}

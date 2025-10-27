@@ -9,7 +9,7 @@ export default function IntroToRigidTransformationsSlide4() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -44,6 +44,18 @@ export default function IntroToRigidTransformationsSlide4() {
       ],
       correctAnswer: 'Turn',
       explanation: "You got it! A rotation is a 'turn' around a fixed center point, like the hands of a clock."
+    },
+    {
+      id: 'rotation-rule-q2',
+      question: 'A point is at (2, 3). Where will it be after a 180° rotation around the origin?',
+      options: [
+        '(3, 2)',
+        '(-2, 3)',
+        '(3, -2)',
+        '(-2, -3)'
+      ],
+      correctAnswer: '(-2, -3)',
+      explanation: 'Correct! For a 180° rotation, the rule is (x, y) → (-x, -y), so (2, 3) becomes (-2, -3).'
     }
   ];
   
@@ -99,7 +111,7 @@ export default function IntroToRigidTransformationsSlide4() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
         
         {/* Left Column - Content */}
         <div className="space-y-6">
@@ -114,6 +126,9 @@ export default function IntroToRigidTransformationsSlide4() {
             <p className="text-lg leading-relaxed mt-4">
               The shape's <strong>orientation</strong> (which way it's facing) will change.
             </p>
+            <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
+              Think: The hands on a clock ⏰ or a spinning Ferris wheel 🎡.
+            </em>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
@@ -123,37 +138,66 @@ export default function IntroToRigidTransformationsSlide4() {
             </p>
             <ul className="mt-4 space-y-2 text-lg">
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">1.</span>
+                <span className="font-bold text-blue-500 mr-2">1.</span>
                 <span><strong>Center of Rotation:</strong> The point you are turning *around* (e.g., the origin (0,0)).</span>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">2.</span>
-                <span><strong>Angle of Rotation:</strong> How far to turn (e.g., $90^\circ, 180^\circ$).</span>
+                <span className="font-bold text-blue-500 mr-2">2.</span>
+                <span><strong>Angle of Rotation:</strong> How far to turn (e.g., 90°, 180°).</span>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">3.</span>
+                <span className="font-bold text-blue-500 mr-2">3.</span>
                 <span><strong>Direction:</strong> Clockwise ↻ or Counter-clockwise ↺. (In math, <strong>counter-clockwise is the default!</strong>)</span>
               </li>
             </ul>
+
+            {/* --- COORDINATE RULES UPDATED ($ REMOVED) --- */}
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Common Rotation Rules (around origin 0,0)</h4>
+              <ul className="list-disc list-inside mt-2 text-lg space-y-1 font-mono">
+                <li><strong>90° CCW (↺):</strong> (x, y) → (-y, x)</li>
+                <li><strong>180° (↻ or ↺):</strong> (x, y) → (-x, -y)</li>
+                <li><strong>270° CCW (↺):</strong> (x, y) → (y, -x)</li>
+              </ul>
+            </div>
           </div>
         </div>
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The "Turn"</h3>
-            <div className="flex justify-center">
-              <img 
-                src="https://via.placeholder.com/500x300.png?text=Rotation+(Turn)+around+Origin"
-                alt="A shape being turned 90 degrees counter-clockwise around the origin (0,0)"
-                className="max-w-full h-auto rounded-lg shadow-md"
-                style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-              />
+          {/* --- VISUAL UPDATED ($ REMOVED) --- */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing a 90° Turn (CCW)</h3>
+            
+            <div className="flex items-center justify-center space-x-4 text-center mt-6 p-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+              
+              <div className="flex flex-col items-center">
+                <span className="text-2xl font-mono">(x, y)</span>
+                <p className="font-semibold text-lg mt-2">Pre-Image</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">(e.g., Quadrant 1)</p>
+              </div>
+              
+              <div className="flex flex-col items-center text-blue-500">
+                <span className="text-3xl font-bold">↺</span>
+                <p className="text-sm font-semibold">90°</p>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <span className="text-2xl font-mono">(-y, x)</span>
+                <p className="font-semibold text-lg mt-2">Image</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">(e.g., Quadrant 2)</p>
+              </div>
+
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The blue shape "turns" 90° counter-clockwise around the center to become the green shape.
+              Notice the coordinates (x, y) swap and the new x-coordinate (which was y) becomes negative!
             </p>
-          </div>
+          </motion.div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
@@ -169,9 +213,9 @@ export default function IntroToRigidTransformationsSlide4() {
                   key={index}
                   className={`h-2 flex-1 rounded ${
                     index === currentQuestionIndex
-                      ? 'bg-blue-500'
+                      ? 'bg-blue-500' 
                       : questionsAnswered[index]
-                      ? 'bg-green-500'
+                      ? 'bg-blue-300 dark:bg-blue-800' 
                       : 'bg-slate-300 dark:bg-slate-600'
                   }`}
                 />
@@ -186,14 +230,15 @@ export default function IntroToRigidTransformationsSlide4() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
+                    
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70'
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -219,8 +264,8 @@ export default function IntroToRigidTransformationsSlide4() {
                       exit={{ opacity: 0, y: -20 }}
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700'
+                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700'
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
@@ -240,7 +285,7 @@ export default function IntroToRigidTransformationsSlide4() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">🔄</div>
+                <div className="text-3xl mb-4">🎉</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}

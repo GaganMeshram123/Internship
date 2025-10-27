@@ -9,7 +9,8 @@ export default function IntroToRigidTransformationsSlide1() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  // --- UPDATED FOR 2 QUESTIONS ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -32,6 +33,7 @@ export default function IntroToRigidTransformationsSlide1() {
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY (2 TOTAL) ---
   const questions: QuizQuestion[] = [
     {
       id: 'rigid-property-q1',
@@ -44,6 +46,18 @@ export default function IntroToRigidTransformationsSlide1() {
       ],
       correctAnswer: 'It preserves both size and shape',
       explanation: "Correct! 'Rigid' means the shape doesn't bend, stretch, or shrink. The pre-image and image are congruent."
+    },
+    {
+      id: 'transformation-type-q2',
+      question: "Which 'rigid move' is a 'slide'?",
+      options: [
+        'Translation',
+        'Rotation',
+        'Reflection',
+        'Isometry'
+      ],
+      correctAnswer: 'Translation',
+      explanation: "Correct! A Translation simply slides a figure to a new location without turning or flipping it."
     }
   ];
   
@@ -99,61 +113,94 @@ export default function IntroToRigidTransformationsSlide1() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
         
         {/* Left Column - Content */}
         <div className="space-y-6">
+          {/* --- CARD 1: UPDATED (REMOVED *) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Moves That *Don't* Change Shape</h2>
+            {/* --- * REMOVED --- */}
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Moves That Don't Change Shape</h2>
             <p className="text-lg leading-relaxed">
               A <strong>Rigid Transformation</strong> (also called an <strong>Isometry</strong>) is a move that preserves the size and shape of a figure.
             </p>
+            <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
+              Think: Moving a stiff piece of cardboard. You can slide it, turn it, or flip it, but the cardboard itself doesn't stretch or shrink.
+            </em>
             <p className="text-lg leading-relaxed mt-4">
               This means two key things are preserved:
             </p>
             <ul className="mt-4 space-y-2 text-lg">
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">✓</span>
+                <span className="font-bold text-blue-500 mr-2">✓</span>
                 <span><strong>Distance:</strong> The lengths of all sides stay the same.</span>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">✓</span>
+                <span className="font-bold text-blue-500 mr-2">✓</span>
                 <span><strong>Angle Measures:</strong> All the angles stay the same.</span>
               </li>
             </ul>
           </div>
 
+          {/* --- CARD 2: UPDATED (REMOVED $ AND LATEX) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Congruent Figures</h3>
             <p className="text-lg leading-relaxed">
               Because size and shape are preserved, the **pre-image** (original) and the **image** (new figure) are <strong>congruent</strong>.
             </p>
+            {/* --- $ and LaTeX commands replaced with unicode --- */}
             <p className="text-lg leading-relaxed mt-4">
-              The symbol for congruent is $\cong$. We can say $\triangle ABC \cong \triangle A'B'C'$.
+              The symbol for congruent is ≅. We can say △ABC ≅ △A'B'C'.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              There are 3 types of rigid transformations: <strong>Translation, Rotation,</strong> and <strong>Reflection</strong>.
+              The 3 types of rigid transformations are:
             </p>
+            <ul className="mt-4 space-y-3 text-lg list-disc list-inside">
+              <li><strong>Translation</strong> (a <strong>"slide"</strong> ➡️)</li>
+              <li><strong>Rotation</strong> (a <strong>"turn"</strong> 🔄)</li>
+              <li><strong>Reflection</strong> (a <strong>"flip"</strong> 🪞)</li>
+            </ul>
           </div>
         </div>
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Congruent Shapes</h3>
-            <div className="flex justify-center">
-              <img 
-                src="https://via.placeholder.com/500x300.png?text=Congruent+Triangles+(Pre-image+and+Image)"
-                alt="A blue triangle (pre-image) and a green triangle (image) that is identical in size and shape, just moved"
-                className="max-w-full h-auto rounded-lg shadow-md"
-                style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-              />
-            </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The image is congruent ($\cong$) to the pre-image. They are identical copies.
-            </p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Three "Rigid Moves"</h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mt-6">
+              
+              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+                <span className="text-4xl text-blue-500">➡️</span>
+                <p className="font-semibold text-lg mt-2">Translation</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">(slide)</p>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+                <span className="text-4xl text-blue-500">🔄</span>
+                <p className="font-semibold text-lg mt-2">Rotation</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">(turn)</p>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+                <span className="text-4xl text-blue-500">🪞</span>
+                <p className="font-semibold text-lg mt-2">Reflection</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">(flip)</p>
+              </div>
 
+            </div>
+            {/* --- $ and LaTeX command replaced with unicode --- */}
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
+              Notice how the new shape (image) is always congruent (≅) to the original (pre-image).
+            </p>
+          </motion.div>
+
+          {/* --- KNOWLEDGE CHECK CARD (No changes needed here) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -168,9 +215,9 @@ export default function IntroToRigidTransformationsSlide1() {
                   key={index}
                   className={`h-2 flex-1 rounded ${
                     index === currentQuestionIndex
-                      ? 'bg-blue-500'
+                      ? 'bg-blue-500' 
                       : questionsAnswered[index]
-                      ? 'bg-green-500'
+                      ? 'bg-blue-300 dark:bg-blue-800' 
                       : 'bg-slate-300 dark:bg-slate-600'
                   }`}
                 />
@@ -185,14 +232,15 @@ export default function IntroToRigidTransformationsSlide1() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
+                    
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
+                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70'
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -218,8 +266,8 @@ export default function IntroToRigidTransformationsSlide1() {
                       exit={{ opacity: 0, y: -20 }}
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700'
+                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700'
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">

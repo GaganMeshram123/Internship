@@ -120,7 +120,8 @@ export default function IntroToRigidTransformationsSlide5() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
+      {/* --- UPDATED to 1 column for small screens, 2 for medium and up --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
         
         {/* Left Column - Content */}
         <div className="space-y-6">
@@ -134,27 +135,38 @@ export default function IntroToRigidTransformationsSlide5() {
             </p>
           </div>
 
+          {/* --- UPDATED "HOW TO" CHEAT SHEET --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Four Moves</h3>
-            <ul className="mt-4 space-y-2 text-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">How to Tell the Difference</h3>
+            <p className="text-lg leading-relaxed">Ask yourself these questions in order:</p>
+            <ul className="mt-4 space-y-3 text-lg">
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">➡️</span>
-                <span><strong>Translation:</strong> A "slide."</span>
+                <span className="font-bold text-blue-500 mr-2">1.</span>
+                <div>
+                  <strong>Did the size change?</strong>
+                  <div className="text-base text-slate-600 dark:text-slate-400"><strong>YES</strong> → It's a <strong>Dilation (Resize)</strong> 📏</div>
+                  <div className="text-base text-slate-600 dark:text-slate-400"><strong>NO</strong> → Go to question 2...</div>
+                </div>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">🔄</span>
-                <span><strong>Rotation:</strong> A "turn."</span>
+                <span className="font-bold text-blue-500 mr-2">2.</span>
+                <div>
+                  <strong>Did the orientation (facing) change?</strong>
+                  <div className="text-base text-slate-600 dark:text-slate-400"><strong>NO</strong> → It's a <strong>Translation (Slide)</strong> ➡️</div>
+                  <div className="text-base text-slate-600 dark:text-slate-400"><strong>YES</strong> → Go to question 3...</div>
+                </div>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">|</span>
-                <span><strong>Reflection:</strong> A "flip."</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">➕</span>
-                <span><strong>Dilation:</strong> A "resize."</span>
+                <span className="font-bold text-blue-500 mr-2">3.</span>
+                <div>
+                  <strong>Is it a mirror image?</strong>
+                  <div className="text-base text-slate-600 dark:text-slate-400"><strong>YES</strong> → It's a <strong>Reflection (Flip)</strong> 🪞</div>
+                  <div className="text-base text-slate-600 dark:text-slate-400"><strong>NO</strong> → It's a <strong>Rotation (Turn)</strong> 🔄</div>
+                </div>
               </li>
             </ul>
           </div>
+          {/* --- END UPDATED CHEAT SHEET --- */}
         </div>
 
         {/* Right Column - Image and Quiz */}
@@ -167,16 +179,17 @@ export default function IntroToRigidTransformationsSlide5() {
               </div>
             </div>
 
+            {/* --- Progress Bar (COLOR UPDATED) --- */}
             <div className="flex space-x-2 mb-6">
               {questions.map((_, index) => (
                 <div
                   key={index}
                   className={`h-2 flex-1 rounded ${
                     index === currentQuestionIndex
-                      ? 'bg-blue-500'
+                      ? 'bg-blue-500' // Active
                       : questionsAnswered[index]
-                      ? 'bg-green-500'
-                      : 'bg-slate-300 dark:bg-slate-600'
+                      ? 'bg-blue-300 dark:bg-blue-800' // Answered (REMOVED GREEN)
+                      : 'bg-slate-300 dark:bg-slate-600' // Unanswered
                   }`}
                 />
               ))}
@@ -195,19 +208,22 @@ export default function IntroToRigidTransformationsSlide5() {
                 </div>
               
                 <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                {/* --- Answer Options (COLORS UPDATED) --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
+                    
+                    // --- UPDATED CLASSNAME LOGIC TO REMOVE RED/GREEN ---
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT (now blue)
+                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT (now slate/neutral)
+                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected (no feedback)
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -231,10 +247,11 @@ export default function IntroToRigidTransformationsSlide5() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
+                      // --- UPDATED FEEDBACK BOX COLORS (REMOVED RED/GREEN) ---
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct (blue)
+                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect (slate)
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">

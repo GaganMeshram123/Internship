@@ -9,7 +9,8 @@ export default function IntroToRigidTransformationsSlide3() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  // --- UPDATED FOR 2 QUESTIONS ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -32,6 +33,7 @@ export default function IntroToRigidTransformationsSlide3() {
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY (2 TOTAL) ---
   const questions: QuizQuestion[] = [
     {
       id: 'translation-definition-q1',
@@ -44,6 +46,18 @@ export default function IntroToRigidTransformationsSlide3() {
       ],
       correctAnswer: 'Slide',
       explanation: "Correct! A translation is a 'slide' because the shape moves without turning or flipping over."
+    },
+    {
+      id: 'translation-rule-q2',
+      question: 'A point is at (3, 2). Where will it be after the translation (x, y) → (x + 2, y - 5)?',
+      options: [
+        '(5, -3)',
+        '(1, -3)',
+        '(5, 7)',
+        '(1, 7)'
+      ],
+      correctAnswer: '(5, -3)',
+      explanation: "Correct! We add the numbers: 3 + 2 = 5 for x, and 2 - 5 = -3 for y. The new point is (5, -3)."
     }
   ];
   
@@ -99,10 +113,12 @@ export default function IntroToRigidTransformationsSlide3() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
+      {/* --- UPDATED to 1 column for small screens, 2 for medium and up --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
         
         {/* Left Column - Content */}
         <div className="space-y-6">
+          {/* --- CARD 1: UPDATED WITH ANALOGY --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Rigid Move 1: Translation</h2>
             <p className="text-lg leading-relaxed">
@@ -114,16 +130,39 @@ export default function IntroToRigidTransformationsSlide3() {
             <p className="text-lg leading-relaxed mt-4">
               The shape's <strong>orientation</strong> (which way it's facing) does not change.
             </p>
+            {/* --- ANALOGY ADDED --- */}
+            <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
+              Think: Sliding a book across your desk without turning it, or a chess rook ♟️ moving.
+            </em>
           </div>
 
+          {/* --- CARD 2: UPDATED WITH RULE BREAKDOWN & SYMBOL FIXES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Describing a Slide</h3>
             <p className="text-lg leading-relaxed">
-              We describe a translation using a <strong>translation vector</strong> $\langle a, b \rangle$ or a <strong>coordinate rule</strong> $(x, y) \to (x + a, y + b)$.
+              {/* --- SYMBOL FIX: Replaced $ with HTML entities --- */}
+              We describe a translation using a <strong>translation vector</strong> &lt;a, b&gt; or a <strong>coordinate rule</strong> (x, y) → (x + a, y + b).
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700 space-y-3">
+            
+            {/* --- RULE BREAKDOWN ADDED --- */}
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Decoding the Rule: $(x + a, y + b)$</h4>
+              <ul className="mt-2 space-y-2 text-lg">
+                <li className="flex items-start">
+                  <span className="font-bold text-blue-500 mr-2 text-xl">↔</span>
+                  <span><strong>$a$ (horizontal):</strong> If $a$ is positive, move <strong>right</strong>. If negative, move <strong>left</strong>.</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="font-bold text-blue-500 mr-2 text-xl">↕</span>
+                  <span><strong>$b$ (vertical):</strong> If $b$ is positive, move <strong>up</strong>. If negative, move <strong>down</strong>.</span>
+                </li>
+              </ul>
+            </div>
+            
+            {/* --- EXAMPLE UPDATED & SYMBOL FIX --- */}
+            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
               <p className="text-lg">
-                <strong>Example:</strong> The rule $(x, y) \to (x + 4, y - 2)$ means "slide every point 4 units to the right, and 2 units down."
+                <strong>Example:</strong> The rule $(x, y) \to (x + 4, y - 2)$ means "slide every point 4 units to the <strong>right</strong>, and 2 units <strong>down</strong>."
               </p>
             </div>
           </div>
@@ -131,21 +170,42 @@ export default function IntroToRigidTransformationsSlide3() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The "Slide"</h3>
-            <div className="flex justify-center">
-              <img 
-                src="https://via.placeholder.com/500x300.png?text=Translation+(Slide)+with+Vector"
-                alt="A shape being slid on a coordinate plane, with a vector arrow showing the (x+4, y-2) move"
-                className="max-w-full h-auto rounded-lg shadow-md"
-                style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-              />
+          {/* --- UPDATED VISUAL --- */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing a "Slide"</h3>
+            
+            <div className="flex items-center justify-center space-x-4 text-center mt-6 p-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+              
+              <div className="flex flex-col items-center">
+                <span className="text-4xl">🟦</span>
+                <p className="font-semibold text-lg mt-2">Pre-Image</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">(Original)</p>
+              </div>
+              
+              <div className="flex flex-col items-center text-blue-500">
+                <span className="text-2xl font-bold">→</span>
+                <p className="text-sm font-semibold">(x + a, y + b)</p>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <span className="text-4xl">🟦</span>
+                <p className="font-semibold text-lg mt-2">Image</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">(New)</p>
+              </div>
+
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Every point on the blue shape moves $\langle 4, -2 \rangle$ to land on the green shape.
+              Every point slides the *exact same* distance and direction. The shape's orientation (which way it faces) doesn't change.
             </p>
-          </div>
+          </motion.div>
+          {/* --- END UPDATED VISUAL --- */}
 
+          {/* --- KNOWLEDGE CHECK CARD (WITH 2 QUESTIONS & COLOR FIXES) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -154,16 +214,17 @@ export default function IntroToRigidTransformationsSlide3() {
               </div>
             </div>
 
+            {/* --- Progress Bar (COLOR UPDATED) --- */}
             <div className="flex space-x-2 mb-6">
               {questions.map((_, index) => (
                 <div
                   key={index}
                   className={`h-2 flex-1 rounded ${
                     index === currentQuestionIndex
-                      ? 'bg-blue-500'
+                      ? 'bg-blue-500' // Active
                       : questionsAnswered[index]
-                      ? 'bg-green-500'
-                      : 'bg-slate-300 dark:bg-slate-600'
+                      ? 'bg-blue-300 dark:bg-blue-800' // Answered (REMOVED GREEN)
+                      : 'bg-slate-300 dark:bg-slate-600' // Unanswered
                   }`}
                 />
               ))}
@@ -172,19 +233,22 @@ export default function IntroToRigidTransformationsSlide3() {
             {!isQuizComplete ? (
               <>
                 <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                {/* --- Answer Options (COLORS UPDATED) --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
+                    
+                    // --- UPDATED CLASSNAME LOGIC TO REMOVE RED/GREEN ---
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT (now blue)
+                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT (now slate/neutral)
+                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected (no feedback)
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -208,10 +272,11 @@ export default function IntroToRigidTransformationsSlide3() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
+                      // --- UPDATED FEEDBACK BOX COLORS (REMOVED RED/GREEN) ---
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct (blue)
+                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect (slate)
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
@@ -230,6 +295,7 @@ export default function IntroToRigidTransformationsSlide3() {
                 </AnimatePresence>
               </>
             ) : (
+              // --- Quiz Complete State ---
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
                 <div className="text-3xl mb-4">➡️</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>

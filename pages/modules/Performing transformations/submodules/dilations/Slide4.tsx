@@ -142,6 +142,40 @@ export default function DilationsSlide4() {
               The new triangle $\triangle P'Q'R'$ is the same shape, but twice as big and twice as far from the origin.
             </p>
           </div>
+
+          {/* NEW BLOCK 1: DILATING SHAPES: SHRINKING (Concept) - FIX APPLIED HERE */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Dilating Shapes: Shrinking</h2>
+            <p className="text-lg leading-relaxed">
+              A <strong>reduction</strong> makes the shape **smaller**. This happens when the scale factor 
+              {/* FIX: Fully enclose the math notation in a string literal */}
+              {"$\\mathbf{k}$ is between 0 and 1 (e.g., $\\mathbf{k=1/2}$, $\\mathbf{k=0.5}$, $\\mathbf{k=1/3}$)"}
+            </p>
+          </div>
+
+          {/* NEW BLOCK 2: EXAMPLE: REDUCE BY k=1/3 - FIX APPLIED HERE */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Example: Reduce by $k=1/3$</h3>
+            <p className="text-lg leading-relaxed">
+              Dilate $\triangle ABC$ from the origin by $k=1/3$.
+            </p>
+            <p className="text-lg leading-relaxed mt-4">
+              {/* FIX: Fully enclose the rule in a string literal */}
+              <strong>Rule:</strong> {"$(x, y) \\to (1/3 x, 1/3 y)$"}
+            </p>
+            <p className="text-lg leading-relaxed mt-4">
+              <strong>Vertices:</strong>
+            </p>
+            <ul className="mt-2 space-y-2 text-lg font-mono">
+              <li>$A(3, 6) \to A'(1, 2)$</li>
+              <li>$B(-9, 3) \to B'(-3, 1)$</li>
+              <li>$C(0, -6) \to C'(0, -2)$</li>
+            </ul>
+            <p className="text-lg leading-relaxed mt-4">
+              The new triangle $\triangle A'B'C'$ is the same shape, but three times smaller and three times closer to the origin.
+            </p>
+          </div>
+
         </div>
 
         {/* Right Column - Image and Quiz */}
@@ -226,7 +260,7 @@ export default function DilationsSlide4() {
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
                           ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/3D'
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// Import useAnimation from framer-motion
+import { motion, AnimatePresence, useAnimation } from 'framer-motion'; 
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
@@ -9,10 +10,14 @@ export default function IntroToEuclideanGeometrySlide1() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
+
+  // --- ANIMATION CONTROL ADDED ---
+  const controls = useAnimation();
+  const [isPlaying, setIsPlaying] = useState(false);
   
   const slideInteractions: Interaction[] = [
     {
@@ -20,7 +25,7 @@ export default function IntroToEuclideanGeometrySlide1() {
       conceptId: 'transformation-readiness',
       conceptName: 'Transformation Readiness Quiz',
       type: 'judging',
-      description: 'Testing understanding of pre-image and image'
+      description: 'Testing understanding of pre-image, image, and coordinate plane'
     }
   ];
 
@@ -35,7 +40,7 @@ export default function IntroToEuclideanGeometrySlide1() {
   const questions: QuizQuestion[] = [
     {
       id: 'name-that-move-q1',
-      question: 'Look at the image. The blue shape is the "pre-image" and the green shape is the "image". What kind of move happened?',
+      question: 'Click "Play Slide" and watch the animation. What kind of move is happening?',
       options: [
         'Slide (Translation)',
         'Turn (Rotation)',
@@ -44,6 +49,18 @@ export default function IntroToEuclideanGeometrySlide1() {
       ],
       correctAnswer: 'Slide (Translation)',
       explanation: 'Correct! The shape slid to a new position without turning or flipping. This is called a Translation, which we will learn about soon!'
+    },
+    {
+      id: 'name-that-move-q2',
+      question: 'What do we call the "map" with an x-axis and y-axis where transformations happen?',
+      options: [
+        'A Geometry Grid',
+        'The Coordinate Plane',
+        'A Transformation Sheet',
+        'A Shape Box'
+      ],
+      correctAnswer: 'The Coordinate Plane',
+      explanation: 'That\'s right! The coordinate plane is our "map" for all transformations, letting us track shapes using (x, y) coordinates.'
     }
   ];
   
@@ -97,6 +114,20 @@ export default function IntroToEuclideanGeometrySlide1() {
     }
   };
 
+  // --- FUNCTION TO CONTROL ANIMATION ---
+  const handlePlay = async () => {
+    setIsPlaying(true); // Disable button
+    await controls.start({ // 1. Reset to start
+      x: 0,
+      transition: { duration: 0.1 } 
+    });
+    await controls.start({ // 2. Play animation
+      x: 100,
+      transition: { ease: "easeInOut", duration: 1.5 }
+    });
+    setIsPlaying(false); // Re-enable button
+  };
+
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
@@ -106,6 +137,9 @@ export default function IntroToEuclideanGeometrySlide1() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">What Happens When Shapes Move?</h2>
             <p className="text-lg leading-relaxed">
+              Have you ever moved a chess piece, zoomed in on a photo, or looked at yourself in a mirror? You've seen transformations in action! 🤩
+            </p>
+            <p className="text-lg leading-relaxed mt-4">
               In geometry, a <strong>transformation</strong> is a fancy word for a "move" or "change" to a shape.
             </p>
             <p className="text-lg leading-relaxed mt-4">
@@ -124,34 +158,87 @@ export default function IntroToEuclideanGeometrySlide1() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The "World" of Geometry</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Transformation Playground 🗺️</h3>
             <p className="text-lg leading-relaxed">
-              Before we can move shapes, we need to understand the "world" they live in. This world is called **Euclidean Geometry**.
+              To move shapes, we need a "map" where all the action happens. This map is the **coordinate plane**!
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              It's the study of shapes, points, lines, and space—all the math that describes the flat world we see around us (like this screen!).
+              Think of it like grid paper with two main lines:
+            </p>
+            <ul className="mt-4 space-y-2 text-lg">
+              <li className="flex items-start">
+                <span className="font-bold text-slate-500 mr-2">→</span>
+                <span>The <strong>x-axis</strong>: The horizontal (side-to-side) line.</span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-slate-500 mr-2">↑</span>
+                <span>The <strong>y-axis</strong>: The vertical (up-and-down) line.</span>
+              </li>
+            </ul>
+            <p className="text-lg leading-relaxed mt-4">
+              We use <strong>coordinates</strong> (like <code>(x, y)</code>) to find the exact location of every point on this map.
             </p>
           </div>
         </div>
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Pre-image vs. Image</h3>
-            <div className="flex justify-center">
-              <img 
-                src="https://via.placeholder.com/500x300.png?text=Translation+Example+(Blue+to+Green)"
-                alt="A blue triangle (pre-image) and a green triangle (image) that has been slid to the right"
-                className="max-w-full h-auto rounded-lg shadow-md"
-                style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-              />
-            </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The original blue shape (pre-image) is moved to a new position to create the new green shape (image).
-            </p>
-          </div>
+          
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+          >
+            
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Before & After: Seeing Transformations</h3>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <div className="flex justify-center w-full h-32 my-2">
+              <svg viewBox="0 0 200 100" className="w-full h-full max-w-xs">
+                {/* 1. The "Pre-image" (Blue Triangle) */}
+                <polygon 
+                  points="20,80 50,20 80,80" 
+                  fill={isDarkMode ? "rgb(96 165 250)" : "rgb(37 99 235)"} // blue-400 dark, blue-600 light
+                />
+                
+                {/* 2. The "Image" (Green Triangle) - NOW CONTROLLED BY 'controls' */}
+                <motion.g
+                  initial={{ x: 0 }} // Start at the beginning
+                  animate={controls} // Animate using the controls
+                >
+                  <polygon 
+                    points="20,80 50,20 80,80" 
+                    fill={isDarkMode ? "rgb(74 222 128)" : "rgb(34 197 94)"} // green-400 dark, green-500 light
+                  />
+                </motion.g>
+              </svg>
+            </div>
+
+            {/* --- BUTTON UPDATED HERE --- */}
+            <div className="flex justify-center mt-3 mb-2">
+              <motion.button
+                onClick={handlePlay}
+                disabled={isPlaying}
+                className="bg-blue-600 dark:bg-blue-400 text-white dark:text-blue-900 px-5 py-2 rounded-lg font-semibold transition-colors hover:bg-blue-700 dark:hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                whileHover={{ scale: isPlaying ? 1 : 1.05 }}
+                whileTap={{ scale: isPlaying ? 1 : 0.95 }}
+              >
+                {isPlaying ? "Sliding..." : "Play Slide ➡️"}
+              </motion.button>
+            </div>
+            {/* --- END BUTTON --- */}
+
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
+              Click the button! The blue triangle (<strong>pre-image</strong>) "slides" to a new spot, becoming the green triangle (<strong>image</strong>).
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+          >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
@@ -246,7 +333,7 @@ export default function IntroToEuclideanGeometrySlide1() {
                 </div>
               </motion.div>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

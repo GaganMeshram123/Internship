@@ -4,12 +4,14 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-export default function IntroToRigidTransformationsSlide2() {
+// Note: The function name is kept as-is from your provided code.
+export default function IntroToRigidTransformationsSlide2() { 
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  // --- UPDATED FOR 2 QUESTIONS ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -32,6 +34,7 @@ export default function IntroToRigidTransformationsSlide2() {
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY (2 TOTAL) ---
   const questions: QuizQuestion[] = [
     {
       id: 'dilation-property-q1',
@@ -44,6 +47,18 @@ export default function IntroToRigidTransformationsSlide2() {
       ],
       correctAnswer: '...side lengths (size).',
       explanation: "Exactly! A dilation stretches or shrinks the shape, so the side lengths (distance) change. This means it's not 'rigid'."
+    },
+    {
+      id: 'scale-factor-q2',
+      question: "What controls *how much* a figure is enlarged or reduced in a dilation?",
+      options: [
+        'Angle Measure',
+        'Scale Factor',
+        'Rigid Number',
+        'Vertex'
+      ],
+      correctAnswer: 'Scale Factor',
+      explanation: "Correct! The Scale Factor (often called 'k') is the number you multiply the side lengths by."
     }
   ];
   
@@ -99,7 +114,7 @@ export default function IntroToRigidTransformationsSlide2() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
         
         {/* Left Column - Content */}
         <div className="space-y-6">
@@ -110,17 +125,30 @@ export default function IntroToRigidTransformationsSlide2() {
             </p>
             <p className="text-lg leading-relaxed mt-4">
               A dilation is a "resize." It changes the <strong>size</strong> of a figure, but not its <strong>shape</strong>.
+              <em className="text-lg text-slate-500 dark:text-slate-400 block mt-2">
+                Think: Using the 'zoom' feature on a phone camera. 📱
+              </em>
             </p>
             <ul className="mt-4 space-y-2 text-lg">
               <li className="flex items-start">
-                <span className="font-bold text-red-500 mr-2">✗</span>
+                <span className="font-bold text-blue-500 mr-2">✗</span>
                 <span><strong>Distance is NOT preserved.</strong> (Side lengths change).</span>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">✓</span>
+                <span className="font-bold text-blue-500 mr-2">✓</span>
                 <span><strong>Angle Measures ARE preserved.</strong> (The shape stays the same).</span>
               </li>
             </ul>
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Scale Factor (k)</h4>
+              <p className="text-lg mt-2">This "resize" is controlled by a <strong>Scale Factor</strong> (called $k$).</p>
+              <ul className="list-disc list-inside mt-2 text-lg space-y-1">
+                {/* --- FIX 1 & 2: Replaced > and < with HTML entities --- */}
+                <li>If k &gt; 1: The shape gets bigger (<strong>Enlargement</strong>).</li>
+                <li>If k &lt; 1: The shape gets smaller (<strong>Reduction</strong>).</li>
+                <li>If k = 1: The shape stays the same size!</li>
+              </ul>
+            </div>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
@@ -129,7 +157,10 @@ export default function IntroToRigidTransformationsSlide2() {
               Because a dilation changes the size, the image is <strong>not congruent</strong> to the pre-image.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              Instead, the figures are <strong>similar</strong> (symbol: $\sim$). This means they are the same shape, but different sizes.
+              Instead, the figures are <strong>similar</strong> (symbol: ~). This means they are the same shape, but different sizes.
+              <em className="text-lg text-slate-500 dark:text-slate-400 block mt-2">
+                Think: A real car and a small toy model of it. 🚗
+              </em>
             </p>
             <p className="text-lg leading-relaxed mt-4">
               We'll cover this move in detail in the last submodule!
@@ -139,20 +170,53 @@ export default function IntroToRigidTransformationsSlide2() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Similar Shapes</h3>
-            <div className="flex justify-center">
-              <img 
-                src="https://via.placeholder.com/500x300.png?text=Similar+Triangles+(Dilation)"
-                alt="A small blue triangle (pre-image) and a larger green triangle (image) that is the same shape but bigger"
-                className="max-w-full h-auto rounded-lg shadow-md"
-                style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-              />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Understanding Scale Factor (k)</h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mt-6">
+              
+              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+                <div className="text-4xl">
+                  <span className="opacity-50">△</span>
+                  <span className="text-blue-500 mx-1">→</span>
+                  <span className="text-2xl">△</span>
+                </div>
+                <p className="font-semibold text-lg mt-2">Enlargement</p>
+                {/* --- FIX 3: Replaced > with HTML entity --- */}
+                <p className="text-sm text-slate-600 dark:text-slate-400">k &gt; 1</p>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+                <div className="text-4xl">
+                  <span className="text-2xl">△</span>
+                  <span className="text-blue-500 mx-1">→</span>
+                  <span className="opacity-50">△</span>
+                </div>
+                <p className="font-semibold text-lg mt-2">Reduction</p>
+                {/* --- FIX 4: Replaced < with HTML entity --- */}
+                <p className="text-sm text-slate-600 dark:text-slate-400">k &lt; 1</p>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
+                <div className="text-4xl">
+                  <span>△</span>
+                  <span className="text-blue-500 mx-1">→</span>
+                  <span>△</span>
+                </div>
+                <p className="font-semibold text-lg mt-2">Same Size</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">k = 1</p>
+              </div>
+
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The image is similar ($\sim$) to the pre-image. It's an enlargement.
+              The image is always <strong>similar (~)</strong> to the pre-image because the angles never change!
             </p>
-          </div>
+          </motion.div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
@@ -170,7 +234,7 @@ export default function IntroToRigidTransformationsSlide2() {
                     index === currentQuestionIndex
                       ? 'bg-blue-500'
                       : questionsAnswered[index]
-                      ? 'bg-green-500'
+                      ? 'bg-blue-300 dark:bg-blue-800'
                       : 'bg-slate-300 dark:bg-slate-600'
                   }`}
                 />
@@ -185,14 +249,15 @@ export default function IntroToRigidTransformationsSlide2() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
+                    
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70'
+                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/3D'
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -218,8 +283,8 @@ export default function IntroToRigidTransformationsSlide2() {
                       exit={{ opacity: 0, y: -20 }}
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700'
+                          : 'bg-slate-100 dark:bg-slate-800/3D border border-slate-200 dark:border-slate-700'
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
@@ -260,7 +325,7 @@ export default function IntroToRigidTransformationsSlide2() {
       slideId="dilations-intro"
       slideTitle="Dilations Intro"
       moduleId="performing-transformations"
-      submoduleId="introduction-to-rigid-transformations"
+      submoduleId="introduction-to-rigid-transformations" 
       interactions={localInteractions}
     >
       {slideContent}

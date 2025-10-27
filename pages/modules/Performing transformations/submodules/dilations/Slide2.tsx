@@ -127,7 +127,7 @@ export default function DilationsSlide2() {
               You can find it by dividing the length of a side on the <strong>image</strong> by the length of the matching side on the <strong>pre-image</strong>.
             </p>
             <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              {/* Fix 2b: Format the formula string for JSX */}
+              {/* Formula String (Corrected) */}
               <p className="text-lg font-mono text-center font-bold">{"$k = \\frac{\\text{image length}}{\\text{pre-image length}}$"}</p>
             </div>
           </div>
@@ -140,16 +140,32 @@ export default function DilationsSlide2() {
             <ul className="mt-4 space-y-3 text-lg">
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">►</span>
-                {/* Fix 3a: Use HTML entity for > */}
+                {/* Use HTML entity for > */}
                 <span><strong>Enlargement:</strong> The shape gets bigger. This happens when $|k| &gt; 1$. (e.g., $k=2, k=5, k=-3$)</span>
               </li>
               <li className="flex items-start">
                 <span className="font-bold text-emerald-500 mr-2">►</span>
-                 {/* Fix 3b: Use HTML entities for < */}
+                {/* Use HTML entities for < */}
                 <span><strong>Reduction:</strong> The shape gets smaller. This happens when $0 &lt; |k| &lt; 1$. (e.g., $k=0.5, k=1/3, k=-0.25$)</span>
               </li>
             </ul>
           </div>
+          
+          {/* NEW BLOCK: Dilation in the Coordinate Plane */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dilation in the Coordinate Plane 📐</h3>
+            {/* FIX: Use string literal for the whole paragraph to prevent JSX/TS parsing errors */}
+            <p className="text-lg leading-relaxed">
+              {"If a shape is dilated by a scale factor of \\(k\\) with respect to the **Origin (0, 0)**, the coordinates of every point \\((x, y)\\) change using the rule:"}
+            </p>
+            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
+              {/* Correctly formatted coordinate rule string */}
+              <p className="text-lg font-mono text-center font-bold">
+                {"$(\\mathbf{x}, \\mathbf{y}) \\rightarrow (\\mathbf{k}\\mathbf{x}, \\mathbf{k}\\mathbf{y})$"}
+              </p>
+            </div>
+          </div>
+          
         </div>
 
         {/* Right Column - Image and Quiz */}
@@ -165,11 +181,31 @@ export default function DilationsSlide2() {
               />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-               {/* Fix 4: Use HTML entities */}
+              {/* Use HTML entities */}
               If $k &gt; 1$, the image is larger. If $0 &lt; k &lt; 1$, the image is smaller.
             </p>
           </div>
-
+          
+          {/* NEW BLOCK: Center of Dilation (Inserted above the Quiz) */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Center of Dilation (C)</h3>
+            <p className="text-lg leading-relaxed">
+              The **Center of Dilation** is the fixed point from which all points are expanded or shrunk.
+            </p>
+            <ul className="mt-2 space-y-2">
+              <li className="flex items-start">
+                {/* Retaining original text and class style */}
+                <span className="font-bold text-emerald-500 mr-2">►</span>
+                <span>All lines connecting a pre-image point and its image point must pass through the Center of Dilation.</span>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-emerald-500 mr-2">►</span>
+                {/* FIX: Ensure (0,0) is part of a string literal to prevent errors */}
+                <span>{"If the Center of Dilation is (0, 0), we use the coordinate rule above."}</span>
+              </li>
+            </ul>
+          </div>
+          
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>

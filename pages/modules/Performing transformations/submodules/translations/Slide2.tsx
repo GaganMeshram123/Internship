@@ -9,7 +9,8 @@ export default function TranslationsSlide2() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  // --- UPDATED FOR 2 QUESTIONS ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -32,18 +33,33 @@ export default function TranslationsSlide2() {
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY (2 QUESTIONS) ---
   const questions: QuizQuestion[] = [
     {
       id: 'find-rule-points-q1',
-      question: "A pre-image point $A(1, 7)$ is translated to the image point $A'(6, 3)$. What is the coordinate rule for this translation?",
+      // --- $ SYMBOLS REMOVED ---
+      question: "A pre-image point A(1, 7) is translated to the image point A'(6, 3). What is the coordinate rule for this translation?",
       options: [
-        "$(x, y) \to (x + 7, y + 10)$",
-        "$(x, y) \to (x + 5, y - 4)$",
-        "$(x, y) \to (x + 6, y + 3)$",
-        "$(x, y) \to (x - 5, y + 4)$"
+        "(x, y) → (x + 7, y + 10)",
+        "(x, y) → (x + 5, y - 4)",
+        "(x, y) → (x + 6, y + 3)",
+        "(x, y) → (x - 5, y + 4)"
       ],
-      correctAnswer: "$(x, y) \to (x + 5, y - 4)$",
-      explanation: "Correct! To get from $x=1$ to $x=6$, you must add 5. To get from $y=7$ to $y=3$, you must subtract 4. The rule is $(x+5, y-4)$."
+      correctAnswer: "(x, y) → (x + 5, y - 4)",
+      explanation: "Correct! To get from x=1 to x=6, you must add 5 (6 - 1 = 5). To get from y=7 to y=3, you must subtract 4 (3 - 7 = -4). The rule is (x+5, y-4)."
+    },
+    {
+      id: 'find-preimage-q2',
+      // --- ADDED SECOND QUESTION ---
+      question: "Point P is translated by the rule (x, y) → (x - 3, y + 6) to get the image P'(4, 2). What were the coordinates of the original point P?",
+      options: [
+        "(1, 8)",
+        "(7, -4)",
+        "(1, -4)",
+        "(7, 8)"
+      ],
+      correctAnswer: "(7, -4)",
+      explanation: "Correct! To find the original x, solve x - 3 = 4 → x = 7. To find the original y, solve y + 6 = 2 → y = -4. So P was at (7, -4)."
     }
   ];
   
@@ -99,10 +115,12 @@ export default function TranslationsSlide2() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
+      {/* --- UPDATED to 1 column for small screens, 2 for medium and up --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
         
         {/* Left Column - Content */}
         <div className="space-y-6">
+          {/* --- CARD 1: UPDATED WITH ANALOGY --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Finding the Rule (From Points)</h2>
             <p className="text-lg leading-relaxed">
@@ -111,46 +129,62 @@ export default function TranslationsSlide2() {
             <p className="text-lg leading-relaxed mt-4">
               It's simple subtraction!
             </p>
+            {/* --- ANALOGY ADDED --- */}
+            <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
+              Think: Finding the **change** between numbers. If you start at 2 and end at 5, the change is $5 - 2 = 3$. We do the same for x and y.
+            </em>
           </div>
 
+          {/* --- CARD 2: UPDATED WITH SYMBOL FIXES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Formula</h3>
             <p className="text-lg leading-relaxed">
-              Given Pre-image $P(x_1, y_1)$ and Image $P'(x_2, y_2)$:
+              {/* --- $ SYMBOLS REMOVED --- */}
+              Given Pre-image P(x₁, y₁) and Image P'(x₂, y₂):
             </p>
             <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg font-mono">Horizontal change $a = x_2 - x_1$</p>
-              <p className="text-lg font-mono mt-2">Vertical change $b = y_2 - y_1$</p>
-              <p className="text-lg font-mono mt-4 font-bold">Rule: $\langle a, b \rangle$ or $(x+a, y+b)$</p>
+              <p className="text-lg font-mono">Horizontal change a = x₂ - x₁</p>
+              <p className="text-lg font-mono mt-2">Vertical change b = y₂ - y₁</p>
+              <p className="text-lg font-mono mt-4 font-bold">
+                {/* --- SYMBOLS UPDATED --- */}
+                Rule: &lt;a, b&gt; or (x+a, y+b)
+              </p>
             </div>
           </div>
 
+          {/* --- CARD 3: UPDATED WITH SYMBOL & COLOR FIXES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Example</h3>
             <p className="text-lg leading-relaxed">
-              Pre-image $A(-2, 1)$ translates to Image $A'(3, -4)$.
+              {/* --- $ SYMBOLS REMOVED --- */}
+              Pre-image A(-2, 1) translates to Image A'(3, -4).
             </p>
             <ul className="mt-4 space-y-2 text-lg">
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">x:</span>
-                <span>$a = 3 - (-2) = 3 + 2 = 5$ (Right 5)</span>
+                <span className="font-bold text-blue-500 mr-2">x:</span> {/* COLOR UPDATED */}
+                {/* --- $ SYMBOLS REMOVED --- */}
+                <span>a = 3 - (-2) = 3 + 2 = 5 (Right 5)</span>
               </li>
               <li className="flex items-start">
-                <span className="font-bold text-emerald-500 mr-2">y:</span>
-                <span>$b = -4 - 1 = -5$ (Down 5)</span>
+                <span className="font-bold text-blue-500 mr-2">y:</span> {/* COLOR UPDATED */}
+                 {/* --- $ SYMBOLS REMOVED --- */}
+                <span>b = -4 - 1 = -5 (Down 5)</span>
               </li>
             </ul>
              <p className="text-lg leading-relaxed mt-4 font-bold">
-              The rule is $\langle 5, -5 \rangle$ or $(x, y) \to (x+5, y-5)$.
+              {/* --- SYMBOLS UPDATED --- */}
+              The rule is &lt;5, -5&gt; or (x, y) → (x+5, y-5).
             </p>
           </div>
         </div>
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
+          {/* --- VISUAL CARD UPDATED ($ REMOVED) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Finding the Rule</h3>
             <div className="flex justify-center">
+              {/* Consider replacing this placeholder with a more dynamic visual */}
               <img 
                 src="https://via.placeholder.com/500x300.png?text=Point+A(-2,1)+and+Point+A'(3,-4)"
                 alt="A coordinate plane showing point A at (-2,1) and point A' at (3,-4) with an arrow between them"
@@ -158,11 +192,13 @@ export default function TranslationsSlide2() {
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>
+            {/* --- $ SYMBOLS REMOVED --- */}
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Ask yourself: "How do I get from A to A'?" Move 5 right ($+5$) and 5 down ($-5$).
+              Ask yourself: "How do I get from A to A'?" Move 5 right (+5) and 5 down (-5).
             </p>
           </div>
 
+          {/* --- KNOWLEDGE CHECK CARD (WITH COLOR FIXES) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -171,16 +207,17 @@ export default function TranslationsSlide2() {
               </div>
             </div>
 
+            {/* --- Progress Bar (COLOR UPDATED) --- */}
             <div className="flex space-x-2 mb-6">
               {questions.map((_, index) => (
                 <div
                   key={index}
                   className={`h-2 flex-1 rounded ${
                     index === currentQuestionIndex
-                      ? 'bg-blue-500'
+                      ? 'bg-blue-500' // Active
                       : questionsAnswered[index]
-                      ? 'bg-green-500'
-                      : 'bg-slate-300 dark:bg-slate-600'
+                      ? 'bg-blue-300 dark:bg-blue-800' // Answered (REMOVED GREEN)
+                      : 'bg-slate-300 dark:bg-slate-600' // Unanswered
                   }`}
                 />
               ))}
@@ -189,19 +226,22 @@ export default function TranslationsSlide2() {
             {!isQuizComplete ? (
               <>
                 <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                {/* --- Answer Options (COLORS UPDATED) --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
+                    
+                    // --- UPDATED CLASSNAME LOGIC TO REMOVE RED/GREEN ---
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT (now blue)
+                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT (now slate/neutral)
+                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected (no feedback)
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -225,10 +265,11 @@ export default function TranslationsSlide2() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
+                      // --- UPDATED FEEDBACK BOX COLORS (REMOVED RED/GREEN) ---
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct (blue)
+                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect (slate)
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
@@ -247,6 +288,7 @@ export default function TranslationsSlide2() {
                 </AnimatePresence>
               </>
             ) : (
+              // --- Quiz Complete State ---
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
                 <div className="text-3xl mb-4">🕵️</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
