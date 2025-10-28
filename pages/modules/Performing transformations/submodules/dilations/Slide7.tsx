@@ -1,15 +1,99 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // No useEffect/useState needed for new anim
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+
+// --- Animation Variants ---
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1 
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+// --- End Animation Variants ---
+
+
+// --- NEW ANIMATION COMPONENT (2x2 Grid) ---
+const FourTransformationsAnimation: React.FC = () => {
+
+  // Reusable 'F' Shape
+  const FShape = () => (
+    <g>
+      <path 
+        d="M 0 -10 L 0 10 L 7 10 M 0 0 L 5 0" 
+        className="stroke-blue-500 dark:stroke-blue-400" 
+        strokeWidth="2.5" 
+        fill="none" 
+        strokeLinecap="round" // Makes it look a bit softer
+      />
+    </g>
+  );
+  
+  // Reusable component for each quadrant
+  const AnimationQuadrant: React.FC<{ title: string; animationProps: object; transitionProps: object; }> = 
+    ({ title, animationProps, transitionProps }) => (
+      
+    <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-700/60 h-full">
+      <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">{title}</span>
+      <svg viewBox="-20 -20 40 40" className="w-16 h-16">
+        {/* Contextual Axes */}
+        <line x1="0" y1="-20" x2="0" y2="20" stroke="rgba(150, 150, 150, 0.3)" strokeWidth="1" strokeDasharray="2 2" />
+        <line x1="-20" y1="0" x2="20" y2="0" stroke="rgba(150, 150, 150, 0.3)" strokeWidth="1" strokeDasharray="2 2" />
+        
+        <motion.g
+          animate={animationProps}
+          transition={transitionProps}
+        >
+          <FShape />
+        </motion.g>
+      </svg>
+    </div>
+  );
+
+  return (
+    // This grid contains the 4 animations
+    <div className="grid grid-cols-2 gap-3 p-2">
+      <AnimationQuadrant 
+        title="Translation" 
+        animationProps={{ x: [-8, 8] }} // Slides back and forth
+        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }} 
+      />
+      <AnimationQuadrant 
+        title="Rotation" 
+        animationProps={{ rotate: [0, 360] }} // Rotates 360
+        transitionProps={{ duration: 2.5, ease: "linear", repeat: Infinity, repeatType: "loop" }} 
+      />
+      <AnimationQuadrant 
+        title="Reflection" 
+        animationProps={{ scaleX: [1, -1] }} // Flips
+        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }} 
+      />
+      <AnimationQuadrant 
+        title="Dilation" 
+        animationProps={{ scale: [1, 1.4] }} // Grows and shrinks
+        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }} 
+      />
+    </div>
+  );
+};
+// --- END OF NEW ANIMATION COMPONENT ---
+
 
 export default function DilationsSlide7() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]); // Three questions
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -121,36 +205,47 @@ export default function DilationsSlide7() {
     }
   };
 
+  const progressPercent = ((currentQuestionIndex + (isQuizComplete ? 1 : 0)) / questions.length) * 100;
+
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         
-        {/* Left Column - Content */}
+        {/* === Left Column - Content === */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Module Review: FAQ</h2>
-            <p className="text-lg leading-relaxed">
+          <motion.div variants={cardVariants}>
+            <h2 className="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Module Review: FAQ</h2>
+            <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
               Let's review the main ideas from the entire "Performing Transformations" module.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+          <motion.div 
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+            variants={cardVariants}
+          >
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Rigid vs. Non-Rigid</h3>
             <p className="text-lg leading-relaxed">
               <strong>Q: What is a rigid transformation?</strong><br/>
               A: A move that preserves size and shape (distance and angles). The image is <strong>congruent</strong> ($\cong$).
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              <strong>Q: Which moves are rigid?</strong><br/>
-              A: <strong>Translation</strong> (slide), <strong>Rotation</strong> (turn), and <strong>Reflection</strong> (flip).
+              <strong>Rigid Moves:</strong> <strong>Translation</strong> (slide), <strong>Rotation</strong> (turn), and <strong>Reflection</strong> (flip). These create <strong>congruent</strong> images.
             </p>
              <p className="text-lg leading-relaxed mt-4">
-              <strong>Q: Which move is *not* rigid?</strong><br/>
-              A: <strong>Dilation</strong> (resize). It changes the size.
+              <strong>Non-Rigid Moves:</strong> <strong>Dilation</strong> (resize). This creates a <strong>similar</strong> image.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+          <motion.div 
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+            variants={cardVariants}
+          >
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Congruent vs. Similar</h3>
             <p className="text-lg leading-relaxed">
               <strong>Q: What does Congruent ($\cong$) mean?</strong><br/>
@@ -164,32 +259,43 @@ export default function DilationsSlide7() {
               <strong>Q: Which transformation creates a *similar* image?</strong><br/>
               A: <strong>Dilation</strong>. The other three create *congruent* images.
             </p>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Right Column - Image and Quiz */}
+        {/* === Right Column - Image and Quiz === */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Four Transformations</h3>
-            <div className="flex justify-center">
-              <img 
-                src="https://via.placeholder.com/500x300.png?text=Grid+of+4:+Translation,+Rotation,+Reflection,+Dilation"
-                alt="A grid of four diagrams, one for each transformation, labeled clearly"
-                className="max-w-full h-auto rounded-lg shadow-md"
-                style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-              />
-            </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Translation, Rotation, Reflection, and Dilation.
-            </p>
-          </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+          <motion.div 
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+            variants={cardVariants}
+            // Hover prop removed
+          >
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Four Transformations</h3>
+            
+            {/* --- NEW ANIMATION COMPONENT IS PLACED HERE --- */}
+            <FourTransformationsAnimation />
+            
+            {/* The old <p> tag is removed as the animation now has labels */}
+          </motion.div>
+
+          <motion.div 
+            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
+            variants={cardVariants}
+          >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
-                Question {currentQuestionIndex + 1} of {questions.length}
+                Question {Math.min(currentQuestionIndex + 1, questions.length)} of {questions.length}
               </div>
+            </div>
+
+            <div className="w-full bg-slate-300 dark:bg-slate-600 rounded-full h-2 mb-6">
+              <motion.div
+                className="bg-blue-500 h-2 rounded-full"
+                initial={{ width: '0%' }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ ease: "easeInOut", duration: 0.5 }}
+              />
             </div>
 
             <div className="flex space-x-2 mb-6">
@@ -197,11 +303,11 @@ export default function DilationsSlide7() {
                 <div
                   key={index}
                   className={`h-2 flex-1 rounded ${
-                    index === currentQuestionIndex
-                      ? 'bg-blue-500'
-                      : questionsAnswered[index]
-                      ? 'bg-green-500'
-                      : 'bg-slate-300 dark:bg-slate-600'
+                    index === currentQuestionIndex && !isQuizComplete
+                      ? 'bg-blue-500' // Active
+                      : questionsAnswered[index] || isQuizComplete
+                      ? 'bg-blue-300 dark:bg-blue-800' // Answered
+                      : 'bg-slate-300 dark:bg-slate-600' // Unanswered
                   }`}
                 />
               ))}
@@ -219,10 +325,10 @@ export default function DilationsSlide7() {
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30' // Selected, Correct
+                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'     // Selected, Incorrect
+                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'   // Just Selected
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400 dark:hover:border-blue-500' // Default
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -249,15 +355,15 @@ export default function DilationsSlide7() {
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
                           ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/3D'
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
+                      <div className="text-lg text-slate-700 dark:text-slate-300 mb-4">
                         {questions[currentQuestionIndex].explanation}
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -279,9 +385,9 @@ export default function DilationsSlide7() {
                 </div>
               </motion.div>
             )}
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 
