@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
-// motion and AnimatePresence are no longer strictly needed for this component's JSX
-// but might still be used by the quiz feedback
+// motion and AnimatePresence are kept for quiz feedback
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+
+// --- Animation Variants (NO LONGER USED ON CARDS) ---
+// const containerVariants = { ... };
+// const cardVariants = { ... };
 
 export default function IntroToEuclideanGeometrySlide2() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  // --- UPDATED FOR 4 QUESTIONS ---
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
-  
+
   const slideInteractions: Interaction[] = [
     {
       id: 'euclid-history-quiz',
@@ -35,17 +37,11 @@ export default function IntroToEuclideanGeometrySlide2() {
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY (4 TOTAL) ---
   const questions: QuizQuestion[] = [
     {
       id: 'euclid-book-q1',
       question: 'What is the name of the famous "rulebook" of geometry written by Euclid?',
-      options: [
-        'The Republic',
-        'Elements',
-        'The Geometry Code',
-        'Principia Mathematica'
-      ],
+      options: [ 'The Republic', 'Elements', 'The Geometry Code', 'Principia Mathematica' ],
       correctAnswer: 'Elements',
       explanation: "That's right! Euclid's 'Elements' is one of the most influential books in history and set the foundation for geometry for over 2000 years."
     },
@@ -76,49 +72,29 @@ export default function IntroToEuclideanGeometrySlide2() {
     {
       id: 'euclid-volumes-q4',
       question: 'The "rulebook" Euclid wrote was massive. How many volumes (or books) did it contain?',
-      options: [
-        '2',
-        '5',
-        '13',
-        '50'
-      ],
+      options: [ '2', '5', '13', '50' ],
       correctAnswer: '13',
       explanation: "That's right! It was a huge 13-volume collection that covered planes, 3D shapes, and number theory."
     }
   ];
-  
+
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
 
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
-
     const current = questions[currentQuestionIndex];
     const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
-
+    if (isCorrect) setScore(prev => prev + 1);
     handleInteractionComplete({
       interactionId: `euclid-history-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
-      isCorrect,
-      timestamp: Date.now(),
-      conceptId: 'geometry-history',
-      conceptName: 'Geometry History Quiz',
+      value: answerText, isCorrect, timestamp: Date.now(),
+      conceptId: 'geometry-history', conceptName: 'Geometry History Quiz',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      question: { type: 'mcq', question: current.question, options: current.options }
     });
   };
 
@@ -126,10 +102,8 @@ export default function IntroToEuclideanGeometrySlide2() {
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
-
     setSelectedAnswer('');
     setShowFeedback(false);
-
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -139,11 +113,13 @@ export default function IntroToEuclideanGeometrySlide2() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
-        
+      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
+
         {/* Left Column - Content */}
         <div className="space-y-6">
-          
+
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Euclid: The Father of Geometry</h2>
             <p className="text-lg leading-relaxed">
@@ -154,6 +130,7 @@ export default function IntroToEuclideanGeometrySlide2() {
             </p>
           </div>
 
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The "Elements"</h3>
             <p className="text-lg leading-relaxed">
@@ -167,36 +144,32 @@ export default function IntroToEuclideanGeometrySlide2() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          
-          {/* --- CONTENT ADDED TO THIS BLOCK --- */}
+
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">
               Key Ideas from "Elements"
             </h3>
-            
             <p className="text-lg leading-relaxed">
               Euclid's genius was starting with a few simple rules, called <strong>postulates</strong> or <strong>axioms</strong>, that were so obvious everyone agreed they were true.
             </p>
-
             <h4 className="text-lg font-semibold mt-4 mb-2 text-slate-700 dark:text-slate-300">The 5 "Obvious" Rules</h4>
             <ul className="list-decimal list-inside space-y-1 text-base">
               <li>A straight line can be drawn between any two points.</li>
               <li>Any straight line segment can be extended indefinitely.</li>
               <li>A circle can be drawn with any center and any radius.</li>
-              {/* You can add 4 and 5 if you like */}
+              <li>All right angles are equal to one another.</li>
+              <li>(The parallel postulate - about lines never meeting)</li> {/* Simplified 5th */}
             </ul>
-
             <h4 className="text-lg font-semibold mt-4 mb-2 text-slate-700 dark:text-slate-300">Why It Matters Today 🌎</h4>
             <ul className="list-disc list-inside space-y-1 text-base">
               <li><strong>Engineering:</strong> Designing stable bridges and buildings.</li>
               <li><strong>Computer Graphics:</strong> Creating 3D worlds in video games.</li>
               <li><strong>Navigation:</strong> GPS satellites use this geometry.</li>
             </ul>
-
           </div>
-          {/* --- END CARD --- */}
 
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -213,7 +186,8 @@ export default function IntroToEuclideanGeometrySlide2() {
                     index === currentQuestionIndex
                       ? 'bg-blue-500'
                       : questionsAnswered[index]
-                      ? 'bg-green-500'
+                      // --- Fixed Progress Bar Color ---
+                      ? 'bg-blue-300 dark:bg-blue-800'
                       : 'bg-slate-300 dark:bg-slate-600'
                   }`}
                 />
@@ -228,14 +202,15 @@ export default function IntroToEuclideanGeometrySlide2() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
+                    // --- Fixed Answer Feedback Color Logic ---
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
-                            : 'border-red-500 bg-red-50 dark:bg-red-900/30'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Correct
+                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // Incorrect
+                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -259,10 +234,11 @@ export default function IntroToEuclideanGeometrySlide2() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
+                      // --- Fixed Feedback Box Color Logic ---
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct
+                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
@@ -299,7 +275,7 @@ export default function IntroToEuclideanGeometrySlide2() {
   );
 
   return (
-    <SlideComponentWrapper 
+    <SlideComponentWrapper
       slideId="euclid-history"
       slideTitle="Euclid as the Father of Geometry"
       moduleId="performing-transformations"

@@ -4,51 +4,38 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- Animation Variants ---
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1 
-    }
-  }
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
-// --- End Animation Variants ---
+// --- Animation Variants (NO LONGER USED ON CARDS) ---
+// const containerVariants = { ... };
+// const cardVariants = { ... };
 
 
-// --- NEW ANIMATION COMPONENT (2x2 Grid) ---
+// --- NEW ANIMATION COMPONENT (2x2 Grid) (UNCHANGED) ---
 const FourTransformationsAnimation: React.FC = () => {
-
+  // ... (Code for FourTransformationsAnimation remains exactly the same) ...
   // Reusable 'F' Shape
   const FShape = () => (
     <g>
-      <path 
-        d="M 0 -10 L 0 10 L 7 10 M 0 0 L 5 0" 
-        className="stroke-blue-500 dark:stroke-blue-400" 
-        strokeWidth="2.5" 
-        fill="none" 
+      <path
+        d="M 0 -10 L 0 10 L 7 10 M 0 0 L 5 0"
+        className="stroke-blue-500 dark:stroke-blue-400"
+        strokeWidth="2.5"
+        fill="none"
         strokeLinecap="round" // Makes it look a bit softer
       />
     </g>
   );
-  
+
   // Reusable component for each quadrant
-  const AnimationQuadrant: React.FC<{ title: string; animationProps: object; transitionProps: object; }> = 
+  const AnimationQuadrant: React.FC<{ title: string; animationProps: object; transitionProps: object; }> =
     ({ title, animationProps, transitionProps }) => (
-      
+
     <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-700/60 h-full">
       <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">{title}</span>
       <svg viewBox="-20 -20 40 40" className="w-16 h-16">
         {/* Contextual Axes */}
         <line x1="0" y1="-20" x2="0" y2="20" stroke="rgba(150, 150, 150, 0.3)" strokeWidth="1" strokeDasharray="2 2" />
         <line x1="-20" y1="0" x2="20" y2="0" stroke="rgba(150, 150, 150, 0.3)" strokeWidth="1" strokeDasharray="2 2" />
-        
+
         <motion.g
           animate={animationProps}
           transition={transitionProps}
@@ -62,25 +49,25 @@ const FourTransformationsAnimation: React.FC = () => {
   return (
     // This grid contains the 4 animations
     <div className="grid grid-cols-2 gap-3 p-2">
-      <AnimationQuadrant 
-        title="Translation" 
+      <AnimationQuadrant
+        title="Translation"
         animationProps={{ x: [-8, 8] }} // Slides back and forth
-        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }} 
+        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }}
       />
-      <AnimationQuadrant 
-        title="Rotation" 
+      <AnimationQuadrant
+        title="Rotation"
         animationProps={{ rotate: [0, 360] }} // Rotates 360
-        transitionProps={{ duration: 2.5, ease: "linear", repeat: Infinity, repeatType: "loop" }} 
+        transitionProps={{ duration: 2.5, ease: "linear", repeat: Infinity, repeatType: "loop" }}
       />
-      <AnimationQuadrant 
-        title="Reflection" 
+      <AnimationQuadrant
+        title="Reflection"
         animationProps={{ scaleX: [1, -1] }} // Flips
-        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }} 
+        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }}
       />
-      <AnimationQuadrant 
-        title="Dilation" 
+      <AnimationQuadrant
+        title="Dilation"
         animationProps={{ scale: [1, 1.4] }} // Grows and shrinks
-        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }} 
+        transitionProps={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }}
       />
     </div>
   );
@@ -97,7 +84,7 @@ export default function DilationsSlide7() {
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
-  
+
   const slideInteractions: Interaction[] = [
     {
       id: 'transformations-faq-quiz',
@@ -120,73 +107,43 @@ export default function DilationsSlide7() {
     {
       id: 'faq-q1-rigid',
       question: "Which of the following is *NOT* a rigid transformation (isometry)?",
-      options: [
-        'Translation (Slide)',
-        'Rotation (Turn)',
-        'Reflection (Flip)',
-        'Dilation (Resize)'
-      ],
+      options: [ 'Translation (Slide)', 'Rotation (Turn)', 'Reflection (Flip)', 'Dilation (Resize)' ],
       correctAnswer: 'Dilation (Resize)',
       explanation: "Correct! Dilation changes the size, so it is not 'rigid'. Translations, rotations, and reflections all preserve size and shape."
     },
     {
       id: 'faq-q2-similar',
       question: "A dilation creates an image that is...?",
-      options: [
-        'Congruent to the pre-image',
-        'Similar to the pre-image',
-        'Neither congruent nor similar',
-        'Always larger than the pre-image'
-      ],
+      options: [ 'Congruent to the pre-image', 'Similar to the pre-image', 'Neither congruent nor similar', 'Always larger than the pre-image' ],
       correctAnswer: 'Similar to the pre-image',
       explanation: "Correct! 'Similar' means same shape, different size. 'Congruent' means same shape, same size. Dilations change the size, so the result is similar."
     },
     {
       id: 'faq-q3-properties',
       question: "Which transformation preserves angle measures but *NOT* side lengths?",
-      options: [
-        'Translation',
-        'Rotation',
-        'Reflection',
-        'Dilation'
-      ],
+      options: [ 'Translation', 'Rotation', 'Reflection', 'Dilation' ],
       correctAnswer: 'Dilation',
       explanation: "Correct! A dilation keeps the same shape (preserves angles) but changes the size (does not preserve side lengths). All rigid transformations preserve both."
     }
   ];
-  
+
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
 
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
-
     const current = questions[currentQuestionIndex];
     const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
-
+    if (isCorrect) setScore(prev => prev + 1);
     handleInteractionComplete({
       interactionId: `transformations-faq-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
-      isCorrect,
-      timestamp: Date.now(),
-      conceptId: 'transformations-summary',
-      conceptName: 'Transformations FAQ',
+      value: answerText, isCorrect, timestamp: Date.now(),
+      conceptId: 'transformations-summary', conceptName: 'Transformations FAQ',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      question: { type: 'mcq', question: current.question, options: current.options }
     });
   };
 
@@ -194,10 +151,8 @@ export default function DilationsSlide7() {
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
-
     setSelectedAnswer('');
     setShowFeedback(false);
-
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -209,79 +164,63 @@ export default function DilationsSlide7() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        
+      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
+
         {/* === Left Column - Content === */}
         <div className="space-y-6">
-          <motion.div variants={cardVariants}>
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div>
             <h2 className="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Module Review: FAQ</h2>
             <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
               Let's review the main ideas from the entire "Performing Transformations" module.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-            variants={cardVariants}
-          >
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Rigid vs. Non-Rigid</h3>
             <p className="text-lg leading-relaxed">
               <strong>Q: What is a rigid transformation?</strong><br/>
-              A: A move that preserves size and shape (distance and angles). The image is <strong>congruent</strong> ($\cong$).
-            </p>
+              A: A move that preserves size and shape (distance and angles). The image is <strong>congruent</strong> .
+            </p> 
             <p className="text-lg leading-relaxed mt-4">
               <strong>Rigid Moves:</strong> <strong>Translation</strong> (slide), <strong>Rotation</strong> (turn), and <strong>Reflection</strong> (flip). These create <strong>congruent</strong> images.
             </p>
              <p className="text-lg leading-relaxed mt-4">
               <strong>Non-Rigid Moves:</strong> <strong>Dilation</strong> (resize). This creates a <strong>similar</strong> image.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-            variants={cardVariants}
-          >
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Congruent vs. Similar</h3>
             <p className="text-lg leading-relaxed">
-              <strong>Q: What does Congruent ($\cong$) mean?</strong><br/>
+              <strong>Q: What does Congruent  mean?</strong><br/>
               A: Same size, same shape.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              <strong>Q: What does Similar ($\sim$) mean?</strong><br/>
+              <strong>Q: What does Similar mean?</strong><br/>
               A: Same shape, different size.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              <strong>Q: Which transformation creates a *similar* image?</strong><br/>
-              A: <strong>Dilation</strong>. The other three create *congruent* images.
+              <strong>Q: Which transformation creates a similar image?</strong><br/>
+              A: <strong>Dilation</strong>. The other three create congruent images.
             </p>
-          </motion.div>
+          </div>
         </div>
 
         {/* === Right Column - Image and Quiz === */}
         <div className="space-y-6">
 
-          <motion.div 
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-            variants={cardVariants}
-            // Hover prop removed
-          >
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Four Transformations</h3>
-            
-            {/* --- NEW ANIMATION COMPONENT IS PLACED HERE --- */}
             <FourTransformationsAnimation />
-            
-            {/* The old <p> tag is removed as the animation now has labels */}
-          </motion.div>
+          </div>
 
-          <motion.div 
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-            variants={cardVariants}
-          >
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
@@ -385,14 +324,14 @@ export default function DilationsSlide7() {
                 </div>
               </motion.div>
             )}
-          </motion.div>
+          </div> {/* <--- Added missing closing div tag here */}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 
   return (
-    <SlideComponentWrapper 
+    <SlideComponentWrapper
       slideId="transformations-faq"
       slideTitle="Performing Transformations FAQ"
       moduleId="performing-transformations"

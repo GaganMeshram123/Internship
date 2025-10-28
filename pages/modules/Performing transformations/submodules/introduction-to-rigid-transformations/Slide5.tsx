@@ -121,7 +121,7 @@ export default function IntroToRigidTransformationsSlide5() {
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       {/* --- UPDATED to 1 column for small screens, 2 for medium and up --- */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto ">
         
         {/* Left Column - Content */}
         <div className="space-y-6">
@@ -180,7 +180,7 @@ export default function IntroToRigidTransformationsSlide5() {
             </div>
 
             {/* --- Progress Bar (COLOR UPDATED) --- */}
-            <div className="flex space-x-2 mb-6">
+           { <div className="flex space-x-2 mb-6">
               {questions.map((_, index) => (
                 <div
                   key={index}
@@ -193,19 +193,19 @@ export default function IntroToRigidTransformationsSlide5() {
                   }`}
                 />
               ))}
-            </div>
+            </div>}
 
             {!isQuizComplete ? (
               <>
                 {/* Image for the current question */}
-                <div className="flex justify-center mb-4">
+                {/* <div className="flex justify-center mb-4">
                   <img 
                     src={questions[currentQuestionIndex].image}
                     alt="Transformation example for quiz"
                     className="max-w-full h-auto rounded-lg shadow-md"
                     style={{ width: '100%', maxWidth: '400px', height: 'auto' }}
                   />
-                </div>
+                </div> */}
               
                 <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
                 {/* --- Answer Options (COLORS UPDATED) --- */}

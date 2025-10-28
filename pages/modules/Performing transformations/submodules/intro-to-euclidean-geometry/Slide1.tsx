@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 // Import useAnimation from framer-motion
-import { motion, AnimatePresence, useAnimation } from 'framer-motion'; 
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+
+// --- Animation Variants (NO LONGER USED ON CARDS) ---
+// const containerVariants = { ... };
+// const cardVariants = { ... };
 
 export default function IntroToEuclideanGeometrySlide1() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -15,10 +19,12 @@ export default function IntroToEuclideanGeometrySlide1() {
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 
-  // --- ANIMATION CONTROL ADDED ---
   const controls = useAnimation();
   const [isPlaying, setIsPlaying] = useState(false);
-  
+
+  const preImageColor = isDarkMode ? "rgb(96 165 250)" : "rgb(37 99 235)";
+  const imageColor = isDarkMode ? "rgb(74 222 128)" : "rgb(34 197 94)";
+
   const slideInteractions: Interaction[] = [
     {
       id: 'transformation-ready-quiz',
@@ -41,61 +47,36 @@ export default function IntroToEuclideanGeometrySlide1() {
     {
       id: 'name-that-move-q1',
       question: 'Click "Play Slide" and watch the animation. What kind of move is happening?',
-      options: [
-        'Slide (Translation)',
-        'Turn (Rotation)',
-        'Flip (Reflection)',
-        'Resize (Dilation)'
-      ],
+      options: [ 'Slide (Translation)', 'Turn (Rotation)', 'Flip (Reflection)', 'Resize (Dilation)' ],
       correctAnswer: 'Slide (Translation)',
       explanation: 'Correct! The shape slid to a new position without turning or flipping. This is called a Translation, which we will learn about soon!'
     },
     {
       id: 'name-that-move-q2',
       question: 'What do we call the "map" with an x-axis and y-axis where transformations happen?',
-      options: [
-        'A Geometry Grid',
-        'The Coordinate Plane',
-        'A Transformation Sheet',
-        'A Shape Box'
-      ],
+      options: [ 'A Geometry Grid', 'The Coordinate Plane', 'A Transformation Sheet', 'A Shape Box' ],
       correctAnswer: 'The Coordinate Plane',
       explanation: 'That\'s right! The coordinate plane is our "map" for all transformations, letting us track shapes using (x, y) coordinates.'
     }
   ];
-  
+
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
 
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
-
     const current = questions[currentQuestionIndex];
     const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
-
+    if (isCorrect) setScore(prev => prev + 1);
     handleInteractionComplete({
       interactionId: `transformation-ready-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
-      isCorrect,
-      timestamp: Date.now(),
-      conceptId: 'transformation-readiness',
-      conceptName: 'Transformation Readiness Quiz',
+      value: answerText, isCorrect, timestamp: Date.now(),
+      conceptId: 'transformation-readiness', conceptName: 'Transformation Readiness Quiz',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      question: { type: 'mcq', question: current.question, options: current.options }
     });
   };
 
@@ -103,10 +84,8 @@ export default function IntroToEuclideanGeometrySlide1() {
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
-
     setSelectedAnswer('');
     setShowFeedback(false);
-
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -114,26 +93,30 @@ export default function IntroToEuclideanGeometrySlide1() {
     }
   };
 
-  // --- FUNCTION TO CONTROL ANIMATION ---
   const handlePlay = async () => {
-    setIsPlaying(true); // Disable button
-    await controls.start({ // 1. Reset to start
+    setIsPlaying(true);
+    await controls.start({
       x: 0,
-      transition: { duration: 0.1 } 
+      fill: preImageColor,
+      transition: { duration: 0.1 }
     });
-    await controls.start({ // 2. Play animation
+    await controls.start({
       x: 100,
+      fill: imageColor,
       transition: { ease: "easeInOut", duration: 1.5 }
     });
-    setIsPlaying(false); // Re-enable button
+    setIsPlaying(false);
   };
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-2 gap-8 p-8 mx-auto">
-        
+      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
+
         {/* Left Column - Content */}
+        {/* --- LEFT COLUMN WRAPPER - NO LONGER ANIMATES --- */}
         <div className="space-y-6">
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">What Happens When Shapes Move?</h2>
             <p className="text-lg leading-relaxed">
@@ -157,10 +140,11 @@ export default function IntroToEuclideanGeometrySlide1() {
             </ul>
           </div>
 
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Transformation Playground 🗺️</h3>
             <p className="text-lg leading-relaxed">
-              To move shapes, we need a "map" where all the action happens. This map is the **coordinate plane**!
+              To move shapes, we need a "map" where all the action happens. This map is the coordinate plane!
             </p>
             <p className="text-lg leading-relaxed mt-4">
               Think of it like grid paper with two main lines:
@@ -183,38 +167,24 @@ export default function IntroToEuclideanGeometrySlide1() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-          >
-            
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Before & After: Seeing Transformations</h3>
 
-            <div className="flex justify-center w-full h-32 my-2">
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Before & After: Seeing Transformations</h3>
+            <div className="flex justify-center w-full h-32 my-2 overflow-hidden">
               <svg viewBox="0 0 200 100" className="w-full h-full max-w-xs">
-                {/* 1. The "Pre-image" (Blue Triangle) */}
-                <polygon 
-                  points="20,80 50,20 80,80" 
-                  fill={isDarkMode ? "rgb(96 165 250)" : "rgb(37 99 235)"} // blue-400 dark, blue-600 light
-                />
-                
-                {/* 2. The "Image" (Green Triangle) - NOW CONTROLLED BY 'controls' */}
                 <motion.g
-                  initial={{ x: 0 }} // Start at the beginning
-                  animate={controls} // Animate using the controls
+                  animate={controls}
+                  initial={{ x: 0 }}
                 >
-                  <polygon 
-                    points="20,80 50,20 80,80" 
-                    fill={isDarkMode ? "rgb(74 222 128)" : "rgb(34 197 94)"} // green-400 dark, green-500 light
+                  <motion.polygon
+                    points="20,80 50,20 80,80"
+                    animate={controls}
+                    initial={{ fill: preImageColor }}
                   />
                 </motion.g>
               </svg>
             </div>
-
-            {/* --- BUTTON UPDATED HERE --- */}
             <div className="flex justify-center mt-3 mb-2">
               <motion.button
                 onClick={handlePlay}
@@ -226,41 +196,33 @@ export default function IntroToEuclideanGeometrySlide1() {
                 {isPlaying ? "Sliding..." : "Play Slide ➡️"}
               </motion.button>
             </div>
-            {/* --- END BUTTON --- */}
-
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Click the button! The blue triangle (<strong>pre-image</strong>) "slides" to a new spot, becoming the green triangle (<strong>image</strong>).
+              Click the button! The <strong>pre-image</strong> (blue) "slides" and becomes the <strong>image</strong> (green).
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-          >
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
             </div>
-
             <div className="flex space-x-2 mb-6">
               {questions.map((_, index) => (
                 <div
                   key={index}
                   className={`h-2 flex-1 rounded ${
                     index === currentQuestionIndex
-                      ? 'bg-blue-500'
+                      ? 'bg-blue-500' // Active
                       : questionsAnswered[index]
-                      ? 'bg-green-500'
-                      : 'bg-slate-300 dark:bg-slate-600'
+                      ? 'bg-blue-300 dark:bg-blue-800' // Answered
+                      : 'bg-slate-300 dark:bg-slate-600' // Unanswered
                   }`}
                 />
               ))}
             </div>
-
             {!isQuizComplete ? (
               <>
                 <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
@@ -276,7 +238,7 @@ export default function IntroToEuclideanGeometrySlide1() {
                             ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
                             : 'border-red-500 bg-red-50 dark:bg-red-900/30'
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
+                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400 dark:hover:border-blue-500'
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
                     return (
@@ -293,7 +255,6 @@ export default function IntroToEuclideanGeometrySlide1() {
                     );
                   })}
                 </div>
-
                 <AnimatePresence>
                   {showFeedback && (
                     <motion.div
@@ -306,12 +267,12 @@ export default function IntroToEuclideanGeometrySlide1() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
+                      <div className="text-lg text-slate-700 dark:text-slate-300 mb-4">
                         {questions[currentQuestionIndex].explanation}
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -333,14 +294,14 @@ export default function IntroToEuclideanGeometrySlide1() {
                 </div>
               </motion.div>
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
   );
 
   return (
-    <SlideComponentWrapper 
+    <SlideComponentWrapper
       slideId="getting-ready"
       slideTitle="Getting Ready for Transformations"
       moduleId="performing-transformations"

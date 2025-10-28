@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
+// motion and AnimatePresence are kept for quiz feedback
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+
+// --- Animation Variants (NO LONGER USED ON CARDS) ---
+// const containerVariants = { ... };
+// const cardVariants = { ... };
 
 export default function IntroToRigidTransformationsSlide1() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  // --- UPDATED FOR 2 QUESTIONS ---
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]); // Two questions
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
-  
+
   const slideInteractions: Interaction[] = [
     {
       id: 'rigid-transformation-quiz',
@@ -33,7 +37,6 @@ export default function IntroToRigidTransformationsSlide1() {
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY (2 TOTAL) ---
   const questions: QuizQuestion[] = [
     {
       id: 'rigid-property-q1',
@@ -50,49 +53,29 @@ export default function IntroToRigidTransformationsSlide1() {
     {
       id: 'transformation-type-q2',
       question: "Which 'rigid move' is a 'slide'?",
-      options: [
-        'Translation',
-        'Rotation',
-        'Reflection',
-        'Isometry'
-      ],
+      options: [ 'Translation', 'Rotation', 'Reflection', 'Isometry' ],
       correctAnswer: 'Translation',
       explanation: "Correct! A Translation simply slides a figure to a new location without turning or flipping it."
     }
   ];
-  
+
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
 
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
-
     const current = questions[currentQuestionIndex];
     const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
-
+    if (isCorrect) setScore(prev => prev + 1);
     handleInteractionComplete({
       interactionId: `rigid-transformation-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
-      isCorrect,
-      timestamp: Date.now(),
-      conceptId: 'rigid-transformation-definition',
-      conceptName: 'Rigid Transformation Definition',
+      value: answerText, isCorrect, timestamp: Date.now(),
+      conceptId: 'rigid-transformation-definition', conceptName: 'Rigid Transformation Definition',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      question: { type: 'mcq', question: current.question, options: current.options }
     });
   };
 
@@ -100,10 +83,8 @@ export default function IntroToRigidTransformationsSlide1() {
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
-
     setSelectedAnswer('');
     setShowFeedback(false);
-
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -113,13 +94,13 @@ export default function IntroToRigidTransformationsSlide1() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
-        
+      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
+
         {/* Left Column - Content */}
         <div className="space-y-6">
-          {/* --- CARD 1: UPDATED (REMOVED *) --- */}
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            {/* --- * REMOVED --- */}
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Moves That Don't Change Shape</h2>
             <p className="text-lg leading-relaxed">
               A <strong>Rigid Transformation</strong> (also called an <strong>Isometry</strong>) is a move that preserves the size and shape of a figure.
@@ -142,13 +123,12 @@ export default function IntroToRigidTransformationsSlide1() {
             </ul>
           </div>
 
-          {/* --- CARD 2: UPDATED (REMOVED $ AND LATEX) --- */}
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Congruent Figures</h3>
             <p className="text-lg leading-relaxed">
-              Because size and shape are preserved, the **pre-image** (original) and the **image** (new figure) are <strong>congruent</strong>.
+              Because size and shape are preserved, the pre-image (original) and the image (new figure) are <strong>congruent</strong>.
             </p>
-            {/* --- $ and LaTeX commands replaced with unicode --- */}
             <p className="text-lg leading-relaxed mt-4">
               The symbol for congruent is ≅. We can say △ABC ≅ △A'B'C'.
             </p>
@@ -165,42 +145,32 @@ export default function IntroToRigidTransformationsSlide1() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-          >
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Three "Rigid Moves"</h3>
-            
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mt-6">
-              
               <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
                 <span className="text-4xl text-blue-500">➡️</span>
                 <p className="font-semibold text-lg mt-2">Translation</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">(slide)</p>
               </div>
-              
               <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
                 <span className="text-4xl text-blue-500">🔄</span>
                 <p className="font-semibold text-lg mt-2">Rotation</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">(turn)</p>
               </div>
-              
               <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
                 <span className="text-4xl text-blue-500">🪞</span>
                 <p className="font-semibold text-lg mt-2">Reflection</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">(flip)</p>
               </div>
-
             </div>
-            {/* --- $ and LaTeX command replaced with unicode --- */}
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
               Notice how the new shape (image) is always congruent (≅) to the original (pre-image).
             </p>
-          </motion.div>
+          </div>
 
-          {/* --- KNOWLEDGE CHECK CARD (No changes needed here) --- */}
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -215,9 +185,9 @@ export default function IntroToRigidTransformationsSlide1() {
                   key={index}
                   className={`h-2 flex-1 rounded ${
                     index === currentQuestionIndex
-                      ? 'bg-blue-500' 
+                      ? 'bg-blue-500'
                       : questionsAnswered[index]
-                      ? 'bg-blue-300 dark:bg-blue-800' 
+                      ? 'bg-blue-300 dark:bg-blue-800'
                       : 'bg-slate-300 dark:bg-slate-600'
                   }`}
                 />
@@ -232,12 +202,12 @@ export default function IntroToRigidTransformationsSlide1() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    
+
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
                             : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70'
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
                         : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
@@ -304,7 +274,7 @@ export default function IntroToRigidTransformationsSlide1() {
   );
 
   return (
-    <SlideComponentWrapper 
+    <SlideComponentWrapper
       slideId="rigid-intro"
       slideTitle="Rigid Transformations Intro"
       moduleId="performing-transformations"

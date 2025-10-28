@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
+// motion and AnimatePresence are kept for quiz feedback
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// Note: The function name is kept as-is from your provided code.
-export default function IntroToRigidTransformationsSlide2() { 
+// --- Animation Variants Removed ---
+
+export default function IntroToRigidTransformationsSlide2() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  // --- UPDATED FOR 2 QUESTIONS ---
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]); // Two questions
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
-  
+
   const slideInteractions: Interaction[] = [
     {
       id: 'dilation-intro-quiz',
@@ -34,7 +35,6 @@ export default function IntroToRigidTransformationsSlide2() {
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY (2 TOTAL) ---
   const questions: QuizQuestion[] = [
     {
       id: 'dilation-property-q1',
@@ -61,39 +61,24 @@ export default function IntroToRigidTransformationsSlide2() {
       explanation: "Correct! The Scale Factor (often called 'k') is the number you multiply the side lengths by."
     }
   ];
-  
+
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
 
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
-
     const current = questions[currentQuestionIndex];
     const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
-
+    if (isCorrect) setScore(prev => prev + 1);
     handleInteractionComplete({
       interactionId: `dilation-intro-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
-      isCorrect,
-      timestamp: Date.now(),
-      conceptId: 'dilation-definition',
-      conceptName: 'Dilation Definition',
+      value: answerText, isCorrect, timestamp: Date.now(),
+      conceptId: 'dilation-definition', conceptName: 'Dilation Definition',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      question: { type: 'mcq', question: current.question, options: current.options }
     });
   };
 
@@ -101,10 +86,8 @@ export default function IntroToRigidTransformationsSlide2() {
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
-
     setSelectedAnswer('');
     setShowFeedback(false);
-
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -114,10 +97,12 @@ export default function IntroToRigidTransformationsSlide2() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
-        
+      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
+
         {/* Left Column - Content */}
         <div className="space-y-6">
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">What About Changing Size?</h2>
             <p className="text-lg leading-relaxed">
@@ -143,7 +128,6 @@ export default function IntroToRigidTransformationsSlide2() {
               <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Scale Factor (k)</h4>
               <p className="text-lg mt-2">This "resize" is controlled by a <strong>Scale Factor</strong> (called $k$).</p>
               <ul className="list-disc list-inside mt-2 text-lg space-y-1">
-                {/* --- FIX 1 & 2: Replaced > and < with HTML entities --- */}
                 <li>If k &gt; 1: The shape gets bigger (<strong>Enlargement</strong>).</li>
                 <li>If k &lt; 1: The shape gets smaller (<strong>Reduction</strong>).</li>
                 <li>If k = 1: The shape stays the same size!</li>
@@ -151,6 +135,7 @@ export default function IntroToRigidTransformationsSlide2() {
             </div>
           </div>
 
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Similar Figures</h3>
             <p className="text-lg leading-relaxed">
@@ -170,16 +155,10 @@ export default function IntroToRigidTransformationsSlide2() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-          >
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Understanding Scale Factor (k)</h3>
-            
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mt-6">
-              
               <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
                 <div className="text-4xl">
                   <span className="opacity-50">△</span>
@@ -187,10 +166,8 @@ export default function IntroToRigidTransformationsSlide2() {
                   <span className="text-2xl">△</span>
                 </div>
                 <p className="font-semibold text-lg mt-2">Enlargement</p>
-                {/* --- FIX 3: Replaced > with HTML entity --- */}
                 <p className="text-sm text-slate-600 dark:text-slate-400">k &gt; 1</p>
               </div>
-              
               <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
                 <div className="text-4xl">
                   <span className="text-2xl">△</span>
@@ -198,10 +175,8 @@ export default function IntroToRigidTransformationsSlide2() {
                   <span className="opacity-50">△</span>
                 </div>
                 <p className="font-semibold text-lg mt-2">Reduction</p>
-                {/* --- FIX 4: Replaced < with HTML entity --- */}
                 <p className="text-sm text-slate-600 dark:text-slate-400">k &lt; 1</p>
               </div>
-              
               <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
                 <div className="text-4xl">
                   <span>△</span>
@@ -211,13 +186,13 @@ export default function IntroToRigidTransformationsSlide2() {
                 <p className="font-semibold text-lg mt-2">Same Size</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">k = 1</p>
               </div>
-
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
               The image is always <strong>similar (~)</strong> to the pre-image because the angles never change!
             </p>
-          </motion.div>
+          </div>
 
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -249,14 +224,15 @@ export default function IntroToRigidTransformationsSlide2() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    
+
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                            // --- Fixed typo bg-blue-900/3D -> /30 ---
                             : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/3D'
+                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
                         : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
 
@@ -281,10 +257,11 @@ export default function IntroToRigidTransformationsSlide2() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
+                      // --- Fixed typo bg-slate-800/3D -> /30 ---
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
                           ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700'
-                          : 'bg-slate-100 dark:bg-slate-800/3D border border-slate-200 dark:border-slate-700'
+                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700'
                       }`}
                     >
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
@@ -321,11 +298,11 @@ export default function IntroToRigidTransformationsSlide2() {
   );
 
   return (
-    <SlideComponentWrapper 
+    <SlideComponentWrapper
       slideId="dilations-intro"
       slideTitle="Dilations Intro"
       moduleId="performing-transformations"
-      submoduleId="introduction-to-rigid-transformations" 
+      submoduleId="introduction-to-rigid-transformations"
       interactions={localInteractions}
     >
       {slideContent}

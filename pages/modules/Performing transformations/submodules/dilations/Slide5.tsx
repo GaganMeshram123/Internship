@@ -179,7 +179,7 @@ export default function DilationsSlide5() {
     const slideContent = (
         <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
              {/* --- UPDATED to 1 column for small screens, 2 for medium and up --- */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto ">
 
                 {/* Left Column - Content */}
                 <div className="space-y-6">

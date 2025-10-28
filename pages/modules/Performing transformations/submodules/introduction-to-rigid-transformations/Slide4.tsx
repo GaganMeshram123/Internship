@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+// motion and AnimatePresence are kept for quiz feedback
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+
+// --- Animation Variants Removed ---
 
 export default function IntroToRigidTransformationsSlide4() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -13,7 +16,7 @@ export default function IntroToRigidTransformationsSlide4() {
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
-  
+
   const slideInteractions: Interaction[] = [
     {
       id: 'rotation-intro-quiz',
@@ -36,61 +39,36 @@ export default function IntroToRigidTransformationsSlide4() {
     {
       id: 'rotation-definition-q1',
       question: 'A rotation is often called a...?',
-      options: [
-        'Turn',
-        'Flip',
-        'Slide',
-        'Resize'
-      ],
+      options: [ 'Turn', 'Flip', 'Slide', 'Resize' ],
       correctAnswer: 'Turn',
       explanation: "You got it! A rotation is a 'turn' around a fixed center point, like the hands of a clock."
     },
     {
       id: 'rotation-rule-q2',
       question: 'A point is at (2, 3). Where will it be after a 180° rotation around the origin?',
-      options: [
-        '(3, 2)',
-        '(-2, 3)',
-        '(3, -2)',
-        '(-2, -3)'
-      ],
+      options: [ '(3, 2)', '(-2, 3)', '(3, -2)', '(-2, -3)' ],
       correctAnswer: '(-2, -3)',
       explanation: 'Correct! For a 180° rotation, the rule is (x, y) → (-x, -y), so (2, 3) becomes (-2, -3).'
     }
   ];
-  
+
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
 
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
-
     const current = questions[currentQuestionIndex];
     const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
-
+    if (isCorrect) setScore(prev => prev + 1);
     handleInteractionComplete({
       interactionId: `rotation-intro-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
-      isCorrect,
-      timestamp: Date.now(),
-      conceptId: 'rotation-definition',
-      conceptName: 'Rotation Definition',
+      value: answerText, isCorrect, timestamp: Date.now(),
+      conceptId: 'rotation-definition', conceptName: 'Rotation Definition',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      question: { type: 'mcq', question: current.question, options: current.options }
     });
   };
 
@@ -98,10 +76,8 @@ export default function IntroToRigidTransformationsSlide4() {
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
-
     setSelectedAnswer('');
     setShowFeedback(false);
-
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -111,10 +87,12 @@ export default function IntroToRigidTransformationsSlide4() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
-        
+      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
+
         {/* Left Column - Content */}
         <div className="space-y-6">
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Rigid Move 2: Rotation</h2>
             <p className="text-lg leading-relaxed">
@@ -131,6 +109,7 @@ export default function IntroToRigidTransformationsSlide4() {
             </em>
           </div>
 
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">What You Need to Rotate</h3>
             <p className="text-lg leading-relaxed">
@@ -150,8 +129,6 @@ export default function IntroToRigidTransformationsSlide4() {
                 <span><strong>Direction:</strong> Clockwise ↻ or Counter-clockwise ↺. (In math, <strong>counter-clockwise is the default!</strong>)</span>
               </li>
             </ul>
-
-            {/* --- COORDINATE RULES UPDATED ($ REMOVED) --- */}
             <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
               <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Common Rotation Rules (around origin 0,0)</h4>
               <ul className="list-disc list-inside mt-2 text-lg space-y-1 font-mono">
@@ -165,40 +142,31 @@ export default function IntroToRigidTransformationsSlide4() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          {/* --- VISUAL UPDATED ($ REMOVED) --- */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-          >
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing a 90° Turn (CCW)</h3>
-            
             <div className="flex items-center justify-center space-x-4 text-center mt-6 p-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
-              
               <div className="flex flex-col items-center">
                 <span className="text-2xl font-mono">(x, y)</span>
                 <p className="font-semibold text-lg mt-2">Pre-Image</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">(e.g., Quadrant 1)</p>
               </div>
-              
               <div className="flex flex-col items-center text-blue-500">
                 <span className="text-3xl font-bold">↺</span>
                 <p className="text-sm font-semibold">90°</p>
               </div>
-
               <div className="flex flex-col items-center">
                 <span className="text-2xl font-mono">(-y, x)</span>
                 <p className="font-semibold text-lg mt-2">Image</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">(e.g., Quadrant 2)</p>
               </div>
-
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
               Notice the coordinates (x, y) swap and the new x-coordinate (which was y) becomes negative!
             </p>
-          </motion.div>
+          </div>
 
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -213,9 +181,9 @@ export default function IntroToRigidTransformationsSlide4() {
                   key={index}
                   className={`h-2 flex-1 rounded ${
                     index === currentQuestionIndex
-                      ? 'bg-blue-500' 
+                      ? 'bg-blue-500'
                       : questionsAnswered[index]
-                      ? 'bg-blue-300 dark:bg-blue-800' 
+                      ? 'bg-blue-300 dark:bg-blue-800'
                       : 'bg-slate-300 dark:bg-slate-600'
                   }`}
                 />
@@ -230,7 +198,7 @@ export default function IntroToRigidTransformationsSlide4() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    
+
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
@@ -302,7 +270,7 @@ export default function IntroToRigidTransformationsSlide4() {
   );
 
   return (
-    <SlideComponentWrapper 
+    <SlideComponentWrapper
       slideId="rotations-intro"
       slideTitle="Rotations Intro"
       moduleId="performing-transformations"

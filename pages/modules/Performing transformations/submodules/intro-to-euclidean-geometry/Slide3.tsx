@@ -1,8 +1,112 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react'; // Added useEffect for animation
+import { motion, AnimatePresence } from 'framer-motion'; // Removed unused useAnimation
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+
+// --- Animation Variants (NO LONGER USED ON CARDS) ---
+// const containerVariants = { ... };
+// const cardVariants = { ... };
+
+// --- LineTypesAnimation Component (UNCHANGED) ---
+export const LineTypesAnimation: React.FC = () => {
+  const { isDarkMode } = useThemeContext();
+  const [index, setIndex] = useState(0);
+  const lineTypes = [
+    { name: 'Line', label: 'Line: Goes on forever in both directions.' },
+    { name: 'Line Segment', label: 'Line Segment: Has two clear endpoints.' },
+    { name: 'Ray', label: 'Ray: Starts at one point and goes forever in one direction.' },
+  ];
+
+  const currentType = lineTypes[index];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % lineTypes.length);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [index, lineTypes.length]);
+
+  const lineColor = isDarkMode ? '#60a5fa' : '#2563eb';
+  const textColor = isDarkMode ? '#e2e8f0' : '#1e293b';
+  const endpointColor = isDarkMode ? '#94a3b8' : '#64748b';
+
+  const yPos = 25;
+  const startX = 20;
+  const endX = 180;
+
+  const arrowheadVariant = {
+    hidden: { opacity: 0, scale: 0.5 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+    exit: { opacity: 0, scale: 0.5, transition: { duration: 0.3 } },
+  };
+  const endpointVariant = {
+    hidden: { opacity: 0, scale: 0 },
+    visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 15, delay: 0.2 } },
+    exit: { opacity: 0, scale: 0, transition: { duration: 0.3 } },
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center w-full min-h-[120px] bg-slate-100 dark:bg-slate-700/60 p-4 rounded-lg overflow-hidden">
+      <svg viewBox="0 0 200 50" className="w-full h-12 mb-2">
+        <line x1={startX} y1={yPos} x2={endX} y2={yPos} stroke={lineColor} strokeWidth="3" />
+        <AnimatePresence mode="wait">
+          {currentType.name === 'Line' && (
+            <motion.g key="line-ends">
+              <motion.polygon
+                points={`${startX},${yPos} ${startX + 10},${yPos - 5} ${startX + 10},${yPos + 5}`}
+                fill={lineColor}
+                variants={arrowheadVariant} initial="hidden" animate="visible" exit="exit"
+              />
+              <motion.polygon
+                points={`${endX},${yPos} ${endX - 10},${yPos - 5} ${endX - 10},${yPos + 5}`}
+                fill={lineColor}
+                variants={arrowheadVariant} initial="hidden" animate="visible" exit="exit"
+              />
+            </motion.g>
+          )}
+          {currentType.name === 'Line Segment' && (
+            <motion.g key="segment-ends">
+              <motion.circle cx={startX} cy={yPos} r="4" fill={endpointColor}
+               variants={endpointVariant} initial="hidden" animate="visible" exit="exit"
+              />
+               <motion.circle cx={endX} cy={yPos} r="4" fill={endpointColor}
+               variants={endpointVariant} initial="hidden" animate="visible" exit="exit"
+              />
+            </motion.g>
+          )}
+          {currentType.name === 'Ray' && (
+            <motion.g key="ray-ends">
+               <motion.circle cx={startX} cy={yPos} r="4" fill={endpointColor}
+                variants={endpointVariant} initial="hidden" animate="visible" exit="exit"
+               />
+              <motion.polygon
+                points={`${endX},${yPos} ${endX - 10},${yPos - 5} ${endX - 10},${yPos + 5}`}
+                fill={lineColor}
+                variants={arrowheadVariant} initial="hidden" animate="visible" exit="exit"
+              />
+            </motion.g>
+          )}
+        </AnimatePresence>
+      </svg>
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={currentType.name}
+          className="text-sm text-center font-semibold mt-1"
+          style={{ color: textColor }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {currentType.label}
+        </motion.p>
+      </AnimatePresence>
+    </div>
+  );
+};
+// --- END OF LineTypesAnimation ---
+
 
 export default function IntroToEuclideanGeometrySlide3() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -13,7 +117,7 @@ export default function IntroToEuclideanGeometrySlide3() {
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
-  
+
   const slideInteractions: Interaction[] = [
     {
       id: 'geometry-terms-quiz',
@@ -36,73 +140,43 @@ export default function IntroToEuclideanGeometrySlide3() {
     {
       id: 'point-line-q1',
       question: 'What is a straight path that goes on forever in BOTH directions?',
-      options: [
-        'Point',
-        'Line',
-        'Line Segment',
-        'Ray'
-      ],
+      options: [ 'Point', 'Line', 'Line Segment', 'Ray' ],
       correctAnswer: 'Line',
       explanation: 'Correct! A Line (like ⃡AB) is a 1D path that extends infinitely in both directions.'
     },
     {
       id: 'ray-segment-q2',
       question: 'What do we call a piece of a line with ONE endpoint?',
-      options: [
-        'Line',
-        'Line Segment',
-        'Ray',
-        'Plane'
-      ],
+      options: [ 'Line', 'Line Segment', 'Ray', 'Plane' ],
       correctAnswer: 'Ray',
       explanation: "Correct! A Ray (like ⃗AB) starts at one point (A) and goes on forever in one direction (through B)."
     },
     {
       id: 'collinear-q3',
       question: 'If three points all lie on the exact same straight line, what do we call them?',
-      options: [
-        'Coplanar',
-        'Collinear',
-        'Line Segments',
-        'Planes'
-      ],
+      options: [ 'Coplanar', 'Collinear', 'Line Segments', 'Planes' ],
       correctAnswer: 'Collinear',
       explanation: 'Correct! "Co-linear" just means "together on the same line." Great job!'
     }
   ];
-  
+
   const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+    setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
   };
 
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
-
     const current = questions[currentQuestionIndex];
     const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
-
+    if (isCorrect) setScore(prev => prev + 1);
     handleInteractionComplete({
       interactionId: `geometry-terms-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
-      isCorrect,
-      timestamp: Date.now(),
-      conceptId: 'geometry-vocabulary',
-      conceptName: 'Geometry Vocabulary Quiz',
+      value: answerText, isCorrect, timestamp: Date.now(),
+      conceptId: 'geometry-vocabulary', conceptName: 'Geometry Vocabulary Quiz',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      question: { type: 'mcq', question: current.question, options: current.options }
     });
   };
 
@@ -110,10 +184,8 @@ export default function IntroToEuclideanGeometrySlide3() {
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
-
     setSelectedAnswer('');
     setShowFeedback(false);
-
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
@@ -123,11 +195,13 @@ export default function IntroToEuclideanGeometrySlide3() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
-        
+      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
+
         {/* Left Column - Content */}
         <div className="space-y-6 flex flex-col">
-          
+
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The Language of Geometry</h2>
             <p className="text-lg leading-relaxed">
@@ -171,7 +245,8 @@ export default function IntroToEuclideanGeometrySlide3() {
               </li>
             </ul>
           </div>
-          
+
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Staying in Line (and on the Page)! 📍</h3>
             <p className="text-lg leading-relaxed">
@@ -195,6 +270,7 @@ export default function IntroToEuclideanGeometrySlide3() {
             </ul>
           </div>
 
+          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Lines Together 🤝</h3>
             <p className="text-lg leading-relaxed">
@@ -222,53 +298,24 @@ export default function IntroToEuclideanGeometrySlide3() {
 
         {/* Right Column - Animated Visual Comparison and Quiz */}
         <div className="space-y-6 flex flex-col">
-          
-          {/* --- Animated Visual Comparison Card --- */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg"
-          >
+
+          {/* --- CARD - NO LONGER ANIMATES --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">See the Difference! 👀</h3>
-            
-            {/* --- Comparison Grid/Flexbox --- */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mt-6">
-              
-              {/* Line */}
-              <div>
-                <span className="block text-2xl font-bold text-blue-500">↔</span>
-                <p className="font-semibold text-lg mt-1">Line</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Goes on forever in both directions.</p>
-              </div>
-              
-              {/* Line Segment */}
-              <div>
-                <span className="block text-2xl font-bold text-blue-500">―</span>
-                <p className="font-semibold text-lg mt-1">Line Segment</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Has two clear endpoints. It "stops."</p>
-              </div>
-              
-              {/* Ray */}
-              <div>
-                <span className="block text-2xl font-bold text-blue-500">→</span>
-                <p className="font-semibold text-lg mt-1">Ray</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Starts at one point and goes forever in one direction.</p>
-              </div>
 
+            <LineTypesAnimation />
+
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400">
+              <h4 className="font-semibold mb-2">Notation uses arrows to show direction:</h4>
+              <ul className="list-disc list-inside space-y-1">
+                <li><strong>Line {"$\\overleftrightarrow{AB}$"}:</strong> Arrows on <strong>both ends</strong>.</li>
+                <li><strong>Line Segment {"$\\overline{AB}$"}:</strong> <strong>No arrows</strong>, just a bar.</li>
+                <li><strong>Ray {"$\\overrightarrow{AB}$"}:</strong> An arrow on <strong>one end</strong>.</li>
+              </ul>
             </div>
+          </div>
 
-            <p className="text-base text-slate-700 dark:text-slate-300 mt-6 text-center">
-              The notation uses arrows to show direction:
-            </p>
-            <ul className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400 list-disc list-inside text-left">
-              <li><strong>Line {"$\\overleftrightarrow{AB}$"}:</strong> Arrows on <strong>both ends</strong>.</li>
-              <li><strong>Line Segment {"$\\overline{AB}$"}:</strong> <strong>No arrows</strong>, just a bar.</li>
-              <li><strong>Ray {"$\\overrightarrow{AB}$"}:</strong> An arrow on <strong>one end</strong>.</li>
-            </ul>
-          </motion.div>
-
-          {/* --- Knowledge Check Card --- */}
+          {/* --- Knowledge Check Card (NO LONGER ANIMATES) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -300,7 +347,7 @@ export default function IntroToEuclideanGeometrySlide3() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    
+
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
@@ -372,7 +419,7 @@ export default function IntroToEuclideanGeometrySlide3() {
   );
 
   return (
-    <SlideComponentWrapper 
+    <SlideComponentWrapper
       slideId="terms-and-labels"
       slideTitle="Terms & Labels in Geometry"
       moduleId="performing-transformations"

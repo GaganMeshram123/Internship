@@ -186,7 +186,7 @@ export default function ReflectionsSlide2() {
     const slideContent = (
         <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
             {/* --- UPDATED to 1 column for small screens, 2 for medium and up --- */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
                 {/* Left Column - Content */}
                 <div className="space-y-6">
@@ -255,14 +255,14 @@ export default function ReflectionsSlide2() {
                             Reflecting P(3, 2) over the x-axis gives P'(3, -2). Reflecting P(3, 2) over the y-axis gives P''(-3, 2).
                         </p>
                          {/* --- Visual for y=x (Static for now, could be animated later) --- */}
-                         <div className="flex justify-center mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                         {/* <div className="flex justify-center mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                             <img
                                 src="https://via.placeholder.com/300x150.png?text=P(3,2)+reflects+to+P'(2,3)+over+y=x"
                                 alt="Point P(3,2) reflecting over the dashed line y=x to P'(2,3)"
                                 className="max-w-full h-auto rounded-lg shadow-md"
                                 style={{ maxWidth: '300px' }}
                             />
-                        </div>
+                        </div> */}
                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 text-center">
                              Reflecting P(3, 2) over the line y=x gives P'(2, 3).
                          </p>
