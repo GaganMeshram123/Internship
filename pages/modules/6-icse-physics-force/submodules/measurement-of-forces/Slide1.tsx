@@ -5,59 +5,112 @@ import SlideComponentWrapper from '../../../common-components/SlideComponentWrap
 import { useThemeContext } from '@/lib/ThemeContext';
 import { CheckCircle, XCircle } from 'lucide-react'; // For quiz feedback
 
-// --- ANIMATION COMPONENT (Unchanged) ---
-const ForceArrowAnimation: React.FC = () => {
+// --- NEW ANIMATION COMPONENT: SEESAW ---
+const SeesawAnimation: React.FC = () => {
+    type ForceScenario = 'small_down' | 'large_down' | 'up';
+    const [activeScenario, setActiveScenario] = useState<ForceScenario>('small_down');
+
     const svgWidth = 400;
     const svgHeight = 250;
-    const startPoint = { x: 100, y: 150 };
-    const endPoint = { x: 280, y: 80 };
+    const centerX = svgWidth / 2;
+    const centerY = svgHeight / 2 + 30; // Move pivot down slightly
+    const plankWidth = 250;
+    const plankHeight = 15;
 
-    const arrowDrawDuration = 1.5;
-    const objectMoveDelay = arrowDrawDuration + 0.5;
-    const objectMoveDuration = 1.0;
+    // Simple arrow
+    const Arrow: React.FC<{ x: number, y: number, length: number, direction: 'down' | 'up', label: string, color: string, delay?: number }> =
+        ({ x, y, length, direction, label, color, delay = 0 }) => {
+        let y2 = y;
+        let headPath = '';
+        let textX = x, textY = y;
+
+        if (direction === 'down') {
+            y2 = y + length;
+            headPath = `M ${x - 4} ${y2 - 5} L ${x} ${y2} L ${x + 4} ${y2 - 5}`;
+            textX = x + 8;
+            textY = y + length / 2;
+        } else { // direction === 'up'
+            y2 = y - length;
+            headPath = `M ${x - 4} ${y2 + 5} L ${x} ${y2} L ${x + 4} ${y2 + 5}`;
+            textX = x + 8;
+            textY = y - length / 2;
+        }
+
+        return (
+            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay }}>
+                <line x1={x} y1={y} x2={x} y2={y2} stroke={color} strokeWidth="3" />
+                <path d={headPath} fill={color} />
+                <text x={textX} y={textY} dominantBaseline="middle" className="text-xs font-semibold" fill={color}>{label}</text>
+            </motion.g>
+        );
+    };
+
+    const scenarios = {
+        small_down: {
+            arrow: <Arrow x={centerX + plankWidth * 0.4} y={centerY - 50} length={30} direction="down" label="Small Force" color="#3B82F6" delay={0.2} />,
+            seesawRotate: -15, // Slight tilt down right
+            transition: { delay: 0.5, duration: 0.8, ease: 'easeOut' }
+        },
+        large_down: {
+            arrow: <Arrow x={centerX + plankWidth * 0.4} y={centerY - 70} length={60} direction="down" label="Large Force" color="#3B82F6" delay={0.2} />,
+            seesawRotate: -35, // Steep tilt down right
+            transition: { delay: 0.5, duration: 1.0, ease: 'easeOut' }
+        },
+        up: {
+            arrow: <Arrow x={centerX + plankWidth * 0.4} y={centerY + 50} length={40} direction="up" label="Different Direction" color="#3B82F6" delay={0.2} />,
+            seesawRotate: 25, // Tilts up right
+            transition: { delay: 0.5, duration: 0.9, ease: 'easeOut' }
+        }
+    };
 
     return (
-        <div className="w-full flex justify-center items-center p-4 rounded-lg bg-blue-900 overflow-hidden">
-            <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                {/* 1. The Arrow Line */}
-                <motion.line
-                    x1={startPoint.x}
-                    y1={startPoint.y}
-                    x2={endPoint.x}
-                    y2={endPoint.y}
-                    stroke="#FFF"
-                    strokeWidth="3"
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 1 }}
-                    transition={{ duration: arrowDrawDuration, ease: "easeInOut" }}
-                />
-                {/* 2. The Arrow Head */}
-                <motion.path
-                    d="M 275 70 L 280 80 L 270 85"
-                    fill="#FFF"
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: arrowDrawDuration - 0.2, duration: 0.3 }}
-                />
-                {/* 3. The Object (Orange Circle) */}
-                <motion.circle
-                    cx={startPoint.x}
-                    cy={startPoint.y}
-                    r={15}
-                    fill="#F97316" // Orange-600
-                    stroke="#FFF"
-                    strokeWidth="2"
-                    animate={{
-                        cx: [startPoint.x, endPoint.x + 20],
-                        cy: [startPoint.y, endPoint.y - 10],
-                    }}
-                    transition={{
-                        delay: objectMoveDelay,
-                        duration: objectMoveDuration,
-                        ease: "easeOut"
-                    }}
-                />
-            </svg>
+        <div className="w-full">
+            {/* Tabs */}
+             <div className="flex justify-center space-x-2 mb-4">
+                {(['small_down', 'large_down', 'up'] as ForceScenario[]).map(tab => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveScenario(tab)}
+                        className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                            activeScenario === tab
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                        }`}
+                    >
+                        {tab === 'small_down' ? 'Small Force Down' : tab === 'large_down' ? 'Large Force Down' : 'Force Up'}
+                    </button>
+                ))}
+            </div>
+
+            {/* Animation Canvas */}
+            <div className="w-full flex justify-center items-center p-4 rounded-lg bg-blue-900 overflow-hidden" style={{ minHeight: svgHeight }}>
+                <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+                    {/* Fulcrum (Triangle) */}
+                    <path d={`M ${centerX} ${centerY} L ${centerX - 15} ${centerY + 25} L ${centerX + 15} ${centerY + 25} Z`} fill="#94A3B8" />
+
+                    <AnimatePresence mode="wait">
+                         <motion.g key={activeScenario}> {/* Group for arrow + seesaw */}
+                            {/* Seesaw Plank - Animates Rotation */}
+                            <motion.rect
+                                x={centerX - plankWidth / 2}
+                                y={centerY - plankHeight / 2}
+                                width={plankWidth}
+                                height={plankHeight}
+                                fill="#F97316" // Orange
+                                stroke="#A16207"
+                                strokeWidth="2"
+                                style={{ transformOrigin: `${centerX}px ${centerY}px` }} // Rotate around the center pivot
+                                initial={{ rotate: 0 }}
+                                animate={{ rotate: scenarios[activeScenario].seesawRotate }}
+                                transition={scenarios[activeScenario].transition}
+                            />
+
+                            {/* Arrow */}
+                            {scenarios[activeScenario].arrow}
+                        </motion.g>
+                    </AnimatePresence>
+                </svg>
+            </div>
         </div>
     );
 };
@@ -66,7 +119,7 @@ const ForceArrowAnimation: React.FC = () => {
 
 export default function MeasurementOfForcesSlide1() {
     const { isDarkMode } = useThemeContext();
-    
+
     // --- QUIZ STATE & LOGIC (Unchanged) ---
     const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -105,7 +158,7 @@ export default function MeasurementOfForcesSlide1() {
                 'Direction and Mass'
             ],
             correctAnswer: 'Magnitude and Direction',
-            explanation: 'Correct! Force is a vector, so it must have both a magnitude (strength) and a direction.'
+            explanation: 'Force is a vector, so it must have both a magnitude (strength) and a direction.'
         },
         {
             id: 'q2-magnitude',
@@ -117,7 +170,7 @@ export default function MeasurementOfForcesSlide1() {
                 'How strong it is'
             ],
             correctAnswer: 'How strong it is',
-            explanation: "That's right! Magnitude is the size or strength, like 10 N or 50 lbs."
+            explanation: "Magnitude is the size or strength, like 10 N or 50 lbs."
         },
         {
             id: 'q3-vector',
@@ -128,7 +181,7 @@ export default function MeasurementOfForcesSlide1() {
                 'It depends on the mass of the box.'
             ],
             correctAnswer: 'No, because the directions are different.',
-            explanation: 'Exactly! Even with the same magnitude (20 N), the different directions make them different forces with different effects.'
+            explanation: 'Even with the same magnitude (20 N), the different directions make them different forces with different effects.'
         }
     ];
 
@@ -138,19 +191,19 @@ export default function MeasurementOfForcesSlide1() {
           [response.interactionId]: response
         }));
     };
- 
+
     const handleQuizAnswer = (answerText: string) => {
         if (showFeedback || isQuizComplete) return;
- 
+
         setSelectedAnswer(answerText);
         setShowFeedback(true);
- 
+
         const current = questions[currentQuestionIndex];
         const isCorrect = answerText === current.correctAnswer;
         if (isCorrect) {
           setScore(prev => prev + 1);
         }
- 
+
         handleInteractionComplete({
           interactionId: `force-magnitude-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
           value: answerText,
@@ -166,15 +219,15 @@ export default function MeasurementOfForcesSlide1() {
           }
         });
     };
- 
+
     const handleNextQuestion = () => {
         const newAnswered = [...questionsAnswered];
         newAnswered[currentQuestionIndex] = true;
         setQuestionsAnswered(newAnswered);
- 
+
         setSelectedAnswer('');
         setShowFeedback(false);
- 
+
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(prev => prev + 1);
         } else {
@@ -200,7 +253,7 @@ export default function MeasurementOfForcesSlide1() {
                             <li><strong>Example:</strong> A push of 10 N to the right is different from 10 N upward.</li>
                         </ul>
                     </div>
-                    
+
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Force is a Vector</h3>
                         <p className="text-lg text-slate-700 dark:text-slate-300">
@@ -211,26 +264,28 @@ export default function MeasurementOfForcesSlide1() {
                             <dt className="font-semibold text-slate-800 dark:text-slate-200">
                                 <span className="font-semibold">Vector</span> (like Force):
                             </dt>
-                            <dd className="ml-4 text-slate-600 dark:text-slate-400">Has magnitude AND direction. (e.g., "10 Newtons *to the right*")</dd>
-                            
+                            <dd className="ml-4 text-slate-600 dark:text-slate-400">Has magnitude AND direction. (e.g., "10 Newtons to the right")</dd>
+
                             <dt className="font-semibold text-slate-800 dark:text-slate-200">
                                 <span className="font-semibold">Scalar</span> (like Mass):
                             </dt>
-                            <dd className="ml-4 text-slate-600 dark:text-slate-400">Has magnitude ONLY. (e.g., "5 kilograms". It makes no sense to say "5 kg *to the right*")</dd>
+                            <dd className="ml-4 text-slate-600 dark:text-slate-400">Has magnitude ONLY. (e.g., "5 kilograms". It makes no sense to say "5 kg to the right")</dd>
                         </dl>
                     </div>
                 </div>
 
                 {/* Right Column - Animation and Quiz */}
                 <div className="space-y-6 flex flex-col">
-                    {/* Card 1: Animation (Unchanged) */}
+                    {/* Card 1: Animation (REPLACED) */}
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">
-                            Draw an arrow to show the direction and magnitude of Force and see the effect
+                           Magnitude and Direction on a Seesaw
                         </h3>
-                        <ForceArrowAnimation />
+                        {/* --- USING NEW ANIMATION --- */}
+                        <SeesawAnimation />
+                        {/* --- UPDATED TEXT --- */}
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-                            The arrow shows the <strong>direction</strong> and <strong>magnitude</strong> (length) of the force. The force then causes the object to move.
+                            The arrow's length (magnitude) and orientation (direction) determine the force's effect on the seesaw's tilt.
                         </p>
                     </div>
 
@@ -257,28 +312,29 @@ export default function MeasurementOfForcesSlide1() {
                                 />
                             ))}
                         </div>
-                        
+
                         {!isQuizComplete ? (
                             <>
-                                <div className="text-lg mb-4 text-slate-800 dark:text-slate-200">{questions[currentQuestionIndex].question}</div>
+                                <div className="text-lg mb-4 text-slate-800 dark:text-slate-200 min-h-[4rem]">{questions[currentQuestionIndex].question}</div>
                                 <div className="space-y-3">
                                     {questions[currentQuestionIndex].options.map((option, idx) => {
                                         const disabled = showFeedback;
                                         const selected = selectedAnswer === option;
                                         const correct = option === questions[currentQuestionIndex].correctAnswer;
-                                        
+
+                                        // --- QUIZ BUTTON STYLE LOGIC (Corrected) ---
                                         let buttonClass = 'border-slate-300 dark:border-slate-600 hover:border-blue-400';
-                                        if (selected) {
-                                            buttonClass = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30';
+                                        if (showFeedback) {
+                                            if (selected && correct) {
+                                                buttonClass = 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200';
+                                            } else if (selected && !correct) {
+                                                buttonClass = 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
+                                            } else {
+                                                buttonClass = 'border-slate-300 dark:border-slate-600 opacity-50';
+                                            }
                                         }
-                                        if (showFeedback && selected) {
-                                            buttonClass = correct 
-                                                ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200' 
-                                                : 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
-                                        } else if (showFeedback && correct) {
-                                            buttonClass = 'border-green-500 bg-green-50 dark:bg-green-900/3TCA0';
-                                        }
-                                        
+                                        // --- END OF QUIZ BUTTON LOGIC ---
+
                                         return (
                                             <motion.button
                                                 key={idx}
@@ -293,7 +349,7 @@ export default function MeasurementOfForcesSlide1() {
                                         );
                                     })}
                                 </div>
-                                
+
                                 <AnimatePresence>
                                     {showFeedback && (
                                         <motion.div
@@ -302,16 +358,23 @@ export default function MeasurementOfForcesSlide1() {
                                             exit={{ opacity: 0, y: -20 }}
                                             className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700"
                                         >
-                                            <div className="flex items-center">
+                                            {/* --- QUIZ FEEDBACK TEXT LOGIC (Corrected) --- */}
+                                            <div className="flex items-start">
                                                 {selectedAnswer === questions[currentQuestionIndex].correctAnswer ? (
-                                                    <CheckCircle className="text-green-500 mr-2" />
+                                                    <CheckCircle className="text-green-500 mr-2 flex-shrink-0" />
                                                 ) : (
-                                                    <XCircle className="text-red-500 mr-2" />
+                                                    <XCircle className="text-red-500 mr-2 flex-shrink-0" />
                                                 )}
-                                                <div className="text-lg text-slate-700 dark:text-slate-300">
-                                                    {questions[currentQuestionIndex].explanation}
+                                                <div>
+                                                    <p className={`text-lg font-semibold ${selectedAnswer === questions[currentQuestionIndex].correctAnswer ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                                                        {selectedAnswer === questions[currentQuestionIndex].correctAnswer ? 'Correct!' : 'Not quite!'}
+                                                    </p>
+                                                    <div className="text-lg text-slate-700 dark:text-slate-300 mt-1">
+                                                        {questions[currentQuestionIndex].explanation}
+                                                    </div>
                                                 </div>
                                             </div>
+                                            {/* --- END OF QUIZ FEEDBACK TEXT LOGIC --- */}
                                             <motion.button
                                                 onClick={handleNextQuestion}
                                                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors mt-4 w-full"

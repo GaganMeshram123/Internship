@@ -140,7 +140,7 @@ export default function MeasurementOfForcesSlide7() {
         },
         {
             id: 'q2-principle',
-            question: "What scientific principle explains *how* a spring balance works?",
+            question: "What scientific principle explains how a spring balance works?",
             options: [
                 "Newton's First Law",
                 "Hooke's Law",
@@ -229,7 +229,7 @@ export default function MeasurementOfForcesSlide7() {
                         <ul className="mt-4 space-y-3 text-lg list-disc list-inside text-slate-700 dark:text-slate-300">
                             <li>A <strong>spring balance</strong> is a simple instrument used to measure the force acting on an object.</li>
                             <li>The force it measures is typically <strong>weight</strong> (the pull of gravity).</li>
-                            <li>It works using **Hooke's Law**: the more force you apply (pull), the more the spring stretches in a predictable way.</li>
+                            <li>It works using Hooke's Law: the more force you apply (pull), the more the spring stretches in a predictable way.</li>
                             <li>The scale is marked to show the force, usually in <strong>Newtons (N)</strong>.</li>
                         </ul>
                     </div>
@@ -238,12 +238,12 @@ export default function MeasurementOfForcesSlide7() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Mass vs. Weight: A Key Difference</h3>
                         <p className="text-lg text-slate-700 dark:text-slate-300">
-                            A spring balance measures **weight (force)**, not **mass**. This is a very important concept in physics!
+                            A spring balance measures weight (force), not mass. This is a very important concept in physics!
                         </p>
                         <ul className="mt-4 space-y-3 text-lg list-disc list-inside text-slate-700 dark:text-slate-300">
-                            <li><strong>Mass:</strong> The amount of "stuff" in an object (measured in **kg**). This is the same everywhere.</li>
-                            <li><strong>Weight:</strong> The force of gravity pulling on that mass (measured in **N**). This changes based on where you are.</li>
-                            <li><strong>Example:</strong> Your *mass* is the same on Earth and the Moon. But your *weight* (what the spring balance shows) would be ~6 times less on the Moon!</li>
+                            <li><strong>Mass:</strong> The amount of "stuff" in an object (measured in kg). This is the same everywhere.</li>
+                            <li><strong>Weight:</strong> The force of gravity pulling on that mass (measured in N). This changes based on where you are.</li>
+                            <li><strong>Example:</strong> Your mass is the same on Earth and the Moon. But your weight (what the spring balance shows) would be ~6 times less on the Moon!</li>
                         </ul>
                     </div>
                 </div>

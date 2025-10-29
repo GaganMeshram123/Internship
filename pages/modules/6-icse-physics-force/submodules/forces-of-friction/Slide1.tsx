@@ -5,19 +5,19 @@ import SlideComponentWrapper from '../../../common-components/SlideComponentWrap
 import { useThemeContext } from '@/lib/ThemeContext';
 import { CheckCircle, XCircle } from 'lucide-react'; // For quiz feedback
 
-// --- NEW ANIMATION COMPONENT 1: FRICTION OPPOSES MOTION ---
+// --- NEW ANIMATION COMPONENT 1: FRICTION OPPOSES MOTION (WITH MOTION) ---
 const FrictionOpposesAnimation: React.FC = () => {
     const svgWidth = 400;
     const svgHeight = 150;
     const groundY = 100;
     
     // Simple arrow
-    const Arrow: React.FC<{ x: number, y: number, length: number, label: string, color: string, left?: boolean }> = 
-        ({ x, y, length, label, color, left = false }) => {
+    const Arrow: React.FC<{ x: number, y: number, length: number, label: string, color: string, left?: boolean, delay?: number }> = 
+        ({ x, y, length, label, color, left = false, delay = 0 }) => {
         const x2 = left ? x - length : x + length;
         const headOffset = left ? 5 : -5;
         return (
-            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay }}>
                 <line x1={x} y1={y} x2={x2} y2={y} stroke={color} strokeWidth="3" />
                 <path d={`M ${x2 + headOffset} ${y - 4} L ${x2} ${y} L ${x2 + headOffset} ${y + 4}`} fill={color} />
                 <text x={(x + x2) / 2} y={y - 8} textAnchor="middle" className="text-xs font-semibold" fill={color}>{label}</text>
@@ -31,29 +31,36 @@ const FrictionOpposesAnimation: React.FC = () => {
                 {/* Ground */}
                 <line x1="0" y1={groundY} x2={svgWidth} y2={groundY} className="stroke-slate-400" strokeWidth="2" />
                 
-                {/* Box */}
+                {/* Box (Now Animates Sliding) */}
                 <motion.rect
-                    x={170}
+                    x={100} // Start position
                     y={groundY - 40}
                     width={80}
                     height={40}
                     fill="#F97316" // Orange
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
+                    initial={{ x: 100, opacity: 1 }}
+                    animate={{ x: 220 }} // End position
+                    transition={{ delay: 1.5, duration: 2.5, ease: "easeInOut" }}
                 />
                 
-                {/* Applied Force Arrow */}
-                <Arrow x={160} y={groundY - 20} length={50} label="Applied Force" color="#3B82F6" />
+                {/* Applied Force Arrow (Appears first) */}
+                <Arrow x={90} y={groundY - 20} length={50} label="Applied Force" color="#3B82F6" delay={0.5} />
                 
-                {/* Friction Force Arrow */}
-                <Arrow x={260} y={groundY - 20} length={50} label="Friction Force" color="#EF4444" left={true} />
+                {/* Friction Force Arrow (Appears second, moves with box) */}
+                <motion.g
+                     initial={{ x: 100, opacity: 0 }}
+                     animate={{ x: 220, opacity: 1 }} // Moves with the box
+                     transition={{ delay: 1.5, duration: 2.5, ease: "easeInOut" }}
+                >
+                    {/* Position relative to the moving group */}
+                     <Arrow x={90} y={groundY - 20} length={40} label="Friction Force" color="#EF4444" left={true} delay={1.0} /> 
+                </motion.g>
             </svg>
         </div>
     );
 };
 
-// --- NEW ANIMATION COMPONENT 2: MICROSCOPIC VIEW ---
+// --- NEW ANIMATION COMPONENT 2: MICROSCOPIC VIEW (WITH JIGGLE) ---
 const MicroscopicViewAnimation: React.FC = () => {
     const svgWidth = 400;
     const svgHeight = 150;
@@ -65,13 +72,34 @@ const MicroscopicViewAnimation: React.FC = () => {
     return (
         <div className="w-full flex justify-center items-center p-4 rounded-lg bg-blue-900/50 overflow-hidden">
             <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                {/* Bottom Surface */}
+                {/* Bottom Surface (Static) */}
                 <rect x="0" y={surfaceY} width={svgWidth} height={svgHeight - surfaceY} fill="#94A3B8" />
                 <path d={`M 0 ${surfaceY} ${jaggedPath}`} stroke="#475569" strokeWidth="2" fill="#94A3B8" />
 
-                {/* Top Surface */}
-                <rect x="0" y="0" width={svgWidth} height={surfaceY} fill="#F97316" />
-                <path d={`M 0 ${surfaceY} ${jaggedPath}`} transform="scale(1, -1) translate(0, -${surfaceY})" stroke="#A16207" strokeWidth="2" fill="#F97316" />
+                {/* Top Surface (Animates Side-to-Side with Jiggle) */}
+                <motion.g
+                    initial={{ x: 0 }}
+                    animate={{ x: [0, 5, -5, 5, 0] }} // Side-to-side motion
+                    transition={{ 
+                        delay: 1, 
+                        duration: 1.5, 
+                        ease: "easeInOut", 
+                        repeat: Infinity, 
+                        repeatDelay: 1 
+                    }}
+                >
+                     <motion.g 
+                        animate={{ y: [0, -1, 1, -1, 0]}} // Jiggle effect
+                         transition={{ 
+                            duration: 0.1, 
+                            ease: "linear",
+                            repeat: Infinity,
+                         }}
+                    >
+                        <rect x="0" y="0" width={svgWidth} height={surfaceY} fill="#F97316" />
+                        <path d={`M 0 ${surfaceY} ${jaggedPath}`} transform={`scale(1, -1) translate(0, -${surfaceY})`} stroke="#A16207" strokeWidth="2" fill="#F97316" />
+                    </motion.g>
+                </motion.g>
                 
                 <text x={svgWidth/2} y={surfaceY + 5} textAnchor="middle" className="text-sm fill-red-500 font-bold">Interlocking Bumps</text>
             </svg>
@@ -121,7 +149,7 @@ export default function ForcesOfFrictionSlide1() {
                 'A force that only acts on heavy objects.',
             ],
             correctAnswer: 'A force that opposes motion.',
-            explanation: 'Correct! Friction is a contact force that always tries to stop or slow down movement.'
+            explanation: 'Friction is a contact force that always tries to stop or slow down movement.' // Removed "Correct!"
         },
         {
             id: 'q2-direction',
@@ -132,7 +160,7 @@ export default function ForcesOfFrictionSlide1() {
                 'UP',
             ],
             correctAnswer: 'To the LEFT',
-            explanation: "That's right! Friction always acts in the opposite direction of the motion or intended motion."
+            explanation: "Friction always acts in the opposite direction of the motion or intended motion." // Removed "That's right!"
         },
         {
             id: 'q3-cause',
@@ -143,7 +171,7 @@ export default function ForcesOfFrictionSlide1() {
                 'Microscopic bumps and ridges (irregularities).',
             ],
             correctAnswer: 'Microscopic bumps and ridges (irregularities).',
-            explanation: 'Exactly! These tiny irregularities on all surfaces interlock and catch on each other.'
+            explanation: 'These tiny irregularities on all surfaces interlock and catch on each other.' // Removed "Exactly!"
         }
     ];
 
@@ -153,19 +181,19 @@ export default function ForcesOfFrictionSlide1() {
           [response.interactionId]: response
         }));
     };
- 
+
     const handleQuizAnswer = (answerText: string) => {
         if (showFeedback || isQuizComplete) return;
- 
+
         setSelectedAnswer(answerText);
         setShowFeedback(true);
- 
+
         const current = questions[currentQuestionIndex];
         const isCorrect = answerText === current.correctAnswer;
         if (isCorrect) {
           setScore(prev => prev + 1);
         }
- 
+
         handleInteractionComplete({
           interactionId: `what-is-friction-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
           value: answerText,
@@ -181,15 +209,15 @@ export default function ForcesOfFrictionSlide1() {
           }
         });
     };
- 
+
     const handleNextQuestion = () => {
         const newAnswered = [...questionsAnswered];
         newAnswered[currentQuestionIndex] = true;
         setQuestionsAnswered(newAnswered);
- 
+
         setSelectedAnswer('');
         setShowFeedback(false);
- 
+
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(prev => prev + 1);
         } else {
@@ -291,24 +319,25 @@ export default function ForcesOfFrictionSlide1() {
                         
                         {!isQuizComplete ? (
                             <>
-                                <div className="text-lg mb-4 text-slate-800 dark:text-slate-200">{questions[currentQuestionIndex].question}</div>
+                                <div className="text-lg mb-4 text-slate-800 dark:text-slate-200 min-h-[4rem]">{questions[currentQuestionIndex].question}</div>
                                 <div className="space-y-3">
                                     {questions[currentQuestionIndex].options.map((option, idx) => {
                                         const disabled = showFeedback;
                                         const selected = selectedAnswer === option;
                                         const correct = option === questions[currentQuestionIndex].correctAnswer;
                                         
+                                        // --- QUIZ BUTTON STYLE LOGIC (Corrected) ---
                                         let buttonClass = 'border-slate-300 dark:border-slate-600 hover:border-blue-400';
-                                        if (selected) {
-                                            buttonClass = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30';
+                                        if (showFeedback) {
+                                            if (selected && correct) {
+                                                buttonClass = 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200';
+                                            } else if (selected && !correct) {
+                                                buttonClass = 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
+                                            } else {
+                                                buttonClass = 'border-slate-300 dark:border-slate-600 opacity-50';
+                                            }
                                         }
-                                        if (showFeedback && selected) {
-                                            buttonClass = correct 
-                                                ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200' 
-                                                : 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
-                                        } else if (showFeedback && correct) {
-                                            buttonClass = 'border-green-500 bg-green-50 dark:bg-green-900/30';
-                                        }
+                                        // --- END OF QUIZ BUTTON LOGIC ---
                                         
                                         return (
                                             <motion.button
@@ -333,16 +362,23 @@ export default function ForcesOfFrictionSlide1() {
                                             exit={{ opacity: 0, y: -20 }}
                                             className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700"
                                         >
-                                            <div className="flex items-center">
+                                            {/* --- QUIZ FEEDBACK TEXT LOGIC (Corrected) --- */}
+                                            <div className="flex items-start">
                                                 {selectedAnswer === questions[currentQuestionIndex].correctAnswer ? (
-                                                    <CheckCircle className="text-green-500 mr-2" />
+                                                    <CheckCircle className="text-green-500 mr-2 flex-shrink-0" />
                                                 ) : (
-                                                    <XCircle className="text-red-500 mr-2" />
+                                                    <XCircle className="text-red-500 mr-2 flex-shrink-0" />
                                                 )}
-                                                <div className="text-lg text-slate-700 dark:text-slate-300">
-                                                    {questions[currentQuestionIndex].explanation}
+                                                <div>
+                                                    <p className={`text-lg font-semibold ${selectedAnswer === questions[currentQuestionIndex].correctAnswer ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                                                        {selectedAnswer === questions[currentQuestionIndex].correctAnswer ? 'Correct!' : 'Not quite!'}
+                                                    </p>
+                                                    <div className="text-lg text-slate-700 dark:text-slate-300 mt-1">
+                                                        {questions[currentQuestionIndex].explanation}
+                                                    </div>
                                                 </div>
                                             </div>
+                                            {/* --- END OF QUIZ FEEDBACK TEXT LOGIC --- */}
                                             <motion.button
                                                 onClick={handleNextQuestion}
                                                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors mt-4 w-full"
