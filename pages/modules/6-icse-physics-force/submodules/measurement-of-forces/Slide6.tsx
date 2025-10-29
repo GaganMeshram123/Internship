@@ -185,7 +185,7 @@ export default function MeasurementOfForcesSlide6() {
     const slideContent = (
         <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
             {/* --- UI FIX: Removed justify-center from columns --- */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
                 {/* Left Column - Content */}
                 <div className="space-y-6 flex flex-col">
