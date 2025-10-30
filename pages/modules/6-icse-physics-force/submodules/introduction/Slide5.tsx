@@ -179,8 +179,8 @@ function ForceShapeDemo() {
         ))}
       </div>
 
-      {/* Animation Area */}
-      <div className="h-32 bg-slate-50 dark:bg-slate-700 rounded-lg relative overflow-hidden border-2 border-dashed border-slate-300 dark:border-slate-600">
+       {/* Animation Area */}
+      {<div className="h-32 bg-slate-50 dark:bg-slate-700 rounded-lg relative overflow-hidden border-2 border-dashed border-slate-300 dark:border-slate-600">
         {activeDemo ? (
           <div className="h-full flex items-center justify-center">
             {/* Object being changed */}
@@ -318,7 +318,7 @@ function ForceShapeDemo() {
           </div>
         )}
       </div>
-
+}
       {/* Description for active demo */}
       <AnimatePresence>
         {activeDemo && (
@@ -348,7 +348,7 @@ function ForceShapeDemo() {
       )}
     </div>
   );
-}
+} 
 
 export default function ForceCanChangeShapeSlide() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
