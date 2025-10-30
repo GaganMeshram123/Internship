@@ -67,21 +67,29 @@ const EffectsAnimation: React.FC = () => {
 };
 
 // --- ANIMATION COMPONENT 2: FACTORS (CORRECTED) ---
+// --- ANIMATION COMPONENT 2: FACTORS (FIXED OVERLAP BUG) ---
 const FactorsAnimation: React.FC = () => {
     type FactorType = 'surface' | 'weight';
     const [activeTab, setActiveTab] = useState<FactorType>('surface');
 
     const svgWidth = 400;
-    const svgHeight = 150;
-    const groundY = 130;
+    const svgHeight = 250; // Increased height to make space
+    const groundHeight = 50; // Define a fixed ground height
 
-    // A simple scene component
-    const Scene: React.FC<{ boxColor: string, groundColor: string, groundLabel: string, moveDistance: number, boxText?: string }> = 
-        ({ boxColor, groundColor, groundLabel, moveDistance, boxText }) => (
+    // A simple scene component - NOW ACCEPTS A Y-POSITION
+    const Scene: React.FC<{ 
+        yPos: number, // <--- ADDED THIS PROP
+        boxColor: string, 
+        groundColor: string, 
+        groundLabel: string, 
+        moveDistance: number, 
+        boxText?: string 
+    }> = 
+        ({ yPos, boxColor, groundColor, groundLabel, moveDistance, boxText }) => (
         <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             {/* Ground */}
-            <rect x="0" y={groundY} width={svgWidth} height={svgHeight - groundY} fill={groundColor} />
-            <text x="20" y={groundY + 15} className="text-xs fill-black">{groundLabel}</text>
+            <rect x="0" y={yPos} width={svgWidth} height={groundHeight} fill={groundColor} />
+            <text x="20" y={yPos + 20} className="text-xs fill-black">{groundLabel}</text>
             
             {/* Box */}
             <motion.g
@@ -89,8 +97,8 @@ const FactorsAnimation: React.FC = () => {
                 animate={{ x: 50 + moveDistance }}
                 transition={{ duration: 2.0, ease: "easeOut", delay: 0.5 }}
             >
-                <rect y={groundY - 40} width="40" height="40" fill={boxColor} />
-                {boxText && <text y={groundY - 20} x="20" textAnchor="middle" className="text-xs fill-white font-bold">{boxText}</text>}
+                <rect y={yPos - 40} width="40" height="40" fill={boxColor} />
+                {boxText && <text y={yPos - 20} x="20" textAnchor="middle" className="text-xs fill-white font-bold">{boxText}</text>}
             </motion.g>
         </motion.g>
     );
@@ -119,31 +127,34 @@ const FactorsAnimation: React.FC = () => {
             
             {/* Animation Canvas */}
             <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ minHeight: svgHeight }}>
+                {/* --- UPDATED SVG HEIGHT --- */}
                 <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
                     <AnimatePresence mode="wait">
                         {activeTab === 'surface' ? (
-                            <Scene key="surface" boxColor="#A16207" groundColor="#654321" groundLabel="Rough Sand" moveDistance={100} />
+                            // --- ADDED yPos to define top animation block ---
+                            <Scene key="surface" yPos={100} boxColor="#A16207" groundColor="#654321" groundLabel="Rough Sand" moveDistance={100} />
                         ) : (
-                            <Scene key="weight" boxColor="#A16207" groundColor="#654321" groundLabel="Rough Sand" moveDistance={100} />
+                            // --- ADDED yPos to define top animation block ---
+                            <Scene key="weight" yPos={100} boxColor="#A16207" groundColor="#654321" groundLabel="Rough Sand" moveDistance={100} />
                         )}
                     </AnimatePresence>
                     <AnimatePresence mode="wait">
                         {activeTab === 'surface' ? (
-                            <Scene key="surface2" boxColor="#A16207" groundColor="#A0E9FF" groundLabel="Smooth Ice" moveDistance={300} />
+                            // --- ADDED yPos to define bottom animation block ---
+                            <Scene key="surface2" yPos={180} boxColor="#A16207" groundColor="#A0E9FF" groundLabel="Smooth Ice" moveDistance={300} />
                         ) : (
-                            <Scene key="weight2" boxColor="#4B5563" groundColor="#654321" groundLabel="Rough Sand" moveDistance={50} boxText="HEAVY" />
+                            // --- ADDED yPos to define bottom animation block ---
+                            <Scene key="weight2" yPos={180} boxColor="#4B5563" groundColor="#654321" groundLabel="Rough Sand" moveDistance={50} boxText="HEAVY" />
                         )}
                     </AnimatePresence>
                 </svg>
             </div>
-            {/* --- THIS IS THE FIX --- */}
             <p className="text-center text-sm font-semibold text-slate-600 dark:text-slate-400 mt-2">
                 {activeTab === 'surface' 
                     ? "More friction on rough sand (stops sooner) than smooth ice."
                     : "More friction on the heavy box (stops sooner) than the light one."
                 }
             </p> 
-            {/* --- THE CLOSING TAG IS NOW </p> --- */}
         </div>
     );
 };
