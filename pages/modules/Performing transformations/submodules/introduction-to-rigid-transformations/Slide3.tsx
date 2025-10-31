@@ -1,11 +1,119 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
 // motion and AnimatePresence are kept for quiz feedback
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- Animation Variants Removed ---
+// --- Re-usable variants for definition lists ---
+const listContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const listItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+    },
+  },
+};
+
+// --- NEW TranslationAnimation Component ---
+const TranslationAnimation: React.FC = () => {
+  const [index, setIndex] = useState(0);
+  const { isDarkMode } = useThemeContext();
+  const textColor = isDarkMode ? '#e2e8f0' : '#1e293b';
+  const arrowColor = isDarkMode ? '#60a5fa' : '#2563eb';
+
+  const slideTypes = [
+    { name: 'Horizontal', x: 100, y: 10, rule: '(x + a, y)', arrow: 'M 25 25 H 115' },
+    { name: 'Vertical', x: 10, y: 60, rule: '(x, y + b)', arrow: 'M 25 25 V 75' },
+    { name: 'Diagonal', x: 100, y: 60, rule: '(x + a, y + b)', arrow: 'M 25 25 L 115 75' }
+  ];
+  const current = slideTypes[index];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIndex((prev) => (prev + 1) % slideTypes.length);
+    }, 3000); // Cycle every 3 seconds
+    return () => clearTimeout(timer);
+  }, [index, slideTypes.length]);
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg min-h-[190px] overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={current.name}
+          className="w-full flex flex-col items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          {/* Animation Area */}
+          <div className="relative w-48 h-28">
+            {/* --- FIX 1 HERE --- */}
+            <motion.span 
+              className="text-4xl absolute" 
+              style={{ left: 10, top: 10, opacity: 0.4 }} // Changed x/y to left/top
+            >
+              🟦
+            </motion.span>
+            
+            {/* --- FIX 2 HERE --- */}
+            <svg width="150" height="100" className="absolute" style={{ left: 10, top: 10 }}> {/* Changed x/y to left/top */}
+               <motion.path 
+                 d={current.arrow} 
+                 stroke={arrowColor} 
+                 strokeWidth="3"
+                 strokeDasharray="4 4"
+                 initial={{ pathLength: 0 }}
+                 animate={{ pathLength: 1 }}
+                 transition={{ duration: 1 }}
+               />
+               {/* This is a dashed line that moves, creating a "marching ants" effect */}
+               <motion.path 
+                 d={current.arrow} 
+                 stroke={arrowColor} 
+                 strokeWidth="3"
+                 strokeDasharray="4 4"
+                 initial={{ strokeDashoffset: 1000 }}
+                 animate={{ strokeDashoffset: 0 }}
+                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+               />
+            </svg>
+
+            <motion.span 
+              className="text-4xl absolute"
+              initial={{ x: 10, y: 10 }} // These x/y are motion props, not style props, so they are correct
+              animate={{ x: current.x, y: current.y }}
+              transition={{ type: 'spring', stiffness: 50, delay: 0.5, duration: 1 }}
+            >
+              🟦
+            </motion.span>
+          </div>
+          {/* Text Area */}
+          <div className="text-center">
+            <p className="font-semibold text-lg" style={{ color: textColor }}>{current.name} Slide</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 font-mono">{current.rule}</p>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+};
+// --- END of TranslationAnimation Component ---
+
 
 export default function IntroToRigidTransformationsSlide3() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -87,12 +195,10 @@ export default function IntroToRigidTransformationsSlide3() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto ">
 
         {/* Left Column - Content */}
         <div className="space-y-6">
-          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Rigid Move 1: Translation</h2>
             <p className="text-lg leading-relaxed">
@@ -109,24 +215,29 @@ export default function IntroToRigidTransformationsSlide3() {
             </em>
           </div>
 
-          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Describing a Slide</h3>
             <p className="text-lg leading-relaxed">
               We describe a translation using a <strong>translation vector</strong> &lt;a, b&gt; or a <strong>coordinate rule</strong> (x, y) → (x + a, y + b).
             </p>
             <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-              <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Decoding the Rule: $(x + a, y + b)$</h4>
-              <ul className="mt-2 space-y-2 text-lg">
-                <li className="flex items-start">
+              <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Decoding the Rule: (x + a, y + b)</h4>
+              {/* --- ANIMATED LIST --- */}
+              <motion.ul
+                className="mt-2 space-y-2 text-lg"
+                variants={listContainerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <motion.li className="flex items-start" variants={listItemVariants}>
                   <span className="font-bold text-blue-500 mr-2 text-xl">↔</span>
-                  <span><strong>$a$ (horizontal):</strong> If $a$ is positive, move <strong>right</strong>. If negative, move <strong>left</strong>.</span>
-                </li>
-                <li className="flex items-start">
+                  <span><strong>a (horizontal):</strong> If a is positive, move <strong>right</strong>. If negative, move <strong>left</strong>.</span>
+                </motion.li>
+                <motion.li className="flex items-start" variants={listItemVariants}>
                   <span className="font-bold text-blue-500 mr-2 text-xl">↕</span>
-                  <span><strong>$b$ (vertical):</strong> If $b$ is positive, move <strong>up</strong>. If negative, move <strong>down</strong>.</span>
-                </li>
-              </ul>
+                  <span><strong>b (vertical):</strong> If b is positive, move <strong>up</strong>. If negative, move <strong>down</strong>.</span>
+                </motion.li>
+              </motion.ul>
             </div>
             <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
               <p className="text-lg">
@@ -138,31 +249,22 @@ export default function IntroToRigidTransformationsSlide3() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          {/* --- CARD - NO LONGER ANIMATES --- */}
+          {/* --- CARD UPDATED WITH ANIMATION --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing a "Slide"</h3>
-            <div className="flex items-center justify-center space-x-4 text-center mt-6 p-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
-              <div className="flex flex-col items-center">
-                <span className="text-4xl">🟦</span>
-                <p className="font-semibold text-lg mt-2">Pre-Image</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">(Original)</p>
-              </div>
-              <div className="flex flex-col items-center text-blue-500">
-                <span className="text-2xl font-bold">→</span>
-                <p className="text-sm font-semibold">(x + a, y + b)</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-4xl">🟦</span>
-                <p className="font-semibold text-lg mt-2">Image</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">(New)</p>
-              </div>
+            
+            {/* --- STATIC DIAGRAM REPLACED --- */}
+            <div className="mt-6">
+              <TranslationAnimation />
             </div>
+            {/* --- END OF REPLACEMENT --- */}
+            
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Every point slides the *exact same* distance and direction. The shape's orientation (which way it faces) doesn't change.
+              Every point slides the exact same distance and direction. The shape's orientation (which way it faces) doesn't change.
             </p>
           </div>
 
-          {/* --- CARD - NO LONGER ANIMATES --- */}
+          {/* --- QUIZ CARD (with animations) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -194,16 +296,38 @@ export default function IntroToRigidTransformationsSlide3() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
+                    
+                    // --- Animation and Styling Logic ---
+                    const isSelectedCorrect = showFeedback && selected && correct;
+                    const isSelectedIncorrect = showFeedback && selected && !correct;
+                    const isCorrectUnselected = showFeedback && !selected && correct;
 
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
+                    let animateProps = {};
+                    if (isSelectedCorrect) {
+                      animateProps = { scale: [1, 1.05, 1], transition: { duration: 0.3 } };
+                    } else if (isSelectedIncorrect) {
+                      animateProps = { x: [0, -5, 5, -5, 5, 0], transition: { duration: 0.4, ease: "easeInOut" } };
+                    }
+                    
+                    let buttonStyle = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                    if (showFeedback) {
+                      if (isSelectedCorrect) {
+                        buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30';
+                      } else if (isSelectedIncorrect) {
+                        buttonStyle = 'border-red-500 bg-red-50 dark:bg-red-900/30';
+                      } else if (isCorrectUnselected) {
+                        buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30 opacity-70';
+                      } else {
+                        buttonStyle = 'border-slate-300 dark:border-slate-600 opacity-50'; // Other incorrect
+                      }
+                    } else if (selected) {
+                      buttonStyle = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // Selected, pre-submit
+                    }
+
+                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${buttonStyle} ${
+                      disabled && !selected ? 'opacity-50' : ''
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    // --- END of new logic ---
 
                     return (
                       <motion.button
@@ -211,6 +335,7 @@ export default function IntroToRigidTransformationsSlide3() {
                         onClick={() => handleQuizAnswer(option)}
                         disabled={disabled}
                         className={className}
+                        animate={animateProps} // Apply shake or pop animation
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
                       >
@@ -228,11 +353,11 @@ export default function IntroToRigidTransformationsSlide3() {
                       exit={{ opacity: 0, y: -20 }}
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct
-                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect
+                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
+                      <div className="text-lg text-slate-700 dark:text-slate-300 mb-4">
                         {questions[currentQuestionIndex].explanation}
                       </div>
                       <motion.button

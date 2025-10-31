@@ -1,13 +1,147 @@
-import React, { useState } from 'react';
-// motion and AnimatePresence are kept for quiz feedback
+import React, { useState, useEffect } from 'react'; // Added useEffect
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- Animation Variants (NO LONGER USED ON CARDS) ---
-// const containerVariants = { ... };
-// const cardVariants = { ... };
+// --- NEW ANIMATION COMPONENT for Euclid's 5 Postulates ---
+const EuclidPostulatesAnimation: React.FC = () => {
+  const { isDarkMode } = useThemeContext();
+  const [index, setIndex] = useState(0);
+
+  const postulates = [
+    { name: 'Postulate 1', label: '1. A straight line can be drawn between any two points.' },
+    { name: 'Postulate 2', label: '2. Any straight line segment can be extended indefinitely.' },
+    { name: 'Postulate 3', label: '3. A circle can be drawn with any center and any radius.' },
+    { name: 'Postulate 4', label: '4. All right angles are equal to one another.' },
+    { name: 'Postulate 5', label: '5. The parallel postulate.' },
+  ];
+
+  const current = postulates[index];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % postulates.length);
+    }, 3500); // Cycle every 3.5 seconds
+    return () => clearTimeout(timer);
+  }, [index, postulates.length]);
+
+  const lineColor = isDarkMode ? '#60a5fa' : '#2563eb';
+  const textColor = isDarkMode ? '#e2e8f0' : '#1e293b';
+  const pointColor = isDarkMode ? '#94a3b8' : '#64748b';
+  
+  const draw = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: {
+      pathLength: 1,
+      opacity: 1,
+      transition: { duration: 1, ease: 'easeInOut' },
+    },
+    exit: { opacity: 0, transition: { duration: 0.3 } }
+  };
+  
+  // --- THIS IS THE FIX ---
+  const drawFast = {
+    ...draw,
+    visible: {
+      ...draw.visible, // Keep original properties
+      transition: { duration: 0.5, ease: 'easeInOut' }, // Override transition
+    },
+  };
+  // --- END OF FIX ---
+  
+  const popIn = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: { scale: 1, opacity: 1, transition: { type: 'spring', stiffness: 150, delay: 0.2 } },
+    exit: { scale: 0, opacity: 0, transition: { duration: 0.3 } }
+  };
+  
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.5, delay: 0.5 } },
+    exit: { opacity: 0, transition: { duration: 0.3 } }
+  };
+
+  return (
+    <div className="w-full flex flex-col items-center justify-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 min-h-[180px]">
+      <svg width="250" height="120" viewBox="0 0 250 120" className="overflow-visible">
+        <AnimatePresence mode="wait">
+          
+          {/* 1. Two points and a line */}
+          {current.name === 'Postulate 1' && (
+            <motion.g key="p1">
+              <motion.circle cx="50" cy="60" r="5" fill={pointColor} variants={popIn} initial="hidden" animate="visible" exit="exit" />
+              <motion.circle cx="200" cy="60" r="5" fill={pointColor} variants={popIn} initial="hidden" animate="visible" exit="exit" />
+              <motion.line x1="50" y1="60" x2="200" y2="60" stroke={lineColor} strokeWidth="3" variants={draw} initial="hidden" animate="visible" exit="exit" />
+            </motion.g>
+          )}
+
+          {/* 2. Extend line segment */}
+          {current.name === 'Postulate 2' && (
+            <motion.g key="p2">
+              <motion.line x1="70" y1="60" x2="180" y2="60" stroke={lineColor} strokeWidth="3" variants={draw} initial="hidden" animate="visible" exit="exit" />
+              <motion.line x1="70" y1="60" x2="20" y2="60" stroke={lineColor} strokeWidth="3" strokeDasharray="4 4" variants={draw} initial="hidden" animate="visible" exit="exit" />
+              <motion.line x1="180" y1="60" x2="230" y2="60" stroke={lineColor} strokeWidth="3" strokeDasharray="4 4" variants={draw} initial="hidden" animate="visible" exit="exit" />
+            </motion.g>
+          )}
+
+          {/* 3. Circle */}
+          {current.name === 'Postulate 3' && (
+            <motion.g key="p3">
+              <motion.circle cx="125" cy="60" r="5" fill={pointColor} variants={popIn} initial="hidden" animate="visible" exit="exit" />
+              <motion.path
+                d="M 175 60 A 50 50 0 1 1 174.9 60" // A full circle arc
+                stroke={lineColor}
+                strokeWidth="3"
+                fill="none"
+                variants={draw}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              />
+            </motion.g>
+          )}
+
+          {/* 4. Right angles */}
+          {current.name === 'Postulate 4' && (
+            <motion.g key="p4">
+              <motion.line x1="50" y1="60" x2="200" y2="60" stroke={lineColor} strokeWidth="3" variants={drawFast} initial="hidden" animate="visible" exit="exit" />
+              <motion.line x1="125" y1="20" x2="125" y2="100" stroke={lineColor} strokeWidth="3" variants={drawFast} initial="hidden" animate="visible" exit="exit" />
+              <motion.rect x="125" y="60" width="10" height="10" stroke={pointColor} strokeWidth="2" fill="none" variants={fadeIn} initial="hidden" animate="visible" exit="exit" />
+              <motion.rect x="115" y="60" width="10" height="10" stroke={pointColor} strokeWidth="2" fill="none" transform="rotate(90 125 60)" variants={fadeIn} initial="hidden" animate="visible" exit="exit" />
+              <motion.rect x="115" y="50" width="10" height="10" stroke={pointColor} strokeWidth="2" fill="none" variants={fadeIn} initial="hidden" animate="visible" exit="exit" />
+              <motion.rect x="125" y="50" width="10" height="10" stroke={pointColor} strokeWidth="2" fill="none" transform="rotate(90 125 60)" variants={fadeIn} initial="hidden" animate="visible" exit="exit" />
+            </motion.g>
+          )}
+
+          {/* 5. Parallel postulate */}
+          {current.name === 'Postulate 5' && (
+            <motion.g key="p5">
+              <motion.line x1="30" y1="80" x2="220" y2="80" stroke={lineColor} strokeWidth="3" variants={drawFast} initial="hidden" animate="visible" exit="exit" />
+              <motion.circle cx="125" cy="40" r="5" fill={pointColor} variants={popIn} initial="hidden" animate="visible" exit="exit" />
+              <motion.line x1="30" y1="40" x2="220" y2="40" stroke={lineColor} strokeWidth="3" strokeDasharray="4 4" variants={drawFast} initial="hidden" animate="visible" exit="exit" />
+            </motion.g>
+          )}
+        </AnimatePresence>
+      </svg>
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={current.name}
+          className="text-sm text-center font-semibold mt-1 h-10" // Added h-10 for layout
+          style={{ color: textColor }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {current.label}
+        </motion.p>
+      </AnimatePresence>
+    </div>
+  );
+};
+// --- END OF ANIMATION COMPONENT ---
+
 
 export default function IntroToEuclideanGeometrySlide2() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -113,13 +247,10 @@ export default function IntroToEuclideanGeometrySlide2() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
         {/* Left Column - Content */}
         <div className="space-y-6">
-
-          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Euclid: The Father of Geometry</h2>
             <p className="text-lg leading-relaxed">
@@ -129,8 +260,6 @@ export default function IntroToEuclideanGeometrySlide2() {
               He is often called the "Father of Geometry" because he collected all the known geometric knowledge of his time into a 13-volume "rulebook."
             </p>
           </div>
-
-          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The "Elements"</h3>
             <p className="text-lg leading-relaxed">
@@ -145,7 +274,7 @@ export default function IntroToEuclideanGeometrySlide2() {
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
 
-          {/* --- CARD - NO LONGER ANIMATES --- */}
+          {/* --- CARD WITH ANIMATION --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">
               Key Ideas from "Elements"
@@ -153,14 +282,12 @@ export default function IntroToEuclideanGeometrySlide2() {
             <p className="text-lg leading-relaxed">
               Euclid's genius was starting with a few simple rules, called <strong>postulates</strong> or <strong>axioms</strong>, that were so obvious everyone agreed they were true.
             </p>
+            
+            {/* --- STATIC LIST REPLACED WITH ANIMATION --- */}
             <h4 className="text-lg font-semibold mt-4 mb-2 text-slate-700 dark:text-slate-300">The 5 "Obvious" Rules</h4>
-            <ul className="list-decimal list-inside space-y-1 text-base">
-              <li>A straight line can be drawn between any two points.</li>
-              <li>Any straight line segment can be extended indefinitely.</li>
-              <li>A circle can be drawn with any center and any radius.</li>
-              <li>All right angles are equal to one another.</li>
-              <li>(The parallel postulate - about lines never meeting)</li> {/* Simplified 5th */}
-            </ul>
+            <EuclidPostulatesAnimation />
+            {/* --- END OF REPLACEMENT --- */}
+
             <h4 className="text-lg font-semibold mt-4 mb-2 text-slate-700 dark:text-slate-300">Why It Matters Today 🌎</h4>
             <ul className="list-disc list-inside space-y-1 text-base">
               <li><strong>Engineering:</strong> Designing stable bridges and buildings.</li>
@@ -169,7 +296,7 @@ export default function IntroToEuclideanGeometrySlide2() {
             </ul>
           </div>
 
-          {/* --- CARD - NO LONGER ANIMATES --- */}
+          {/* --- QUIZ CARD (with animations) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -186,7 +313,6 @@ export default function IntroToEuclideanGeometrySlide2() {
                     index === currentQuestionIndex
                       ? 'bg-blue-500'
                       : questionsAnswered[index]
-                      // --- Fixed Progress Bar Color ---
                       ? 'bg-blue-300 dark:bg-blue-800'
                       : 'bg-slate-300 dark:bg-slate-600'
                   }`}
@@ -202,16 +328,38 @@ export default function IntroToEuclideanGeometrySlide2() {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    // --- Fixed Answer Feedback Color Logic ---
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Correct
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // Incorrect
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
+                    
+                    // --- Animation and Styling Logic ---
+                    const isSelectedCorrect = showFeedback && selected && correct;
+                    const isSelectedIncorrect = showFeedback && selected && !correct;
+                    const isCorrectUnselected = showFeedback && !selected && correct;
+
+                    let animateProps = {};
+                    if (isSelectedCorrect) {
+                      animateProps = { scale: [1, 1.05, 1], transition: { duration: 0.3 } };
+                    } else if (isSelectedIncorrect) {
+                      animateProps = { x: [0, -5, 5, -5, 5, 0], transition: { duration: 0.4, ease: "easeInOut" } };
+                    }
+                    
+                    let buttonStyle = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                    if (showFeedback) {
+                      if (isSelectedCorrect) {
+                        buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30';
+                      } else if (isSelectedIncorrect) {
+                        buttonStyle = 'border-red-500 bg-red-50 dark:bg-red-900/30';
+                      } else if (isCorrectUnselected) {
+                        buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30 opacity-70';
+                      } else {
+                        buttonStyle = 'border-slate-300 dark:border-slate-600 opacity-50'; // Other incorrect
+                      }
+                    } else if (selected) {
+                      buttonStyle = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // Selected, pre-submit
+                    }
+
+                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${buttonStyle} ${
+                      disabled && !selected ? 'opacity-50' : ''
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    // --- END of new logic ---
 
                     return (
                       <motion.button
@@ -219,6 +367,7 @@ export default function IntroToEuclideanGeometrySlide2() {
                         onClick={() => handleQuizAnswer(option)}
                         disabled={disabled}
                         className={className}
+                        animate={animateProps} // Apply shake or pop animation
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
                       >
@@ -234,14 +383,13 @@ export default function IntroToEuclideanGeometrySlide2() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      // --- Fixed Feedback Box Color Logic ---
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct
-                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect
+                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
+                      <div className="text-lg text-slate-700 dark:text-slate-300 mb-4">
                         {questions[currentQuestionIndex].explanation}
                       </div>
                       <motion.button

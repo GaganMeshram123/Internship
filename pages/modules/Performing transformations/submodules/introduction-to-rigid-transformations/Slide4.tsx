@@ -1,11 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
 // motion and AnimatePresence are kept for quiz feedback
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- Animation Variants Removed ---
+// --- Re-usable variants for definition lists ---
+const listContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const listItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+    },
+  },
+};
+
+// --- NEW RotationRulesAnimation Component ---
+const RotationRulesAnimation: React.FC = () => {
+  const [index, setIndex] = useState(0);
+  const { isDarkMode } = useThemeContext();
+
+  const rules = [
+    { name: "90° CCW", angleIcon: "↺", angle: "90°", rule: "(-y, x)", color: "text-green-500", quadrant: "(e.g., Q2)" },
+    { name: "180°", angleIcon: "↻/↺", angle: "180°", rule: "(-x, -y)", color: "text-yellow-500", quadrant: "(e.g., Q3)" },
+    { name: "270° CCW", angleIcon: "↺", angle: "270°", rule: "(y, -x)", color: "text-red-500", quadrant: "(e.g., Q4)" }
+  ];
+  const current = rules[index];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIndex((prev) => (prev + 1) % rules.length);
+    }, 3000); // Cycle every 3 seconds
+    return () => clearTimeout(timer);
+  }, [index, rules.length]);
+
+  return (
+    <div className="flex items-center justify-center space-x-4 text-center mt-6 p-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg min-h-[160px] overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={current.name}
+          className="flex w-full items-center justify-around"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Block 1: Pre-Image */}
+          <div className="flex flex-col items-center w-1/3">
+            <span className="text-2xl font-mono">(x, y)</span>
+            <p className="font-semibold text-lg mt-2">Pre-Image</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">(e.g., Q1)</p>
+          </div>
+          
+          {/* Block 2: Arrow */}
+          <div className={`flex flex-col items-center ${current.color}`}>
+            <span className="text-3xl font-bold">{current.angleIcon}</span>
+            <p className="text-sm font-semibold">{current.angle}</p>
+          </div>
+          
+          {/* Block 3: Image */}
+          <div className="flex flex-col items-center w-1/3">
+            <span className="text-2xl font-mono">{current.rule}</span>
+            <p className="font-semibold text-lg mt-2">Image</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{current.quadrant}</p>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+};
+// --- END of RotationRulesAnimation Component ---
+
 
 export default function IntroToRigidTransformationsSlide4() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -87,12 +165,10 @@ export default function IntroToRigidTransformationsSlide4() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
         {/* Left Column - Content */}
         <div className="space-y-6">
-          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Rigid Move 2: Rotation</h2>
             <p className="text-lg leading-relaxed">
@@ -109,64 +185,63 @@ export default function IntroToRigidTransformationsSlide4() {
             </em>
           </div>
 
-          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">What You Need to Rotate</h3>
             <p className="text-lg leading-relaxed">
               To perform a rotation, you must be given three pieces of information:
             </p>
-            <ul className="mt-4 space-y-2 text-lg">
-              <li className="flex items-start">
+            {/* --- ANIMATED LIST 1 --- */}
+            <motion.ul
+              className="mt-4 space-y-2 text-lg"
+              variants={listContainerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.li className="flex items-start" variants={listItemVariants}>
                 <span className="font-bold text-blue-500 mr-2">1.</span>
                 <span><strong>Center of Rotation:</strong> The point you are turning *around* (e.g., the origin (0,0)).</span>
-              </li>
-              <li className="flex items-start">
+              </motion.li>
+              <motion.li className="flex items-start" variants={listItemVariants}>
                 <span className="font-bold text-blue-500 mr-2">2.</span>
                 <span><strong>Angle of Rotation:</strong> How far to turn (e.g., 90°, 180°).</span>
-              </li>
-              <li className="flex items-start">
+              </motion.li>
+              <motion.li className="flex items-start" variants={listItemVariants}>
                 <span className="font-bold text-blue-500 mr-2">3.</span>
                 <span><strong>Direction:</strong> Clockwise ↻ or Counter-clockwise ↺. (In math, <strong>counter-clockwise is the default!</strong>)</span>
-              </li>
-            </ul>
+              </motion.li>
+            </motion.ul>
             <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
               <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Common Rotation Rules (around origin 0,0)</h4>
-              <ul className="list-disc list-inside mt-2 text-lg space-y-1 font-mono">
-                <li><strong>90° CCW (↺):</strong> (x, y) → (-y, x)</li>
-                <li><strong>180° (↻ or ↺):</strong> (x, y) → (-x, -y)</li>
-                <li><strong>270° CCW (↺):</strong> (x, y) → (y, -x)</li>
-              </ul>
+              {/* --- ANIMATED LIST 2 --- */}
+              <motion.ul
+                className="list-disc list-inside mt-2 text-lg space-y-1 font-mono"
+                variants={listContainerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <motion.li variants={listItemVariants}><strong>90° CCW (↺):</strong> (x, y) → (-y, x)</motion.li>
+                <motion.li variants={listItemVariants}><strong>180° (↻ or ↺):</strong> (x, y) → (-x, -y)</motion.li>
+                <motion.li variants={listItemVariants}><strong>270° CCW (↺):</strong> (x, y) → (y, -x)</motion.li>
+              </motion.ul>
             </div>
           </div>
         </div>
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          {/* --- CARD - NO LONGER ANIMATES --- */}
+          {/* --- CARD UPDATED WITH ANIMATION --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing a 90° Turn (CCW)</h3>
-            <div className="flex items-center justify-center space-x-4 text-center mt-6 p-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
-              <div className="flex flex-col items-center">
-                <span className="text-2xl font-mono">(x, y)</span>
-                <p className="font-semibold text-lg mt-2">Pre-Image</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">(e.g., Quadrant 1)</p>
-              </div>
-              <div className="flex flex-col items-center text-blue-500">
-                <span className="text-3xl font-bold">↺</span>
-                <p className="text-sm font-semibold">90°</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-2xl font-mono">(-y, x)</span>
-                <p className="font-semibold text-lg mt-2">Image</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">(e.g., Quadrant 2)</p>
-              </div>
-            </div>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing The Rules</h3>
+            
+            {/* --- STATIC DIAGRAM REPLACED --- */}
+            <RotationRulesAnimation />
+            
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Notice the coordinates (x, y) swap and the new x-coordinate (which was y) becomes negative!
+              Notice how the coordinates swap for 90°/270°, but only flip signs for 180°.
             </p>
           </div>
 
-          {/* --- CARD - NO LONGER ANIMATES --- */}
+          {/* --- QUIZ CARD (with animations) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -199,15 +274,37 @@ export default function IntroToRigidTransformationsSlide4() {
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
 
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70'
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                    // --- Animation and Styling Logic ---
+                    const isSelectedCorrect = showFeedback && selected && correct;
+                    const isSelectedIncorrect = showFeedback && selected && !correct;
+                    const isCorrectUnselected = showFeedback && !selected && correct;
+
+                    let animateProps = {};
+                    if (isSelectedCorrect) {
+                      animateProps = { scale: [1, 1.05, 1], transition: { duration: 0.3 } };
+                    } else if (isSelectedIncorrect) {
+                      animateProps = { x: [0, -5, 5, -5, 5, 0], transition: { duration: 0.4, ease: "easeInOut" } };
+                    }
+                    
+                    let buttonStyle = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                    if (showFeedback) {
+                      if (isSelectedCorrect) {
+                        buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30';
+                      } else if (isSelectedIncorrect) {
+                        buttonStyle = 'border-red-500 bg-red-50 dark:bg-red-900/30';
+                      } else if (isCorrectUnselected) {
+                        buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30 opacity-70';
+                      } else {
+                        buttonStyle = 'border-slate-300 dark:border-slate-600 opacity-50'; // Other incorrect
+                      }
+                    } else if (selected) {
+                      buttonStyle = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // Selected, pre-submit
+                    }
+
+                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${buttonStyle} ${
+                      disabled && !selected ? 'opacity-50' : ''
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    // --- END of new logic ---
 
                     return (
                       <motion.button
@@ -215,6 +312,7 @@ export default function IntroToRigidTransformationsSlide4() {
                         onClick={() => handleQuizAnswer(option)}
                         disabled={disabled}
                         className={className}
+                        animate={animateProps} // Apply shake or pop animation
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
                       >
@@ -232,11 +330,11 @@ export default function IntroToRigidTransformationsSlide4() {
                       exit={{ opacity: 0, y: -20 }}
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700'
-                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700'
+                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
+                      <div className="text-lg text-slate-700 dark:text-slate-300 mb-4">
                         {questions[currentQuestionIndex].explanation}
                       </div>
                       <motion.button

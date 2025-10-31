@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
@@ -65,7 +65,8 @@ const RotatingShapeAnimation: React.FC = () => {
                 <text x={svgB.x + 5} y={svgB.y + 15} className="fill-blue-200 font-bold text-xs">B</text>
                 <text x={svgC.x - 15} y={svgC.y} className="fill-blue-200 font-bold text-xs">C</text>
 
-                {/* Animated Arcs for Vertices */}
+                {/* --- THIS IS THE FIX --- */}
+                {/* Animated Arcs for Vertices (NOW GREEN AND SOLID) */}
                 {[svgA, svgB, svgC].map((p, i) => {
                     const p_prime = [svgA_prime, svgB_prime, svgC_prime][i];
                     const arcPath = getArcPath(p, p_prime);
@@ -74,15 +75,16 @@ const RotatingShapeAnimation: React.FC = () => {
                             key={`arc-${i}`}
                             d={arcPath}
                             fill="none"
-                            className="stroke-orange-400 opacity-70"
-                            strokeWidth="1.5"
-                            strokeDasharray="3 3"
-                             initial={{ pathLength: 0, opacity: 0 }}
-                             animate={{ pathLength: 1, opacity: 0.7 }}
-                             transition={{ delay: delay + i * 0.1, duration: duration, ease: "linear" }}
+                            className="stroke-green-500 opacity-70" // CHANGED from stroke-orange-400
+                            strokeWidth="2" // CHANGED from 1.5
+                            // strokeDasharray="3 3" // REMOVED to make solid
+                            initial={{ pathLength: 0, opacity: 0 }}
+                            animate={{ pathLength: 1, opacity: 0.7 }}
+                            transition={{ delay: delay + i * 0.1, duration: duration, ease: "linear" }}
                         />
                     );
                 })}
+                {/* --- END OF FIX --- */}
 
 
                 {/* Animated Image Vertices (landing points) */}
@@ -101,9 +103,9 @@ const RotatingShapeAnimation: React.FC = () => {
                    initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: delay + duration}}
                  >A'</motion.text>
                  <motion.text
-                    x={svgB_prime.x - 15} y={svgB_prime.y - 5} className="fill-green-200 font-bold text-xs"
-                    initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: delay + 0.1 + duration}}
-                  >B'</motion.text>
+                   x={svgB_prime.x - 15} y={svgB_prime.y - 5} className="fill-green-200 font-bold text-xs"
+                   initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: delay + 0.1 + duration}}
+                 >B'</motion.text>
                   <motion.text
                     x={svgC_prime.x - 15} y={svgC_prime.y + 5} className="fill-green-200 font-bold text-xs"
                     initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: delay + 0.2 + duration}}
@@ -175,17 +177,17 @@ export default function RotationsSlide4() {
             explanation: 'Exactly! You apply the same rotation rule to every single vertex (corner) of the shape, then you reconnect the new vertices to form the image.'
         },
         { // --- ADDED SECOND QUESTION ---
-             id: 'shape-rotation-apply-q2',
-             question: "Square DEFG has vertex E at (5, -3). If the square is rotated 180° around the origin, what are the coordinates of E'?",
-             options: [
-                 "E'(3, 5)",
-                 "E'(-3, -5)",
-                 "E'(-5, 3)",
-                 "E'(5, 3)"
-             ],
-             correctAnswer: "E'(-5, 3)",
-             explanation: "Correct! The rule for 180° is (x, y) → (-x, -y). So, E(5, -3) becomes E'(-5, -(-3)) = E'(-5, 3)."
-        }
+           id: 'shape-rotation-apply-q2',
+           question: "Square DEFG has vertex E at (5, -3). If the square is rotated 180° around the origin, what are the coordinates of E'?",
+           options: [
+               "E'(3, 5)",
+               "E'(-3, -5)",
+               "E'(-5, 3)",
+               "E'(5, 3)"
+           ],
+           correctAnswer: "E'(-5, 3)",
+           explanation: "Correct! The rule for 180° is (x, y) → (-x, -y). So, E(5, -3) becomes E'(-5, -(-3)) = E'(-5, 3)."
+       }
     ];
 
     // ... (Keep existing handlers: handleInteractionComplete, handleQuizAnswer, handleNextQuestion)
@@ -237,7 +239,7 @@ export default function RotationsSlide4() {
                             Just like with translations, we have a simple trick for rotating a whole polygon (like a triangle or rectangle).
                         </p>
                         <p className="text-lg leading-relaxed mt-4 font-bold">
-                            You don't rotate the *shape*... you rotate its **vertices** (corners)!
+                            You don't rotate the shape... you rotate its vertices (corners)!
                         </p>
                          {/* --- ANALOGY ADDED --- */}
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
@@ -266,14 +268,14 @@ export default function RotationsSlide4() {
 
                      {/* --- NEW CARD: Concrete Example --- */}
                      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Quick Example: 90° CCW</h3>
-                         <p className="text-lg leading-relaxed">Let's rotate △PQR with P(1, 2), Q(3, 4), R(1, 4) using the rule (x, y) → (-y, x):</p>
-                         <ul className="mt-4 space-y-2 text-lg font-mono text-slate-700 dark:text-slate-300">
-                             <li>P(1, 2) → P'(-2, 1)</li>
-                             <li>Q(3, 4) → Q'(-4, 3)</li>
-                             <li>R(1, 4) → R'(-4, 1)</li>
-                         </ul>
-                         <p className="text-lg leading-relaxed mt-2 text-blue-600 dark:text-blue-400">Plot P', Q', R' and connect them!</p>
+                          <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Quick Example: 90° CCW</h3>
+                          <p className="text-lg leading-relaxed">Let's rotate △PQR with P(1, 2), Q(3, 4), R(1, 4) using the rule (x, y) → (-y, x):</p>
+                          <ul className="mt-4 space-y-2 text-lg font-mono text-slate-700 dark:text-slate-300">
+                               <li>P(1, 2) → P'(-2, 1)</li>
+                               <li>Q(3, 4) → Q'(-4, 3)</li>
+                               <li>R(1, 4) → R'(-4, 1)</li>
+                          </ul>
+                          <p className="text-lg leading-relaxed mt-2 text-blue-600 dark:text-blue-400">Plot P', Q', R' and connect them!</p>
                      </div>
 
                 </div>
@@ -286,7 +288,7 @@ export default function RotationsSlide4() {
                         
                         {/* --- USE THE ANIMATION COMPONENT --- */}
                         <RotatingShapeAnimation />
-                       
+                        
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
                             Each vertex (A, B, C) follows the same rotation path to create the new image (A', B', C').
                         </p>

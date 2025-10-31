@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
-import { CheckCircle, XCircle } from 'lucide-react';
+// Note: CheckCircle and XCircle are not used in this version, so import is removed.
 
 // --- NEW ANIMATION COMPONENT: TRANSFORMATION PLAYGROUND ---
 const TransformationPlayground: React.FC = () => {
@@ -108,37 +108,89 @@ export default function IntroToEuclideanGeometrySlide1() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState<string>('');
     const [showFeedback, setShowFeedback] = useState(false);
-    const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+    // --- UPDATED STATE FOR 3 QUESTIONS ---
+    const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
     const [score, setScore] = useState(0);
     const [isQuizComplete, setIsQuizComplete] = useState(false);
     const { isDarkMode } = useThemeContext();
 
-    const slideInteractions: Interaction[] = [ /* ... (unchanged) ... */ ];
+    const slideInteractions: Interaction[] = [
+      {
+        id: 'intro-transformation-quiz',
+        conceptId: 'intro-to-transformations',
+        conceptName: 'Intro to Transformations',
+        type: 'judging',
+        description: 'Testing basic transformation vocabulary'
+      }
+    ];
 
-    interface QuizQuestion { /* ... (unchanged) ... */ }
+    interface QuizQuestion {
+      id: string;
+      question: string;
+      options: string[];
+      correctAnswer: string;
+      explanation: string;
+    }
 
-    // --- UPDATED QUIZ QUESTIONS ---
+    // --- UPDATED QUIZ QUESTIONS (3 QUESTIONS) ---
     const questions: QuizQuestion[] = [
         {
-            id: 'vocab-q1-preimage',
-            question: 'What is the fancy word for the original shape, *before* it is moved or changed?',
-            options: [ 'Image', 'Pre-Image', 'Coordinate', 'Axis' ],
-            correctAnswer: 'Pre-Image',
-            explanation: 'Correct! The Pre-Image is the "before" state of any transformation.'
+            id: 'vocab-q1-transformation',
+            question: 'In geometry, what is the fancy word for a "move" or "change" to a shape?',
+            options: [ 'A Pre-image', 'A Transformation', 'A Coordinate', 'An Axis' ],
+            correctAnswer: 'A Transformation',
+            explanation: 'Correct! A transformation is the formal name for any move, like a slide, flip, turn, or resize.'
         },
         {
-            id: 'vocab-q2-plane',
+            id: 'vocab-q2-preimage',
+            question: 'What do we call the original shape, *before* it is moved or changed?',
+            options: [ 'Image', 'Pre-Image', 'Coordinate', 'Axis' ],
+            correctAnswer: 'Pre-Image',
+            explanation: 'Correct! The Pre-Image is the "before" state, and the Image is the "after" state.'
+        },
+        {
+            id: 'vocab-q3-plane',
             question: 'What do we call the "map" with an x-axis and y-axis where we perform transformations?',
             options: [ 'A Geometry Grid', 'The Coordinate Plane', 'A Transformation Sheet', 'A Shape Box' ],
             correctAnswer: 'The Coordinate Plane',
-            explanation: 'That\'s right! The coordinate plane is our "map" for all transformations, letting us track shapes using (x, y) coordinates.'
+            explanation: 'That\'s right! The coordinate plane is our "map" for all transformations.'
         }
     ];
 
-    // --- LOGIC HANDLERS (UNCHANGED) ---
-    const handleInteractionComplete = (response: InteractionResponse) => { /* ... */ };
-    const handleQuizAnswer = (answerText: string) => { /* ... */ };
-    const handleNextQuestion = () => { /* ... */ };
+    // --- LOGIC HANDLERS (Implementations added) ---
+    const handleInteractionComplete = (response: InteractionResponse) => {
+      setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
+    };
+
+    const handleQuizAnswer = (answerText: string) => {
+      if (showFeedback || isQuizComplete) return;
+      setSelectedAnswer(answerText);
+      setShowFeedback(true);
+      const current = questions[currentQuestionIndex];
+      const isCorrect = answerText === current.correctAnswer;
+      if (isCorrect) setScore(prev => prev + 1);
+      handleInteractionComplete({
+          interactionId: `intro-transformation-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+          value: answerText, isCorrect, timestamp: Date.now(),
+          conceptId: 'intro-to-transformations', conceptName: 'Intro to Transformations',
+          conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
+          question: { type: 'mcq', question: current.question, options: current.options }
+      });
+    };
+
+    const handleNextQuestion = () => {
+        const newAnswered = [...questionsAnswered];
+        newAnswered[currentQuestionIndex] = true;
+        setQuestionsAnswered(newAnswered);
+        setSelectedAnswer('');
+        setShowFeedback(false);
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(prev => prev + 1);
+        } else {
+            setIsQuizComplete(true);
+        }
+    };
+
 
     const slideContent = (
         <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
@@ -147,8 +199,7 @@ export default function IntroToEuclideanGeometrySlide1() {
                 {/* Left Column - Content (UNCHANGED) */}
                 <div className="space-y-6">
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                        {/* ... (all text content here is unchanged) ... */}
-                        <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">What Happens When Shapes Move?</h2>
+                         <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">What Happens When Shapes Move?</h2>
                          <p className="text-lg leading-relaxed">
                            Have you ever moved a chess piece, zoomed in on a photo, or looked at yourself in a mirror? You've seen transformations in action! 🤩
                          </p>
@@ -206,9 +257,126 @@ export default function IntroToEuclideanGeometrySlide1() {
                         </p>
                     </div>
 
-                    {/* --- QUIZ CARD (Uses updated questions) --- */}
+                    {/* --- NEW QUIZ CARD --- */}
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                        {/* ... (all quiz JSX is unchanged, it will just use the new `questions` array) ... */}
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
+                          <div className="text-lg text-slate-600 dark:text-slate-400">
+                            Question {currentQuestionIndex + 1} of {questions.length}
+                          </div>
+                        </div>
+
+                        <div className="flex space-x-2 mb-6">
+                          {questions.map((_, index) => (
+                            <div
+                              key={index}
+                              className={`h-2 flex-1 rounded ${
+                                index === currentQuestionIndex
+                                  ? 'bg-blue-500' // Active
+                                  : questionsAnswered[index]
+                                  ? 'bg-blue-300 dark:bg-blue-800' // Answered
+                                  : 'bg-slate-300 dark:bg-slate-600' // Unanswered
+                              }`}
+                            />
+                          ))}
+                        </div>
+
+                        {!isQuizComplete ? (
+                          <>
+                            <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                            <div className="space-y-3">
+                              {questions[currentQuestionIndex].options.map((option, idx) => {
+                                const disabled = showFeedback;
+                                const selected = selectedAnswer === option;
+                                const correct = option === questions[currentQuestionIndex].correctAnswer;
+                                
+                                // --- Animation and Styling Logic ---
+                                const isSelectedCorrect = showFeedback && selected && correct;
+                                const isSelectedIncorrect = showFeedback && selected && !correct;
+                                const isCorrectUnselected = showFeedback && !selected && correct;
+
+                                let animateProps = {};
+                                if (isSelectedCorrect) {
+                                  animateProps = { scale: [1, 1.05, 1], transition: { duration: 0.3 } };
+                                } else if (isSelectedIncorrect) {
+                                  animateProps = { x: [0, -5, 5, -5, 5, 0], transition: { duration: 0.4, ease: "easeInOut" } };
+                                }
+                                
+                                let buttonStyle = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                                if (showFeedback) {
+                                  if (isSelectedCorrect) {
+                                    buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30';
+                                  } else if (isSelectedIncorrect) {
+                                    buttonStyle = 'border-red-500 bg-red-50 dark:bg-red-900/30';
+                                  } else if (isCorrectUnselected) {
+                                    buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30 opacity-70';
+                                  } else {
+                                    buttonStyle = 'border-slate-300 dark:border-slate-600 opacity-50'; // Other incorrect
+                                  }
+                                } else if (selected) {
+                                  buttonStyle = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // Selected, pre-submit
+                                }
+
+                                const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${buttonStyle} ${
+                                  disabled && !selected ? 'opacity-50' : ''
+                                } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                                // --- END of new logic ---
+
+                                return (
+                                  <motion.button
+                                    key={idx}
+                                    onClick={() => handleQuizAnswer(option)}
+                                    disabled={disabled}
+                                    className={className}
+                                    animate={animateProps} // Apply shake or pop animation
+                                    whileHover={!disabled ? { scale: 1.02 } : {}}
+                                    whileTap={!disabled ? { scale: 0.98 } : {}}
+                                  >
+                                    {option}
+                                  </motion.button>
+                                );
+                              })}
+                            </div>
+
+                            <AnimatePresence>
+                              {showFeedback && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -20 }}
+                                  className={`mt-4 p-4 rounded-lg ${
+                                    selectedAnswer === questions[currentQuestionIndex].correctAnswer
+                                      ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
+                                      : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
+                                  }`}
+                                >
+                                  <div className="text-lg text-slate-700 dark:text-slate-300 mb-4">
+                                    {questions[currentQuestionIndex].explanation}
+                                  </div>
+                                  <motion.button
+                                    onClick={handleNextQuestion}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                  >
+                                    {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Complete Quiz'}
+                                  </motion.button>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </>
+                        ) : (
+                          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
+                            <div className="text-3xl mb-4">🧠</div>
+                            <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
+                            <div className="text-lg text-slate-600 dark:text-slate-400">
+                              You scored {score} out of {questions.length}
+                            </div>
+                            <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
+                              {score === questions.length ? 'You know the basics!' : 'Great job!'}
+                            </div>
+                          </motion.div>
+                        )}
                     </div>
                 </div>
             </div>

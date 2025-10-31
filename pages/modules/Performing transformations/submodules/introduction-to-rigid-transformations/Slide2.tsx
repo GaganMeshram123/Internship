@@ -1,11 +1,99 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
 // motion and AnimatePresence are kept for quiz feedback
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- Animation Variants Removed ---
+// --- NEW ScaleFactorAnimation Component ---
+const ScaleFactorAnimation: React.FC = () => {
+  const [index, setIndex] = useState(0);
+  const { isDarkMode } = useThemeContext();
+  const textColor = isDarkMode ? '#e2e8f0' : '#1e293b';
+  
+  const scaleStates = [
+    { name: 'Enlargement', k: 'k > 1', scale: 1.8, color: 'text-green-500', iconScale: 1.5 },
+    { name: 'Reduction', k: 'k < 1', scale: 0.5, color: 'text-red-500', iconScale: 0.6 },
+    { name: 'Same Size', k: 'k = 1', scale: 1.0, color: 'text-blue-500', iconScale: 1.0 },
+  ];
+  
+  const current = scaleStates[index];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % scaleStates.length);
+    }, 3000); // Cycle every 3 seconds
+    return () => clearTimeout(timer);
+  }, [index, scaleStates.length]);
+
+  const triangleVariant = {
+    initial: { scale: 1, opacity: 0.5 },
+    animate: (custom: number) => ({
+      scale: custom,
+      opacity: 1,
+      transition: { type: 'spring', duration: 1.5, bounce: 0.3 }
+    }),
+    exit: { opacity: 0 }
+  };
+
+  const textVariant = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    exit: { opacity: 0, y: -10, transition: { duration: 0.3 } }
+  };
+
+  return (
+    <div className="w-full flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg min-h-[160px] overflow-hidden">
+      <div className="h-16 w-full flex items-center justify-center relative">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current.name}
+            className="w-full h-full flex items-center justify-center"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            {/* The pre-image (always there) */}
+            <span 
+              className="text-4xl text-blue-500 opacity-30" 
+              style={{ transform: `scale(${current.iconScale})` }} // Use style for non-animated part
+            >
+              △
+            </span>
+            
+            {/* The animated image */}
+            <motion.span
+              className={`text-4xl ${current.color} absolute`}
+              variants={triangleVariant}
+              custom={current.scale} // Pass scale factor to variant
+              style={{ transformOrigin: 'center' }}
+            >
+              △
+            </motion.span>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="h-12 w-full flex flex-col items-center justify-center">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current.name + "text"}
+            className="flex flex-col items-center"
+            variants={textVariant}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <p className="font-semibold text-lg" style={{ color: textColor }}>{current.name}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{current.k}</p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+// --- END of ScaleFactorAnimation Component ---
+
 
 export default function IntroToRigidTransformationsSlide2() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -97,12 +185,10 @@ export default function IntroToRigidTransformationsSlide2() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      {/* --- GRID CONTAINER - NO LONGER ANIMATES --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UNCHANGED) */}
         <div className="space-y-6">
-          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">What About Changing Size?</h2>
             <p className="text-lg leading-relaxed">
@@ -134,8 +220,6 @@ export default function IntroToRigidTransformationsSlide2() {
               </ul>
             </div>
           </div>
-
-          {/* --- CARD - NO LONGER ANIMATES --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Similar Figures</h3>
             <p className="text-lg leading-relaxed">
@@ -155,44 +239,22 @@ export default function IntroToRigidTransformationsSlide2() {
 
         {/* Right Column - Image and Quiz */}
         <div className="space-y-6">
-          {/* --- CARD - NO LONGER ANIMATES --- */}
+          {/* --- CARD UPDATED WITH ANIMATION --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Understanding Scale Factor (k)</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mt-6">
-              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
-                <div className="text-4xl">
-                  <span className="opacity-50">△</span>
-                  <span className="text-blue-500 mx-1">→</span>
-                  <span className="text-2xl">△</span>
-                </div>
-                <p className="font-semibold text-lg mt-2">Enlargement</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">k &gt; 1</p>
-              </div>
-              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
-                <div className="text-4xl">
-                  <span className="text-2xl">△</span>
-                  <span className="text-blue-500 mx-1">→</span>
-                  <span className="opacity-50">△</span>
-                </div>
-                <p className="font-semibold text-lg mt-2">Reduction</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">k &lt; 1</p>
-              </div>
-              <div className="flex flex-col items-center justify-center p-3 bg-slate-100 dark:bg-slate-700/60 rounded-lg">
-                <div className="text-4xl">
-                  <span>△</span>
-                  <span className="text-blue-500 mx-1">→</span>
-                  <span>△</span>
-                </div>
-                <p className="font-semibold text-lg mt-2">Same Size</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">k = 1</p>
-              </div>
+            
+            {/* --- STATIC GRID REPLACED --- */}
+            <div className="mt-6">
+              <ScaleFactorAnimation />
             </div>
+            {/* --- END OF REPLACEMENT --- */}
+
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
               The image is always <strong>similar (~)</strong> to the pre-image because the angles never change!
             </p>
           </div>
 
-          {/* --- CARD - NO LONGER ANIMATES --- */}
+          {/* --- QUIZ CARD (UNCHANGED, but with typo fixes) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -225,12 +287,12 @@ export default function IntroToRigidTransformationsSlide2() {
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
 
+                    // --- TYPO FIX: bg-blue-900/3D -> bg-blue-900/30 ---
                     const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
                       selected
                         ? showFeedback
                           ? correct
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                            // --- Fixed typo bg-blue-900/3D -> /30 ---
                             : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70'
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
                         : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
@@ -257,7 +319,7 @@ export default function IntroToRigidTransformationsSlide2() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      // --- Fixed typo bg-slate-800/3D -> /30 ---
+                      // --- TYPO FIX: bg-slate-800/3D -> bg-slate-800/30 ---
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
                           ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700'

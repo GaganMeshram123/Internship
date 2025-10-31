@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
@@ -6,89 +6,38 @@ import { QuizRenderer, QuizConfig } from '../../../common-components/QuizRendere
 import { useThemeContext } from '@/lib/ThemeContext';
 
 // Object Components
-const SpongeComponent = ({ size = 40, compressed = false }: { size?: number; compressed?: boolean }) => (
-  <motion.div 
-    className="bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-lg relative border-2 border-yellow-600"
+const SpongeComponent = ({ size = 40 }: { size?: number }) => (
+  <div
+    className="rounded-md bg-gradient-to-br from-yellow-300 to-yellow-500 border-2 border-yellow-600"
     style={{ 
-      width: compressed ? size * 0.7 : size, 
-      height: size 
-    }}
-    animate={{ 
-      width: compressed ? size * 0.7 : size,
-      scaleY: compressed ? 0.8 : 1
-    }}
-    transition={{ duration: 0.5 }}
-  >
-    {/* Sponge holes */}
-    {[...Array(6)].map((_, i) => (
-      <div
-        key={i}
-        className="absolute bg-yellow-100 rounded-full"
-        style={{
-          width: compressed ? 3 : 4,
-          height: compressed ? 3 : 4,
-          top: `${20 + (i % 2) * 30}%`,
-          left: `${15 + Math.floor(i / 2) * 25}%`
-        }}
-      />
-    ))}
-  </motion.div>
-);
-
-const RubberBandComponent = ({ size = 40, stretched = false }: { size?: number; stretched?: boolean }) => (
-  <motion.div 
-    className="bg-gradient-to-r from-red-400 to-red-600 rounded-full border-2 border-red-700"
-    style={{ 
-      width: stretched ? size * 1.5 : size, 
-      height: size * 0.3 
-    }}
-    animate={{ 
-      width: stretched ? size * 1.5 : size
-    }}
-    transition={{ duration: 0.5 }}
-  >
-    <div className="absolute inset-1 bg-gradient-to-r from-red-300 to-red-500 rounded-full"></div>
-  </motion.div>
-);
-
-const ClayComponent = ({ size = 40, deformed = false }: { size?: number; deformed?: boolean }) => (
-  <motion.div 
-    className="bg-gradient-to-br from-orange-600 to-orange-800 relative border-2 border-orange-900"
-    style={{ 
-      width: size, 
+      width: size * 1.5, 
       height: size,
-      borderRadius: deformed ? '20% 80% 60% 40%' : '10px'
+      // Add some 'pores'
+      backgroundImage: 'radial-gradient(circle at 10px 10px, rgba(0,0,0,0.1) 1px, transparent 1px), radial-gradient(circle at 30px 25px, rgba(0,0,0,0.1) 1px, transparent 1px), radial-gradient(circle at 50px 15px, rgba(0,0,0,0.1) 1px, transparent 1px)',
+      backgroundSize: '100% 100%',
     }}
-    animate={{ 
-      borderRadius: deformed ? '20% 80% 60% 40%' : '10px',
-      scaleX: deformed ? 1.2 : 1,
-      scaleY: deformed ? 0.8 : 1
-    }}
-    transition={{ duration: 0.5 }}
-  >
-    <div className="absolute inset-2 bg-gradient-to-br from-orange-500 to-orange-700 rounded"></div>
-  </motion.div>
+  />
 );
 
-const HandPressComponent = ({ size = 40 }: { size?: number }) => (
-  <div 
-    className="bg-gradient-to-br from-orange-300 to-orange-500 rounded-lg relative border-2 border-orange-600"
-    style={{ width: size, height: size * 0.8 }}
-  >
-    <div className="absolute inset-1 bg-gradient-to-br from-orange-200 to-orange-400 rounded"></div>
-    {/* Fingers */}
-    <div className="absolute -top-2 left-1 w-1.5 h-3 bg-gradient-to-t from-orange-400 to-orange-300 rounded-t"></div>
-    <div className="absolute -top-2.5 left-2.5 w-1.5 h-4 bg-gradient-to-t from-orange-400 to-orange-300 rounded-t"></div>
-    <div className="absolute -top-2.5 left-4 w-1.5 h-4 bg-gradient-to-t from-orange-400 to-orange-300 rounded-t"></div>
-    <div className="absolute -top-2 left-5.5 w-1.5 h-3 bg-gradient-to-t from-orange-400 to-orange-300 rounded-t"></div>
-  </div>
+const RubberBandComponent = ({ size = 40 }: { size?: number }) => (
+  <div
+    className="rounded-full bg-transparent border-4 border-red-500"
+    style={{ width: size * 1.8, height: size * 0.8 }}
+  />
 );
+
+const ClayComponent = ({ size = 40 }: { size?: number }) => (
+  <div
+    className="rounded-full bg-gradient-to-br from-orange-500 to-orange-700 border-2 border-orange-800"
+    style={{ width: size, height: size }}
+  />
+);
+
 
 // Interactive Animation Component for Force Changing Shape
-function ForceShapeDemo() {
+function ForceShapeChangeDemo() {
   const [activeDemo, setActiveDemo] = useState<string>('');
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
-  const [objectState, setObjectState] = useState<boolean>(false);
   const { isDarkMode } = useThemeContext();
 
   const demos = [
@@ -96,62 +45,86 @@ function ForceShapeDemo() {
       id: 'sponge',
       name: 'Squeeze Sponge',
       object: 'sponge',
+      force: 'Hands',
       action: 'Squeeze',
-      description: 'Squeezing a sponge makes it thinner.',
-      component: SpongeComponent
+      description: "When you squeeze a sponge, the force from your hands compresses it, making it thinner."
     },
     {
-      id: 'rubber',
+      id: 'band',
       name: 'Stretch Rubber Band',
-      object: 'rubber',
+      object: 'band',
+      force: 'Fingers',
       action: 'Stretch',
-      description: 'Stretching a rubber band makes it longer.',
-      component: RubberBandComponent
+      description: "When you pull a rubber band, the force stretches it, making it longer."
     },
     {
       id: 'clay',
       name: 'Press Clay',
       object: 'clay',
+      force: 'Hand',
       action: 'Press',
-      description: 'Pressing clay or dough changes its shape.',
-      component: ClayComponent
+      description: "When you press on clay, the force deforms it, changing its shape."
     }
   ];
 
   const startAnimation = (demoId: string) => {
     setActiveDemo(demoId);
     setIsAnimating(true);
-    setObjectState(false);
     
-    // Change shape after 1 second
-    setTimeout(() => setObjectState(true), 1000);
-    
-    // Reset animation after 4 seconds
+    // Reset animation after 3 seconds
     setTimeout(() => {
       setIsAnimating(false);
-      setActiveDemo('');
-      setObjectState(false);
-    }, 4000);
+      // Keep activeDemo set to show the description
+    }, 3000);
   };
 
-  const renderObject = (demo: any, isChanged: boolean) => {
-    const Component = demo.component;
-    switch (demo.id) {
+  const renderObject = (objectType: string, size: number = 50) => {
+    switch (objectType) {
       case 'sponge':
-        return <Component size={60} compressed={isChanged} />;
-      case 'rubber':
-        return <Component size={60} stretched={isChanged} />;
+        return <SpongeComponent size={size} />;
+      case 'band':
+        return <RubberBandComponent size={size} />;
       case 'clay':
-        return <Component size={60} deformed={isChanged} />;
+        return <ClayComponent size={size} />;
       default:
         return <div className="w-12 h-12 bg-gray-400 rounded"></div>;
     }
   };
 
+  // Determine animation properties based on active demo
+  const getAnimationProps = () => {
+    const baseProps = { x: 120 }; // Keep it centered
+    if (!isAnimating) return baseProps;
+
+    switch (activeDemo) {
+      case 'sponge':
+        return { ...baseProps, scaleY: 0.5, scaleX: 1.2, transition: { duration: 1.5, ease: "easeInOut" } };
+      case 'band':
+        return { ...baseProps, width: 250, transition: { duration: 1.5, ease: "easeInOut" } };
+      case 'clay':
+        return { ...baseProps, height: 40, scaleX: 1.5, borderRadius: '30%', transition: { duration: 1.5, ease: "easeInOut" } };
+      default:
+        return baseProps;
+    }
+  };
+
+  const getObjectInitialProps = () => {
+    switch (activeDemo) {
+      case 'sponge':
+        return { x: 120, scaleY: 1, scaleX: 1 };
+      case 'band':
+        return { x: 120, width: 100 };
+      case 'clay':
+        return { x: 120, height: 60, scaleX: 1, borderRadius: '50%' };
+      default:
+        return { x: 120 };
+    }
+  };
+
   return (
     <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-      <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Interactive Shape Change Demonstrations</h3>
-      <p className="text-sm mb-4 text-slate-600 dark:text-slate-400">Click on any material to see how force changes its shape!</p>
+      <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Interactive Shape Change</h3>
+      <p className="text-sm mb-4 text-slate-600 dark:text-slate-400">Click on an example to see force change its shape!</p>
       
       {/* Demo Buttons */}
       <div className="grid grid-cols-1 gap-3 mb-6">
@@ -162,13 +135,13 @@ function ForceShapeDemo() {
             disabled={isAnimating}
             className={`p-4 rounded-lg border-2 transition-all text-left ${
               activeDemo === demo.id
-                ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/30'
-                : 'border-slate-300 dark:border-slate-600 hover:border-orange-300'
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                : 'border-slate-300 dark:border-slate-600 hover:border-blue-300'
             } ${isAnimating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}`}
           >
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-12 h-12">
-                {demo.component && <demo.component size={32} />}
+                {renderObject(demo.object, 32)}
               </div>
               <div>
                 <div className="font-medium">{demo.name}</div>
@@ -179,146 +152,78 @@ function ForceShapeDemo() {
         ))}
       </div>
 
-       {/* Animation Area */}
-      {<div className="h-32 bg-slate-50 dark:bg-slate-700 rounded-lg relative overflow-hidden border-2 border-dashed border-slate-300 dark:border-slate-600">
+      {/* Animation Area */}
+      <div className="h-32 bg-slate-50 dark:bg-slate-700 rounded-lg relative overflow-hidden border-2 border-dashed border-slate-300 dark:border-slate-600">
         {activeDemo ? (
           <div className="h-full flex items-center justify-center">
-            {/* Object being changed */}
-            <div className="flex items-center justify-center">
-              {renderObject(demos.find(d => d.id === activeDemo)!, objectState)}
-            </div>
-
-            {/* Force Application */}
+            {/* Force Arrow */}
             <AnimatePresence>
               {isAnimating && (
                 <motion.div
-                  className="absolute top-4 left-4 flex items-center z-10"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  className="absolute left-4 flex items-center z-10"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <HandPressComponent size={32} />
-                  <div className="ml-2">
-                    <span className="text-lg font-semibold text-orange-600 dark:text-orange-400">
-                      {demos.find(d => d.id === activeDemo)?.action.toUpperCase()}!
-                    </span>
+                  <div className="flex items-center">
+                    <span className="text-lg font-semibold text-red-600 dark:text-red-400 mr-2">FORCE</span>
+                    <svg width="60" height="20">
+                      <defs>
+                        <marker id="arrowhead-force-shape" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                          <polygon points="0 0, 10 3, 0 6" fill="#dc2626" />
+                        </marker>
+                      </defs>
+                      <line x1="5" y1="10" x2="50" y2="10" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead-force-shape)" />
+                    </svg>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Force arrows */}
+            {/* Deforming Object */}
+            <motion.div
+              className="absolute flex items-center justify-center"
+              initial={getObjectInitialProps()}
+              animate={getAnimationProps()}
+              transition={{ duration: isAnimating ? 1.5 : 0.5, ease: "easeInOut" }}
+            >
+              {renderObject(demos.find(d => d.id === activeDemo)?.object || '', 60)}
+            </motion.div>
+            
+            {/* Additional force arrow for squeeze/stretch */}
             <AnimatePresence>
-              {isAnimating && objectState && (
-                <>
-                  {activeDemo === 'sponge' && (
-                    <motion.div
-                      className="absolute top-1/2 left-1/3 transform -translate-y-1/2"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      <svg width="40" height="20">
-                        <defs>
-                          <marker
-                            id="arrowhead-compress"
-                            markerWidth="10"
-                            markerHeight="10"
-                            refX="9"
-                            refY="3"
-                            orient="auto"
-                            markerUnits="strokeWidth"
-                          >
-                            <polygon points="0 0, 10 3, 0 6" fill="#ea580c" />
-                          </marker>
-                        </defs>
-                        <line x1="5" y1="10" x2="30" y2="10" stroke="#ea580c" strokeWidth="3" markerEnd="url(#arrowhead-compress)" />
-                        <line x1="35" y1="10" x2="10" y2="10" stroke="#ea580c" strokeWidth="3" markerEnd="url(#arrowhead-compress)" />
-                      </svg>
-                    </motion.div>
-                  )}
-                  
-                  {activeDemo === 'rubber' && (
-                    <motion.div
-                      className="absolute top-1/2 left-1/4 right-1/4 transform -translate-y-1/2"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      <svg width="100%" height="20">
-                        <defs>
-                          <marker
-                            id="arrowhead-stretch"
-                            markerWidth="10"
-                            markerHeight="10"
-                            refX="9"
-                            refY="3"
-                            orient="auto"
-                            markerUnits="strokeWidth"
-                          >
-                            <polygon points="0 0, 10 3, 0 6" fill="#ea580c" />
-                          </marker>
-                        </defs>
-                        <line x1="20%" y1="10" x2="5%" y2="10" stroke="#ea580c" strokeWidth="3" markerEnd="url(#arrowhead-stretch)" />
-                        <line x1="80%" y1="10" x2="95%" y2="10" stroke="#ea580c" strokeWidth="3" markerEnd="url(#arrowhead-stretch)" />
-                      </svg>
-                    </motion.div>
-                  )}
-                  
-                  {activeDemo === 'clay' && (
-                    <motion.div
-                      className="absolute top-1/4 left-1/2 transform -translate-x-1/2"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      <svg width="40" height="40">
-                        <defs>
-                          <marker
-                            id="arrowhead-press"
-                            markerWidth="10"
-                            markerHeight="10"
-                            refX="9"
-                            refY="3"
-                            orient="auto"
-                            markerUnits="strokeWidth"
-                          >
-                            <polygon points="0 0, 10 3, 0 6" fill="#ea580c" />
-                          </marker>
-                        </defs>
-                        <line x1="20" y1="5" x2="20" y2="30" stroke="#ea580c" strokeWidth="3" markerEnd="url(#arrowhead-press)" />
-                      </svg>
-                    </motion.div>
-                  )}
-                </>
-              )}
-            </AnimatePresence>
-
-            {/* Shape change indicator */}
-            <AnimatePresence>
-              {isAnimating && objectState && (
+              {isAnimating && (activeDemo === 'sponge' || activeDemo === 'band') && (
                 <motion.div
-                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute right-4 flex items-center z-10"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <div className="px-4 py-2 rounded-full border-2 bg-orange-100 dark:bg-orange-900/50 border-orange-400 text-orange-700 dark:text-orange-300">
-                    <span className="text-sm font-bold">SHAPE CHANGED!</span>
+                  <div className="flex items-center">
+                    <svg width="60" height="20">
+                      <defs>
+                        <marker id="arrowhead-force-shape-left" markerWidth="10" markerHeight="10" refX="1" refY="3" orient="auto" markerUnits="strokeWidth">
+                          <polygon points="10 0, 0 3, 10 6" fill="#dc2626" />
+                        </marker>
+                      </defs>
+                      <line x1="10" y1="10" x2="55" y2="10" stroke="#dc2626" strokeWidth="3" /* markerSstart="url(#arrowhead-force-shape-left)" */ />
+                    </svg>
+                    <span className="text-lg font-semibold text-red-600 dark:text-red-400 ml-2">FORCE</span>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
+
           </div>
         ) : (
           <div className="h-full flex items-center justify-center text-slate-500 dark:text-slate-400">
-            <p>Click a material above to see the shape change animation!</p>
+            <p>Click an example above to see the animation!</p>
           </div>
         )}
       </div>
-}
+
       {/* Description for active demo */}
       <AnimatePresence>
         {activeDemo && (
@@ -326,33 +231,32 @@ function ForceShapeDemo() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="mt-4 p-4 bg-orange-50 dark:bg-orange-900/30 rounded-lg border-l-4 border-orange-400"
+            className="mt-4 p-4 bg-green-50 dark:bg-green-900/30 rounded-lg border-l-4 border-green-400"
           >
-            <p className="text-orange-800 dark:text-orange-200 font-medium">
+            <p className="text-green-800 dark:text-green-200 font-medium">
               {demos.find(d => d.id === activeDemo)?.description}
             </p>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {isAnimating && (
-        <div className="mt-4 text-center">
-          <motion.p
-            className="text-orange-600 dark:text-orange-400 font-semibold"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 1, repeat: Infinity }}
-          >
-            Watch how force changes shape and size!
-          </motion.p>
-        </div>
-      )}
     </div>
   );
-} 
+}
 
 export default function ForceCanChangeShapeSlide() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const { isDarkMode } = useThemeContext();
+  
+  // Define interactions for this slide
+  const slideInteractions: Interaction[] = [
+    {
+      id: 'force-shape-exploration',
+      conceptId: 'force-shape',
+      conceptName: 'Force and Shape Exploration',
+      type: 'learning',
+      description: 'Understanding how forces can change the size and shape of objects'
+    },
+  ];
   
   // Handle completion of an interaction
   const handleInteractionComplete = (response: InteractionResponse) => {
@@ -366,58 +270,58 @@ export default function ForceCanChangeShapeSlide() {
   const quizConfig: QuizConfig = {
     questions: [
       {
-        id: 'flexible-materials',
-        question: 'Which type of materials can easily change shape when force is applied?',
-        options: [
-          'Hard and rigid materials like rocks',
-          'Flexible or soft materials like sponges and clay',
-          'All materials change shape equally',
-          'No materials can change shape'
-        ],
-        correctAnswer: 'Flexible or soft materials like sponges and clay',
-        explanation: 'Flexible or soft materials like sponges, rubber bands, and clay can easily change their shape when force is applied because their particles can move and rearrange more easily than in rigid materials.'
-      },
-      {
-        id: 'sponge-compression',
+        id: 'shape-change-sponge',
         question: 'What happens to a sponge when you squeeze it?',
         options: [
-          'It becomes longer',
-          'It becomes thinner and compressed',
-          'It changes color',
-          'Nothing happens'
+          'It gets heavier',
+          'It changes shape and gets thinner',
+          'It starts moving',
+          'It changes color'
         ],
-        correctAnswer: 'It becomes thinner and compressed',
-        explanation: 'When you squeeze a sponge, you apply force that compresses it, making it thinner and smaller. The sponge\'s flexible structure allows it to compress and then return to its original shape when released.'
+        correctAnswer: 'It changes shape and gets thinner',
+        explanation: 'Squeezing is a compression force. This force pushes the parts of the soft sponge closer together, changing its shape and making it thinner.'
       },
       {
-        id: 'rubber-band-stretch',
-        question: 'When you stretch a rubber band, what changes about it?',
+        id: 'shape-change-band',
+        question: "Stretching a rubber band is an example of force changing an object's...?",
         options: [
-          'Its color changes',
-          'It becomes longer',
-          'It becomes heavier',
-          'Its temperature increases'
+          '...color',
+          '...weight',
+          '...size (length)',
+          '...temperature'
         ],
-        correctAnswer: 'It becomes longer',
-        explanation: 'When you stretch a rubber band by applying force at both ends, it becomes longer. The elastic material allows it to extend and then return to its original length when the force is removed.'
+        correctAnswer: '...size (length)',
+        explanation: 'The pulling force (tension) causes the rubber band to stretch, which is a change in its size (specifically, its length).'
       },
       {
-        id: 'shape-change-examples',
-        question: 'Which of these is an example of force changing shape?',
+        id: 'shape-change-clay',
+        question: 'Why can force easily change the shape of clay or dough?',
         options: [
-          'A book sitting on a shelf',
-          'Molding clay into a different shape',
-          'A car driving at constant speed',
-          'A light bulb glowing'
+          'Because it is hard',
+          'Because it is flexible or soft',
+          'Because it is heavy',
+          'Because it is hot'
         ],
-        correctAnswer: 'Molding clay into a different shape',
-        explanation: 'Molding clay into a different shape is a perfect example of force changing the shape of an object. Clay is soft and malleable, so applying force can reshape it into various forms.'
+        correctAnswer: 'Because it is flexible or soft',
+        explanation: 'Materials like clay and dough are soft (malleable). This means the bonds between their particles can be easily moved and reformed, allowing force to change their shape permanently.'
+      },
+      {
+        id: 'shape-vs-motion',
+        question: 'Which of these is an example of force causing MOTION, not just changing shape?',
+        options: [
+          'Pressing clay',
+          'Squeezing a sponge',
+          'Kicking a football',
+          'Stretching a band'
+        ],
+        correctAnswer: 'Kicking a football',
+        explanation: 'While pressing, squeezing, and stretching are examples of force changing shape, kicking a football is a clear example of force causing a stationary object to start moving.'
       }
     ],
     title: 'Quick Check',
-    conceptId: 'force-shape-understanding',
+    conceptId: 'force-shape-change-understanding',
     conceptName: 'Force and Shape Change Quick Check',
-    conceptDescription: 'Testing understanding of how forces can change the shape and size of objects',
+    conceptDescription: 'Testing understanding of how forces change shape and size',
     showProgress: true
   };
 
@@ -431,22 +335,23 @@ export default function ForceCanChangeShapeSlide() {
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Force can change the size and shape</h3>
             
             <div className="space-y-4">
-              <div className="bg-orange-50 dark:bg-orange-900/30 p-4 rounded-lg border-l-4 border-orange-400">
-                <p className="text-orange-800 dark:text-orange-200 font-medium text-lg">
-                  Some materials are flexible or soft, so force can easily change their shape or size.
+              <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg border-l-4 border-green-400">
+                <p className="text-green-800 dark:text-green-200 font-medium text-lg">
+                  👉 Some materials are flexible or soft, so force can easily change their shape or size.
                 </p>
               </div>
 
               <div className="space-y-4">
-                <h4 className="font-semibold text-lg text-amber-600 dark:text-amber-400">Examples of Force Changing Shape:</h4>
+                <h4 className="font-semibold text-lg text-orange-600 dark:text-orange-400">Examples of Changing Shape and Size:</h4>
                 
                 <div className="space-y-4">
+                  
                   <div className="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-                    <div className="flex items-center justify-center w-12 h-12 mt-1">
-                      <SpongeComponent size={40} />
+                    <div className="flex items-center justify-center w-12 h-12 mt-1 flex-shrink-0">
+                      <SpongeComponent size={36} />
                     </div>
                     <div>
-                      <p className="font-medium text-lg">Squeezing a Sponge</p>
+                      <p className="font-medium text-lg">Squeezing a sponge</p>
                       <p className="text-slate-600 dark:text-slate-400">
                         Squeezing a sponge makes it thinner.
                       </p>
@@ -454,11 +359,11 @@ export default function ForceCanChangeShapeSlide() {
                   </div>
 
                   <div className="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-                    <div className="flex items-center justify-center w-12 h-12 mt-1">
-                      <RubberBandComponent size={40} />
+                    <div className="flex items-center justify-center w-12 h-12 mt-1 flex-shrink-0">
+                      <RubberBandComponent size={36} />
                     </div>
                     <div>
-                      <p className="font-medium text-lg">Stretching a Rubber Band</p>
+                      <p className="font-medium text-lg">Stretching a rubber band</p>
                       <p className="text-slate-600 dark:text-slate-400">
                         Stretching a rubber band makes it longer.
                       </p>
@@ -466,57 +371,25 @@ export default function ForceCanChangeShapeSlide() {
                   </div>
 
                   <div className="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-                    <div className="flex items-center justify-center w-12 h-12 mt-1">
-                      <ClayComponent size={40} />
+                    <div className="flex items-center justify-center w-12 h-12 mt-1 flex-shrink-0">
+                      <ClayComponent size={36} />
                     </div>
                     <div>
-                      <p className="font-medium text-lg">Pressing Clay or Dough</p>
+                      <p className="font-medium text-lg">Pressing clay or dough</p>
                       <p className="text-slate-600 dark:text-slate-400">
                         Pressing clay or dough changes its shape.
                       </p>
                     </div>
                   </div>
+
                 </div>
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2 text-blue-800 dark:text-blue-200">Key Understanding:</h4>
                 <p className="text-blue-700 dark:text-blue-300">
-                  Different materials respond differently to force. <strong>Flexible materials</strong> like sponges, rubber, and clay can change shape easily, while <strong>rigid materials</strong> like rocks and metals resist shape changes.
+                  Force doesn't just move things; it can also **deform** them. Applying force can compress (squeeze), stretch (pull), or bend an object, changing its dimensions or form.
                 </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Material Types Visualization */}
-          <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl p-6 shadow-lg`}>
-            <h4 className="text-lg font-semibold mb-4 text-purple-600 dark:text-purple-400">Types of Materials</h4>
-            
-            <div className="space-y-4">
-              <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                <h5 className="font-semibold mb-2 text-green-800 dark:text-green-200">Flexible Materials</h5>
-                <p className="text-green-700 dark:text-green-300 mb-2">
-                  <strong>Easy to change shape:</strong>
-                </p>
-                <div className="flex items-center gap-4">
-                  <SpongeComponent size={30} />
-                  <RubberBandComponent size={30} />
-                  <ClayComponent size={30} />
-                  <span className="text-sm">Sponge, Rubber, Clay</span>
-                </div>
-              </div>
-              
-              <div className="p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
-                <h5 className="font-semibold mb-2 text-red-800 dark:text-red-200">Rigid Materials</h5>
-                <p className="text-red-700 dark:text-red-300 mb-2">
-                  <strong>Resist shape changes:</strong>
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 bg-gray-600 rounded border-2 border-gray-800"></div>
-                  <div className="w-8 h-8 bg-amber-800 rounded border-2 border-amber-900"></div>
-                  <div className="w-8 h-8 bg-blue-800 rounded border-2 border-blue-900"></div>
-                  <span className="text-sm">Metal, Wood, Plastic</span>
-                </div>
               </div>
             </div>
           </div>
@@ -524,7 +397,7 @@ export default function ForceCanChangeShapeSlide() {
 
         {/* Right Column - Interactive Animation and Quiz */}
         <div className="space-y-6">
-          <ForceShapeDemo />
+          <ForceShapeChangeDemo />
           
           <QuizRenderer
             config={quizConfig}
@@ -538,9 +411,9 @@ export default function ForceCanChangeShapeSlide() {
   return (
     <SlideComponentWrapper 
       slideId="force-can-change-shape"
-      slideTitle="Force can change the size and shape"
+      slideTitle="Force can change size and shape"
       moduleId="6-icse-physics-force"
-      submoduleId="introduction"
+      submoduleId="effects-of-force"
       interactions={localInteractions}
     >
       {slideContent}

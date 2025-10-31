@@ -4,6 +4,98 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
+// --- Re-usable variants for definition lists ---
+const listContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2, // A bit slower for steps
+    },
+  },
+};
+
+const listItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+    },
+  },
+};
+
+// --- NEW Animation Component for the Quiz ---
+const TransformationQuizAnimation = ({ type }: { type: 'translation' | 'rotation' | 'reflection' | 'dilation' }) => {
+  const { isDarkMode } = useThemeContext();
+  const preImageColor = isDarkMode ? "rgb(37 99 235 / 0.5)" : "rgb(59 130 246 / 0.5)"; // Blue with opacity
+  const imageColor = "rgb(34 197 94)"; // Green
+  
+  // Using an L-shape to make orientation changes (rotation/reflection) obvious
+  const shapePath = "M 20 20 L 80 20 L 80 40 L 40 40 L 40 80 L 20 80 Z";
+  
+  const animationProps = {
+    translation: {
+      animate: { x: 80, y: 20 },
+      transition: { type: 'spring', stiffness: 50, duration: 1 }
+    },
+    rotation: {
+      animate: { rotate: 90, scale: 1 }, // Added scale to fix framer-motion bug
+      transition: { type: 'spring', stiffness: 50, duration: 1 }
+    },
+    reflection: {
+      animate: { scaleX: -1 },
+      transition: { type: 'spring', stiffness: 50, duration: 1 }
+    },
+    dilation: {
+      animate: { scale: 1.5 },
+      transition: { type: 'spring', stiffness: 50, duration: 1 }
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center mb-4 w-full h-48 bg-slate-100 dark:bg-slate-700/60 rounded-lg overflow-hidden">
+      <svg width="200" height="150" viewBox="0 0 200 150">
+        {/* Center crosshair */}
+        <line x1="100" y1="0" x2="100" y2="150" stroke={isDarkMode ? "#475569" : "#cbd5e1"} strokeWidth="1" />
+        <line x1="0" y1="75" x2="200" y2="75" stroke={isDarkMode ? "#475569" : "#cbd5e1"} strokeWidth="1" />
+        
+        <g transform="translate(60, 30)"> {/* Move group to a better starting position */}
+          {/* Pre-Image (Blue) */}
+          <path d={shapePath} fill={preImageColor} />
+          
+          {/* Animated Image (Green) */}
+          <motion.path
+            d={shapePath}
+            fill={imageColor}
+            transformOrigin="20 20" // Set transform origin to the corner of the shape
+            initial={{ x: 0, y: 0, rotate: 0, scale: 1, scaleX: 1 }}
+            animate={animationProps[type].animate}
+            transition={animationProps[type].transition}
+          />
+
+          {/* Reflection Line (only for reflection) */}
+          {type === 'reflection' && (
+             <motion.line 
+                x1="-10" y1="0" x2="-10" y2="100" 
+                stroke={isDarkMode ? "#fff" : "#000"} 
+                strokeWidth="2"
+                strokeDasharray="4 4"
+                initial={{opacity: 0}}
+                animate={{opacity: 0.5}}
+                transition={{delay: 0.2}}
+             />
+          )}
+        </g>
+      </svg>
+    </div>
+  );
+};
+// --- END of Animation Component ---
+
+
 export default function IntroToRigidTransformationsSlide5() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -30,7 +122,7 @@ export default function IntroToRigidTransformationsSlide5() {
     options: string[];
     correctAnswer: string;
     explanation: string;
-    image: string; // Add image property
+    animationType: 'translation' | 'rotation' | 'reflection' | 'dilation'; // Use animationType
   }
 
   const questions: QuizQuestion[] = [
@@ -40,7 +132,7 @@ export default function IntroToRigidTransformationsSlide5() {
       options: ['Translation (Slide)', 'Rotation (Turn)', 'Reflection (Flip)', 'Dilation (Resize)'],
       correctAnswer: 'Translation (Slide)',
       explanation: 'Correct! The shape just slid to a new position. That\'s a Translation.',
-      image: 'https://via.placeholder.com/400x250.png?text=Translation+Example'
+      animationType: 'translation' // Changed from image
     },
     {
       id: 'identify-q2-rotation',
@@ -48,7 +140,7 @@ export default function IntroToRigidTransformationsSlide5() {
       options: ['Translation (Slide)', 'Rotation (Turn)', 'Reflection (Flip)', 'Dilation (Resize)'],
       correctAnswer: 'Rotation (Turn)',
       explanation: 'Correct! The shape turned around a center point. That\'s a Rotation.',
-      image: 'https://via.placeholder.com/400x250.png?text=Rotation+Example'
+      animationType: 'rotation' // Changed from image
     },
     {
       id: 'identify-q3-reflection',
@@ -56,15 +148,15 @@ export default function IntroToRigidTransformationsSlide5() {
       options: ['Translation (Slide)', 'Rotation (Turn)', 'Reflection (Flip)', 'Dilation (Resize)'],
       correctAnswer: 'Reflection (Flip)',
       explanation: 'Correct! The shape flipped over a "mirror line." That\'s a Reflection.',
-      image: 'https://via.placeholder.com/400x250.png?text=Reflection+Example'
+      animationType: 'reflection' // Changed from image
     },
     {
       id: 'identify-q4-dilation',
       question: 'Name This Move: The blue shape moves to become the green shape.',
       options: ['Translation (Slide)', 'Rotation (Turn)', 'Reflection (Flip)', 'Dilation (Resize)'],
       correctAnswer: 'Dilation (Resize)',
-      explanation: 'Correct! The shape changed size (it got smaller). That\'s a Dilation.',
-      image: 'https://via.placeholder.com/400x250.png?text=Dilation+Example'
+      explanation: 'Correct! The shape changed size. That\'s a Dilation.',
+      animationType: 'dilation' // Changed from image
     }
   ];
   
@@ -120,7 +212,6 @@ export default function IntroToRigidTransformationsSlide5() {
 
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      {/* --- UPDATED to 1 column for small screens, 2 for medium and up --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto ">
         
         {/* Left Column - Content */}
@@ -135,38 +226,42 @@ export default function IntroToRigidTransformationsSlide5() {
             </p>
           </div>
 
-          {/* --- UPDATED "HOW TO" CHEAT SHEET --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">How to Tell the Difference</h3>
             <p className="text-lg leading-relaxed">Ask yourself these questions in order:</p>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
+            {/* --- ANIMATED LIST --- */}
+            <motion.ul
+              className="mt-4 space-y-3 text-lg"
+              variants={listContainerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.li className="flex items-start" variants={listItemVariants}>
                 <span className="font-bold text-blue-500 mr-2">1.</span>
                 <div>
                   <strong>Did the size change?</strong>
                   <div className="text-base text-slate-600 dark:text-slate-400"><strong>YES</strong> → It's a <strong>Dilation (Resize)</strong> 📏</div>
                   <div className="text-base text-slate-600 dark:text-slate-400"><strong>NO</strong> → Go to question 2...</div>
                 </div>
-              </li>
-              <li className="flex items-start">
+              </motion.li>
+              <motion.li className="flex items-start" variants={listItemVariants}>
                 <span className="font-bold text-blue-500 mr-2">2.</span>
                 <div>
                   <strong>Did the orientation (facing) change?</strong>
                   <div className="text-base text-slate-600 dark:text-slate-400"><strong>NO</strong> → It's a <strong>Translation (Slide)</strong> ➡️</div>
                   <div className="text-base text-slate-600 dark:text-slate-400"><strong>YES</strong> → Go to question 3...</div>
                 </div>
-              </li>
-              <li className="flex items-start">
+              </motion.li>
+              <motion.li className="flex items-start" variants={listItemVariants}>
                 <span className="font-bold text-blue-500 mr-2">3.</span>
                 <div>
                   <strong>Is it a mirror image?</strong>
                   <div className="text-base text-slate-600 dark:text-slate-400"><strong>YES</strong> → It's a <strong>Reflection (Flip)</strong> 🪞</div>
                   <div className="text-base text-slate-600 dark:text-slate-400"><strong>NO</strong> → It's a <strong>Rotation (Turn)</strong> 🔄</div>
                 </div>
-              </li>
-            </ul>
+              </motion.li>
+            </motion.ul>
           </div>
-          {/* --- END UPDATED CHEAT SHEET --- */}
         </div>
 
         {/* Right Column - Image and Quiz */}
@@ -179,7 +274,6 @@ export default function IntroToRigidTransformationsSlide5() {
               </div>
             </div>
 
-            {/* --- Progress Bar (COLOR UPDATED) --- */}
            { <div className="flex space-x-2 mb-6">
               {questions.map((_, index) => (
                 <div
@@ -188,7 +282,7 @@ export default function IntroToRigidTransformationsSlide5() {
                     index === currentQuestionIndex
                       ? 'bg-blue-500' // Active
                       : questionsAnswered[index]
-                      ? 'bg-blue-300 dark:bg-blue-800' // Answered (REMOVED GREEN)
+                      ? 'bg-blue-300 dark:bg-blue-800' // Answered
                       : 'bg-slate-300 dark:bg-slate-600' // Unanswered
                   }`}
                 />
@@ -197,34 +291,62 @@ export default function IntroToRigidTransformationsSlide5() {
 
             {!isQuizComplete ? (
               <>
-                {/* Image for the current question */}
-                {/* <div className="flex justify-center mb-4">
-                  <img 
-                    src={questions[currentQuestionIndex].image}
-                    alt="Transformation example for quiz"
-                    className="max-w-full h-auto rounded-lg shadow-md"
-                    style={{ width: '100%', maxWidth: '400px', height: 'auto' }}
-                  />
-                </div> */}
+                {/* --- ANIMATION REPLACES IMAGE --- */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentQuestionIndex} // This makes it re-animate when the question changes
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <TransformationQuizAnimation 
+                      type={questions[currentQuestionIndex].animationType}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+                {/* --- END OF REPLACEMENT --- */}
               
                 <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
-                {/* --- Answer Options (COLORS UPDATED) --- */}
+                
+                {/* --- QUIZ BUTTONS (with animations) --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
                     const correct = option === questions[currentQuestionIndex].correctAnswer;
                     
-                    // --- UPDATED CLASSNAME LOGIC TO REMOVE RED/GREEN ---
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT (now blue)
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT (now slate/neutral)
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected (no feedback)
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
+                    // --- Animation and Styling Logic ---
+                    const isSelectedCorrect = showFeedback && selected && correct;
+                    const isSelectedIncorrect = showFeedback && selected && !correct;
+                    const isCorrectUnselected = showFeedback && !selected && correct;
+
+                    let animateProps = {};
+                    if (isSelectedCorrect) {
+                      animateProps = { scale: [1, 1.05, 1], transition: { duration: 0.3 } };
+                    } else if (isSelectedIncorrect) {
+                      animateProps = { x: [0, -5, 5, -5, 5, 0], transition: { duration: 0.4, ease: "easeInOut" } };
+                    }
+                    
+                    let buttonStyle = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                    if (showFeedback) {
+                      if (isSelectedCorrect) {
+                        buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30';
+                      } else if (isSelectedIncorrect) {
+                        buttonStyle = 'border-red-500 bg-red-50 dark:bg-red-900/30';
+                      } else if (isCorrectUnselected) {
+                        buttonStyle = 'border-green-500 bg-green-50 dark:bg-green-900/30 opacity-70';
+                      } else {
+                        buttonStyle = 'border-slate-300 dark:border-slate-600 opacity-50'; // Other incorrect
+                      }
+                    } else if (selected) {
+                      buttonStyle = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // Selected, pre-submit
+                    }
+
+                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${buttonStyle} ${
+                      disabled && !selected ? 'opacity-50' : ''
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    // --- END of new logic ---
 
                     return (
                       <motion.button
@@ -232,6 +354,7 @@ export default function IntroToRigidTransformationsSlide5() {
                         onClick={() => handleQuizAnswer(option)}
                         disabled={disabled}
                         className={className}
+                        animate={animateProps} // Apply shake or pop animation
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
                       >
@@ -247,14 +370,13 @@ export default function IntroToRigidTransformationsSlide5() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      // --- UPDATED FEEDBACK BOX COLORS (REMOVED RED/GREEN) ---
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct (blue)
-                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect (slate)
+                          ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700'
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
+                      <div className="text-lg text-slate-700 dark:text-slate-300 mb-4">
                         {questions[currentQuestionIndex].explanation}
                       </div>
                       <motion.button
