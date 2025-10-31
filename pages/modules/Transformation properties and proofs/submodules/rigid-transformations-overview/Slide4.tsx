@@ -352,7 +352,7 @@ export default function Slide4() {
                                     You scored {score} out of {questions.length}
                                 </div>
                                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                                    {score === questions.length ? 'You've pieced the puzzle together!' : 'Great finish!'}
+                                    {score === questions.length ? 'Youve pieced the puzzle together!' : 'Great finish!'}
                                 </div>
                             </motion.div>
                         )}

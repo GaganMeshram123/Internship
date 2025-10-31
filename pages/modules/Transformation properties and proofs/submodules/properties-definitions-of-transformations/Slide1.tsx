@@ -335,7 +335,7 @@ export default function Slide1() {
                                     You scored {score} out of {questions.length}
                                 </div>
                                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                                    {score === questions.length ? 'You're on the right path!' : 'Good job!'}
+                                    {score === questions.length ? 'Youre on the right path!' : 'Good job!'}
                                 </div>
                             </motion.div>
                         )}

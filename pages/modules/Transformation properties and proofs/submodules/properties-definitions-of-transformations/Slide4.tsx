@@ -105,14 +105,14 @@ const IdentifyTransformAnimation: React.FC = () => {
 
 
 export default function Slide4() {
-    const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [selectedAnswer, setSelectedAnswer] = useState<string>('');
-    const [showFeedback, setShowFeedback] = useState(false);
-    const [questionsAnswered, setQuestionsAnswered] =B(boolean[] = [false, false]);
-    const [score, setScore] = useState(0);
-    const [isQuizComplete, setIsQuizComplete] = useState(false);
-    const { isDarkMode } = useThemeContext();
+  const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [score, setScore] = useState(0);
+  const [isQuizComplete, setIsQuizComplete] = useState(false);
+  const { isDarkMode } = useThemeContext();
 
     const slideInteractions: Interaction[] = [
         {

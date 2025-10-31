@@ -247,7 +247,7 @@ export default function Slide3() {
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Summary of Properties</h3>
                         <p className="text-lg leading-relaxed">
                            Here is the complete breakdown for rigid transformations.
-                        </a>
+                        </p>
                         {/* A simple table is clearer here */}
                         <table className="w-full mt-4 text-left border-collapse">
                             <thead>
@@ -256,7 +256,7 @@ export default function Slide3() {
                                     <th className="p-2 border-b-2 dark:border-slate-600 text-center">Preserves Distance?</th>
                                     <th className="p-2 border-b-2 dark:border-slate-600 text-center">Preserves Angles?</th>
                                     <th className="p-2 border-b-2 dark:border-slate-600 text-center">Preserves Orientation?</th>
-                                tr>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr className="border-b dark:border-slate-700">

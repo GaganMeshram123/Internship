@@ -1,92 +1,99 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
-const TransformationTypesAnimation: React.FC = () => {
+// --- NEW ANIMATION COMPONENT ---
+const TransformationCycleAnimation: React.FC = () => {
     const svgWidth = 400;
     const svgHeight = 300;
-    const baseTriangle = "M 150 180 L 180 130 L 210 180 Z";
-    const delay = 0.5;
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-    const items = [
-        { 
-            id: 'pre-image', 
-            d: baseTriangle, 
-            transform: "translate(0, 0)", 
-            label: "Pre-image", 
-            className: "fill-blue-500", 
-            textClass: "fill-blue-300",
-            delay: 0
+    const baseTriangle = "M 180 150 L 220 150 L 200 110 Z"; // Centered triangle
+
+    const transformations = [
+        {
+            label: "Pre-image",
+            transform: "translate(0, 0)",
+            className: "fill-blue-500",
+            textClass: "fill-blue-300"
         },
-        { 
-            id: 'translation', 
-            d: baseTriangle, 
-            transform: "translate(100, -20)", 
-            label: "Translation", 
+        {
+            label: "Translation (Rigid)",
+            transform: "translate(50, 50)",
             className: "fill-green-500",
-            textClass: "fill-green-300",
-            delay: delay * 1
+            textClass: "fill-green-300"
         },
-        { 
-            id: 'rotation', 
-            d: baseTriangle, 
-            transform: "rotate(-90, 180, 155) translate(-70, -150)", 
-            label: "Rotation", 
+        {
+            label: "Rotation (Rigid)",
+            transform: "rotate(120, 200, 130)", // Rotate 120 deg around center
             className: "fill-purple-500",
-            textClass: "fill-purple-300",
-            delay: delay * 2
+            textClass: "fill-purple-300"
         },
-        { 
-            id: 'reflection', 
-            d: baseTriangle, 
-            transform: "scale(1, -1) translate(0, -360)", 
-            label: "Reflection", 
+        {
+            label: "Reflection (Rigid)",
+            transform: "scale(1, -1) translate(0, -260)", // Reflect across y=130
             className: "fill-orange-500",
-            textClass: "fill-orange-300",
-            delay: delay * 3
+            textClass: "fill-orange-300"
         },
-        { 
-            id: 'dilation', 
-            d: baseTriangle, 
-            transform: "scale(1.5) translate(-150, -100)", 
-            label: "Dilation", 
-            className: "fill-red-500",
-            textClass: "fill-red-300",
-            delay: delay * 4
-        },
+        {
+            label: "Dilation (Non-Rigid)",
+            transform: "scale(1.5) translate(-100, -65)", // Scale 1.5 from center (200, 130)
+            className: "fill-red-500", // Non-rigid is red
+            textClass: "fill-red-300" // Non-rigid is red
+        }
     ];
 
+    // Effect to cycle through animations
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % transformations.length);
+        }, 2500); // Change every 2.5 seconds
+
+        return () => clearTimeout(timer); // Cleanup timer
+    }, [currentIndex]);
+
+    const current = transformations[currentIndex];
+
     return (
-        <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+        <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ height: svgHeight }}>
             <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                {items.map(item => (
-                    <g key={item.id}>
+                <AnimatePresence mode="wait">
+                    <motion.g
+                        key={currentIndex}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        {/* Line of Reflection (only show for reflection step) */}
+                        {current.label.includes("Reflection") && (
+                             <motion.line
+                                x1={0} y1={130} x2={svgWidth} y2={130}
+                                className="stroke-slate-400 dark:stroke-slate-500"
+                                strokeWidth="1.5" strokeDasharray="4 4"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                            />
+                        )}
+
                         <motion.path
-                            d={item.d}
-                            transform={item.transform}
-                            className={item.className}
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ opacity: 0.8, scale: 1 }}
-                            transition={{ delay: item.delay, duration: 0.5 }}
+                            d={baseTriangle}
+                            transform={current.transform}
+                            className={current.className}
+                            opacity={0.9}
                         />
                         <motion.text
-                            x={parseFloat(item.transform.match(/translate\(([^,]+),/)?.[1] || "0") + 180}
-                            y={parseFloat(item.transform.match(/translate\([^,]+, ([-0-9.]+)/)?.[1] || "0") + (item.id === 'reflection' ? 330 : 160)}
-                            // Basic text positioning (adjust as needed)
-                            transform={item.id === 'rotation' ? 'translate(-100, -130)' : (item.id === 'dilation' ? 'translate(-150, -100) scale(1.5)' : '')}
+                            x={svgWidth / 2}
+                            y={svgHeight - 30} // Position text at the bottom
                             textAnchor="middle"
-                            className={`text-xs font-semibold ${item.textClass}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: item.delay + 0.3, duration: 0.3 }}
+                            className={`text-lg font-semibold ${current.textClass}`}
                         >
-                            {item.label}
+                            {current.label}
                         </motion.text>
-                    </g>
-                ))}
+                    </motion.g>
+                </AnimatePresence>
             </svg>
         </div>
     );
@@ -251,7 +258,8 @@ export default function Slide1() {
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing the Transformations</h3>
-                        <TransformationTypesAnimation />
+                        {/* --- UPDATED COMPONENT --- */}
+                        <TransformationCycleAnimation />
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
                             Notice how translation, rotation, and reflection (rigid) change the position, but dilation (non-rigid) changes the size.
                         </p>

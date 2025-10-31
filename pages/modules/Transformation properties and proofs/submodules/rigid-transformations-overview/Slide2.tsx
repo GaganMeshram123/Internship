@@ -4,7 +4,7 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
+// --- ANIMATION COMPONENT UPDATED ---
 const FindMeasureAnimation: React.FC = () => {
     const [isRevealed, setIsRevealed] = useState(false);
 
@@ -20,43 +20,72 @@ const FindMeasureAnimation: React.FC = () => {
 
     const answerVariants = {
         hidden: { opacity: 0, scale: 0.5 },
-        visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 15 } },
+        visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 15, delay: 0.5 } },
     };
+
+    // Shape to be animated
+    const shapePath = "M 0 0 L 30 0 L 0 40 Z"; // A simple right triangle
 
     return (
         <div 
-            className="w-full flex flex-col justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden cursor-pointer"
+            className="w-full flex flex-col justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden cursor-pointer relative"
+            // We now reveal on click
             onClick={() => setIsRevealed(true)}
+            style={{ height: '220px' }} // Set fixed height for animation
         >
+            {/* Animated shape that moves */}
+            <svg width="100%" height="100%" viewBox="0 0 400 150" className="absolute top-0 left-0" style={{ pointerEvents: 'none' }}>
+                <motion.path
+                    d={shapePath}
+                    className="fill-blue-500 opacity-80"
+                    initial={{ x: 70, y: 60, rotate: 0 }}
+                    animate={isRevealed ? 
+                        { x: 300, y: 60, rotate: -90 } : 
+                        { x: 70, y: 60, rotate: 0 }
+                    }
+                    transition={{ type: 'spring', stiffness: 100, damping: 15, duration: 0.8 }}
+                />
+            </svg>
+
+            {/* Static Boxes (for context) */}
             <motion.div
                 className="flex flex-col md:flex-row items-center justify-around w-full"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
-                {/* Pre-Image */}
-                <motion.div variants={itemVariants} className="bg-blue-100 dark:bg-blue-900/50 p-4 rounded-lg shadow text-center m-2">
+                {/* Pre-Image Box */}
+                <motion.div variants={itemVariants} className="bg-blue-100 dark:bg-blue-900/50 p-4 rounded-lg shadow text-center m-2 z-10">
                     <h4 className="font-semibold text-blue-700 dark:text-blue-300">Pre-Image: Shape $T$</h4>
-                    <p className="font-mono text-slate-800 dark:text-slate-100">Side $S = 8 \text{ cm}$</p>
+                    <p className="font-mono text-slate-800 dark:text-slate-100">Side $S = 8 \\text{  }$</p>
                     <p className="font-mono text-slate-800 dark:text-slate-100">Angle $\angle A = 70^\circ$</p>
                 </motion.div>
 
-                {/* Transformation */}
-                <motion.div variants={itemVariants} className="text-center m-2">
+                {/* Transformation Arrow */}
+                <motion.div variants={itemVariants} className="text-center m-2 z-10">
                     <div className="text-3xl font-bold text-slate-600 dark:text-slate-400">→</div>
                     <p className="text-sm text-slate-500 dark:text-slate-400">(Rigid Transformation)</p>
                 </motion.div>
 
-                {/* Image */}
-                <motion.div variants={itemVariants} className="bg-green-100 dark:bg-green-900/50 p-4 rounded-lg shadow text-center m-2">
+                {/* Image Box */}
+                <motion.div variants={itemVariants} className="bg-green-100 dark:bg-green-900/50 p-4 rounded-lg shadow text-center m-2 z-10">
                     <h4 className="font-semibold text-green-700 dark:text-green-300">Image: Shape $T'$</h4>
                     <p className="font-mono text-slate-800 dark:text-slate-100">
                         Side $S' = $
                         <AnimatePresence mode="wait">
                             {!isRevealed ? (
-                                <motion.span key="q1" {...answerVariants} className="font-bold text-red-500">?</motion.span>
+                                <motion.span 
+                                    key="q1" 
+                                    initial={{ opacity: 1 }} 
+                                    animate={{ opacity: 1 }} 
+                                    exit={answerVariants.hidden} 
+                                    className="font-bold text-red-500">?</motion.span>
                             ) : (
-                                <motion.span key="a1" {...answerVariants} className="font-bold text-green-600 dark:text-green-300">8 cm</motion.span>
+                                <motion.span 
+                                    key="a1" 
+                                    initial={answerVariants.hidden} 
+                                    animate={answerVariants.visible} 
+                                    className="font-bold text-green-600 dark:text-green-300">8 \\text{  }</motion.span>
                             )}
                         </AnimatePresence>
                     </p>
@@ -64,9 +93,18 @@ const FindMeasureAnimation: React.FC = () => {
                         Angle $\angle A' = $
                         <AnimatePresence mode="wait">
                             {!isRevealed ? (
-                                <motion.span key="q2" {...answerVariants} className="font-bold text-red-500">?</motion.span>
+                                <motion.span 
+                                    key="q2" 
+                                    initial={{ opacity: 1 }} 
+                                    animate={{ opacity: 1 }} 
+                                    exit={answerVariants.hidden} 
+                                    className="font-bold text-red-500">?</motion.span>
                             ) : (
-                                <motion.span key="a2" {...answerVariants} className="font-bold text-green-600 dark:text-green-300">70°</motion.span>
+                                <motion.span 
+                                    key="a2" 
+                                    initial={answerVariants.hidden} 
+                                    animate={answerVariants.visible} 
+                                    className="font-bold text-green-600 dark:text-green-300">70°</motion.span>
                             )}
                         </AnimatePresence>
                     </p>
@@ -76,15 +114,15 @@ const FindMeasureAnimation: React.FC = () => {
             <AnimatePresence>
                 {isRevealed ? (
                     <motion.div
-                        className="mt-4 text-center"
+                        className="mt-4 text-center z-10"
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        animate={{ opacity: 1, transition: { delay: 0.8 } }}
                         exit={{ opacity: 0 }}
                     >
                         <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">Because measures are preserved!</p>
                     </motion.div>
                 ) : (
-                     <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">(Click to reveal answers)</p>
+                     <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 z-10 absolute bottom-4">(Click to reveal answers)</p>
                 )}
             </AnimatePresence>
         </div>
@@ -209,13 +247,13 @@ export default function Slide2() {
                            If you have a triangle <span className="font-mono">$\triangle ABC$</span> and you translate it to get <span className="font-mono">$\triangle A'B'C'$</span>.
                         </p>
                          <p className="text-lg leading-relaxed mt-3">
-                           And you know that side <span className="font-mono">$AB = 5 \text{ cm}$</span>...
+                           And you know that side <span className="font-mono">$AB = 5 \\text{  }$</span>...
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
                             ...what is the length of side <span className="font-mono">$A'B'$</span>?
                         </p>
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
-                            It MUST be <span className="font-bold">$5 \text{ cm}$</span>, because translation is a rigid transformation and preserves distance.
+                            It MUST be <span className="font-bold">$5 \\text{  }$</span>, because translation is a rigid transformation and preserves distance.
                          </em>
                     </div>
                     
@@ -338,7 +376,7 @@ export default function Slide2() {
                                     You scored {score} out of {questions.length}
                                 </div>
                                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                                    {score === questions.length ? 'You've got the measure of this!' : 'Great job!'}
+                                    {score === questions.length ? 'You\'ve got the measure of this!' : 'Great job!'}
                                 </div>
                             </motion.div>
                         )}

@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import  React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
