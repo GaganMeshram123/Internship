@@ -57,6 +57,7 @@ const getModules = async () => {
     'Motion',
     'Force_Laws_of_Motion',
     'Adaptations',
+    'Transformation properties and proofs',
     'Performing transformations',
     'olympiad-8-bio-nervous-system'
   ];
