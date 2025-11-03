@@ -216,12 +216,12 @@ export default function Slide4() {
                             <li>
                                 <strong className="text-red-500">NOT Congruent:</strong>
                                 <br />
-                                <span className="text-slate-600 dark:text-slate-400">If the size changed, a **Dilation** *must* have been used.</span>
+                                <span className="text-slate-600 dark:text-slate-400">If the size changed, a Dilation must have been used.</span>
                             </li>
                              <li>
                                 <strong className="text-green-500">Congruent:</strong>
                                 <br />
-                                 <span className="text-slate-600 dark:text-slate-400">If the size is the same, it's a **Rigid Transformation** (or sequence). Now go to Step 2.</span>
+                                 <span className="text-slate-600 dark:text-slate-400">If the size is the same, it's a Rigid Transformation (or sequence). Now go to Step 2.</span>
                             </li>
                         </ul>
                     </div>
@@ -235,12 +235,12 @@ export default function Slide4() {
                             <li>
                                 <strong>Orientation Preserved:</strong>
                                 <br />
-                                <span className="text-slate-600 dark:text-slate-400">The vertex order is the same (e.g., clockwise). This is a **Translation** or a **Rotation**.</span>
+                                <span className="text-slate-600 dark:text-slate-400">The vertex order is the same (e.g., clockwise). This is a Translation or a Rotation.</span>
                             </li>
                              <li>
                                 <strong>Orientation Reversed:</strong>
                                 <br />
-                                 <span className="text-slate-600 dark:text-slate-400">The figure is a "mirror image" (e.g., flipped from clockwise to counter-clockwise). This is a **Reflection** or a **Glide Reflection**.</span>
+                                 <span className="text-slate-600 dark:text-slate-400">The figure is a "mirror image" (e.g., flipped from clockwise to counter-clockwise). This is a Reflection or a Glide Reflection.</span>
                             </li>
                         </ul>
                     </div>

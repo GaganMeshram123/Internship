@@ -207,10 +207,10 @@ export default function Slide1() {
                         </p>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                **Rotate then Translate:** Rotating a shape at the origin and *then* sliding it right...
+                                Rotate then Translate: Rotating a shape at the origin and then sliding it right...
                             </li>
                             <li>
-                                **Translate then Rotate:** ...is *different* from sliding it right and *then* rotating it around the origin.
+                                Translate then Rotate: ...is different from sliding it right and then rotating it around the origin.
                             </li>
                         </ul>
                     </div>

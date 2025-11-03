@@ -207,16 +207,16 @@ export default function Slide1() {
                         </p>
                          <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                **Zero** lines of symmetry (like a general parallelogram).
+                                Zero lines of symmetry (like a general parallelogram).
                             </li>
                              <li>
-                                **One** line of symmetry (like an isosceles triangle).
+                                One line of symmetry (like an isosceles triangle).
                             </li>
                              <li>
-                                **Two or more** lines of symmetry (like a rectangle or square).
+                                Two or more lines of symmetry (like a rectangle or square).
                             </li>
                              <li>
-                                **Infinite** lines of symmetry (like a circle).
+                                Infinite lines of symmetry (like a circle).
                             </li>
                         </ul>
                     </div>

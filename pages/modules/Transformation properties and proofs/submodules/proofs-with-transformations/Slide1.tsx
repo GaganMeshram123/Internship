@@ -1,71 +1,138 @@
-import  React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
+// --- ANIMATION COMPONENT UPDATED ---
 const ProofFlowAnimation: React.FC = () => {
     const svgWidth = 400;
     const svgHeight = 250;
     const baseDelay = 0.5;
 
-    const items = [
-        { id: 'given', label: 'Given: $\triangle ABC$', x: 100, y: 50, delay: baseDelay },
-        { id: 'transform', label: 'Apply Rigid Transformation(s)', x: 200, y: 125, delay: baseDelay + 1.0 },
-        { id: 'image', label: 'Image: $\triangle A\'B\'C\'$', x: 300, y: 200, delay: baseDelay + 2.0 },
-        { id: 'conclude', label: '$\therefore \triangle ABC \cong \triangle A\'B\'C\'$', x: 200, y: 240, delay: baseDelay + 3.0 }
-    ];
+    // A simple triangle path
+    const trianglePath = "M 0 0 L 0 50 L 40 50 Z";
+    
+    // Animation for all items (fade in)
+    const itemVariants = {
+        hidden: { opacity: 0, y: 10 },
+        visible: (delay: number) => ({
+            opacity: 1,
+            y: 0,
+            transition: { delay, type: 'spring', stiffness: 100 }
+        })
+    };
+
+    // Animation for drawing the arrow
+    const arrowVariants = {
+        hidden: { pathLength: 0, opacity: 0 },
+        visible: (delay: number) => ({
+            pathLength: 1,
+            opacity: 1,
+            transition: { delay, duration: 0.7, ease: "easeInOut" }
+        })
+    };
 
     return (
         <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
             <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                {/* Arrows */}
-                <motion.path
-                    d="M 100 70 L 200 105"
-                    className="stroke-slate-400 dark:stroke-slate-500" strokeWidth="2"
-                    markerEnd="url(#arrowhead)"
-                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: baseDelay + 0.5, duration: 0.5 }}
-                />
-                <motion.path
-                    d="M 200 145 L 300 180"
-                    className="stroke-slate-400 dark:stroke-slate-500" strokeWidth="2"
-                    markerEnd="url(#arrowhead)"
-                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: baseDelay + 1.5, duration: 0.5 }}
-                />
-                 <motion.path
-                    d="M 290 220 C 270 240, 230 240, 210 220"
-                    className="stroke-green-500" strokeWidth="2"
-                    markerEnd="url(#arrowhead-green)"
-                    fill="none"
-                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: baseDelay + 2.5, duration: 0.5 }}
-                />
-
-
-                {/* Nodes */}
-                {items.map(item => (
-                    <motion.g
-                        key={item.id}
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: item.delay, type: 'spring', stiffness: 200 }}
-                    >
-                        <text
-                            x={item.x} y={item.y}
-                            textAnchor="middle"
-                            className={`text-sm ${item.id === 'conclude' ? 'fill-green-500 font-bold' : 'fill-slate-700 dark:fill-slate-200'}`}
-                        >
-                            {item.label}
-                        </text>
-                    </motion.g>
-                ))}
                 
+                {/* --- Step 1: Given --- */}
+                <motion.g
+                    custom={baseDelay}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <text
+                        x={100} y={50}
+                        textAnchor="middle"
+                        className="fill-blue-500 text-sm font-semibold"
+                    >
+                        Given: triangle ABC
+                    </text>
+                    <path
+                        d={trianglePath}
+                        transform="translate(80, 70)" // Positioned under text
+                        className="fill-blue-500 opacity-80"
+                    />
+                </motion.g>
+
+                {/* --- Step 2: Arrow 1 --- */}
+                <motion.path
+                    d="M 100 130 L 100 170" // Vertical arrow
+                    className="stroke-slate-400 dark:stroke-slate-500"
+                    strokeWidth="2"
+                    markerEnd="url(#arrowhead)"
+                    custom={baseDelay + 0.5}
+                    variants={arrowVariants}
+                    initial="hidden"
+                    animate="visible"
+                />
+
+                {/* --- Step 3: Apply Text --- */}
+                <motion.text
+                    x={200} y={155} // To the right of the arrow
+                    textAnchor="middle"
+                    className="fill-slate-700 dark:fill-slate-200 text-sm"
+                    custom={baseDelay + 1.0}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    Apply Rigid Transformation(s)
+                </motion.text>
+                
+                 {/* --- Step 4: Arrow 2 --- */}
+                 <motion.path
+                    d="M 300 170 L 300 130" // Vertical arrow (reversed)
+                    className="stroke-slate-400 dark:stroke-slate-500"
+                    strokeWidth="2"
+                    markerEnd="url(#arrowhead)"
+                    custom={baseDelay + 1.5}
+                    variants={arrowVariants}
+                    initial="hidden"
+                    animate="visible"
+                />
+
+                {/* --- Step 5: Image --- */}
+                 <motion.g
+                    custom={baseDelay + 2.0}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <text
+                        x={300} y={50}
+                        textAnchor="middle"
+                        className="fill-green-500 text-sm font-semibold"
+                    >
+                        Image: triangle A'B'C'
+                    </text>
+                    <path
+                        d={trianglePath}
+                        transform="translate(280, 70) rotate(-45, 20, 25)" // Transformed
+                        className="fill-green-500 opacity-80"
+                    />
+                </motion.g>
+
+                {/* --- Step 6: Therefore --- */}
+                 <motion.text
+                    x={svgWidth / 2} y={240}
+                    textAnchor="middle"
+                    className="fill-slate-700 dark:fill-slate-200 text-base font-bold"
+                    custom={baseDelay + 2.5}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                 >
+                    therefore: triangle ABC $\cong$ triangle A'B'C'
+                </motion.text>
+                
+                {/* Arrowhead Definition */}
                 <defs>
                     <marker id="arrowhead" markerWidth="5" markerHeight="4" refX="2.5" refY="2" orient="auto">
                         <polygon points="0 0, 5 2, 0 4" className="fill-slate-500 dark:fill-slate-400" />
-                    </marker>
-                    <marker id="arrowhead-green" markerWidth="5" markerHeight="4" refX="2.5" refY="2" orient="auto">
-                        <polygon points="0 0, 5 2, 0 4" className="fill-green-500" />
                     </marker>
                 </defs>
             </svg>
@@ -118,7 +185,7 @@ export default function Slide1() {
         },
         {
             id: 'proof-property-q2',
-            question: "Why can we say that if $\triangle ABC$ is mapped to $\triangle A'B'C'$ by a reflection, then $AB = A'B'$?",
+            question: "Why can we say that if triangle ABC is mapped to triangle A'B'C' by a reflection, then AB = A'B'?",
             options: [
                 "Because reflections change side lengths.",
                 "Because reflections preserve angle measure.",
@@ -126,7 +193,7 @@ export default function Slide1() {
                 "Because reflections preserve orientation."
             ],
             correctAnswer: "Because reflections preserve distance.",
-            explanation: "Correct! The justification for $AB = A'B'$ is that reflections are rigid transformations (isometries) and therefore *preserve distance* (length)."
+            explanation: "Correct! The justification for AB = A'B' is that reflections are rigid transformations (isometries) and therefore *preserve distance* (length)."
         }
     ];
 
@@ -176,14 +243,14 @@ export default function Slide1() {
                             So far, you may have used proofs like SSS, ASA, or SAS to prove triangles are congruent.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           Now, we will use a different method: **proving congruence using the definitions of transformations.**
+                            Now, we will use a different method: **proving congruence using the definitions of transformations.**
                         </p>
                     </div>
 
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Core Idea</h3>
                         <p className="text-lg leading-relaxed">
-                           Remember the definition of congruence from earlier?
+                            Remember the definition of congruence from earlier?
                         </p>
                         <div className="mt-4 p-4 rounded-lg bg-blue-100 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700">
                             <p className="text-lg font-bold text-blue-800 dark:text-blue-200">
@@ -191,21 +258,21 @@ export default function Slide1() {
                             </p>
                         </div>
                          <p className="text-lg leading-relaxed mt-3">
-                           Therefore, to *prove* two figures are congruent, you just have to find this exact sequence of transformations!
+                            Therefore, to *prove* two figures are congruent, you just have to find this exact sequence of transformations!
                          </p>
                     </div>
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Justifying Your Steps</h3>
+                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-4D00">Justifying Your Steps</h3>
                         <p className="text-lg leading-relaxed">
-                           In a proof, you can't just say "they are congruent." You must use the properties we've learned.
+                            In a proof, you can't just say "they are congruent." You must use the properties we've learned.
                         </p>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                **If you use a reflection:** You can state that lengths are equal (e.g., $AB = A'B'$) because "reflections preserve distance."
+                                **If you use a reflection:** You can state that lengths are equal (e.g., AB = A'B') because "reflections preserve distance."
                             </li>
                              <li>
-                                **If you use a rotation:** You can state that angles are equal (e.g., $\angle C = \angle C'$) because "rotations preserve angle measure."
+                                **If you use a rotation:** You can state that angles are equal (e.g., $\angle$C = $\angle$C') because "rotations preserve angle measure."
                             </li>
                         </ul>
                     </div>
@@ -302,7 +369,7 @@ export default function Slide1() {
                                             </motion.button>
                                         </motion.div>
                                     )}
-                                 </AnimatePresence>
+                                </AnimatePresence>
                             </>
                         ) : (
                             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">

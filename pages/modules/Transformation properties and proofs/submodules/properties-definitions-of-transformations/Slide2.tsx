@@ -189,7 +189,7 @@ export default function Slide2() {
                             We know a translation is a "slide," a rotation is a "turn," and a reflection is a "flip."
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           Now we need their **formal definitions** to use them in proofs.
+                           Now we need their formal definitions to use them in proofs.
                         </p>
                     </div>
 

@@ -176,13 +176,13 @@ export default function Slide3() {
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Clue 1: Rotational Symmetry</h3>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                <strong>Order 4 (90°):</strong> It *must* be a **Square**.
+                                <strong>Order 4 (90°):</strong> It must be a Square.
                             </li>
                              <li>
-                                <strong>Order 2 (180°):</strong> It could be a **Square, Rectangle, Rhombus,** or **Parallelogram**.
+                                <strong>Order 2 (180°):</strong> It could be a Square, Rectangle, Rhombus, or Parallelogram.
                             </li>
                             <li>
-                                <strong>No Rotational Symmetry:</strong> It could be a **Kite, Isosceles Trapezoid,** or a general quadrilateral.
+                                <strong>No Rotational Symmetry:</strong> It could be a Kite, Isosceles Trapezoid, or a general quadrilateral.
                             </li>
                         </ul>
                     </div>
@@ -191,16 +191,16 @@ export default function Slide3() {
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Clue 2: Reflective Symmetry</h3>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                              <li>
-                                <strong>4 Lines:</strong> It *must* be a **Square**.
+                                <strong>4 Lines:</strong> It must be a Square.
                             </li>
                             <li>
-                                <strong>2 Lines:</strong> It's a **Rectangle** (lines at midpoints) or **Rhombus** (lines are diagonals).
+                                <strong>2 Lines:</strong> It's a Rectangle (lines at midpoints) or Rhombus (lines are diagonals).
                             </li>
                             <li>
-                                <strong>1 Line:</strong> It's a **Kite** or **Isosceles Trapezoid**.
+                                <strong>1 Line:</strong> It's a Kite or Isosceles Trapezoid.
                             </li>
                             <li>
-                                <strong>0 Lines:</strong> It's a **Parallelogram** (if it has 180° rotation) or just a general quadrilateral.
+                                <strong>0 Lines:</strong> It's a Parallelogram (if it has 180° rotation) or just a general quadrilateral.
                             </li>
                         </ul>
                     </div>

@@ -173,13 +173,13 @@ export default function Slide4() {
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Symmetry Clues: Case #2</h3>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                <strong>Rotational Symmetry:</strong> Yes, it has **Order 2** (180°) symmetry.
+                                <strong>Rotational Symmetry:</strong> Yes, it has Order 2 (180°) symmetry.
                             </li>
                              <li>
-                                <strong>Reflective Symmetry:</strong> Yes, it has **2 lines** of symmetry.
+                                <strong>Reflective Symmetry:</strong> Yes, it has 2 lines of symmetry.
                             </li>
                              <li>
-                                <strong>*Special Clue*:</strong> The lines of symmetry *are* the diagonals.
+                                <strong>Special Clue:</strong> The lines of symmetry are the diagonals.
                             </li>
                         </ul>
                     </div>
@@ -194,7 +194,7 @@ export default function Slide4() {
                         </p>
                         <div className="mt-4 p-4 rounded-lg bg-green-100 dark:bg-green-900/50 border border-green-200 dark:border-green-700">
                             <p className="text-lg font-bold text-green-800 dark:text-green-200">
-                                The special clue solves it! The shape whose lines of symmetry are its diagonals is a **Rhombus**.
+                                The special clue solves it! The shape whose lines of symmetry are its diagonals is a Rhombus.
                             </p>
                         </div>
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">

@@ -261,10 +261,10 @@ export default function Slide3() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Recap: What is an Isometry?</h2>
                         <p className="text-lg leading-relaxed">
-                            A rigid transformation is also called an **isometry**.
+                            A rigid transformation is also called an isometry.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           The name comes from Greek: *iso-* (equal) and *-metry* (measure).
+                           The name comes from Greek: iso- (equal) and -metry (measure).
                         </p>
                          <p className="text-lg leading-relaxed mt-3">
                            All 3 rigid transformations (translation, rotation, reflection) are isometries because they preserve the "measure" of:

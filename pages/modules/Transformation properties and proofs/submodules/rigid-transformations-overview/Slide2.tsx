@@ -18,25 +18,24 @@ const FindMeasureAnimation: React.FC = () => {
         visible: { opacity: 1, y: 0 },
     };
 
-    // --- TIMING SIMPLIFIED ---
-    // Removed all the shape animation variables
-
-    const answerVariants = {
-        hidden: { opacity: 0, scale: 0.5 },
-        visible: { 
-            opacity: 1, 
-            scale: 1, 
-            transition: { 
-                type: 'spring', 
-                stiffness: 300, 
-                damping: 15, 
-                delay: 0.2 // A simple, short delay after click
-            } 
-        },
+    // --- NEW: Spring transition for the "magic move" ---
+    const layoutTransition = { 
+        type: 'spring', 
+        stiffness: 300, 
+        damping: 20,
+        delay: 0.1
     };
 
-    // --- SHAPE VARIABLES REMOVED ---
-    // (Removed shapePath, preImagePos, imageStartPos)
+    const answerVariants = {
+        // This is now just for the '?' fade out/in
+        hidden: { opacity: 0, scale: 0.5, transition: { duration: 0.1 } },
+        visible: { opacity: 1, scale: 1 },
+    };
+
+    const textFadeIn = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { delay: 0.5 } } // Fades in after numbers land
+    }
 
     return (
         <div 
@@ -45,8 +44,6 @@ const FindMeasureAnimation: React.FC = () => {
             onClick={() => setIsRevealed(true)}
             style={{ height: '220px' }} // Adjusted height back
         >
-            {/* --- SVG SHAPE ANIMATION REMOVED --- */}
-
             {/* Static Boxes (for context) */}
             <motion.div
                 className="flex flex-col md:flex-row items-center justify-around w-full"
@@ -56,9 +53,44 @@ const FindMeasureAnimation: React.FC = () => {
             >
                 {/* Pre-Image Box */}
                 <motion.div variants={itemVariants} className="bg-blue-100 dark:bg-blue-900/50 p-4 rounded-lg shadow text-center m-2 z-10">
-                    <h4 className="font-semibold text-blue-700 dark:text-blue-300">Pre-Image: Shape $T$</h4>
-                    <p className="font-mono text-slate-800 dark:text-slate-100">Side $S = 8 \\text{  }$</p>
-                    <p className="font-mono text-slate-800 dark:text-slate-100">Angle $\angle A = 70^\circ$</p>
+                    <h4 className="font-semibold text-blue-700 dark:text-blue-300">Pre-Image: Shape T</h4>
+                    
+                    {/* --- UPDATED: This line now uses layoutId --- */}
+                    <p className="font-mono text-slate-800 dark:text-slate-100">
+                        Side S = 
+                        <AnimatePresence>
+                            {!isRevealed && (
+                                <motion.span
+                                    layoutId="side-value"
+                                    transition={layoutTransition}
+                                    className="font-bold text-blue-700 dark:text-blue-300"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                >
+                                    &nbsp;8
+                                </motion.span>
+                            )}
+                        </AnimatePresence>
+                    </p>
+                    {/* --- UPDATED: This line now uses layoutId --- */}
+                    <p className="font-mono text-slate-800 dark:text-slate-100">
+                        Angle ∠A = 
+                        <AnimatePresence>
+                            {!isRevealed && (
+                                <motion.span
+                                    layoutId="angle-value"
+                                    transition={layoutTransition}
+                                    className="font-bold text-blue-700 dark:text-blue-300"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                >
+                                    &nbsp;70°
+                                </motion.span>
+                            )}
+                        </AnimatePresence>
+                    </p>
                 </motion.div>
 
                 {/* Transformation Arrow */}
@@ -69,42 +101,45 @@ const FindMeasureAnimation: React.FC = () => {
 
                 {/* Image Box */}
                 <motion.div variants={itemVariants} className="bg-green-100 dark:bg-green-900/50 p-4 rounded-lg shadow text-center m-2 z-10">
-                    <h4 className="font-semibold text-green-700 dark:text-green-300">Image: Shape $T'$</h4>
+                    <h4 className="font-semibold text-green-700 dark:text-green-300">Image: Shape T'</h4>
+                    
+                    {/* --- UPDATED: This line now uses layoutId --- */}
                     <p className="font-mono text-slate-800 dark:text-slate-100">
-                        Side $S' = $
+                        Side S' = 
                         <AnimatePresence mode="wait">
                             {!isRevealed ? (
                                 <motion.span 
                                     key="q1" 
-                                    initial={{ opacity: 1 }} 
-                                    animate={{ opacity: 1 }} 
-                                    exit={answerVariants.hidden} 
-                                    className="font-bold text-red-500">?</motion.span>
+                                    variants={answerVariants}
+                                    initial="visible"
+                                    exit="hidden"
+                                    className="font-bold text-red-500">&nbsp;?</motion.span>
                             ) : (
                                 <motion.span 
                                     key="a1" 
-                                    initial={answerVariants.hidden} 
-                                    animate={answerVariants.visible} // Simple reveal
-                                    className="font-bold text-green-600 dark:text-green-300">8 \\text{  }</motion.span>
+                                    layoutId="side-value" // This ID matches
+                                    transition={layoutTransition}
+                                    className="font-bold text-green-600 dark:text-green-300">&nbsp;8</motion.span>
                             )}
                         </AnimatePresence>
                     </p>
+                    {/* --- UPDATED: This line now uses layoutId --- */}
                     <p className="font-mono text-slate-800 dark:text-slate-100">
-                        Angle $\angle A' = $
+                        Angle ∠A' = 
                         <AnimatePresence mode="wait">
                             {!isRevealed ? (
                                 <motion.span 
                                     key="q2" 
-                                    initial={{ opacity: 1 }} 
-                                    animate={{ opacity: 1 }} 
-                                    exit={answerVariants.hidden} 
-                                    className="font-bold text-red-500">?</motion.span>
+                                    variants={answerVariants}
+                                    initial="visible"
+                                    exit="hidden"
+                                    className="font-bold text-red-500">&nbsp;?</motion.span>
                             ) : (
                                 <motion.span 
                                     key="a2" 
-                                    initial={answerVariants.hidden} 
-                                    animate={answerVariants.visible} // Simple reveal
-                                    className="font-bold text-green-600 dark:text-green-300">70°</motion.span>
+                                    layoutId="angle-value" // This ID matches
+                                    transition={layoutTransition}
+                                    className="font-bold text-green-600 dark:text-green-300">&nbsp;70°</motion.span>
                             )}
                         </AnimatePresence>
                     </p>
@@ -115,9 +150,10 @@ const FindMeasureAnimation: React.FC = () => {
                 {isRevealed ? (
                     <motion.div
                         className="mt-4 text-center z-10"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1, transition: { delay: 0.5 } }} // Fades in after numbers
-                        exit={{ opacity: 0 }}
+                        variants={textFadeIn}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
                     >
                         {/* Simplified Text */}
                         <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
@@ -232,14 +268,14 @@ export default function Slide2() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The Core Rule</h2>
                         <p className="text-lg leading-relaxed">
-                            As we learned, **rigid transformations** (translations, rotations, reflections) are "rigid" because they don't change the figure's size or shape.
+                            As we learned, rigid transformations (translations, rotations, reflections) are "rigid" because they don't change the figure's size or shape.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
                             This has a powerful consequence:
                         </p>
                         <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
                             <p className="text-lg font-bold text-slate-800 dark:text-slate-100">
-                                Rigid transformations **preserve** both **distance** (side lengths) and **angle measure**.
+                                Rigid transformations preserve both distance (side lengths) and angle measure.
                             </p>
                         </div>
                     </div>
@@ -247,32 +283,32 @@ export default function Slide2() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Example: Finding Side Lengths</h3>
                         <p className="text-lg leading-relaxed">
-                            If you have a triangle <span className="font-mono">$\triangle ABC$</span> and you translate it to get <span className="font-mono">$\triangle A'B'C'$</span>.
+                            If you have a triangle <span className="font-mono">triangle ABC</span> and you translate it to get <span className="font-mono">triangle A'B'C'</span>.
                         </p>
                          <p className="text-lg leading-relaxed mt-3">
-                            And you know that side <span className="font-mono">$AB = 5 \\text{  }$</span>...
+                            And you know that side <span className="font-mono">AB = 5</span>...
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                            ...what is the length of side <span className="font-mono">$A'B'$</span>?
+                            ...what is the length of side <span className="font-mono">A'B'</span>?
                         </p>
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
-                            It MUST be <span className="font-bold">$5 \\text{  }$</span>, because translation is a rigid transformation and preserves distance.
+                            It MUST be <span className="font-bold">5</span>, because translation is a rigid transformation and preserves distance.
                          </em>
                     </div>
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Example: Finding Angle Measures</h3>
                         <p className="text-lg leading-relaxed">
-                            If you have a quadrilateral <span className="font-mono">$PQRS$</span> and you reflect it to get <span className="font-mono">$P'Q'R'S'$</span>.
+                            If you have a quadrilateral <span className="font-mono">PQRS</span> and you reflect it to get <span className="font-mono">P'Q'R'S'</span>.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                            And you know that <span className="font-mono">$\angle P = 90^\circ$</span>...
+                            And you know that <span className="font-mono">∠P = 90°</span>...
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                            ...what is the measure of <span className="font-mono">$\angle P'$</span>?
+                            ...what is the measure of <span className="font-mono">∠P'</span>?
                         </p>
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
-                            It MUST be <span className="font-bold">$90^\circ$</span>, because reflection is a rigid transformation and preserves angle measure.
+                            It MUST be <span className="font-bold">90°</span>, because reflection is a rigid transformation and preserves angle measure.
                          </em>
                     </div>
 

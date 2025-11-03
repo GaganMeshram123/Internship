@@ -156,7 +156,7 @@ export default function Slide2() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Rotational Symmetry</h2>
                         <p className="text-lg leading-relaxed">
-                           A figure has <strong>rotational symmetry</strong> if it can be mapped onto itself by a rotation of **less than 360°** around a fixed point.
+                           A figure has <strong>rotational symmetry</strong> if it can be mapped onto itself by a rotation of less than 360° around a fixed point.
                         </p>
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
                             Think: If you "turn" it, does it look the same before you've completed a full circle?
@@ -173,7 +173,7 @@ export default function Slide2() {
                                 <strong>Center of Symmetry:</strong> The fixed point the figure rotates around (the "pin" in the pinwheel).
                             </li>
                              <li>
-                                <strong>Angle of Symmetry:</strong> The **smallest** angle a figure can be rotated to map onto itself.
+                                <strong>Angle of Symmetry:</strong> The smallest angle a figure can be rotated to map onto itself.
                             </li>
                         </ul>
                     </div>
@@ -189,9 +189,9 @@ export default function Slide2() {
                             </p>
                         </div>
                         <p className="text-lg leading-relaxed mt-3">
-                           **Example:** A square's smallest angle is 90°.
+                           Example: A square's smallest angle is 90°.
                            <br />
-                           Its order is 360° / 90° = **4**.
+                           Its order is 360° / 90° = 4.
                         </p>
                     </div>
 

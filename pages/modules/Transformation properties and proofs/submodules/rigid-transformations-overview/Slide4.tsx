@@ -11,36 +11,25 @@ const MappingAnimation: React.FC = () => {
 
     // A simple triangle path
     const trianglePath = "M 0 0 L 0 50 L 40 50 Z";
+    const baseDelay = 0.5;
 
-    // Animation for the triangle
-    const triangleVariants = {
-        initial: {
-            x: 80, // Start on the left
-            y: 150,
-            rotate: -30,
-            fill: "#3b82f6" // Blue
-        },
-        animate: {
-            x: 230, // End in the final position
-            y: 80,
-            rotate: 0,
-            fill: "#22c55e", // Green
-            transition: {
-                type: 'spring',
-                stiffness: 50,
-                duration: 2.5,
-                delay: 0.5,
-            }
-        }
+    // Animation for fading in items
+    const itemVariants = {
+        hidden: { opacity: 0 },
+        visible: (delay: number) => ({ 
+            opacity: 1,
+            transition: { delay }
+        })
     };
     
-    // Animation for the labels (A', B', C')
-    const labelVariants = {
-        hidden: { opacity: 0 },
-        visible: { 
+    // Animation for drawing the arrow
+    const arrowVariants = {
+        hidden: { pathLength: 0, opacity: 0 },
+        visible: (delay: number) => ({
+            pathLength: 1,
             opacity: 1,
-            transition: { delay: 2.0 } // Appear after triangle lands
-        }
+            transition: { delay, duration: 0.7, ease: "easeInOut" }
+        })
     };
 
     return (
@@ -49,48 +38,86 @@ const MappingAnimation: React.FC = () => {
             style={{ height: '280px' }} // Fixed height
         >
             <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                {/* The animated triangle */}
-                <motion.path
-                    d={trianglePath}
-                    variants={triangleVariants}
-                    initial="initial"
-                    // Use "animate" as the key to trigger animation on load
-                    animate="animate" 
-                />
-
-                {/* Labels for the Image (A', B', C') */}
-                <motion.g 
-                    className="fill-slate-800 dark:fill-slate-100 text-sm font-semibold"
-                    variants={labelVariants}
+                
+                {/* --- Step 1: Pre-Image (Static) --- */}
+                <motion.g
+                    custom={baseDelay}
+                    variants={itemVariants}
                     initial="hidden"
                     animate="visible"
                 >
-                    <text x="225" y="75">A'</text>
-                    <text x="225" y="135">C'</text>
-                    <text x="275" y="135">B'</text>
+                    <path
+                        d={trianglePath}
+                        transform="translate(80, 70) rotate(-30, 20, 25)"
+                        className="fill-blue-500 opacity-80"
+                    />
+                    <text x="80" y="60" textAnchor="middle" className="fill-blue-400 text-sm font-semibold">
+                        (ABC)
+                    </text>
                 </motion.g>
 
-                {/* Static text below */}
+                {/* --- Step 2: Image (Static) --- */}
+                <motion.g
+                    custom={baseDelay}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <path
+                        d={trianglePath}
+                        transform="translate(230, 80)"
+                        className="fill-green-500 opacity-80"
+                    />
+                    {/* Labels for the Image (A', B', C') */}
+                    <g className="fill-slate-800 dark:fill-slate-100 text-sm font-semibold">
+                        <text x="225" y="75">A'</text>
+                        <text x="225" y="135">C'</text>
+                        <text x="275" y="135">B'</text>
+                    </g>
+                </motion.g>
+
+                {/* --- Step 3: Arrow --- */}
+                <motion.path
+                    d="M 130 90 C 160 70, 190 70, 220 90"
+                    className="stroke-slate-400 dark:stroke-slate-500 fill-none"
+                    strokeWidth="2"
+                    markerEnd="url(#arrowhead)"
+                    custom={baseDelay + 0.5}
+                    variants={arrowVariants}
+                    initial="hidden"
+                    animate="visible"
+                />
+
+                {/* --- Step 4: Text Labels --- */}
                 <motion.text
                     x={svgWidth / 2} y="200"
                     textAnchor="middle"
                     className="fill-green-600 dark:fill-green-400 font-semibold"
-                    variants={labelVariants}
+                    custom={baseDelay + 1.2}
+                    variants={itemVariants}
                     initial="hidden"
                     animate="visible"
                 >
                     triangle ABC maps to triangle A'B'C'
                 </motion.text>
-                 <motion.text
+                <motion.text
                     x={svgWidth / 2} y="240"
                     textAnchor="middle"
                     className="fill-slate-800 dark:fill-slate-100 font-bold"
-                    variants={labelVariants}
+                    custom={baseDelay + 1.7}
+                    variants={itemVariants}
                     initial="hidden"
                     animate="visible"
-                 >
-                    therefore: triangle ABC $\cong$ triangle A'B'C'
+                >
+                    therefore: triangle ABC ≅ triangle A'B'C'
                 </motion.text>
+                
+                {/* Arrowhead Definition */}
+                <defs>
+                    <marker id="arrowhead" markerWidth="5" markerHeight="4" refX="2.5" refY="2" orient="auto">
+                        <polygon points="0 0, 5 2, 0 4" className="fill-slate-500 dark:fill-slate-400" />
+                    </marker>
+                </defs>
             </svg>
         </div>
     );
@@ -227,26 +254,26 @@ export default function Slide4() { // Assuming this is Slide 4
                         </div>
                     </div>
 
-                    {/* --- NEW SECTION ADDED HERE --- */}
+                    {/* --- "Congruent vs. Similar" Section --- */}
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Congruent vs. Similar</h3>
                         <p className="text-lg leading-relaxed">
-                            This new definition helps us understand the key difference between *congruent* and *similar*.
+                            This new definition helps us understand the key difference between congruent and similar.
                         </p>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                <strong>Congruent ($\cong$):</strong> Mapped using <strong>rigid transformations</strong> (translation, rotation, reflection).
+                                <strong>Congruent (≅):</strong> Mapped using <strong>rigid transformations</strong> (translation, rotation, reflection).
                                 <br />
                                 <span className="text-slate-600 dark:text-slate-400 pl-4">→ Preserves <strong>size and shape</strong>.</span>
                             </li>
                             <li>
-                                <strong>Similar ($\sim$):</strong> Mapped using <strong>non-rigid transformations</strong> (like dilation).
+                                <strong>Similar (~):</strong> Mapped using <strong>non-rigid transformations</strong> (like dilation).
                                 <br />
                                 <span className="text-slate-600 dark:text-slate-400 pl-4">→ Preserves <strong>shape only</strong>, not size.</span>
                             </li>
                         </ul>
                     </div>
-                    {/* --- END OF NEW SECTION --- */}
+                    {/* --- END OF SECTION --- */}
 
                 </div>
 
