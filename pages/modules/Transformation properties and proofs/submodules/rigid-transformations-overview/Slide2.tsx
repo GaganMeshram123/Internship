@@ -18,34 +18,34 @@ const FindMeasureAnimation: React.FC = () => {
         visible: { opacity: 1, y: 0 },
     };
 
+    // --- TIMING SIMPLIFIED ---
+    // Removed all the shape animation variables
+
     const answerVariants = {
         hidden: { opacity: 0, scale: 0.5 },
-        visible: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 15, delay: 0.5 } },
+        visible: { 
+            opacity: 1, 
+            scale: 1, 
+            transition: { 
+                type: 'spring', 
+                stiffness: 300, 
+                damping: 15, 
+                delay: 0.2 // A simple, short delay after click
+            } 
+        },
     };
 
-    // Shape to be animated
-    const shapePath = "M 0 0 L 30 0 L 0 40 Z"; // A simple right triangle
+    // --- SHAPE VARIABLES REMOVED ---
+    // (Removed shapePath, preImagePos, imageStartPos)
 
     return (
         <div 
             className="w-full flex flex-col justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden cursor-pointer relative"
             // We now reveal on click
             onClick={() => setIsRevealed(true)}
-            style={{ height: '220px' }} // Set fixed height for animation
+            style={{ height: '220px' }} // Adjusted height back
         >
-            {/* Animated shape that moves */}
-            <svg width="100%" height="100%" viewBox="0 0 400 150" className="absolute top-0 left-0" style={{ pointerEvents: 'none' }}>
-                <motion.path
-                    d={shapePath}
-                    className="fill-blue-500 opacity-80"
-                    initial={{ x: 70, y: 60, rotate: 0 }}
-                    animate={isRevealed ? 
-                        { x: 300, y: 60, rotate: -90 } : 
-                        { x: 70, y: 60, rotate: 0 }
-                    }
-                    transition={{ type: 'spring', stiffness: 100, damping: 15, duration: 0.8 }}
-                />
-            </svg>
+            {/* --- SVG SHAPE ANIMATION REMOVED --- */}
 
             {/* Static Boxes (for context) */}
             <motion.div
@@ -84,7 +84,7 @@ const FindMeasureAnimation: React.FC = () => {
                                 <motion.span 
                                     key="a1" 
                                     initial={answerVariants.hidden} 
-                                    animate={answerVariants.visible} 
+                                    animate={answerVariants.visible} // Simple reveal
                                     className="font-bold text-green-600 dark:text-green-300">8 \\text{  }</motion.span>
                             )}
                         </AnimatePresence>
@@ -103,7 +103,7 @@ const FindMeasureAnimation: React.FC = () => {
                                 <motion.span 
                                     key="a2" 
                                     initial={answerVariants.hidden} 
-                                    animate={answerVariants.visible} 
+                                    animate={answerVariants.visible} // Simple reveal
                                     className="font-bold text-green-600 dark:text-green-300">70°</motion.span>
                             )}
                         </AnimatePresence>
@@ -116,10 +116,13 @@ const FindMeasureAnimation: React.FC = () => {
                     <motion.div
                         className="mt-4 text-center z-10"
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1, transition: { delay: 0.8 } }}
+                        animate={{ opacity: 1, transition: { delay: 0.5 } }} // Fades in after numbers
                         exit={{ opacity: 0 }}
                     >
-                        <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">Because measures are preserved!</p>
+                        {/* Simplified Text */}
+                        <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                            Because measures are preserved!
+                        </p>
                     </motion.div>
                 ) : (
                      <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 z-10 absolute bottom-4">(Click to reveal answers)</p>
@@ -244,10 +247,10 @@ export default function Slide2() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Example: Finding Side Lengths</h3>
                         <p className="text-lg leading-relaxed">
-                           If you have a triangle <span className="font-mono">$\triangle ABC$</span> and you translate it to get <span className="font-mono">$\triangle A'B'C'$</span>.
+                            If you have a triangle <span className="font-mono">$\triangle ABC$</span> and you translate it to get <span className="font-mono">$\triangle A'B'C'$</span>.
                         </p>
                          <p className="text-lg leading-relaxed mt-3">
-                           And you know that side <span className="font-mono">$AB = 5 \\text{  }$</span>...
+                            And you know that side <span className="font-mono">$AB = 5 \\text{  }$</span>...
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
                             ...what is the length of side <span className="font-mono">$A'B'$</span>?
@@ -260,10 +263,10 @@ export default function Slide2() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Example: Finding Angle Measures</h3>
                         <p className="text-lg leading-relaxed">
-                           If you have a quadrilateral <span className="font-mono">$PQRS$</span> and you reflect it to get <span className="font-mono">$P'Q'R'S'$</span>.
+                            If you have a quadrilateral <span className="font-mono">$PQRS$</span> and you reflect it to get <span className="font-mono">$P'Q'R'S'$</span>.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           And you know that <span className="font-mono">$\angle P = 90^\circ$</span>...
+                            And you know that <span className="font-mono">$\angle P = 90^\circ$</span>...
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
                             ...what is the measure of <span className="font-mono">$\angle P'$</span>?

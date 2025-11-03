@@ -4,102 +4,93 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
-const MappingCongruenceAnimation: React.FC = () => {
+// --- NEW ANIMATION COMPONENT ---
+const MappingAnimation: React.FC = () => {
     const svgWidth = 400;
-    const svgHeight = 250;
+    const svgHeight = 300; // Increased height for labels
 
-    const preImageTriangle = "M 100 50 L 150 100 L 100 100 Z";
-    const imageTransform = "rotate(90, 125, 75) translate(150, 50)";
+    // A simple triangle path
+    const trianglePath = "M 0 0 L 0 50 L 40 50 Z";
 
-    const baseDelay = 0.5;
+    // Animation for the triangle
+    const triangleVariants = {
+        initial: {
+            x: 80, // Start on the left
+            y: 150,
+            rotate: -30,
+            fill: "#3b82f6" // Blue
+        },
+        animate: {
+            x: 230, // End in the final position
+            y: 80,
+            rotate: 0,
+            fill: "#22c55e", // Green
+            transition: {
+                type: 'spring',
+                stiffness: 50,
+                duration: 2.5,
+                delay: 0.5,
+            }
+        }
+    };
+    
+    // Animation for the labels (A', B', C')
+    const labelVariants = {
+        hidden: { opacity: 0 },
+        visible: { 
+            opacity: 1,
+            transition: { delay: 2.0 } // Appear after triangle lands
+        }
+    };
 
     return (
-        <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+        <div 
+            className="w-full flex flex-col justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden"
+            style={{ height: '280px' }} // Fixed height
+        >
             <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                {/* Pre-Image */}
-                <motion.g
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: baseDelay, duration: 0.5 }}
-                >
-                    <path d={preImageTriangle} className="fill-blue-500 opacity-80" />
-                    <text x="85" y="45" className="fill-blue-300 text-sm font-semibold">A</text>
-                    <text x="155" y="105" className="fill-blue-300 text-sm font-semibold">B</text>
-                    <text x="85" y="105" className="fill-blue-300 text-sm font-semibold">C</text>
-                    <text x="100" y="125" textAnchor="middle" className="fill-blue-400 text-base font-bold">$\triangle ABC$</text>
-                </motion.g>
-
-                {/* Transformation Text */}
-                <motion.text
-                    x={svgWidth / 2} y={svgHeight / 2 - 20}
-                    textAnchor="middle"
-                    className="fill-slate-500 dark:fill-slate-400 text-sm"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: baseDelay + 0.8 }}
-                >
-                    maps to
-                </motion.text>
-                 <motion.text
-                    x={svgWidth / 2} y={svgHeight / 2}
-                    textAnchor="middle"
-                    className="fill-slate-600 dark:fill-slate-300 text-base font-semibold"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: baseDelay + 1.0 }}
-                >
-                    (Rigid Transformation)
-                </motion.text>
-                 <motion.path
-                    d={`M 160 ${svgHeight / 2 - 10} L 240 ${svgHeight / 2 - 10}`}
-                    className="stroke-slate-500 dark:stroke-slate-400"
-                    strokeWidth="2"
-                    markerEnd="url(#arrowhead)"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ delay: baseDelay + 1.2, duration: 0.5 }}
+                {/* The animated triangle */}
+                <motion.path
+                    d={trianglePath}
+                    variants={triangleVariants}
+                    initial="initial"
+                    // Use "animate" as the key to trigger animation on load
+                    animate="animate" 
                 />
 
-                {/* Image */}
-                <motion.g
-                    transform={imageTransform}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: baseDelay + 1.5, duration: 0.5 }}
+                {/* Labels for the Image (A', B', C') */}
+                <motion.g 
+                    className="fill-slate-800 dark:fill-slate-100 text-sm font-semibold"
+                    variants={labelVariants}
+                    initial="hidden"
+                    animate="visible"
                 >
-                    <path d={preImageTriangle} className="fill-green-500 opacity-80" />
-                    <text x="85" y="45" className="fill-green-300 text-sm font-semibold">A'</text>
-                    <text x="155" y="105" className="fill-green-300 text-sm font-semibold">B'</text>
-                    <text x="85" y="105" className="fill-green-300 text-sm font-semibold">C'</text>
+                    <text x="225" y="75">A'</text>
+                    <text x="225" y="135">C'</text>
+                    <text x="275" y="135">B'</text>
                 </motion.g>
-                <motion.text 
-                    x="275" y="160" textAnchor="middle" className="fill-green-400 text-base font-bold"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: baseDelay + 1.7 }}
-                >
-                    $\triangle A'B'C'$
-                </motion.text>
 
-
-                {/* Conclusion */}
+                {/* Static text below */}
                 <motion.text
-                    x={svgWidth / 2} y={svgHeight - 30}
+                    x={svgWidth / 2} y="200"
                     textAnchor="middle"
-                    className="fill-purple-500 dark:fill-purple-300 text-lg font-bold"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: baseDelay + 2.2, type: 'spring' }}
+                    className="fill-green-600 dark:fill-green-400 font-semibold"
+                    variants={labelVariants}
+                    initial="hidden"
+                    animate="visible"
                 >
-                    Therefore: $\triangle ABC \cong \triangle A'B'C'$
+                    triangle ABC maps to triangle A'B'C'
                 </motion.text>
-                
-                <defs>
-                    <marker id="arrowhead" markerWidth="5" markerHeight="4" refX="2.5" refY="2" orient="auto">
-                        <polygon points="0 0, 5 2, 0 4" className="fill-slate-500 dark:fill-slate-400" />
-                    </marker>
-                </defs>
+                 <motion.text
+                    x={svgWidth / 2} y="240"
+                    textAnchor="middle"
+                    className="fill-slate-800 dark:fill-slate-100 font-bold"
+                    variants={labelVariants}
+                    initial="hidden"
+                    animate="visible"
+                 >
+                    therefore: triangle ABC $\cong$ triangle A'B'C'
+                </motion.text>
             </svg>
         </div>
     );
@@ -107,7 +98,7 @@ const MappingCongruenceAnimation: React.FC = () => {
 // --- END OF ANIMATION COMPONENT DEFINITION ---
 
 
-export default function Slide4() {
+export default function Slide4() { // Assuming this is Slide 4
     const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -119,11 +110,11 @@ export default function Slide4() {
 
     const slideInteractions: Interaction[] = [
         {
-          id: 'mapping-shapes-quiz',
-          conceptId: 'mapping-and-congruence',
-          conceptName: 'Mapping and Congruence',
+          id: 'mapping-quiz',
+          conceptId: 'definition-of-congruence',
+          conceptName: 'Definition of Congruence',
           type: 'judging',
-          description: 'Testing the transformation definition of congruence'
+          description: 'Testing understanding of mapping and congruence'
         }
     ];
 
@@ -135,33 +126,35 @@ export default function Slide4() {
         explanation: string;
     }
 
+    // Quiz questions based on the slide content
     const questions: QuizQuestion[] = [
         {
-            id: 'congruence-definition-q1',
+            id: 'congruence-def-q1',
             question: "What does it mean if Shape X can be mapped onto Shape Y using *only* rigid transformations?",
             options: [
                 "Shape X and Shape Y are similar.",
                 "Shape X and Shape Y are congruent.",
-                "Shape X is a dilation of Shape Y.",
+                "Shape X is larger than Shape Y.",
                 "Shape X and Shape Y are unrelated."
             ],
             correctAnswer: "Shape X and Shape Y are congruent.",
-            explanation: "Correct! This is the formal definition of congruence. If a rigid transformation (or a sequence of them) maps one figure to another, they are congruent."
+            explanation: "Correct! The formal definition of congruence is that two figures are congruent if and only if there is a rigid transformation that maps one onto the other."
         },
         {
-            id: 'identify-mapping-q2',
-            question: "A transformation maps square A (side 5) to square B (side 5). The orientation is preserved. What was the mapping?",
+            id: 'mapping-def-q2',
+            question: "What is the name for the *process* of applying a transformation to a figure?",
             options: [
-                "A reflection only.",
-                "A dilation with scale factor 1.",
-                "A translation or a rotation.",
-                "It's impossible to tell."
+                "Congruence",
+                "Isometry",
+                "Mapping",
+                "Imaging"
             ],
-            correctAnswer: "A translation or a rotation.",
-            explanation: "That's right! The size is preserved (rigid) and the orientation is preserved (direct isometry). This rules out reflections and dilations, leaving translations and rotations."
+            correctAnswer: "Mapping",
+            explanation: "That's right! Mapping is the process of applying the transformation. The pre-image is 'mapped' to the image."
         }
     ];
-
+    
+    // --- Quiz handlers (Copied from previous slide) ---
     const handleInteractionComplete = (response: InteractionResponse) => {
         setLocalInteractions(prev => ({ ...prev, [response.interactionId]: response }));
     };
@@ -174,9 +167,9 @@ export default function Slide4() {
         const isCorrect = answerText === current.correctAnswer;
         if (isCorrect) setScore(prev => prev + 1);
         handleInteractionComplete({
-            interactionId: `mapping-shapes-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+            interactionId: `mapping-quiz-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
             value: answerText, isCorrect, timestamp: Date.now(),
-            conceptId: 'mapping-and-congruence', conceptName: 'Mapping and Congruence',
+            conceptId: 'definition-of-congruence', conceptName: 'Definition of Congruence',
             conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
             question: { type: 'mcq', question: current.question, options: current.options }
         });
@@ -194,6 +187,7 @@ export default function Slide4() {
             setIsQuizComplete(true);
         }
     };
+    // --- End of quiz handlers ---
 
     const slideContent = (
         <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
@@ -208,47 +202,51 @@ export default function Slide4() {
                             <strong>Mapping</strong> is the process of applying a transformation to a figure.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           We say a transformation "maps" the pre-image to the image.
+                            We say a transformation "maps" the pre-image to the image.
                         </p>
-                        <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700 font-mono">
-                            <p className="text-lg text-slate-800 dark:text-slate-100">
-                                $T(P) = P'$
-                            </p>
-                             <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 non-italic">
-                                (Read as: "The transformation $T$ maps point $P$ to point $P'$")
-                            </p>
+                        <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700 font-mono text-center">
+                            T(P) = P'
+                            <em className="block text-sm text-slate-600 dark:text-slate-400 mt-2 normal-case">
+                                (Read as: "The transformation T maps point P to point P'")
+                            </em>
                         </div>
                     </div>
 
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Definition of Congruence</h3>
                         <p className="text-lg leading-relaxed">
-                           This brings us to the most important idea of this submodule.
+                            This brings us to the most important idea of this submodule.
                         </p>
-                         <p className="text-lg leading-relaxed mt-3">
-                           We used to say "congruent" means "same size and same shape." Now we have a formal definition:
+                        <p className="text-lg leading-relaxed mt-3">
+                            We used to say "congruent" means "same size and same shape." Now we have a formal definition:
                         </p>
                         <div className="mt-4 p-4 rounded-lg bg-blue-100 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700">
-                            <p className="text-lg font-bold text-blue-800 dark:text-blue-200">
-                                Two figures are <strong>congruent</strong> if and only if there is a rigid transformation (or a sequence of rigid transformations) that maps one figure onto the other.
+                            <p className="text-lg font-bold text-blue-800 dark:text-blue-100">
+                                Two figures are congruent if and only if there is a rigid transformation (or a sequence of rigid transformations) that maps one figure onto the other.
                             </p>
                         </div>
                     </div>
-                    
+
+                    {/* --- NEW SECTION ADDED HERE --- */}
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Congruent vs. Similar</h3>
                         <p className="text-lg leading-relaxed">
-                           This is why we separate rigid vs. non-rigid.
+                            This new definition helps us understand the key difference between *congruent* and *similar*.
                         </p>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                A **rigid transformation** (slide, flip, turn) maps a figure to a <strong className="text-green-500">congruent</strong> figure.
+                                <strong>Congruent ($\cong$):</strong> Mapped using <strong>rigid transformations</strong> (translation, rotation, reflection).
+                                <br />
+                                <span className="text-slate-600 dark:text-slate-400 pl-4">→ Preserves <strong>size and shape</strong>.</span>
                             </li>
                             <li>
-                                A **non-rigid transformation** (like a dilation) maps a figure to a <strong className="text-red-500">similar</strong> figure (same shape, different size).
+                                <strong>Similar ($\sim$):</strong> Mapped using <strong>non-rigid transformations</strong> (like dilation).
+                                <br />
+                                <span className="text-slate-600 dark:text-slate-400 pl-4">→ Preserves <strong>shape only</strong>, not size.</span>
                             </li>
                         </ul>
                     </div>
+                    {/* --- END OF NEW SECTION --- */}
 
                 </div>
 
@@ -256,16 +254,19 @@ export default function Slide4() {
                 <div className="space-y-6">
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Mapping $\to$ Congruence</h3>
-                        <MappingCongruenceAnimation />
+                        <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Mapping to Congruence</h3>
+                        
+                        {/* --- ANIMATION COMPONENT --- */}
+                        <MappingAnimation />
+                        
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-                            Because a rigid transformation maps $\triangle ABC$ to $\triangle A'B'C'$, we can conclude that they are congruent.
+                            Because a rigid transformation maps triangle ABC to triangle A'B'C', we can conclude that they are congruent.
                         </p>
                     </div>
 
-                    {/* --- KNOWLEDGE CHECK CARD --- */}
+                    {/* --- KNOWLEDGE CHECK CARD (RESTORED) --- */}
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                        {/* Quiz UI - Copied from reference */}
+                        {/* Quiz UI */}
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
                             <div className="text-lg text-slate-600 dark:text-slate-400">
@@ -346,13 +347,13 @@ export default function Slide4() {
                             </>
                         ) : (
                             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                                <div className="text-3xl mb-4">🧩</div>
+                                <div className="text-3xl mb-4">🎉</div>
                                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                                 <div className="text-lg text-slate-600 dark:text-slate-400">
                                     You scored {score} out of {questions.length}
                                 </div>
                                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                                    {score === questions.length ? 'Youve pieced the puzzle together!' : 'Great finish!'}
+                                    {score === questions.length ? 'You\'ve mastered the definition!' : 'Good job!'}
                                 </div>
                             </motion.div>
                         )}
@@ -364,10 +365,10 @@ export default function Slide4() {
 
     return (
         <SlideComponentWrapper
-            slideId="mapping-shapes"
+            slideId="mapping-to-congruence"
             slideTitle="Mapping shapes"
             moduleId="transformation-properties-proofs"
-            submoduleId="rigid-transformations-overview"
+            submoduleId="rigid-transformations-overview" 
             interactions={localInteractions}
         >
             {slideContent}

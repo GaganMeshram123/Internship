@@ -4,97 +4,169 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- NEW ANIMATION COMPONENT ---
-const TransformationCycleAnimation: React.FC = () => {
+// --- (MODIFIED) NEW ANIMATION COMPONENT ---
+const TransformationComparator: React.FC = () => {
     const svgWidth = 400;
     const svgHeight = 300;
-    const [currentIndex, setCurrentIndex] = useState(0);
+    // NEW state: null, 'translate', 'rotate', 'reflect', 'dilate'
+    const [activeKey, setActiveKey] = useState<string | null>(null);
+    const { isDarkMode } = useThemeContext();
 
-    const baseTriangle = "M 180 150 L 220 150 L 200 110 Z"; // Centered triangle
+    // --- Define Shapes ---
+    // Pre-Image on the left
+    const preImageTriangle = "M 80 150 L 120 150 L 100 110 Z"; // Centered at x=100
+    // Base for the Image on the right
+    const imageTriangleBase = "M 280 150 L 320 150 L 300 110 Z"; // Centered at x=300
 
-    const transformations = [
-        {
-            label: "Pre-image",
-            transform: "translate(0, 0)",
-            className: "fill-blue-500",
-            textClass: "fill-blue-300"
-        },
-        {
+    const preImageProps = {
+        label: "Pre-Image",
+        path: preImageTriangle,
+        className: "fill-blue-500",
+        textClass: "fill-blue-300"
+    };
+
+    // --- Define Image States ---
+    const imageStates: Record<string, { label: string, transform: string, className: string, textClass: string }> = {
+        'translate': {
             label: "Translation (Rigid)",
-            transform: "translate(50, 50)",
+            transform: "translate(20, 30)", // Simple slide
             className: "fill-green-500",
             textClass: "fill-green-300"
         },
-        {
+        'rotate': {
             label: "Rotation (Rigid)",
-            transform: "rotate(120, 200, 130)", // Rotate 120 deg around center
+            transform: "rotate(120, 300, 130)", // Rotate around its center (300, 130)
             className: "fill-purple-500",
             textClass: "fill-purple-300"
         },
-        {
+        'reflect': {
             label: "Reflection (Rigid)",
-            transform: "scale(1, -1) translate(0, -260)", // Reflect across y=130
+            transform: "scale(-1, 1) translate(-600, 0)", // Reflect across x=300
             className: "fill-orange-500",
             textClass: "fill-orange-300"
         },
-        {
+        'dilate': {
             label: "Dilation (Non-Rigid)",
-            transform: "scale(1.5) translate(-100, -65)", // Scale 1.5 from center (200, 130)
-            className: "fill-red-500", // Non-rigid is red
-            textClass: "fill-red-300" // Non-rigid is red
+            transform: "scale(1.5) translate(-150, -65)", // Scale from its center (300, 130)
+            className: "fill-red-500",
+            textClass: "fill-red-300"
         }
+    };
+
+    // --- Define Buttons ---
+    const buttons = [
+        { key: 'translate', label: 'Translate' },
+        { key: 'rotate', label: 'Rotate' },
+        { key: 'reflect', label: 'Reflect' },
+        { key: 'dilate', label: 'Dilate' },
     ];
 
-    // Effect to cycle through animations
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % transformations.length);
-        }, 2500); // Change every 2.5 seconds
-
-        return () => clearTimeout(timer); // Cleanup timer
-    }, [currentIndex]);
-
-    const current = transformations[currentIndex];
+    const currentImage = activeKey ? imageStates[activeKey] : null;
+    // Update label text based on active state
+    const currentLabel = activeKey ? (currentImage?.label || "") : "Click a button to see a transformation.";
+    const currentTextClass = activeKey ? (currentImage?.textClass || "") : (isDarkMode ? "fill-slate-400" : "fill-slate-500");
 
     return (
-        <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ height: svgHeight }}>
+        // Use a flex-col container to hold SVG and buttons
+        <div className="w-full flex flex-col justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+            {/* SVG Area */}
             <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                <AnimatePresence mode="wait">
-                    <motion.g
-                        key={currentIndex}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        transition={{ duration: 0.5 }}
+                
+                {/* 1. Pre-Image (Always visible) */}
+                <g>
+                    <path
+                        d={preImageProps.path}
+                        className={preImageProps.className}
+                        opacity={0.9}
+                    />
+                    <text
+                        x={100} // Centered on pre-image
+                        y={svgHeight - 60} // Position text below shape
+                        textAnchor="middle"
+                        className={`text-base font-semibold ${preImageProps.textClass}`}
                     >
-                        {/* Line of Reflection (only show for reflection step) */}
-                        {current.label.includes("Reflection") && (
-                             <motion.line
-                                x1={0} y1={130} x2={svgWidth} y2={130}
-                                className="stroke-slate-400 dark:stroke-slate-500"
-                                strokeWidth="1.5" strokeDasharray="4 4"
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: 1 }}
-                            />
-                        )}
+                        {preImageProps.label}
+                    </text>
+                </g>
 
-                        <motion.path
-                            d={baseTriangle}
-                            transform={current.transform}
-                            className={current.className}
-                            opacity={0.9}
-                        />
-                        <motion.text
-                            x={svgWidth / 2}
-                            y={svgHeight - 30} // Position text at the bottom
-                            textAnchor="middle"
-                            className={`text-lg font-semibold ${current.textClass}`}
-                        >
-                            {current.label}
-                        </motion.text>
-                    </motion.g>
+                {/* Line of Reflection (only show for reflection) */}
+                <AnimatePresence>
+                {activeKey === 'reflect' && (
+                    <motion.line
+                        x1={200} y1={50} x2={200} y2={svgHeight - 80} // Vertical line at x=200
+                        className="stroke-slate-400 dark:stroke-slate-500"
+                        strokeWidth="1.5" strokeDasharray="4 4"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        exit={{ pathLength: 0 }}
+                    />
+                )}
                 </AnimatePresence>
+
+                {/* 2. Image (Animated on state change) */}
+                <AnimatePresence mode="wait">
+                    {currentImage && (
+                        <motion.g
+                            key={activeKey} // Key change triggers animation
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <path
+                                d={imageTriangleBase}
+                                transform={currentImage.transform}
+                                className={currentImage.className}
+                                opacity={0.9}
+                            />
+                             <text
+                                x={300} // Centered on image
+                                y={svgHeight - 60} // Position text below shape
+                                textAnchor="middle"
+                                className={`text-base font-semibold ${currentImage.textClass}`}
+                            >
+                                Image
+                            </text>
+                        </motion.g>
+                    )}
+                </AnimatePresence>
+
+                {/* 3. Dynamic Label Text at bottom */}
+                <motion.text
+                    key={currentLabel} // Animate text change
+                    x={svgWidth / 2}
+                    y={svgHeight - 20} // Position text at the very bottom
+                    textAnchor="middle"
+                    className={`text-lg font-semibold ${currentTextClass}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    {currentLabel}
+                </motion.text>
             </svg>
+            
+            {/* Button Controls */}
+            <div className="flex flex-wrap justify-center gap-3 pt-4">
+                {buttons.map((btn) => {
+                    const isActive = activeKey === btn.key;
+                    return (
+                        <motion.button
+                            key={btn.key}
+                            onClick={() => setActiveKey(btn.key)}
+                            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all border-2
+                                ${isActive
+                                    ? 'bg-blue-600 text-white border-blue-600' // Active state
+                                    : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700' // Inactive
+                                }`}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            {btn.label}
+                        </motion.button>
+                    );
+                })}
+            </div>
         </div>
     );
 };
@@ -207,7 +279,7 @@ export default function Slide1() {
                         </ul>
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
                             Think: It's a "mapping" of every point from the pre-image to a new point on the image.
-                         </em>
+                          </em>
                     </div>
 
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
@@ -241,7 +313,7 @@ export default function Slide1() {
                             A property is <strong>preserved</strong> if it remains the same after the transformation.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           In this unit, we will check which transformations preserve key properties like:
+                            In this unit, we will check which transformations preserve key properties like:
                         </p>
                         <ul className="text-lg list-none mt-4 space-y-2 font-mono text-slate-700 dark:text-slate-300">
                              <li className='border-b pb-2 dark:border-slate-700'>📐 Angle Measure</li>
@@ -258,8 +330,10 @@ export default function Slide1() {
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing the Transformations</h3>
-                        {/* --- UPDATED COMPONENT --- */}
-                        <TransformationCycleAnimation />
+                        
+                        {/* --- UPDATED COMPONENT REFERENCE --- */}
+                        <TransformationComparator />
+                        
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
                             Notice how translation, rotation, and reflection (rigid) change the position, but dilation (non-rigid) changes the size.
                         </p>
@@ -339,7 +413,7 @@ export default function Slide1() {
                                                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
-                                            >
+            >
                                                 {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Complete Quiz'}
                                             </motion.button>
                                         </motion.div>

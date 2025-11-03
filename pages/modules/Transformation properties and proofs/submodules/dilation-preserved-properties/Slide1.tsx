@@ -1,104 +1,118 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+// 1. Import 'animate'
+import { motion, AnimatePresence, useAnimation, useMotionValue, useTransform, animate } from 'framer-motion'; 
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
+// --- ANIMATION COMPONENT UPDATED ---
 const DilationPropertiesAnimation: React.FC = () => {
     const svgWidth = 400;
     const svgHeight = 250;
     const center = { x: 80, y: 125 };
-    const scaleFactor = 2;
 
+    // Paths from your original code
     const preImageTriangle = "M 150 80 L 180 130 L 130 130 Z";
-    const imageTriangle = "M 220 35 L 280 135 L 180 135 Z"; // Manually calculated for k=2 from center
+    const imageTriangle = "M 220 35 L 280 135 L 180 135 Z";
     
-    const preImagePoints = [
-        { x: 150, y: 80, label: "A" },
-        { x: 180, y: 130, label: "B" },
-        { x: 130, y: 130, label: "C" },
-    ];
+    // Animation controls
+    const controls = useAnimation();
     
-    const imagePoints = [
-        { x: 220, y: 35, label: "A'" },
-        { x: 280, y: 135, label: "B'" },
-        { x: 180, y: 135, label: "C'" },
-    ];
+    // Animated number for the side length
+    const sideLength = useMotionValue(50);
+    const roundedSide = useTransform(sideLength, latest => Math.round(latest));
 
-    const baseDelay = 0.5;
+    // Animation loop
+    useEffect(() => {
+        const sequence = async () => {
+            while (true) {
+                // Grow to Image
+                await Promise.all([
+                    controls.start({
+                        d: imageTriangle,
+                        fill: "#22c55e", // Green
+                        transition: { type: 'spring', stiffness: 50, damping: 15, duration: 1.5 }
+                    }),
+                    // 2. Use animate() instead of sideLength.set()
+                    animate(sideLength, 100, { duration: 1.5 }) 
+                ]);
+                await new Promise(res => setTimeout(res, 1500)); // Pause
+
+                // Shrink to Pre-Image
+                await Promise.all([
+                    controls.start({
+                        d: preImageTriangle,
+                        fill: "#3b82f6", // Blue
+                        transition: { type: 'spring', stiffness: 50, damping: 15, duration: 1.5 }
+                    }),
+                    // 2. Use animate() instead of sideLength.set()
+                    animate(sideLength, 50, { duration: 1.5 })
+                ]);
+                await new Promise(res => setTimeout(res, 1500)); // Pause
+            }
+        };
+        sequence();
+    }, [controls, sideLength]);
 
     return (
         <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
             <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
                 {/* Center of Dilation */}
-                <motion.circle
-                    cx={center.x} cy={center.y} r={5} className="fill-red-500"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: baseDelay }}
+                <circle cx={center.x} cy={center.y} r={5} className="fill-red-500" />
+                <text x={center.x - 10} y={center.y + 5} textAnchor="end" className="fill-red-400 text-sm font-semibold">P</text>
+
+                {/* Dilation Lines (static) */}
+                <line x1={center.x} y1={center.y} x2={220} y2={35} className="stroke-slate-400 dark:stroke-slate-600 opacity-70" strokeWidth="1" strokeDasharray="3 3" />
+                <line x1={center.x} y1={center.y} x2={280} y2={135} className="stroke-slate-400 dark:stroke-slate-600 opacity-70" strokeWidth="1" strokeDasharray="3 3" />
+                <line x1={center.x} y1={center.y} x2={180} y2={135} className="stroke-slate-400 dark:stroke-slate-600 opacity-70" strokeWidth="1" strokeDasharray="3 3" />
+
+                {/* The "Live Grow" Triangle */}
+                <motion.path
+                    d={preImageTriangle}
+                    className="opacity-80"
+                    animate={controls}
+                    initial={{ d: preImageTriangle, fill: "#3b82f6" }}
                 />
-                <motion.text x={center.x - 10} y={center.y + 5} textAnchor="end" className="fill-red-400 text-sm font-semibold"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: baseDelay + 0.2 }}
-                >P</motion.text>
 
-                {/* Dilation Lines */}
-                {preImagePoints.map((p, i) => (
-                    <motion.line
-                        key={i}
-                        x1={center.x} y1={center.y}
-                        x2={imagePoints[i].x} y2={imagePoints[i].y}
-                        className="stroke-slate-400 dark:stroke-slate-600"
-                        strokeWidth="1" strokeDasharray="3 3"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.7 }}
-                        transition={{ delay: baseDelay + 0.5 }}
-                    />
-                ))}
+                {/* --- Text that changes vs. text that doesn't --- */}
 
-                {/* Pre-Image */}
-                <motion.g
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: baseDelay + 0.8 }}
+                {/* 3. Split the text into a static <text> and a dynamic <motion.text> */}
+                {/* Static Side Length Text */}
+                <text 
+                    x={170} y={155} 
+                    className="fill-slate-700 dark:fill-slate-200 text-sm font-semibold"
                 >
-                    <path d={preImageTriangle} className="fill-blue-500 opacity-80" />
-                    {/* Pre-image labels */}
-                    <text x="140" y="150" className="fill-blue-300 text-sm">Side = 50</text>
-                    <text x="130" y="125" className="fill-blue-300 text-sm">90°</text>
-                </motion.g>
-
-                {/* Image */}
-                 <motion.g
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: baseDelay + 1.2, duration: 0.5 }}
+                    Side = 
+                </text>
+                {/* Animated Side Length Number */}
+                <motion.text 
+                    x={215} y={155} // Adjusted x-position
+                    className="fill-slate-700 dark:fill-slate-200 text-sm font-semibold"
                 >
-                    <path d={imageTriangle} className="fill-green-500 opacity-80" />
-                    {/* Image labels */}
-                    <motion.text x="170" y="155" className="fill-green-300 text-sm font-semibold"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: baseDelay + 1.8 }}
-                    >
-                        Side = 100
-                    </motion.text>
-                     <motion.text x="180" y="130" className="fill-green-300 text-sm font-semibold"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: baseDelay + 1.8 }}
-                    >
-                        90°
-                    </motion.text>
-                </motion.g>
+                    {roundedSide}
+                </motion.text>
+                
+                {/* Pulsing Angle Symbol (shows it's preserved) */}
+                <motion.text 
+                    x={130} y={125} 
+                    className="fill-slate-700 dark:fill-slate-200 text-sm font-semibold"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                    90°
+                </motion.text>
                 
                 {/* Conclusion Text */}
-                 <motion.text x={svgWidth - 20} y={svgHeight - 40} textAnchor="end" className="fill-red-500 text-base font-bold"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: baseDelay + 2.2 }}
-                 >
-                     Side Lengths ❌ (Not Preserved)
-                 </motion.text>
-                 <motion.text x={svgWidth - 20} y={svgHeight - 20} textAnchor="end" className="fill-green-500 text-base font-bold"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: baseDelay + 2.5 }}
-                 >
-                     Angle Measure ✔️ (Preserved)
-                 </motion.text>
+                <motion.text x={svgWidth - 20} y={svgHeight - 40} textAnchor="end" className="fill-red-500 text-base font-bold"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}
+                >
+                    Side Lengths ❌ (Not Preserved)
+                </motion.text>
+                <motion.text x={svgWidth - 20} y={svgHeight - 20} textAnchor="end" className="fill-green-500 text-base font-bold"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}
+                >
+                    Angle Measure ✔️ (Preserved)
+                </motion.text>
             </svg>
         </div>
     );
@@ -204,17 +218,17 @@ export default function Slide1() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Recap: Dilation (Non-Rigid)</h2>
                         <p className="text-lg leading-relaxed">
-                            A <strong>dilation</strong> is the "resize" transformation. It is **non-rigid** because it changes the size of the figure.
+                            A <strong>dilation</strong> is the "resize" transformation. It is non-rigid because it changes the size of the figure.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           The new figure (image) is **similar** to the pre-image, but not congruent (unless the scale factor is 1).
+                           The new figure (image) is similar to the pre-image, but not congruent (unless the scale factor is 1).
                         </p>
                     </div>
 
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">What Dilations PRESERVE</h3>
                         <p className="text-lg leading-relaxed">
-                           Even though the size changes, dilations still preserve some key properties:
+                            Even though the size changes, dilations still preserve some key properties:
                         </p>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li className="font-semibold">
@@ -235,17 +249,17 @@ export default function Slide1() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-red-500 dark:text-red-400">What Dilations DO NOT Preserve</h3>
                         <p className="text-lg leading-relaxed">
-                           This is the most important part that separates dilations from rigid transformations:
+                            This is the most important part that separates dilations from rigid transformations:
                         </p>
                          <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li className="font-semibold">
                                 📏 Distance (Side Length)
-                                <span className="font-normal block text-slate-600 dark:text-slate-400">Side lengths are **not** preserved. They are multiplied by the scale factor $k$.</span>
+                                <span className="font-normal block text-slate-600 dark:text-slate-400">Side lengths are not preserved. They are multiplied by the scale factor.</span>
                             </li>
                         </ul>
                         <div className="mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/50 border border-red-200 dark:border-red-700">
                             <p className="text-lg font-bold text-red-800 dark:text-red-200">
-                                New Length = (Original Length) $\times$ (Scale Factor $k$)
+                                New Length = (Original Length) × (Scale Factor k)
                             </p>
                         </div>
                     </div>
@@ -259,7 +273,7 @@ export default function Slide1() {
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Angles vs. Side Lengths</h3>
                         <DilationPropertiesAnimation />
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-                            Notice the 90° angle is preserved, but the side length of 50 is not (it becomes 100 with $k=2$).
+                            Notice the 90° angle is preserved, but the side length of 50 is not (it becomes 100 with k=2).
                         </p>
                     </div>
 

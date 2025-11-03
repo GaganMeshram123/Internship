@@ -4,13 +4,28 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
+// --- ANIMATION COMPONENT UPDATED ---
 const OrientationAnimation: React.FC = () => {
     const svgWidth = 400;
     const svgHeight = 300;
     
     // A simple "F" shape
     const fPath = "M 0 0 L 0 100 L 50 100 M 0 50 L 40 50";
+
+    // --- NEW ---
+    // Define the 3 vertices (A, B, C) that define the "order"
+    // We'll trace these points
+    const vertices = [
+        { id: 'A', cx: 0, cy: 0 },   // Top of vertical bar
+        { id: 'B', cx: 40, cy: 50 }, // End of middle bar
+        { id: 'C', cx: 50, cy: 100 } // End of bottom bar
+    ];
+
+    // --- NEW ---
+    // Animation loop settings
+    const loopDuration = 3.0; // 3-second loop
+    const pulseDuration = 0.5; // Dot is visible for 0.5s
+    // ---
 
     const items = [
         {
@@ -21,7 +36,8 @@ const OrientationAnimation: React.FC = () => {
             order: "(Clockwise)",
             className: "stroke-blue-500",
             textClass: "fill-blue-400",
-            delay: 0.5
+            delay: 0.5,
+            dotClass: "fill-blue-300" // NEW: dot color
         },
         {
             id: 'translation',
@@ -31,19 +47,24 @@ const OrientationAnimation: React.FC = () => {
             order: "(Clockwise)",
             className: "stroke-green-500",
             textClass: "fill-green-400",
-            delay: 1.0
+            delay: 0.7, // Staggered fade-in
+            dotClass: "fill-green-300" // NEW: dot color
         },
         {
             id: 'reflection',
             d: fPath,
-            transform: 'translate(80, 200) scale(1, -1) translate(0, -100)',
+            // Flipped transform
+            transform: 'translate(80, 250) scale(1, -1) translate(0, -100)',
             label: "Reflection (A''B''C'')",
             order: "(Counter-Clockwise)",
             className: "stroke-orange-500",
             textClass: "fill-orange-400",
-            delay: 1.5
+            delay: 0.9, // Staggered fade-in
+            dotClass: "fill-orange-300" // NEW: dot color
         }
     ];
+    
+    const lineDelay = 0.3;
 
     return (
         <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
@@ -55,14 +76,14 @@ const OrientationAnimation: React.FC = () => {
                     strokeWidth="1" strokeDasharray="4 4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 1.3 }}
+                    transition={{ delay: lineDelay }}
                 />
                 <motion.text
                     x="260" y="165"
                     className="fill-slate-400 text-xs"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 1.3 }}
+                    transition={{ delay: lineDelay }}
                 >
                     Line of Reflection
                 </motion.text>
@@ -74,6 +95,7 @@ const OrientationAnimation: React.FC = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: item.delay, duration: 0.5 }}
                     >
+                        {/* The "F" shape (as before) */}
                         <path
                             d={item.d}
                             transform={item.transform}
@@ -82,6 +104,7 @@ const OrientationAnimation: React.FC = () => {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                         />
+                        {/* The labels (as before, but y-vals adjusted) */}
                         <text
                             x={item.id === 'translation' ? 250 : 80}
                             y={item.id === 'reflection' ? 220 : 30}
@@ -92,12 +115,45 @@ const OrientationAnimation: React.FC = () => {
                         </text>
                          <text
                             x={item.id === 'translation' ? 250 : 80}
-                            y={item.id === 'reflection' ? 240 : 170}
+                            y={item.id === 'reflection' ? 240 : 170} // Adjusted y-pos
                             textAnchor="middle"
                             className={`text-xs ${item.textClass} opacity-80`}
                         >
                             {item.order}
                         </text>
+
+                        {/* --- NEW "VERTEX PULSE" ANIMATION --- */}
+                        {/* This adds the glowing dots that trace the A-B-C order */}
+                        {vertices.map((v, index) => (
+                            <motion.circle
+                                key={v.id}
+                                r="5"
+                                cx={v.cx}
+                                cy={v.cy}
+                                transform={item.transform}
+                                className={item.dotClass}
+                                // Animate opacity to "pulse"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: [0, 1, 0, 0] }} // [hidden, pulse, hidden, wait]
+                                transition={{
+                                    duration: loopDuration,
+                                    repeat: Infinity,
+                                    repeatDelay: 1.0, // 1s pause between loops
+                                    // This array controls the timing of the pulse
+                                    // Each dot (A, B, C) pulses at a different time
+                                    times: [
+                                        (index * (pulseDuration + 0.5)) / loopDuration, // Start time
+                                        (index * (pulseDuration + 0.5) + 0.1) / loopDuration, // Fade in
+                                        (index * (pulseDuration + 0.5) + pulseDuration) / loopDuration, // Fade out
+                                        1 // End of loop
+                                    ],
+                                    ease: "linear",
+                                    // Delay the start of the whole loop
+                                    delay: item.delay + 0.5
+                                }}
+                            />
+                        ))}
+                        {/* --- END OF NEW PART --- */}
                     </motion.g>
                 ))}
             </svg>
@@ -222,7 +278,7 @@ export default function Slide3() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Key Difference: Orientation</h3>
                         <p className="text-lg leading-relaxed">
-                           There is one property that splits these three transformations into two groups: **orientation**.
+                            There is one property that splits these three transformations into two groups: **orientation**.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
                             <strong>Orientation</strong> is the order in which a shape's vertices are labeled (e.g., clockwise or counter-clockwise).
@@ -246,7 +302,7 @@ export default function Slide3() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Summary of Properties</h3>
                         <p className="text-lg leading-relaxed">
-                           Here is the complete breakdown for rigid transformations.
+                            Here is the complete breakdown for rigid transformations.
                         </p>
                         {/* A simple table is clearer here */}
                         <table className="w-full mt-4 text-left border-collapse">
