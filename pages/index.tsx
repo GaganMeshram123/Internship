@@ -36,6 +36,7 @@ const getModules = async () => {
     'oscillations-0001',
     'python-kids-0001',
     'python-kids-0002',
+    'Congruence',
     'python-kids-0003',
     'python-kids-0004',
     'python-kids-0005',
