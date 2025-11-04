@@ -77,9 +77,9 @@ const ReflectingPointAnimation: React.FC = () => {
                  <motion.line x1={origin.x - 3} y1={svgP.y + 15} x2={origin.x + 3} y2={svgP.y + 15} className="stroke-orange-400" strokeWidth="2"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + duration * 0.5 }}/>
                 <motion.text x={origin.x + 35} y={svgP.y - 5} textAnchor="middle" className="fill-orange-400 text-xs"
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + duration * 0.5 }}>Equal</motion.text>
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + duration * 0.5 }}>Equal</motion.text>
                 <motion.text x={origin.x - 35} y={svgP.y - 5} textAnchor="middle" className="fill-orange-400 text-xs"
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + duration * 0.5 }}>Equal</motion.text>
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + duration * 0.5 }}>Equal</motion.text>
 
             </svg>
         </div>
@@ -119,15 +119,18 @@ export default function Slide2() {
     const questions: QuizQuestion[] = [
         {
             id: 'reflection-definition-q1',
-            question: "In a reflection, what is the relationship between the line of reflection and the segment connecting a point $P$ to its image $P'$?",
+            // --- MODIFIED ---
+            question: "In a reflection, what is the relationship between the line of reflection and the segment connecting a point P to its image P'?",
             options: [
                 "It is parallel to the segment.",
                 "It is the perpendicular bisector of the segment.",
-                "It passes through point $P$.",
+                // --- MODIFIED ---
+                "It passes through point P.",
                 "It has the same length as the segment."
             ],
             correctAnswer: "It is the perpendicular bisector of the segment.",
-            explanation: "Correct! This is the formal definition. The line is perpendicular (90°) to the segment $PP'$ and cuts it into two equal halves."
+            // --- MODIFIED ---
+            explanation: "Correct! This is the formal definition. The line is perpendicular (90°) to the segment PP' and cuts it into two equal halves."
         },
         {
             id: 'translation-definition-q2',
@@ -139,7 +142,8 @@ export default function Slide2() {
                 "A dilation"
             ],
             correctAnswer: "A translation",
-            explanation: "Correct! A translation is defined by moving every point the same distance in the same direction (e.g., along the vector $\langle 5, -2 \rangle$)."
+            // --- MODIFIED ---
+            explanation: "Correct! A translation is defined by moving every point the same distance in the same direction (e.g., along the vector \langle 5, -2 \rangle)."
         }
     ];
 
@@ -189,21 +193,24 @@ export default function Slide2() {
                             We know a translation is a "slide," a rotation is a "turn," and a reflection is a "flip."
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           Now we need their formal definitions to use them in proofs.
+                            Now we need their formal definitions to use them in proofs.
                         </p>
                     </div>
 
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Definition: Reflection</h3>
+                        {/* --- MODIFIED --- */}
                         <p className="text-lg leading-relaxed">
-                           A reflection across a line $m$ maps every point $P$ to a point $P'$ such that:
+                            A reflection across a line m maps every point P to a point P' such that:
                         </p>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                If $P$ is on line $m$, then $P = P'$. (It doesn't move).
+                                {/* --- MODIFIED --- */}
+                                If P is on line m, then P = P'. (It doesn't move).
                             </li>
                              <li>
-                                If $P$ is *not* on line $m$, then $m$ is the **perpendicular bisector** of the segment $PP'$.
+                                {/* --- MODIFIED --- */}
+                                If P is not on line m, then m is the <strong>perpendicular bisector</strong> of the segment PP'.
                             </li>
                         </ul>
                         <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
@@ -219,12 +226,14 @@ export default function Slide2() {
                             <li>
                                 <strong>Translation:</strong>
                                 <br />
-                                <span className="text-slate-600 dark:text-slate-400">Maps every point $P$ to $P'$ along a vector. Every point moves the *same distance* in the *same direction*.</span>
+                                {/* --- MODIFIED --- */}
+                                <span className="text-slate-600 dark:text-slate-400">Maps every point P to P' along a vector. Every point moves the same distance in the same direction.</span>
                             </li>
                             <li>
                                 <strong>Rotation:</strong>
                                 <br />
-                                <span className="text-slate-600 dark:text-slate-400">Maps every point $P$ to $P'$ around a **center of rotation** $C$ by an **angle of rotation** $\theta$. The distance $PC$ is equal to $P'C$.</span>
+                                {/* --- MODIFIED --- */}
+                                <span className="text-slate-600 dark:text-slate-400">Maps every point P to P' around a <strong>center of rotation</strong> C by an <strong>angle of rotation</strong> \theta. The distance PC is equal to P'C.</span>
                             </li>
                         </ul>
                     </div>
@@ -237,8 +246,9 @@ export default function Slide2() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing the Definition (Reflection)</h3>
                         <ReflectingPointAnimation />
+                        {/* --- MODIFIED --- */}
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-                            The line $m$ is perpendicular to $PP'$ and cuts it into two equal-distance parts.
+                            The line m is perpendicular to PP' and cuts it into two equal-distance parts.
                         </p>
                     </div>
 
@@ -267,7 +277,8 @@ export default function Slide2() {
                         </div>
                         {!isQuizComplete ? (
                             <>
-                                <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                                {/* --- MODIFIED (text from questions[...].question) --- */}
+                                <div className="text-lg mb-4">{questions[currentQuestionIndex].question.replace(/\$|\*/g, '')}</div>
                                 <div className="space-y-3">
                                     {questions[currentQuestionIndex].options.map((option, idx) => {
                                         const disabled = showFeedback;
@@ -291,7 +302,8 @@ export default function Slide2() {
                                                 whileHover={!disabled ? { scale: 1.02 } : {}}
                                                 whileTap={!disabled ? { scale: 0.98 } : {}}
                                             >
-                                                {option}
+                                                {/* --- MODIFIED (text from option) --- */}
+                                                {option.replace(/\$|\*/g, '')}
                                             </motion.button>
                                         );
                                     })}
@@ -308,8 +320,9 @@ export default function Slide2() {
                                                     : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700'
                                             }`}
                                         >
+                                            {/* --- MODIFIED (text from questions[...].explanation) --- */}
                                             <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                                                {questions[currentQuestionIndex].explanation}
+                                                {questions[currentQuestionIndex].explanation.replace(/\$|\*/g, '')}
                                             </div>
                                             <motion.button
                                                 onClick={handleNextQuestion}

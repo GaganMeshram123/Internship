@@ -70,24 +70,26 @@ const RotationDefinitionDiagram: React.FC = () => {
                 <motion.text x="240" y="115" className="fill-purple-300 text-sm font-semibold"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2 }}
                 >
-                    $\theta$
+                    {/* --- MODIFIED --- */}
+                    &theta;
                 </motion.text>
 
                  {/* Equal Distance Ticks */}
                  <motion.text x="250" y="130" className="fill-orange-400 text-lg font-bold"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
+                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
                  >
                      |
                  </motion.text>
                  <motion.text x="220" y="95" className="fill-orange-400 text-lg font-bold"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
+                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
                  >
                      |
                  </motion.text>
                  <motion.text x="280" y="70" className="fill-orange-400 text-xs"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }}
+                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }}
                  >
-                     $CP = CP'$
+                     {/* --- MODIFIED --- */}
+                     CP = CP'
                  </motion.text>
             </svg>
         </div>
@@ -124,6 +126,7 @@ export default function Slide3() {
         explanation: string;
     }
 
+    // --- MODIFIED (Removed $ symbols from questions/answers) ---
     const questions: QuizQuestion[] = [
         {
             id: 'rotation-definition-q1',
@@ -139,15 +142,15 @@ export default function Slide3() {
         },
         {
             id: 'rotation-property-q2',
-            question: "If a rotation maps point $P$ to point $P'$ around a center $C$, what is the relationship between $CP$ and $CP'$?",
+            question: "If a rotation maps point P to point P' around a center C, what is the relationship between CP and CP'?",
             options: [
-                "$CP$ is perpendicular to $CP'$",
-                "$CP'$ is twice as long as $CP$",
-                "$CP$ and $CP'$ are equal in length",
-                "$CP$ and $CP'$ are parallel"
+                "CP is perpendicular to CP'",
+                "CP' is twice as long as CP",
+                "CP and CP' are equal in length",
+                "CP and CP' are parallel"
             ],
-            correctAnswer: "$CP$ and $CP'$ are equal in length",
-            explanation: "Exactly! The definition of a rotation states that all points remain the same distance from the center. $CP = CP'$."
+            correctAnswer: "CP and CP' are equal in length",
+            explanation: "Exactly! The definition of a rotation states that all points remain the same distance from the center. CP = CP'."
         }
     ];
 
@@ -197,7 +200,8 @@ export default function Slide3() {
                             Saying a rotation is a "turn" is good for intuition, but for proofs, we need a precise, mathematical definition.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                           A rotation isn't defined by just one thing. It requires **two key components**.
+                            {/* --- MODIFIED (Removed *) --- */}
+                            A rotation isn't defined by just one thing. It requires <strong>two key components</strong>.
                         </p>
                     </div>
 
@@ -205,12 +209,14 @@ export default function Slide3() {
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Two Components</h3>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-4">
                             <li>
-                                <strong>1. The Center of Rotation ($C$):</strong>
+                                {/* --- MODIFIED --- */}
+                                <strong>1. The Center of Rotation (C):</strong>
                                 <br />
                                 <span className="text-slate-600 dark:text-slate-400">This is the fixed point that the figure "turns around." It is the *only* point that does not move during the rotation.</span>
                             </li>
                              <li>
-                                <strong>2. The Angle of Rotation ($\theta$):</strong>
+                                {/* --- MODIFIED --- */}
+                                <strong>2. The Angle of Rotation (&theta;):</strong>
                                 <br />
                                  <span className="text-slate-600 dark:text-slate-400">This tells you *how far* to turn the figure, usually measured in degrees. You also need a direction (e.g., clockwise or counter-clockwise).</span>
                             </li>
@@ -219,20 +225,24 @@ export default function Slide3() {
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Formal Definition</h3>
+                        {/* --- MODIFIED --- */}
                         <p className="text-lg leading-relaxed">
-                            A **rotation** of $\theta$ degrees about a center $C$ maps any point $P$ to an image $P'$ such that:
+                            A <strong>rotation</strong> of &theta; degrees about a center C maps any point P to an image P' such that:
                         </p>
                          <ul className="text-lg list-disc list-inside mt-4 space-y-2">
-                            <li className="font-semibold">
-                                The distance from the center is preserved: $CP = CP'$.
-                            </li>
                              <li className="font-semibold">
-                                The angle formed by the points, center, and image is the angle of rotation: $m\angle PCP' = \theta$.
-                            </li>
-                        </ul>
-                         <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
-                           (If $P$ is the center $C$, then $P = P'$.)
-                         </em>
+                                {/* --- MODIFIED --- */}
+                                The distance from the center is preserved: CP = CP'.
+                             </li>
+                              <li className="font-semibold">
+                                {/* --- MODIFIED --- */}
+                                The angle formed by the points, center, and image is the angle of rotation: m&angle;PCP' = &theta;.
+                             </li>
+                         </ul>
+                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
+                            {/* --- MODIFIED --- */}
+                            (If P is the center C, then P = P'.)
+                          </em>
                     </div>
 
                 </div>
@@ -243,8 +253,9 @@ export default function Slide3() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing the Definition</h3>
                         <RotationDefinitionDiagram />
+                        {/* --- MODIFIED --- */}
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-                            Note that $P$ and $P'$ are the same distance from the center $C$.
+                            Note that P and P' are the same distance from the center C.
                         </p>
                     </div>
 
@@ -273,6 +284,7 @@ export default function Slide3() {
                         </div>
                         {!isQuizComplete ? (
                             <>
+                                {/* --- MODIFIED (text from questions[...].question) --- */}
                                 <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
                                 <div className="space-y-3">
                                     {questions[currentQuestionIndex].options.map((option, idx) => {
@@ -297,7 +309,8 @@ export default function Slide3() {
                                                 whileHover={!disabled ? { scale: 1.02 } : {}}
                                                 whileTap={!disabled ? { scale: 0.98 } : {}}
                                             >
-                                                {option.includes('$') ? <span>{option}</span> : option}
+                                                {/* --- MODIFIED (text from option) --- */}
+                                                {option}
                                             </motion.button>
                                         );
                                     })}
@@ -314,6 +327,7 @@ export default function Slide3() {
                                                     : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700'
                                             }`}
                                         >
+                                            {/* --- MODIFIED (text from questions[...].explanation) --- */}
                                             <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
                                                 {questions[currentQuestionIndex].explanation}
                                             </div>

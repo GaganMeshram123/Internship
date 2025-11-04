@@ -6,169 +6,151 @@ import { useThemeContext } from '@/lib/ThemeContext';
 
 // --- ANIMATION COMPONENT UPDATED ---
 const FindMeasureAnimation: React.FC = () => {
-    const [isRevealed, setIsRevealed] = useState(false);
+    // This state now controls the transformation
+    const [isTransformed, setIsTransformed] = useState(false);
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.3, delayChildren: 0.2 } },
+    // A simple triangle path
+    const trianglePath = "M 0 50 L 50 50 L 25 0 Z";
+
+    // Animation variants for the text labels
+    const labelVariants = {
+        hidden: { opacity: 0, y: -10 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+        exit: { opacity: 0, y: 10, transition: { duration: 0.2 } }
     };
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
+    // Spring transition for the "magic move"
+    const layoutTransition = {
+        type: 'spring',
+        stiffness: 200,
+        damping: 25
     };
-
-    // --- NEW: Spring transition for the "magic move" ---
-    const layoutTransition = { 
-        type: 'spring', 
-        stiffness: 300, 
-        damping: 20,
-        delay: 0.1
-    };
-
-    const answerVariants = {
-        // This is now just for the '?' fade out/in
-        hidden: { opacity: 0, scale: 0.5, transition: { duration: 0.1 } },
-        visible: { opacity: 1, scale: 1 },
-    };
-
-    const textFadeIn = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { delay: 0.5 } } // Fades in after numbers land
-    }
 
     return (
         <div 
             className="w-full flex flex-col justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden cursor-pointer relative"
-            // We now reveal on click
-            onClick={() => setIsRevealed(true)}
-            style={{ height: '220px' }} // Adjusted height back
+            // Toggle the transformation on click
+            onClick={() => setIsTransformed(!isTransformed)}
+            style={{ height: '220px' }}
         >
-            {/* Static Boxes (for context) */}
-            <motion.div
-                className="flex flex-col md:flex-row items-center justify-around w-full"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-            >
-                {/* Pre-Image Box */}
-                <motion.div variants={itemVariants} className="bg-blue-100 dark:bg-blue-900/50 p-4 rounded-lg shadow text-center m-2 z-10">
+            <div className="w-full h-full relative">
+                {/* --- Pre-Image (Blue Triangle) - Always visible --- */}
+                <motion.div
+                    className="absolute"
+                    style={{ left: '18%', top: '100px' }} // Adjusted left position
+                >
+                    <svg width="50" height="50" viewBox="0 0 50 50">
+                        <path 
+                            d={trianglePath} 
+                            className="fill-blue-500"
+                        />
+                    </svg>
+                </motion.div>
+
+                {/* --- Transformed Image (Green Triangle) - Appears on click --- */}
+                <AnimatePresence>
+                    {isTransformed && (
+                        <motion.div
+                            key="transformed-triangle"
+                            initial={{ x: -100, opacity: 0 }} // Start left and faded
+                            animate={{ x: 0, opacity: 1 }}    // Slide to its final position
+                            exit={{ opacity: 0 }}
+                            transition={layoutTransition}
+                            className="absolute"
+                            style={{ left: '68%', top: '100px' }} // Adjusted left position
+                        >
+                            <svg width="50" height="50" viewBox="0 0 50 50">
+                                <path 
+                                    d={trianglePath} 
+                                    className="fill-green-500"
+                                />
+                            </svg>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+
+                {/* --- Labels for the Pre-Image (Blue) - Always visible --- */}
+                <motion.div
+                    className="absolute text-center"
+                    style={{ left: '18%', top: '10px', transform: 'translateX(-50%)' }} // Adjusted left for text to center over triangle
+                    variants={labelVariants}
+                    initial="visible" // Always visible
+                    animate="visible"
+                >
                     <h4 className="font-semibold text-blue-700 dark:text-blue-300">Pre-Image: Shape T</h4>
-                    
-                    {/* --- UPDATED: This line now uses layoutId --- */}
-                    <p className="font-mono text-slate-800 dark:text-slate-100">
-                        Side S = 
-                        <AnimatePresence>
-                            {!isRevealed && (
-                                <motion.span
-                                    layoutId="side-value"
-                                    transition={layoutTransition}
-                                    className="font-bold text-blue-700 dark:text-blue-300"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                >
-                                    &nbsp;8
-                                </motion.span>
-                            )}
-                        </AnimatePresence>
-                    </p>
-                    {/* --- UPDATED: This line now uses layoutId --- */}
-                    <p className="font-mono text-slate-800 dark:text-slate-100">
-                        Angle ∠A = 
-                        <AnimatePresence>
-                            {!isRevealed && (
-                                <motion.span
-                                    layoutId="angle-value"
-                                    transition={layoutTransition}
-                                    className="font-bold text-blue-700 dark:text-blue-300"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                >
-                                    &nbsp;70°
-                                </motion.span>
-                            )}
-                        </AnimatePresence>
-                    </p>
+                    <p className="font-mono text-slate-800 dark:text-slate-100">Side S = 8</p>
+                    <p className="font-mono text-slate-800 dark:text-slate-100">Angle ∠A = 70°</p>
                 </motion.div>
 
-                {/* Transformation Arrow */}
-                <motion.div variants={itemVariants} className="text-center m-2 z-10">
-                    <div className="text-3xl font-bold text-slate-600 dark:text-slate-400">→</div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">(Rigid Transformation)</p>
-                </motion.div>
+                {/* --- Labels for the Image (Green) - Appears on click --- */}
+                <AnimatePresence>
+                    {isTransformed && (
+                        <motion.div
+                            key="image-labels"
+                            className="absolute text-center"
+                            style={{ left: '68%', top: '10px', transform: 'translateX(-50%)' }} // Adjusted left for text to center over triangle
+                            variants={labelVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                        >
+                            <h4 className="font-semibold text-green-700 dark:text-green-300">Image: Shape T'</h4>
+                            <p className="font-mono text-slate-800 dark:text-slate-100">Side S' = 8</p>
+                            <p className="font-mono text-slate-800 dark:text-slate-100">Angle ∠A' = 70°</p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-                {/* Image Box */}
-                <motion.div variants={itemVariants} className="bg-green-100 dark:bg-green-900/50 p-4 rounded-lg shadow text-center m-2 z-10">
-                    <h4 className="font-semibold text-green-700 dark:text-green-300">Image: Shape T'</h4>
-                    
-                    {/* --- UPDATED: This line now uses layoutId --- */}
-                    <p className="font-mono text-slate-800 dark:text-slate-100">
-                        Side S' = 
-                        <AnimatePresence mode="wait">
-                            {!isRevealed ? (
-                                <motion.span 
-                                    key="q1" 
-                                    variants={answerVariants}
-                                    initial="visible"
-                                    exit="hidden"
-                                    className="font-bold text-red-500">&nbsp;?</motion.span>
-                            ) : (
-                                <motion.span 
-                                    key="a1" 
-                                    layoutId="side-value" // This ID matches
-                                    transition={layoutTransition}
-                                    className="font-bold text-green-600 dark:text-green-300">&nbsp;8</motion.span>
-                            )}
-                        </AnimatePresence>
-                    </p>
-                    {/* --- UPDATED: This line now uses layoutId --- */}
-                    <p className="font-mono text-slate-800 dark:text-slate-100">
-                        Angle ∠A' = 
-                        <AnimatePresence mode="wait">
-                            {!isRevealed ? (
-                                <motion.span 
-                                    key="q2" 
-                                    variants={answerVariants}
-                                    initial="visible"
-                                    exit="hidden"
-                                    className="font-bold text-red-500">&nbsp;?</motion.span>
-                            ) : (
-                                <motion.span 
-                                    key="a2" 
-                                    layoutId="angle-value" // This ID matches
-                                    transition={layoutTransition}
-                                    className="font-bold text-green-600 dark:text-green-300">&nbsp;70°</motion.span>
-                            )}
-                        </AnimatePresence>
-                    </p>
-                </motion.div>
-            </motion.div>
+                {/* --- Arrow pointing from Pre-Image to Image - Appears on click --- */}
+                <AnimatePresence>
+                    {isTransformed && (
+                        <motion.div
+                            key="transformation-arrow"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0, transition: { delay: 0.3 } }}
+                            exit={{ opacity: 0, x: 20 }}
+                            className="absolute flex flex-col items-center justify-center"
+                            style={{ left: '44%', top: 'calc(50% - 10px)', transform: 'translate(-50%, -50%)' }} // Adjusted left to center better
+                        >
+                            <div className="text-3xl font-bold text-slate-600 dark:text-slate-400">→</div>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">(Rigid Transformation)</p> {/* Added whitespace-nowrap to keep text on one line */}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
             
+            {/* --- Final "Preserved" Text --- */}
             <AnimatePresence>
-                {isRevealed ? (
-                    <motion.div
-                        className="mt-4 text-center z-10"
-                        variants={textFadeIn}
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
+                {isTransformed && (
+                    <motion.p
+                        className="text-lg font-semibold text-blue-600 dark:text-blue-400 text-center absolute bottom-4"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1, transition: { delay: 0.5 } }}
+                        exit={{ opacity: 0 }}
                     >
-                        {/* Simplified Text */}
-                        <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-                            Because measures are preserved!
-                        </p>
-                    </motion.div>
-                ) : (
-                     <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 z-10 absolute bottom-4">(Click to reveal answers)</p>
+                        Rigid transformations preserve both side lengths and angle measures.
+                    </motion.p>
+                )}
+            </AnimatePresence>
+
+            {/* --- Click prompt --- */}
+            <AnimatePresence>
+                {!isTransformed && (
+                    <motion.p
+                        className="text-sm text-slate-500 dark:text-slate-400 z-10 absolute bottom-4"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1, transition: { delay: 0.5 } }}
+                        exit={{ opacity: 0 }}
+                    >
+                        (Click to see transformation)
+                    </motion.p>
                 )}
             </AnimatePresence>
         </div>
     );
 };
 // --- END OF ANIMATION COMPONENT DEFINITION ---
-
 
 export default function Slide2() {
     const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -262,7 +244,7 @@ export default function Slide2() {
         <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-                {/* Left Column - Content */}
+                {/* Left Column - Content (Unchanged) */}
                 <div className="space-y-6">
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
@@ -293,7 +275,7 @@ export default function Slide2() {
                         </p>
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
                             It MUST be <span className="font-bold">5</span>, because translation is a rigid transformation and preserves distance.
-                         </em>
+                          </em>
                     </div>
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
@@ -309,17 +291,18 @@ export default function Slide2() {
                         </p>
                          <em className="text-lg text-slate-500 dark:text-slate-400 block mt-3">
                             It MUST be <span className="font-bold">90°</span>, because reflection is a rigid transformation and preserves angle measure.
-                         </em>
+                          </em>
                     </div>
 
                 </div>
 
-                {/* Right Column - Animation and Quiz */}
+                {/* Right Column - Animation and Quiz (Unchanged) */}
                 <div className="space-y-6">
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Interactive Example</h3>
-                        <FindMeasureAnimation />
+                        {/* The new animation component is rendered here */}
+                        <FindMeasureAnimation /> 
                         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
                             No matter the transformation, if it's rigid, the measures of corresponding parts stay the same.
                         </p>
@@ -327,7 +310,7 @@ export default function Slide2() {
 
                     {/* --- KNOWLEDGE CHECK CARD --- */}
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                        {/* Quiz UI - Copied from reference */}
+                        {/* Quiz UI */}
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
                             <div className="text-lg text-slate-600 dark:text-slate-400">

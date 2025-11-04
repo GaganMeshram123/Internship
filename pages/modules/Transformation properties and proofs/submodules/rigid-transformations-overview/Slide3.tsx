@@ -2,65 +2,70 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
-import { useThemeContext } from '@/lib/ThemeContext';
+import { useThemeContext } from '@/lib/ThemeContext'; 
 
 // --- ANIMATION COMPONENT UPDATED ---
 const OrientationAnimation: React.FC = () => {
     const svgWidth = 400;
     const svgHeight = 300;
     
-    // A simple "F" shape
-    const fPath = "M 0 0 L 0 100 L 50 100 M 0 50 L 40 50";
+    // Define a simple right triangle path
+    // Vertices: A(0,0), B(50,0), C(0,50) - this gives a clockwise order if read A-B-C
+    const trianglePath = "M 0 0 L 50 0 L 0 50 Z";
 
-    // --- NEW ---
-    // Define the 3 vertices (A, B, C) that define the "order"
-    // We'll trace these points
+    // Vertex positions relative to the triangle's origin (0,0)
     const vertices = [
-        { id: 'A', cx: 0, cy: 0 },   // Top of vertical bar
-        { id: 'B', cx: 40, cy: 50 }, // End of middle bar
-        { id: 'C', cx: 50, cy: 100 } // End of bottom bar
+        { id: 'A', x: 0, y: 0, labelOffset: { x: -8, y: -8 } }, // Top-left
+        { id: 'B', x: 50, y: 0, labelOffset: { x: 8, y: -8 } }, // Top-right
+        { id: 'C', x: 0, y: 50, labelOffset: { x: -8, y: 8 } }  // Bottom-left
     ];
-
-    // --- NEW ---
-    // Animation loop settings
-    const loopDuration = 3.0; // 3-second loop
-    const pulseDuration = 0.5; // Dot is visible for 0.5s
-    // ---
 
     const items = [
         {
             id: 'pre-image',
-            d: fPath,
-            transform: 'translate(80, 50)',
+            d: trianglePath,
+            transform: 'translate(80, 50)', // Position the triangle
             label: "Pre-Image (ABC)",
-            order: "(Clockwise)",
+            orientationText: "Clockwise",
             className: "stroke-blue-500",
             textClass: "fill-blue-400",
+            vertexLabelPrefix: "",
             delay: 0.5,
-            dotClass: "fill-blue-300" // NEW: dot color
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            transition: { duration: 0.5 }
         },
         {
             id: 'translation',
-            d: fPath,
-            transform: 'translate(250, 50)',
+            d: trianglePath,
+            transform: 'translate(250, 50)', // Position the translated triangle
             label: "Translation (A'B'C')",
-            order: "(Clockwise)",
+            orientationText: "Orientation preserved.",
             className: "stroke-green-500",
             textClass: "fill-green-400",
-            delay: 0.7, // Staggered fade-in
-            dotClass: "fill-green-300" // NEW: dot color
+            vertexLabelPrefix: "'",
+            delay: 1.0, // Staggered
+            initial: { opacity: 0, x: -80 },
+            animate: { opacity: 1, x: 0 },
+            transition: { delay: 1.0, type: 'spring', stiffness: 100 }
         },
         {
             id: 'reflection',
-            d: fPath,
-            // Flipped transform
-            transform: 'translate(80, 250) scale(1, -1) translate(0, -100)',
+            d: trianglePath,
+            // Reflect across the y-axis of the triangle's local coordinate system (x -> -x), then move to position
+            // and adjust for the change in width due to reflection.
+            // A triangle with vertices (0,0), (50,0), (0,50) reflected across x=25 (center of 50 unit width)
+            // becomes (50,0), (0,0), (50,50)
+            transform: 'translate(80, 200) scale(-1, 1) translate(-50, 0)', // Flip horizontally and translate
             label: "Reflection (A''B''C'')",
-            order: "(Counter-Clockwise)",
+            orientationText: "Orientation reversed.",
             className: "stroke-orange-500",
             textClass: "fill-orange-400",
-            delay: 0.9, // Staggered fade-in
-            dotClass: "fill-orange-300" // NEW: dot color
+            vertexLabelPrefix: "''",
+            delay: 1.5, // Staggered
+            initial: { opacity: 0, scaleX: 0 }, // Start "flipped" flat
+            animate: { opacity: 1, scaleX: 1 }, // Flip into view
+            transition: { delay: 1.5, duration: 0.4 }
         }
     ];
     
@@ -69,9 +74,9 @@ const OrientationAnimation: React.FC = () => {
     return (
         <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
             <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                {/* Line of Reflection */}
+                {/* Line of Reflection (now vertical in the middle, since we are using horizontal reflection) */}
                 <motion.line
-                    x1="0" y1="175" x2={svgWidth} y2="175"
+                    x1="200" y1="0" x2="200" y2={svgHeight}
                     className="stroke-slate-400 dark:stroke-slate-500"
                     strokeWidth="1" strokeDasharray="4 4"
                     initial={{ opacity: 0 }}
@@ -79,7 +84,7 @@ const OrientationAnimation: React.FC = () => {
                     transition={{ delay: lineDelay }}
                 />
                 <motion.text
-                    x="260" y="165"
+                    x="205" y="15"
                     className="fill-slate-400 text-xs"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -91,69 +96,53 @@ const OrientationAnimation: React.FC = () => {
                 {items.map(item => (
                     <motion.g
                         key={item.id}
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: item.delay, duration: 0.5 }}
+                        initial={item.initial}
+                        animate={item.animate}
+                        transition={item.transition}
                     >
-                        {/* The "F" shape (as before) */}
+                        {/* The triangle shape */}
                         <path
                             d={item.d}
                             transform={item.transform}
                             className={`${item.className} fill-none`}
-                            strokeWidth="10"
+                            strokeWidth="4" // Thinner stroke for triangle
                             strokeLinecap="round"
                             strokeLinejoin="round"
                         />
-                        {/* The labels (as before, but y-vals adjusted) */}
+                        {/* The main labels */}
                         <text
-                            x={item.id === 'translation' ? 250 : 80}
-                            y={item.id === 'reflection' ? 220 : 30}
+                            x={item.id === 'pre-image' || item.id === 'reflection' ? 105 : 275} // Adjusted x to center over triangle
+                            y={item.id === 'reflection' ? 190 : 30}
                             textAnchor="middle"
                             className={`text-sm font-semibold ${item.textClass}`}
                         >
                             {item.label}
                         </text>
                          <text
-                            x={item.id === 'translation' ? 250 : 80}
-                            y={item.id === 'reflection' ? 240 : 170} // Adjusted y-pos
+                            x={item.id === 'pre-image' || item.id === 'reflection' ? 105 : 275} // Adjusted x to center over triangle
+                            y={item.id === 'reflection' ? 260 : 120} // Adjusted y-pos
                             textAnchor="middle"
                             className={`text-xs ${item.textClass} opacity-80`}
                         >
-                            {item.order}
+                            {item.orientationText}
                         </text>
 
-                        {/* --- NEW "VERTEX PULSE" ANIMATION --- */}
-                        {/* This adds the glowing dots that trace the A-B-C order */}
+                        {/* Vertex Labels (A, B, C, etc.) */}
                         {vertices.map((v, index) => (
-                            <motion.circle
-                                key={v.id}
-                                r="5"
-                                cx={v.cx}
-                                cy={v.cy}
+                            <motion.text
+                                key={`${item.id}-${v.id}`}
+                                x={v.x + v.labelOffset.x}
+                                y={v.y + v.labelOffset.y}
+                                textAnchor={v.id === 'B' ? 'start' : (v.id === 'C' ? 'end' : 'end')} // Adjust anchor for reflection
                                 transform={item.transform}
-                                className={item.dotClass}
-                                // Animate opacity to "pulse"
+                                className={`text-xs font-bold ${item.textClass}`}
                                 initial={{ opacity: 0 }}
-                                animate={{ opacity: [0, 1, 0, 0] }} // [hidden, pulse, hidden, wait]
-                                transition={{
-                                    duration: loopDuration,
-                                    repeat: Infinity,
-                                    repeatDelay: 1.0, // 1s pause between loops
-                                    // This array controls the timing of the pulse
-                                    // Each dot (A, B, C) pulses at a different time
-                                    times: [
-                                        (index * (pulseDuration + 0.5)) / loopDuration, // Start time
-                                        (index * (pulseDuration + 0.5) + 0.1) / loopDuration, // Fade in
-                                        (index * (pulseDuration + 0.5) + pulseDuration) / loopDuration, // Fade out
-                                        1 // End of loop
-                                    ],
-                                    ease: "linear",
-                                    // Delay the start of the whole loop
-                                    delay: item.delay + 0.5
-                                }}
-                            />
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: item.delay + 0.6 + (index * 0.2), duration: 0.3 }} // Stagger vertex labels
+                            >
+                                {v.id}{item.vertexLabelPrefix}
+                            </motion.text>
                         ))}
-                        {/* --- END OF NEW PART --- */}
                     </motion.g>
                 ))}
             </svg>
@@ -267,7 +256,7 @@ export default function Slide3() {
                            The name comes from Greek: iso- (equal) and -metry (measure).
                         </p>
                          <p className="text-lg leading-relaxed mt-3">
-                           All 3 rigid transformations (translation, rotation, reflection) are isometries because they preserve the "measure" of:
+                            All 3 rigid transformations (translation, rotation, reflection) are isometries because they preserve the "measure" of:
                         </p>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2 font-mono">
                             <li>📏 Distance (Side Lengths)</li>
@@ -278,7 +267,8 @@ export default function Slide3() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Key Difference: Orientation</h3>
                         <p className="text-lg leading-relaxed">
-                            There is one property that splits these three transformations into two groups: **orientation**.
+                            {/* --- MODIFIED: Removed ** --- */}
+                            There is one property that splits these three transformations into two groups: <strong>orientation</strong>.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
                             <strong>Orientation</strong> is the order in which a shape's vertices are labeled (e.g., clockwise or counter-clockwise).

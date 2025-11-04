@@ -126,7 +126,8 @@ const ProofFlowAnimation: React.FC = () => {
                     initial="hidden"
                     animate="visible"
                  >
-                    therefore: triangle ABC $\cong$ triangle A'B'C'
+                    {/* --- MODIFIED --- */}
+                    therefore: triangle ABC &cong; triangle A'B'C'
                 </motion.text>
                 
                 {/* Arrowhead Definition */}
@@ -243,7 +244,8 @@ export default function Slide1() {
                             So far, you may have used proofs like SSS, ASA, or SAS to prove triangles are congruent.
                         </p>
                         <p className="text-lg leading-relaxed mt-3">
-                            Now, we will use a different method: **proving congruence using the definitions of transformations.**
+                            {/* --- MODIFIED --- */}
+                            Now, we will use a different method: <strong>proving congruence using the definitions of transformations.</strong>
                         </p>
                     </div>
 
@@ -254,25 +256,30 @@ export default function Slide1() {
                         </p>
                         <div className="mt-4 p-4 rounded-lg bg-blue-100 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700">
                             <p className="text-lg font-bold text-blue-800 dark:text-blue-200">
-                                Two figures are **congruent** if and only if there is a **sequence of rigid transformations** that maps one figure onto the other.
+                                {/* --- MODIFIED --- */}
+                                Two figures are <strong>congruent</strong> if and only if there is a <strong>sequence of rigid transformations</strong> that maps one figure onto the other.
                             </p>
                         </div>
                          <p className="text-lg leading-relaxed mt-3">
-                            Therefore, to *prove* two figures are congruent, you just have to find this exact sequence of transformations!
-                         </p>
+                            {/* --- MODIFIED --- */}
+                            Therefore, to prove two figures are congruent, you just have to find this exact sequence of transformations!
+                           </p>
                     </div>
                     
                     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+                        {/* --- MODIFIED --- */}
                         <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-4D00">Justifying Your Steps</h3>
                         <p className="text-lg leading-relaxed">
                             In a proof, you can't just say "they are congruent." You must use the properties we've learned.
                         </p>
                         <ul className="text-lg list-disc list-inside mt-4 space-y-2">
                             <li>
-                                **If you use a reflection:** You can state that lengths are equal (e.g., AB = A'B') because "reflections preserve distance."
+                                {/* --- MODIFIED --- */}
+                                <strong>If you use a reflection:</strong> You can state that lengths are equal (e.g., AB = A'B') because "reflections preserve distance."
                             </li>
                              <li>
-                                **If you use a rotation:** You can state that angles are equal (e.g., $\angle$C = $\angle$C') because "rotations preserve angle measure."
+                                {/* --- MODIFIED --- */}
+                                <strong>If you use a rotation:</strong> You can state that angles are equal (e.g., &angle;C = &angle;C') because "rotations preserve angle measure."
                             </li>
                         </ul>
                     </div>
