@@ -4,18 +4,22 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- SSS ANIMATION COMPONENT DEFINED INSIDE ---
+// --- SSS ANIMATION COMPONENT DEFINED INSIDE (UPDATED) ---
 const SssAnimation: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 240; // Increased height
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightStroke = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  
+  // Colors from your image
+  const side1Color = isDarkMode ? '#F87171' : '#EF4444'; // Red/Orange (5)
+  const side2Color = isDarkMode ? '#4ADE80' : '#22C55E'; // Green (4.24)
+  const side3Color = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue (3.6)
 
-  // Triangle 1 (Left)
-  const T1 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  // Triangle 2 (Right)
-  const T2 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
+  // T1 (ABC)
+  const T1 = { A: { x: 30, y: 180 }, B: { x: 180, y: 180 }, C: { x: 100, y: 70 } };
+  // T2 (KLM)
+  const T2 = { K: { x: 230, y: 180 }, L: { x: 300, y: 70 }, M: { x: 370, y: 110 } };
 
   const commonProps = {
     fill: 'none',
@@ -43,57 +47,76 @@ const SssAnimation: React.FC = () => {
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
         {/* --- Triangles --- */}
-        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} strokeDasharray="4 4" {...commonProps} />
-        <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} strokeDasharray="4 4" {...commonProps} />
+        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor}>A</text>
+        <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor}>B</text>
+        <text x={T1.C.x} y={T1.C.y - 10} fill={strokeColor} textAnchor="middle">C</text>
+        
+        <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor}>K</text>
+        <text x={T2.L.x} y={T2.L.y - 10} fill={strokeColor} textAnchor="middle">L</text>
+        <text x={T2.M.x + 5} y={T2.M.y + 5} fill={strokeColor}>M</text>
 
         {/* --- SSS Highlights --- */}
 
-        {/* SIDE 1 (AB and DE) */}
+        {/* SIDE 1 (AB and KL) - Length 5 */}
         <motion.line
           x1={T1.A.x} y1={T1.A.y} x2={T1.B.x} y2={T1.B.y}
-          stroke={highlightStroke} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={0.5}
+          stroke={side1Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={0.5}
         />
-        <motion.line
-          x1={T2.D.x} y1={T2.D.y} x2={T2.E.x} y2={T2.E.y}
-          stroke={highlightStroke} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={0.5}
-        />
-        <motion.text x={T1.A.x - 30} y={(T1.A.y + T1.B.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>S</motion.text>
-        <motion.text x={T2.D.x - 30} y={(T2.D.y + T2.E.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>S</motion.text>
-
-        {/* SIDE 2 (BC and EF) */}
-        <motion.line
-          x1={T1.B.x} y1={T1.B.y} x2={T1.C.x} y2={T1.C.y}
-          stroke={highlightStroke} strokeWidth="6" strokeDasharray="6 6" variants={anim} initial="hidden" animate="visible" custom={1.5}
-        />
-        <motion.line
-          x1={T2.E.x} y1={T2.E.y} x2={T2.F.x} y2={T2.F.y}
-          stroke={highlightStroke} strokeWidth="6" strokeDasharray="6 6" variants={anim} initial="hidden" animate="visible" custom={1.5}
-        />
-        <motion.text x={(T1.B.x + T1.C.x) / 2} y={T1.C.y + 20} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>S</motion.text>
-        <motion.text x={(T2.E.x + T2.F.x) / 2} y={T2.F.y + 20} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>S</motion.text>
+        <motion.text x={(T1.A.x + T1.B.x) / 2} y={T1.A.y + 15} fill={side1Color} fontSize="12" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>5</motion.text>
         
-        {/* SIDE 3 (AC and DF) */}
+        <motion.line
+          x1={T2.K.x} y1={T2.K.y} x2={T2.L.x} y2={T2.L.y}
+          stroke={side1Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={0.5}
+        />
+        <motion.text x={(T2.K.x + T2.L.x) / 2 - 10} y={(T2.K.y + T2.L.y) / 2 + 10} fill={side1Color} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>5</motion.text>
+        
+        <motion.text x={svgWidth / 2 - 70} y={svgHeight - 40} fill={side1Color} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={0.9}>S</motion.text>
+
+        {/* SIDE 2 (AC and KM) - Length 4.24 */}
         <motion.line
           x1={T1.A.x} y1={T1.A.y} x2={T1.C.x} y2={T1.C.y}
-          stroke={highlightStroke} strokeWidth="6" strokeDasharray="1 5" variants={anim} initial="hidden" animate="visible" custom={2.5}
+          stroke={side2Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={1.5}
         />
+        <motion.text x={(T1.A.x + T1.C.x) / 2 - 15} y={(T1.A.y + T1.C.y) / 2} fill={side2Color} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>4.24</motion.text>
+
         <motion.line
-          x1={T2.D.x} y1={T2.D.y} x2={T2.F.x} y2={T2.F.y}
-          stroke={highlightStroke} strokeWidth="6" strokeDasharray="1 5" variants={anim} initial="hidden" animate="visible" custom={2.5}
+          x1={T2.K.x} y1={T2.K.y} x2={T2.M.x} y2={T2.M.y}
+          stroke={side2Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={1.5}
         />
-        <motion.text x={(T1.A.x + T1.C.x) / 2} y={(T1.A.y + T1.C.y) / 2 - 10} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>S</motion.text>
-        <motion.text x={(T2.D.x + T2.F.x) / 2} y={(T2.D.y + T2.F.y) / 2 - 10} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>S</motion.text>
+        <motion.text x={(T2.K.x + T2.M.x) / 2} y={(T2.K.y + T2.M.y) / 2 + 15} fill={side2Color} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>4.24</motion.text>
+
+        <motion.text x={svgWidth / 2} y={svgHeight - 40} fill={side2Color} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.9}>S</motion.text>
+
+        {/* SIDE 3 (BC and LM) - Length 3.6 */}
+        <motion.line
+          x1={T1.B.x} y1={T1.B.y} x2={T1.C.x} y2={T1.C.y}
+          stroke={side3Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={2.5}
+        />
+        <motion.text x={(T1.B.x + T1.C.x) / 2 + 10} y={(T1.B.y + T1.C.y) / 2} fill={side3Color} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>3.6</motion.text>
+          
+        <motion.line
+          x1={T2.L.x} y1={T2.L.y} x2={T2.M.x} y2={T2.M.y}
+          stroke={side3Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={2.5}
+        />
+        <motion.text x={(T2.L.x + T2.M.x) / 2 + 10} y={(T2.L.y + T2.M.y) / 2} fill={side3Color} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>3.6</motion.text>
+        
+        <motion.text x={svgWidth / 2 + 70} y={svgHeight - 40} fill={side3Color} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.9}>S</motion.text>
 
         {/* Congruence Statement */}
-        <motion.text x={svgWidth / 2} y={svgHeight / 2 - 20} fill={highlightStroke} fontSize="18" fontWeight="bold" textAnchor="middle"
+        <motion.text x={svgWidth / 2} y={svgHeight - 15} fill={strokeColor} fontSize="18" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={3.5}>
-          ∴ &triangle;ABC &cong; &triangle;DEF
+          ∴ &triangle;ABC &cong; &triangle;KLM
         </motion.text>
       </svg>
     </div>
@@ -212,44 +235,57 @@ export default function SssSlide1() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The SSS Criterion</h2>
-            <p className="text-lg leading-relaxed">
-              SSS stands for <strong>Side-Side-Side</strong>.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Introduction</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              In general, to prove that two polygons are congruent, we need to check that all pairs of corresponding sides are congruent and that all pairs of corresponding angles are congruent.
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              It states: If three sides of one triangle are congruent to the corresponding three sides of another triangle, then the triangles are congruent.
+            <p className="text-lg leading-relaxed mb-4">
+              When it comes to triangles, however, we have a few shortcuts.
             </p>
-          </div>
-
-          {/* --- CARD 2 (The Most Intuitive) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Most Intuitive Criterion</h3>
-            <p className="text-lg leading-relaxed">
-              This is often the easiest criterion to understand. If you build a triangle with three sticks of specific lengths, there is only **one** possible triangle you can make.
-            </p>
-            <p className="text-lg leading-relaxed mt-3">
-              Therefore, if another triangle is made from the exact same three lengths, it *must* be an identical copy.
+            <p className="text-lg leading-relaxed mb-4">
+              One such shortcut is the <strong>side-side-side (SSS)</strong> congruence criterion, which states the following:
             </p>
 
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                <strong>Key Idea:</strong> With SSS, you don't need to know *any* of the angles to prove congruence. The side lengths "lock in" the angles automatically.
+            <blockquote className="my-4 p-4 bg-slate-100 dark:bg-slate-700/60 border-l-4 border-blue-500 rounded-r-lg">
+              <p className="text-lg italic font-medium leading-relaxed">
+                Two triangles are congruent if and only if three sides of one triangle are congruent to three sides of the other triangle.
+              </p>
+            </blockquote>
+
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">To demonstrate, consider the triangles below.</h3>
+            
+            <div className="space-y-2 text-lg">
+              <p>We can see that we have three pairs of congruent sides:</p>
+              <div className="pl-4 font-mono">
+                <p>AB &cong; KL, AC &cong; KM, BC &cong; LM</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <p className="text-lg leading-relaxed">
+                Therefore, the SSS congruence criterion guarantees that these two triangles are congruent, and we can write:
+              </p>
+              <p className="text-xl font-bold text-center my-4 font-mono text-blue-600 dark:text-blue-400">
+                &triangle;ABC &cong; &triangle;KLM
               </p>
             </div>
+             <p className="text-lg leading-relaxed mt-4">
+              The SSS criterion saves us a lot of work. We didn't even have to check the angles!
+            </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (Quiz is Unchanged) */}
         <div className="space-y-6">
           {/* --- ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing SSS</h3>
             
-            {/* --- USE THE ANIMATION COMPONENT --- */}
+            {/* --- USE THE UPDATED ANIMATION COMPONENT --- */}
             <SssAnimation />
             
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
@@ -257,7 +293,7 @@ export default function SssSlide1() {
             </p>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (Unchanged) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>

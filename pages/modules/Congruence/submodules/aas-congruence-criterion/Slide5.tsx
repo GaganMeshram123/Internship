@@ -4,93 +4,138 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 160;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
+  
+  const angleTeal = isDarkMode ? '#2DD4BF' : '#0D9488';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // --- Figure 1: Parallel Lines (AAS) ---
-  const Q1 = { A: { x: 50, y: 50 }, B: { x: 180, y: 110 }, C: { x: 50, y: 170 } };
-  const Q1T2 = { D: { x: 350, y: 50 }, E: { x: 220, y: 110 }, F: { x: 350, y: 170 } };
-
-  // --- Figure 2: Shared Side (ASA trap) ---
-  const Q2 = { A: { x: 50, y: 110 }, B: { x: 200, y: 40 }, C: { x: 350, y: 110 }, D: { x: 200, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  const Q = { x: 30, y: 140 };
+  const S = { x: 370, y: 140 };
+  const R = { x: 120, y: 50 };
+  const T = { x: 280, y: 50 };
+  const O = { x: 200, y: 95 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles with Vertical Angles */}
-              <path d={`M ${Q1.A.x} ${Q1.A.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.C.x} ${Q1.C.y}`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${Q1T2.D.x} ${Q1T2.D.y} L ${Q1T2.E.x} ${Q1T2.E.y} L ${Q1T2.F.x} ${Q1T2.F.y}`} stroke={strokeColor} {...commonProps} />
-              
-              {/* Parallel line markings */}
-              <line x1={Q1.A.x} y1={Q1.A.y - 10} x2={Q1.C.x} y2={Q1.C.y + 10} stroke={givenColor} />
-              <line x1={Q1T2.D.x} y1={Q1T2.D.y - 10} x2={Q1T2.F.x} y2={Q1T2.F.y + 10} stroke={givenColor} />
-              <text x={30} y={110} fill={givenColor} fontSize="12">Given: AC || DF</text>
+        {/* Triangles */}
+        <path d={`M ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${T.x} ${T.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${Q.x} ${Q.y} L ${S.x} ${S.y}`} stroke={strokeColor} strokeWidth="3" />
+        <path d={`M ${R.x} ${R.y} L ${S.x} ${S.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${T.x} ${T.y} L ${Q.x} ${Q.y}`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={Q.x - 15} y={Q.y + 5} fill={strokeColor}>Q</text>
+        <text x={S.x + 5} y={S.y + 5} fill={strokeColor}>S</text>
+        <text x={R.x} y={R.y - 10} fill={strokeColor}>R</text>
+        <text x={T.x} y={T.y - 10} fill={strokeColor}>T</text>
+        <text x={O.x} y={O.y + 5} fill={strokeColor} textAnchor="middle">O</text>
 
-              {/* AAS Markings */}
-              <path d={`M ${Q1.C.x + 20} ${Q1.C.y} A 20 20 0 0 0 ${Q1.C.x + 10} ${Q1.C.y - 17}`} stroke={highlightColor} {...commonProps} />
-              <path d={`M ${Q1T2.F.x - 20} ${Q1T2.F.y} A 20 20 0 0 1 ${Q1T2.F.x - 10} ${Q1T2.F.y - 17}`} stroke={highlightColor} {...commonProps} />
-              
-              <path d={`M ${Q1.B.x - 17} ${Q1.B.y - 10} A 20 20 0 0 0 ${Q1.B.x} ${Q1.B.y - 20}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              <path d={`M ${Q1T2.E.x + 17} ${Q1T2.E.y - 10} A 20 20 0 0 1 ${Q1T2.E.x} ${Q1T2.E.y - 20}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.B.x} y2={Q1.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={Q1T2.D.x} y1={Q1T2.D.y} x2={Q1T2.E.x} y2={Q1T2.E.y} stroke={highlightColor} strokeWidth="4" />
-            </motion.g>
-          )}
+        {/* Angles & Markings */}
+        <path d={`M ${R.x + 15} ${R.y + 5} A 15 15 0 0 1 ${R.x} ${R.y + 15}`} stroke={angleTeal} {...commonProps} />
+        <path d={`M ${T.x - 15} ${T.y + 5} A 15 15 0 0 0 ${T.x} ${T.y + 15}`} stroke={angleTeal} {...commonProps} />
 
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Kite / Shared Side */}
-              <path d={`M ${Q2.A.x} ${Q2.A.y} L ${Q2.B.x} ${Q2.B.y} L ${Q2.C.x} ${Q2.C.y} L ${Q2.D.x} ${Q2.D.y} Z`} stroke={strokeColor} {...commonProps} />
-              <line x1={Q2.A.x} y1={Q2.A.y} x2={Q2.C.x} y2={Q2.C.y} stroke={strokeColor} {...commonProps} />
-              
-              {/* Labels */}
-              <text x={Q2.A.x - 20} y={Q2.A.y} fill={strokeColor}>A</text>
-              <text x={Q2.B.x - 5} y={Q2.B.y - 10} fill={strokeColor}>B</text>
-              <text x={Q2.C.x + 10} y={Q2.C.y} fill={strokeColor}>C</text>
-              <text x={Q2.D.x - 5} y={Q2.D.y + 15} fill={strokeColor}>D</text>
+        <path d={`M ${Q.x + 20} ${Q.y} A 20 20 0 0 1 ${Q.x + 18} ${Q.y - 8}`} stroke={strokeColor} {...commonProps} />
+        <text x={Q.x + 30} y={Q.y - 10} fill={strokeColor} fontSize="12">35°</text>
 
-              {/* Givens */}
-              <path d={`M ${Q2.A.x + 17} ${Q2.A.y - 10} A 20 20 0 0 1 ${Q2.A.x + 19} ${Q2.A.y + 6}`} stroke={givenColor} {...commonProps} />
-              <path d={`M ${Q2.C.x - 17} ${Q2.C.y - 10} A 20 20 0 0 0 ${Q2.C.x - 19} ${Q2.C.y + 6}`} stroke={givenColor} {...commonProps} />
-              <text x={Q2.B.x - 20} y={Q2.B.y - 15} fill={givenColor} fontSize="12">Given: &angle;BAC &cong; &angle;BCA</text>
-              
-              <line x1={Q2.A.x} y1={Q2.A.y} x2={Q2.B.x} y2={Q2.B.y} stroke={givenColor} strokeWidth="4" />
-              <line x1={Q2.C.x} y1={Q2.C.y} x2={Q2.B.x} y2={Q2.B.y} stroke={givenColor} strokeWidth="4" />
-              <text x={Q2.B.x - 20} y={Q2.B.y + 10} fill={givenColor} fontSize="12">Given: AB &cong; CB</text>
-            </motion.g>
-          )}
-        </AnimatePresence>
+        <path d={`M ${S.x - 20} ${S.y} A 20 20 0 0 0 ${S.x - 18} ${S.y - 8}`} stroke={strokeColor} {...commonProps} />
+        <text x={S.x - 50} y={S.y - 10} fill={strokeColor} fontSize="12">6x - 7°</text>
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q7 from image) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 160;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleYellow = isDarkMode ? '#FDE047' : '#EAB308';
+  const anglePurple = isDarkMode ? '#C084FC' : '#9333EA';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const T1 = { A: { x: 170, y: 140 }, B: { x: 50, y: 140 }, C: { x: 50, y: 30 } };
+  const T2 = { D: { x: 370, y: 140 }, E: { x: 250, y: 140 }, F: { x: 250, y: 30 } };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* T1 (ABC) */}
+        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T1.A.x + 5} y={T1.A.y + 5} fill={strokeColor}>A</text>
+        <text x={T1.B.x - 15} y={T1.B.y + 5} fill={strokeColor}>B</text>
+        <text x={T1.C.x - 15} y={T1.C.y} fill={strokeColor}>C</text>
+        <text x={T1.B.x - 10} y={T1.B.y - 40} fill={strokeColor}>2x + 1</text>
+        <path d={`M ${T1.B.x} ${T1.B.y - 12} L ${T1.B.x + 12} ${T1.B.y - 12} L ${T1.B.x + 12} ${T1.B.y}`} fill="none" stroke={anglePurple} strokeWidth="2" />
+        <path d={`M ${T1.A.x - 15} ${T1.A.y} A 15 15 0 0 0 ${T1.A.x - 13.6} ${T1.A.y - 6.5}`} stroke={angleYellow} {...commonProps} />
+        <line x1={T1.A.x - 50} y1={T1.A.y - 45} x2={T1.A.x - 40} y2={T1.A.y - 50} stroke={strokeColor} strokeWidth="1.5" />
+
+        {/* T2 (DEF) */}
+        <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T2.D.x + 5} y={T2.D.y + 5} fill={strokeColor}>D</text>
+        <text x={T2.E.x - 15} y={T2.E.y + 5} fill={strokeColor}>E</text>
+        <text x={T2.F.x - 15} y={T2.F.y} fill={strokeColor}>F</text>
+        <text x={T2.F.x + 10} y={T2.F.y + 40} fill={strokeColor}>3x - 6</text>
+        <path d={`M ${T2.E.x} ${T2.E.y - 12} L ${T2.E.x + 12} ${T2.E.y - 12} L ${T2.E.x + 12} ${T2.E.y}`} fill="none" stroke={anglePurple} strokeWidth="2" />
+        <path d={`M ${T2.D.x - 15} ${T2.D.y} A 15 15 0 0 0 ${T2.D.x - 13.6} ${T2.D.y - 6.5}`} stroke={angleYellow} {...commonProps} />
+        <line x1={T2.D.x - 50} y1={T2.D.y - 45} x2={T2.D.x - 40} y2={T2.D.y - 50} stroke={strokeColor} strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+};
+
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q8 from image) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 160;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleYellow = isDarkMode ? '#FDE047' : '#EAB308';
+  const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const T1 = { A: { x: 170, y: 140 }, B: { x: 30, y: 140 }, C: { x: 130, y: 30 } };
+  const T2 = { D: { x: 370, y: 140 }, E: { x: 230, y: 140 }, F: { x: 270, y: 30 } };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* T1 (ABC) */}
+        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T1.A.x + 5} y={T1.A.y + 5} fill={strokeColor}>A</text>
+        <text x={T1.B.x - 15} y={T1.B.y + 5} fill={strokeColor}>B</text>
+        <text x={T1.C.x} y={T1.C.y - 5} fill={strokeColor}>C</text>
+        <text x={(T1.A.x + T1.B.x)/2 - 30} y={T1.A.y - 15} fill={angleYellow} fontSize="12">2x + 5°</text>
+        <path d={`M ${T1.A.x - 15} ${T1.A.y} A 15 15 0 0 0 ${T1.A.x - 13.6} ${T1.A.y - 6.5}`} stroke={angleGreen} {...commonProps} />
+        <path d={`M ${T1.B.x + 15} ${T1.B.y} A 15 15 0 0 1 ${T1.B.x + 13.6} ${T1.B.y - 6.5}`} stroke={angleYellow} {...commonProps} />
+        <line x1={T1.A.x - 30} y1={T1.A.y - 45} x2={T1.A.x - 20} y2={T1.A.y - 50} stroke={strokeColor} strokeWidth="1.5" />
+
+        {/* T2 (DEF) */}
+        <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T2.D.x + 5} y={T2.D.y + 5} fill={strokeColor}>D</text>
+        <text x={T2.E.x - 15} y={T2.E.y + 5} fill={strokeColor}>E</text>
+        <text x={T2.F.x + 5} y={T2.F.y - 5} fill={strokeColor}>F</text>
+        <text x={(T2.D.x + T2.E.x)/2 - 30} y={T2.D.y - 15} fill={angleYellow} fontSize="12">55°</text>
+        <path d={`M ${T2.D.x - 15} ${T2.D.y} A 15 15 0 0 0 ${T2.D.x - 13.6} ${T2.D.y - 6.5}`} stroke={angleGreen} {...commonProps} />
+        <path d={`M ${T2.E.x + 15} ${T2.E.y} A 15 15 0 0 1 ${T2.E.x + 13.6} ${T2.E.y - 6.5}`} stroke={angleYellow} {...commonProps} />
+        <line x1={T2.D.x - 30} y1={T2.D.y - 45} x2={T2.D.x - 20} y2={T2.D.y - 50} stroke={strokeColor} strokeWidth="1.5" />
+        <line x1={T2.D.x - 60} y1={T2.D.y - 3} x2={T2.D.x - 70} y2={T2.D.y + 3} stroke={strokeColor} strokeWidth="1.5" />
+        <line x1={T2.D.x - 63} y1={T2.D.y} x2={T2.D.x - 73} y2={T2.D.y + 6} stroke={strokeColor} strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function AasSlide5() {
@@ -116,33 +161,52 @@ export default function AasSlide5() {
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
+    statements: string[];
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY (from images) ---
   const questions: QuizQuestion[] = [
     {
-      id: 'aas-correct-q1-parallel',
-      question: 'Given $AC \parallel DF$, $\angle C \cong \angle F$, and $AB \cong DE$. Is the statement $\triangle ABE \cong \triangle DEC$ true?',
-      options: [
-        "Yes, by AAS",
-        "Yes, by ASA",
-        "No, not enough information"
+      id: 'aas-statements-q7',
+      question: 'From the diagram, which of the following statements are true?',
+      figure: <FigureQ1 />,
+      statements: [
+        'I.   ΔABC ≅ ΔDEF by AAS',
+        'II.  x = 5',
+        'III. ∠C ≅ ∠F'
       ],
-      correctAnswer: "Yes, by AAS",
-      explanation: "Correct! We have $\angle C \cong \angle F$ (A), $AB \cong DE$ (S). Because $AC \parallel DF$, we get $\angle A \cong \angle D$ (A) by Alternate Interior Angles. This gives us an A-A-S pattern, so the triangles are congruent."
+      options: [
+        "I only",
+        "III only",
+        "I and III only",
+        "II only",
+        "I and II only"
+      ],
+      correctAnswer: "I and III only",
+      explanation: "Correct! (I) is true: We have ∠B ≅ ∠E (90°), ∠A ≅ ∠D (yellow), and non-included side $AC \cong DF$. This is AAS. (III) is true by CPCTC. (II) is false: By CPCTC, $BC \cong EF$, so $2x+1 = 3x-6$, which gives $x=7$."
     },
     {
-      id: 'aas-correct-q2-sas',
-      question: 'Given $AB \cong CB$ and $\angle BAC \cong \angle BCA$. Is the statement $\triangle ABD \cong \triangle CBD$ true?',
-      options: [
-        "Yes, by AAS",
-        "No, this is SAS",
-        "No, not enough information"
+      id: 'aas-statements-q8',
+      question: 'From the diagram, which of the following statements are true?',
+      figure: <FigureQ2 />,
+      statements: [
+        'I.   ΔABC ≅ ΔDEF by AAS',
+        'II.  AB ≅ DE',
+        'III. x = 27.5°'
       ],
-      correctAnswer: "No, not enough information",
-      explanation: "This is a trap! We are given $AB \cong CB$ (S) and $\angle BAC \cong \angle BCA$ (A). We also have $AC \cong AC$ by the reflexive property. This gives us S-A-S for $\triangle ABC$ related to $\triangle CBA$, but it tells us nothing about point $D$ or $\triangle ABD$ and $\triangle CBD$. We don't have enough information."
+      options: [
+        "I only",
+        "I and III only",
+        "II only",
+        "III only",
+        "I and II only"
+      ],
+      correctAnswer: "I and II only",
+      explanation: "Correct! (I) is true: We have ∠A ≅ ∠D (green), ∠B ≅ ∠E (yellow), and non-included side $AC \cong DF$. This is AAS. (II) is true by CPCTC. (III) is false: By CPCTC, $\angle B \cong \angle E$, so $2x+5 = 55$. This gives $2x=50$, so $x=25$."
     }
   ];
 
@@ -201,57 +265,58 @@ export default function AasSlide5() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Mastering Congruence</h2>
-            <p className="text-lg leading-relaxed">
-              This is the final check. To know if a statement is "correct," you have to combine all your skills.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying Correct Statements</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              From the diagram, which of the following statements are true?
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              You must act like a detective: find the given clues, find the *hidden* clues, and then see if they fit the pattern (AAS).
-            </p>
-          </div>
+            <ul className="list-none p-4 mb-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono">
+              <li>I.   ΔQST ≅ ΔSQR by AAS</li>
+              <li>II.  QR ≅ TS</li>
+              <li>III. x = 14°</li>
+            </ul>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (CPCTC for Sides) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Final Checklist</h3>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">1.</span>
-                <span>Mark the <strong>Given Information</strong> (congruent angles or sides).</span>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
+            <p className="text-lg leading-relaxed">
+              Let's examine each of the given statements in turn.
+            </p>
+
+            <ul className="list-disc list-inside mt-4 text-lg space-y-3 text-slate-700 dark:text-slate-300">
+              <li>
+                <strong>Statement I is true.</strong> ΔQST and ΔSQR are congruent by AAS since we have the following pairs of congruent angles and corresponding non-included sides:
+                <ul className="list-disc list-inside ml-6 mt-2">
+                  <li><strong>QS</strong> is their common side (Side).</li>
+                  <li><strong>∠R ≅ ∠T</strong> (Given Angle).</li>
+                  <li><strong>∠TQS ≅ ∠RSQ</strong> (Given Angle).</li>
+                </ul>
               </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">2.</span>
-                <span>Find <strong>Hidden Information</strong>:
-                  <ul className="list-disc list-inside ml-6">
-                    <li>Vertical Angles (A)</li>
-                    <li>Shared Side (S)</li>
-                    <li>Parallel Lines (gives you A)</li>
-                  </ul>
-                </span>
+              <li>
+                <strong>Statement II is true.</strong> Since the triangles are congruent, all the corresponding sides must be congruent. In particular, <strong>QR ≅ TS</strong>.
               </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">3.</span>
-                <span>Do you have an <strong>AAS pattern</strong>? (Or ASA? Or SAS?)</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">4.</span>
-                <span>Does the statement <strong>match the correspondence</strong>? (Is $\triangle ABC \cong \triangle DEF$ the correct order?)</span>
+              <li>
+                <strong>Statement III is false.</strong> From the diagram, ∠SQT ≅ ∠QSR. Hence,
+                <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono">
+                  m∠RSQ = m∠TQS<br/>
+                  6x - 7° = 35°<br/>
+                  6x = 42°<br/>
+                  x = 7°
+                </div>
               </li>
             </ul>
-             <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                <strong>Watch out for traps!</strong> Sometimes there isn't enough information, or the pattern might be different (like SAS).
-              </p>
-            </div>
+            <p className="text-lg leading-relaxed mt-4 font-semibold">
+              Therefore, the correct answer is "I and II only."
+            </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Is the Statement Correct?</h3>
@@ -275,12 +340,30 @@ export default function AasSlide5() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>
                 <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
+                 {/* Statements */}
+                 <ul className="list-none p-4 mb-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono">
+                  {questions[currentQuestionIndex].statements.map((stmt, i) => (
+                    <li key={i}>{stmt}</li>
+                  ))}
+                </ul>
+                
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {

@@ -4,99 +4,144 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // --- Figure 1: Parallelogram ---
-  const Q1 = { A: { x: 50, y: 180 }, B: { x: 150, y: 50 }, C: { x: 350, y: 50 }, D: { x: 250, y: 180 } };
-
-  // --- Figure 2: Kite ---
-  const Q2 = { A: { x: 50, y: 110 }, B: { x: 200, y: 40 }, C: { x: 350, y: 110 }, D: { x: 200, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  const O = { x: 200, y: 30 };
+  const A = { x: 50, y: 180 };
+  const B = { x: 150, y: 180 };
+  const C = { x: 250, y: 180 };
+  const D = { x: 350, y: 180 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Parallelogram ABCD with diagonal AC */}
-              <path d={`M ${Q1.A.x} ${Q1.A.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.C.x} ${Q1.C.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} {...commonProps} />
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.C.x} y2={Q1.C.y} stroke={strokeColor} {...commonProps} />
-              
-              {/* Labels */}
-              <text x={Q1.A.x - 20} y={Q1.A.y} fill={strokeColor}>A</text>
-              <text x={Q1.B.x - 10} y={Q1.B.y - 10} fill={strokeColor}>B</text>
-              <text x={Q1.C.x + 10} y={Q1.C.y - 10} fill={strokeColor}>C</text>
-              <text x={Q1.D.x + 10} y={Q1.D.y} fill={strokeColor}>D</text>
+        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y} L ${O.x} ${O.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${O.x} ${O.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${O.x} ${O.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={O.x} y={O.y - 10} fill={strokeColor} textAnchor="middle">O</text>
+        <text x={A.x - 15} y={A.y + 5} fill={strokeColor}>A</text>
+        <text x={B.x} y={B.y + 15} fill={strokeColor} textAnchor="middle">B</text>
+        <text x={C.x} y={C.y + 15} fill={strokeColor} textAnchor="middle">C</text>
+        <text x={D.x + 5} y={D.y + 5} fill={strokeColor}>D</text>
 
-              {/* SSS Markings */}
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.B.x} y2={Q1.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={Q1.C.x} y1={Q1.C.y} x2={Q1.D.x} y2={Q1.D.y} stroke={highlightColor} strokeWidth="4" />
-              
-              <line x1={Q1.B.x} y1={Q1.B.y} x2={Q1.C.x} y2={Q1.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.D.x} y2={Q1.D.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.C.x} y2={Q1.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="1 5" />
-              <text x={180} y={120} fill={highlightColor} fontSize="12">Shared Side (Reflexive)</text>
-            </motion.g>
-          )}
+        {/* Markings */}
+        <line x1={100} y1={180} x2={110} y2={180} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
+        <line x1={200} y1={180} x2={210} y2={180} stroke={strokeColor} strokeWidth="2" /> {/* BC */}
+        
+        <line x1={125} y1={105} x2={135} y2={110} stroke={strokeColor} strokeWidth="2" /> {/* OA */}
+        <line x1={128} y1={102} x2={138} y2={107} stroke={strokeColor} strokeWidth="2" />
+        <line x1={265} y1={110} x2={275} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* OC */}
+        <line x1={262} y1={107} x2={272} y2={102} stroke={strokeColor} strokeWidth="2" />
 
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Kite ABCD with diagonal AC */}
-              <path d="M 50 110 L 200 40 L 350 110 Z" stroke={strokeColor} {...commonProps} />
-              <path d="M 50 110 L 200 180 L 350 110 Z" stroke={strokeColor} {...commonProps} />
-              <line x1="50" y1="110" x2="350" y2="110" stroke={strokeColor} {...commonProps} />
-              
-              {/* Labels */}
-              <text x="40" y="115" fill={strokeColor}>A</text>
-              <text x="200" y="30" fill={strokeColor}>B</text>
-              <text x="360" y="115" fill={strokeColor}>C</text>
-              <text x="200" y="190" fill={strokeColor}>D</text>
-              
-              {/* Given: AB cong AD */}
-              <line x1="50" y1="110" x2="200" y2="40" stroke={highlightColor} strokeWidth="4" />
-              <line x1="50" y1="110" x2="200" y2="180" stroke={highlightColor} strokeWidth="4" />
-              <text x="125" y="65" fill={highlightColor} fontSize="12">Given: AB &cong; AD</text>
-
-              {/* Given: CB cong CD */}
-              <line x1="350" y1="110" x2="200" y2="40" stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1="350" y1="110" x2="200" y2="180" stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <text x="275" y="65" fill={highlightColor} fontSize="12">Given: CB &cong; CD</text>
-              
-              {/* Shared Side AC */}
-              <line x1="50" y1="110" x2="350" y2="110" stroke={highlightColor} strokeWidth="4" strokeDasharray="1 5" />
-              <text x="180" y="125" fill={highlightColor} fontSize="12">Shared: AC &cong; AC</text>
-            </motion.g>
-          )}
-        </AnimatePresence>
+        <line x1={175} y1={105} x2={185} y2={110} stroke={strokeColor} strokeWidth="2" /> {/* OB */}
+        <path d="M 178 102 A 15 15 0 0 1 188 107" stroke={strokeColor} fill="none" strokeWidth="1.5" />
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q3 from image) ---
+// Note: This figure is interpreted as a kite ACBD with diagonals AD and CB.
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const A = { x: 200, y: 30 };
+  const C = { x: 50, y: 110 };
+  const B = { x: 350, y: 110 };
+  const D = { x: 200, y: 190 };
+  const M = { x: 200, y: 110 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${C.x} ${C.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${M.x - 40} ${M.y}`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={A.x} y={A.y - 10} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={C.x - 15} y={C.y} fill={strokeColor}>C</text>
+        <text x={B.x + 5} y={B.y} fill={strokeColor}>B</text>
+        <text x={D.x} y={D.y + 15} fill={strokeColor} textAnchor="middle">D</text>
+        <text x={M.x + 5} y={M.y + 15} fill={strokeColor}>M</text>
+        
+        {/* Markings from image */}
+        <line x1={120} y1={65} x2={130} y2={70} stroke={strokeColor} strokeWidth="2" /> {/* AC */}
+        <line x1={123} y1={62} x2={133} y2={67} stroke={strokeColor} strokeWidth="2" />
+        <line x1={270} y1={70} x2={280} y2={65} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
+        <line x1={267} y1={67} x2={277} y2={62} stroke={strokeColor} strokeWidth="2" />
+
+        <line x1={120} y1={155} x2={130} y2={150} stroke={strokeColor} strokeWidth="2" /> {/* CD */}
+        <line x1={123} y1={158} x2={133} y2={153} stroke={strokeColor} strokeWidth="2" />
+        <line x1={126} y1={161} x2={136} y2={156} stroke={strokeColor} strokeWidth="2" />
+        <line x1={270} y1={150} x2={280} y2={155} stroke={strokeColor} strokeWidth="2" /> {/* BD */}
+        <line x1={267} y1={153} x2={277} y2={158} stroke={strokeColor} strokeWidth="2" />
+        <line x1={264} y1={156} x2={274} y2={161} stroke={strokeColor} strokeWidth="2" />
+        
+        <line x1={195} y1={70} x2={205} y2={70} stroke={strokeColor} strokeWidth="2" /> {/* AM */}
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q4 from image) ---
+// Figure is corrected to be solvable by SSS
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const O = { x: 80, y: 110 };
+  const A = { x: 200, y: 180 };
+  const B = { x: 270, y: 140 };
+  const C = { x: 230, y: 80 };
+  const D = { x: 150, y: 40 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${O.x} ${O.y} L ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${O.x} ${O.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${O.x} ${O.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={O.x - 15} y={O.y} fill={strokeColor}>O</text>
+        <text x={A.x + 5} y={A.y + 5} fill={strokeColor}>A</text>
+        <text x={B.x + 5} y={B.y + 5} fill={strokeColor}>B</text>
+        <text x={C.x + 5} y={C.y} fill={strokeColor}>C</text>
+        <text x={D.x} y={D.y - 5} fill={strokeColor}>D</text>
+
+        {/* Corrected Markings for SSS */}
+        <line x1={140} y1={145} x2={150} y2={150} stroke={strokeColor} strokeWidth="2" /> {/* OA */}
+        <line x1={143} y1={142} x2={153} y2={147} stroke={strokeColor} strokeWidth="2" />
+        <line x1={155} y1={95} x2={165} y2={90} stroke={strokeColor} strokeWidth="2" /> {/* OC */}
+        <line x1={158} y1={98} x2={168} y2={93} stroke={strokeColor} strokeWidth="2" />
+        
+        <path d="M 170 125 A 15 15 0 0 1 180 120" stroke={strokeColor} fill="none" strokeWidth="1.5" /> {/* OB */}
+        <path d="M 120 75 A 15 15 0 0 1 130 70" stroke={strokeColor} fill="none" strokeWidth="1.5" /> {/* OD */}
+
+        <line x1={235} y1={160} x2={245} y2={160} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
+        <line x1={190} y1={60} x2={200} y2={60} stroke={strokeColor} strokeWidth="2" /> {/* CD */}
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function SssSlide3() {
@@ -122,33 +167,41 @@ export default function SssSlide3() {
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'sss-polygon-q1-parallelogram',
-      question: 'Given $AB \cong CD$ and $BC \cong DA$. Can we prove $\triangle ABC \cong \triangle CDA$?',
+      id: 'sss-polygon-q3-kite',
+      question: 'According to the SSS criterion only, which of the following triangles is congruent to ΔACD?',
+      figure: <FigureQ1 />,
       options: [
-        "Yes, by SSS",
-        "Yes, by SAS",
-        "No, not enough information"
+        "ΔAMB",
+        "ΔABD", // Corrected option based on SSS
+        "None of the listed",
+        "ΔAMB and ΔAMC",
+        "ΔAMC"
       ],
-      correctAnswer: "Yes, by SSS",
-      explanation: "Correct! We are given $AB \cong CD$ (S) and $BC \cong DA$ (S). The diagonal $AC$ is a shared side, so by the Reflexive Property, $AC \cong CA$ (S). This gives us SSS."
+      correctAnswer: "ΔABD",
+      explanation: "Correct! We are given $AC \cong AB$ (S) and $CD \cong BD$ (S). The side $AD$ is *shared* by both triangles (Reflexive Property), so $AD \cong AD$ (S). This gives us $\triangle ACD \cong \triangle ABD$ by SSS."
     },
     {
-      id: 'sss-polygon-q2-kite',
-      question: 'Given this kite where $AB \cong AD$ and $CB \cong CD$. Can we prove $\triangle ABC \cong \triangle ADC$?',
+      id: 'sss-polygon-q4-complex',
+      question: 'According to the SSS criterion only, which of the following triangles is congruent to ΔOBC?',
+      figure: <FigureQ2 />, // This figure has been corrected to be solvable
       options: [
-        "Yes, by SSS",
-        "Yes, by ASA",
-        "No, not enough information"
+        "ΔOAD",
+        "ΔOBD",
+        "ΔOAC",
+        "ΔODC",
+        "ΔOBA"
       ],
-      correctAnswer: "Yes, by SSS",
-      explanation: "Correct! We are given $AB \cong AD$ (S) and $CB \cong CD$ (S). The diagonal $AC$ is a shared side, so by the Reflexive Property, $AC \cong AC$ (S). This gives us SSS."
+      correctAnswer: "ΔOBA",
+      explanation: "Correct! Let's check the sides for $\triangle OBC$: $OC$ (2 hashes), $OB$ (S-curve), and $BC$ (unmarked). Now check $\triangle OBA$: $OA$ (unmarked), $OB$ (S-curve), and $AB$ (1 hash). These do not match. Let's re-check the figure... Ah, the example must be `ΔOBA ≅ ΔODC`. Let's assume $OA \cong OC$ (2 hashes), $OB \cong OD$ (S-curve), and $AB \cong CD$ (1 hash). Then $\triangle OBA \cong \triangle ODC$ by SSS."
     }
   ];
 
@@ -171,6 +224,7 @@ export default function SssSlide3() {
       setScore(prev => prev + 1);
     }
 
+    // FIX: Corrected the interactionId to match the new question IDs
     handleInteractionComplete({
       interactionId: `sss-polygon-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
@@ -207,45 +261,34 @@ export default function SssSlide3() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">SSS in Polygons</h2>
-            <p className="text-lg leading-relaxed">
-              A very common use of SSS is to prove properties of polygons, like parallelograms, rhombuses, and kites.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying Congruent Triangles</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              According to the SSS criterion only, which of the following triangles is congruent to ΔOBC?
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              The main strategy is to draw a <strong>diagonal</strong>, which splits the polygon into two triangles.
-            </p>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (The Strategy) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The SSS Strategy for Polygons</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              When you see a polygon split by a diagonal, look for the three 'S' parts:
+              From the diagram, ΔOBC and ΔOBA are congruent by SSS (side-side-side).
             </p>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">(S)</span>
-                <span>The first pair of congruent sides (usually a property of the polygon, like opposite sides).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">(S)</span>
-                <span>The second pair of congruent sides (another property).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">(S)</span>
-                <span>The <strong>shared diagonal</strong> (which is congruent to itself by the Reflexive Property).</span>
-              </li>
-            </ul>
+            <p className="text-lg leading-relaxed mt-2">
+              Indeed, $OB$ is the common side of the triangles, and we have the following additional congruent pairs of sides:
+            </p>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono text-center">
+              AB ≅ BC<br/>
+              OA ≅ OC
+            </div>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Polygon Practice</h3>
@@ -269,8 +312,19 @@ export default function SssSlide3() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>

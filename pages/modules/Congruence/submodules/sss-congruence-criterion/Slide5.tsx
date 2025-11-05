@@ -4,110 +4,144 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 160;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const questionColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  
+  const angleYellow = isDarkMode ? '#FDE047' : '#EAB308';
+  const anglePurple = isDarkMode ? '#C084FC' : '#9333EA';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // --- Figure 1: Isosceles Triangle ---
-  const Q1 = { A: { x: 200, y: 50 }, B: { x: 100, y: 180 }, C: { x: 300, y: 180 }, M: { x: 200, y: 180 } };
-
-  // --- Figure 2: Parallelogram ---
-  const Q2 = { A: { x: 50, y: 180 }, B: { x: 150, y: 50 }, C: { x: 350, y: 50 }, D: { x: 250, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  const S = { x: 50, y: 50 };
+  const R = { x: 250, y: 50 };
+  const Q = { x: 350, y: 150 };
+  const P = { x: 150, y: 150 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Isosceles Triangle ABC with median AM */}
-              <path d={`M ${Q1.A.x} ${Q1.A.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.C.x} ${Q1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.M.x} y2={Q1.M.y} stroke={strokeColor} {...commonProps} strokeDasharray="4 4" />
-              
-              {/* Labels */}
-              <text x={Q1.A.x - 5} y={Q1.A.y - 10} fill={strokeColor}>A</text>
-              <text x={Q1.B.x - 15} y={Q1.B.y + 10} fill={strokeColor}>B</text>
-              <text x={Q1.C.x + 5} y={Q1.C.y + 10} fill={strokeColor}>C</text>
-              <text x={Q1.M.x - 5} y={Q1.M.y + 15} fill={strokeColor}>M</text>
+        <path d={`M ${S.x} ${S.y} L ${R.x} ${R.y} L ${Q.x} ${Q.y} L ${P.x} ${P.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${P.x} ${P.y} L ${R.x} ${R.y}`} stroke={strokeColor} {...commonProps} strokeDasharray="4 4" />
+        
+        {/* Labels */}
+        <text x={S.x - 15} y={S.y} fill={strokeColor}>S</text>
+        <text x={R.x + 5} y={R.y} fill={strokeColor}>R</text>
+        <text x={Q.x + 5} y={Q.y + 5} fill={strokeColor}>Q</text>
+        <text x={P.x - 15} y={P.y + 5} fill={strokeColor}>P</text>
 
-              {/* SSS Markings */}
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.B.x} y2={Q1.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.C.x} y2={Q1.C.y} stroke={highlightColor} strokeWidth="4" />
-              <text x={150} y={100} fill={highlightColor} fontSize="12">Given: AB &cong; AC</text>
-              
-              <line x1={Q1.B.x} y1={Q1.B.y} x2={Q1.M.x} y2={Q1.M.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={Q1.C.x} y1={Q1.C.y} x2={Q1.M.x} y2={Q1.M.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <text x={250} y={100} fill={highlightColor} fontSize="12">Given: M is midpoint</text>
+        {/* Markings */}
+        <line x1={150} y1={50} x2={160} y2={50} stroke={strokeColor} strokeWidth="2" /> {/* SR */}
+        <line x1={250} y1={150} x2={260} y2={150} stroke={strokeColor} strokeWidth="2" /> {/* PQ */}
+        
+        <line x1={95} y1={95} x2={105} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* SP */}
+        <line x1={98} y1={98} x2={108} y2={108} stroke={strokeColor} strokeWidth="2" />
+        <line x1={300} y1={95} x2={310} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* RQ */}
+        <line x1={303} y1={98} x2={313} y2={108} stroke={strokeColor} strokeWidth="2" />
 
-              <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.M.x} y2={Q1.M.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="1 5" />
-              <text x={210} y={115} fill={highlightColor} fontSize="12">Shared Side</text>
-
-              {/* Question */}
-              <text x={Q1.B.x + 20} y={Q1.B.y - 20} fill={questionColor} fontSize="14" fontWeight="bold">x</text>
-              <path d={`M ${Q1.B.x + 20} ${Q1.B.y} A 20 20 0 0 0 ${Q1.B.x + 10} ${Q1.B.y - 17}`} stroke={questionColor} {...commonProps} />
-              
-              <text x={Q1.C.x - 40} y={Q1.C.y - 20} fill={strokeColor} fontSize="14">32°</text>
-              <path d={`M ${Q1.C.x - 20} ${Q1.C.y} A 20 20 0 0 1 ${Q1.C.x - 10} ${Q1.C.y - 17}`} stroke={strokeColor} {...commonProps} />
-            </motion.g>
-          )}
-
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Parallelogram ABCD with diagonal BD */}
-              <path d={`M ${Q2.A.x} ${Q2.A.y} L ${Q2.B.x} ${Q2.B.y} L ${Q2.C.x} ${Q2.C.y} L ${Q2.D.x} ${Q2.D.y} Z`} stroke={strokeColor} {...commonProps} />
-              <line x1={Q2.B.x} y1={Q2.B.y} x2={Q2.D.x} y2={Q2.D.y} stroke={strokeColor} {...commonProps} />
-              
-              {/* Labels */}
-              <text x={Q2.A.x - 20} y={Q2.A.y} fill={strokeColor}>A</text>
-              <text x={Q2.B.x - 10} y={Q2.B.y - 10} fill={strokeColor}>B</text>
-              <text x={Q2.C.x + 10} y={Q2.C.y - 10} fill={strokeColor}>C</text>
-              <text x={Q2.D.x + 10} y={Q2.D.y} fill={strokeColor}>D</text>
-
-              {/* SSS Markings (Givens) */}
-              <line x1={Q2.A.x} y1={Q2.A.y} x2={Q2.B.x} y2={Q2.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={Q2.C.x} y1={Q2.C.y} x2={Q2.D.x} y2={Q2.D.y} stroke={highlightColor} strokeWidth="4" />
-              
-              <line x1={Q2.A.x} y1={Q2.A.y} x2={Q2.D.x} y2={Q2.D.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={Q2.B.x} y1={Q2.B.y} x2={Q2.C.x} y2={Q2.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              
-              {/* Shared Side */}
-              <line x1={Q2.B.x} y1={Q2.B.y} x2={Q2.D.x} y2={Q2.D.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="1 5" />
-
-              {/* Question */}
-              <text x={Q2.A.x + 10} y={Q2.A.y - 20} fill={questionColor} fontSize="14" fontWeight="bold">x</text>
-              <path d={`M ${Q2.A.x + 20} ${Q2.A.y} A 20 20 0 0 0 ${Q2.A.x + 10} ${Q2.A.y - 17}`} stroke={questionColor} {...commonProps} />
-              
-              <text x={Q2.C.x - 30} y={Q2.C.y + 10} fill={strokeColor} fontSize="14">70°</text>
-              <path d={`M ${Q2.C.x - 20} ${Q2.C.y} A 20 20 0 0 1 ${Q2.C.x - 10} ${Q2.C.y + 17}`} stroke={strokeColor} {...commonProps} />
-            </motion.g>
-          )}
-        </AnimatePresence>
+        {/* Angles */}
+        <path d={`M ${S.x + 15} ${S.y + 10} A 15 15 0 0 1 ${S.x} ${S.y + 20}`} stroke={angleYellow} {...commonProps} />
+        <text x={S.x + 30} y={S.y + 30} fill={angleYellow} fontSize="12">67°</text>
+        
+        <path d={`M ${Q.x - 15} ${Q.y - 10} A 15 15 0 0 1 ${Q.x} ${Q.y - 20}`} stroke={anglePurple} {...commonProps} />
+        <text x={Q.x - 60} y={Q.y - 15} fill={anglePurple} fontSize="12">2x + 12°</text>
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q7 from image) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 160;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const S = { x: 50, y: 50 };
+  const R = { x: 250, y: 50 };
+  const Q = { x: 350, y: 150 };
+  const P = { x: 150, y: 150 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${S.x} ${S.y} L ${R.x} ${R.y} L ${Q.x} ${Q.y} L ${P.x} ${P.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${P.x} ${P.y} L ${R.x} ${R.y}`} stroke={strokeColor} {...commonProps} strokeDasharray="4 4" />
+        
+        {/* Labels */}
+        <text x={S.x - 15} y={S.y} fill={strokeColor}>S</text>
+        <text x={R.x + 5} y={R.y} fill={strokeColor}>R</text>
+        <text x={Q.x + 5} y={Q.y + 5} fill={strokeColor}>Q</text>
+        <text x={P.x - 15} y={P.y + 5} fill={strokeColor}>P</text>
+
+        {/* Markings */}
+        <line x1={150} y1={50} x2={160} y2={50} stroke={strokeColor} strokeWidth="2" /> {/* SR */}
+        <line x1={250} y1={150} x2={260} y2={150} stroke={strokeColor} strokeWidth="2" /> {/* PQ */}
+        
+        <line x1={95} y1={95} x2={105} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* SP */}
+        <line x1={98} y1={98} x2={108} y2={108} stroke={strokeColor} strokeWidth="2" />
+        <line x1={300} y1={95} x2={310} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* RQ */}
+        <line x1={303} y1={98} x2={313} y2={108} stroke={strokeColor} strokeWidth="2" />
+
+        {/* Angles */}
+        <path d={`M ${S.x + 15} ${S.y + 10} A 15 15 0 0 1 ${S.x} ${S.y + 20}`} stroke={angleGreen} {...commonProps} />
+        <text x={S.x + 30} y={S.y + 30} fill={angleGreen} fontSize="12">115°</text>
+        
+        <path d={`M ${Q.x - 15} ${Q.y - 10} A 15 15 0 0 1 ${Q.x} ${Q.y - 20}`} stroke={angleBlue} {...commonProps} />
+        <text x={Q.x - 60} y={Q.y - 15} fill={angleBlue} fontSize="12">3x - 5°</text>
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q8 from image) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const A = { x: 200, y: 30 };
+  const B = { x: 50, y: 180 };
+  const C = { x: 350, y: 180 };
+  const M = { x: 200, y: 180 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${M.x} ${M.y}`} stroke={strokeColor} {...commonProps} strokeDasharray="4 4" />
+        
+        {/* Labels */}
+        <text x={A.x} y={A.y - 10} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={B.x - 15} y={B.y + 5} fill={strokeColor}>B</text>
+        <text x={C.x + 5} y={C.y + 5} fill={strokeColor}>C</text>
+        <text x={M.x} y={M.y + 15} fill={strokeColor} textAnchor="middle">M</text>
+
+        {/* Markings */}
+        <line x1={115} y1={100} x2={125} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
+        <line x1={118} y1={97} x2={128} y2={102} stroke={strokeColor} strokeWidth="2" />
+        <line x1={275} y1={105} x2={285} y2={100} stroke={strokeColor} strokeWidth="2" /> {/* AC */}
+        <line x1={272} y1={102} x2={282} y2={97} stroke={strokeColor} strokeWidth="2" />
+        
+        <path d={`M ${M.x - 10} ${M.y - 10} L ${M.x - 10} ${M.y} L ${M.x} ${M.y}`} fill="none" stroke={angleBlue} strokeWidth="2" />
+        <text x={M.x - 30} y={M.y - 20} fill={angleBlue} fontSize="12">2x - 8°</text>
+        
+        <line x1={M.x - 40} y1={M.y - 3} x2={M.x - 50} y2={M.y + 3} stroke={strokeColor} strokeWidth="1.5" />
+        <line x1={M.x + 40} y1={M.y - 3} x2={M.x + 50} y2={M.y + 3} stroke={strokeColor} strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function SssSlide5() {
@@ -133,35 +167,41 @@ export default function SssSlide5() {
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'sss-app-q1-isosceles',
-      question: 'Given Isosceles $\triangle ABC$ ($AB \cong AC$) and $M$ is the midpoint of $BC$. We can prove $\triangle ABM \cong \triangle ACM$ by SSS. What is the value of x?',
+      id: 'sss-app-q7-parallelogram',
+      question: 'In the figure above, $SR \cong PQ$ and $SP \cong QR$. If $m\angle PSR = 115^\circ$ and $m\angle RQP = 3x - 5^\circ$, find the value of $x$.',
+      figure: <FigureQ1 />,
       options: [
-        "32°",
-        "58°",
-        "90°",
-        "Cannot be determined"
+        "x = 40°",
+        "x = 40.75°",
+        "x = 40.15°",
+        "x = 40.25°",
+        "x = 40.5°"
       ],
-      correctAnswer: "32°",
-      explanation: "Correct! We prove $\triangle ABM \cong \triangle ACM$ by SSS ($AB \cong AC$ given, $BM \cong CM$ by midpoint, $AM \cong AM$ by reflexive). By CPCTC, $\angle B \cong \angle C$. Since $m\angle C = 32°$, x must also be 32°."
+      correctAnswer: "x = 40°",
+      explanation: "Correct! The triangles $\triangle PSR$ and $\triangle RQP$ are congruent by SSS ($SR \cong PQ$, $SP \cong RQ$, and $PR \cong RP$). By CPCTC, $\angle PSR \cong \angle RQP$. So, $115 = 3x - 5$. This gives $3x = 120$, and $x = 40^\circ$."
     },
     {
-      id: 'sss-app-q2-parallelogram',
-      question: 'Given parallelogram $ABCD$ ($AB \cong CD$, $BC \cong DA$). We can prove $\triangle ABD \cong \triangle CDB$ by SSS. What is the value of x?',
+      id: 'sss-app-q8-isosceles',
+      question: 'In the triangle $\triangle ABC$ shown above, $M$ is the mid-point of $BC$. If $AB \cong AC$ and $m\angle AMC = 2x - 8^\circ$, find the value of $x$.',
+      figure: <FigureQ2 />,
       options: [
-        "70°",
-        "110°",
-        "We need $\angle B$ to know",
-        "Cannot be determined"
+        "x = 53°",
+        "x = 47°",
+        "x = 50°",
+        "x = 49°",
+        "x = 56°"
       ],
-      correctAnswer: "70°",
-      explanation: "Correct! We prove $\triangle ABD \cong \triangle CDB$ by SSS ($AB \cong CD$ given, $AD \cong CB$ given, $BD \cong DB$ reflexive). By CPCTC, the corresponding angles $\angle A$ and $\angle C$ are congruent. Since $m\angle C = 70°$, x must also be 70°."
+      correctAnswer: "x = 49°",
+      explanation: "Correct! $\triangle AMB \cong \triangle AMC$ by SSS ($AB \cong AC$, $BM \cong CM$, $AM \cong AM$). By CPCTC, $\angle AMB \cong \angle AMC$. Since these two angles form a straight line, they are supplementary ($m\angle AMB + m\angle AMC = 180^\circ$). Because they are equal, they must both be $90^\circ$. Therefore, $2x - 8 = 90$. This gives $2x = 98$, and $x = 49^\circ$."
     }
   ];
 
@@ -220,57 +260,47 @@ export default function SssSlide5() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Applications of SSS</h2>
-            <p className="text-lg leading-relaxed">
-              SSS is a powerful tool for proving properties of other shapes. By splitting a shape into triangles, we can use SSS and CPCTC to find hidden information.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Applying SSS in Polygons</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              In the figure below, $SR \cong QP$ and $SP \cong QR$. If $m\angle RSP = 67^\circ$ and $m\angle PQR = 2x + 12^\circ$, find the value of $x$.
             </p>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (Isosceles Triangles) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Isosceles Triangles</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              SSS is one way to prove the <strong>Isosceles Triangle Theorem</strong> (if two sides are congruent, the angles opposite them are congruent).
+              From the diagram, ΔRSP and ΔPQR are congruent by SSS (side-side-side) since $PR$ is their common side and we have two more pairs of congruent sides:
             </p>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">1.</span>
-                <span>Draw a median from the vertex angle to the base. This splits the base in two (S).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">2.</span>
-                <span>The two "leg" sides are congruent (S).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">3.</span>
-                <span>The median is a shared side (S).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">4.</span>
-                <span>The triangles are congruent by <strong>SSS</strong>, so by <strong>CPCTC</strong>, the base angles are congruent.</span>
-              </li>
+            <ul className="list-none my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono text-center">
+                <li>SR ≅ PQ</li>
+                <li>SP ≅ QR</li>
             </ul>
-          </div>
-          
-          {/* --- CARD 3 (Parallelograms) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Parallelograms</h3>
-            <p className="text-lg leading-relaxed">
-              SSS is used to prove that <strong>opposite angles</strong> of a parallelogram are congruent.
+
+            <p className="text-lg leading-relaxed mt-4">
+              So, we obtain
+            </p>
+            <p className="text-xl font-bold text-center my-4 font-mono text-blue-600 dark:text-blue-400">
+              ∠RSP ≅ ∠PQR
             </p>
             <p className="text-lg leading-relaxed mt-2">
-              As seen in the quiz, drawing a diagonal and using the property that opposite sides are congruent ($AB \cong CD$, $BC \cong DA$) gives you SSS. By CPCTC, $\angle A \cong \angle C$.
+              Therefore,
             </p>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
+              m∠RSP = m∠PQR<br/>
+              67° = 2x + 12°<br/>
+              2x = 55°<br/>
+              x = 27.5°
+            </div>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Polygon Practice</h3>
@@ -294,8 +324,19 @@ export default function SssSlide5() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>

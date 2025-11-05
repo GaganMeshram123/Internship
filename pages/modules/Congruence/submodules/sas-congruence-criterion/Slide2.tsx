@@ -4,90 +4,182 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 280;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const trapColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
+  
+  const angle1 = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
+  const angle2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const angle3 = isDarkMode ? '#F87171' : '#EF4444'; // Red/Orange
+  const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // --- Figure 1: Clear SAS ---
-  const T1_Q1 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q1 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-
-  // --- Figure 2: SSA (the "trap") ---
-  const T1_Q2 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q2 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  // Triangle Defs
+  const T = { A: { x: 80, y: 120 }, B: { x: 180, y: 120 }, C: { x: 160, y: 30 } };
+  const P = { A: { x: 250, y: 30 }, B: { x: 300, y: 120 }, C: { x: 370, y: 80 } };
+  const Q = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
+  const R = { A: { x: 230, y: 250 }, B: { x: 370, y: 250 }, C: { x: 320, y: 160 } };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} L ${T1_Q1.C.x} ${T1_Q1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.E.x} ${T2_Q1.E.y} L ${T2_Q1.F.x} ${T2_Q1.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* Markings for Q1 (SAS) */}
-              {/* Side AB & DE */}
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T1_Q1.B.x} y2={T1_Q1.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2_Q1.D.x} y1={T2_Q1.D.y} x2={T2_Q1.E.x} y2={T2_Q1.E.y} stroke={highlightColor} strokeWidth="4" />
-              
-              {/* Angle A & D (Included) */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y + 20} A 20 20 0 0 1 ${T1_Q1.A.x + 19} ${T1_Q1.A.y + 6}`} stroke={highlightColor} {...commonProps} />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y + 20} A 20 20 0 0 1 ${T2_Q1.D.x + 19} ${T2_Q1.D.y + 6}`} stroke={highlightColor} {...commonProps} />
-              
-              {/* Side AC & DF */}
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T1_Q1.C.x} y2={T1_Q1.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2_Q1.D.x} y1={T2_Q1.D.y} x2={T2_Q1.F.x} y2={T2_Q1.F.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-            </motion.g>
-          )}
-
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} L ${T1_Q2.C.x} ${T1_Q2.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.E.x} ${T2_Q2.E.y} L ${T2_Q2.F.x} ${T2_Q2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* Markings for Q2 (SSA Trap) */}
-              {/* Side AB & DE */}
-              <line x1={T1_Q2.A.x} y1={T1_Q2.A.y} x2={T1_Q2.B.x} y2={T1_Q2.B.y} stroke={trapColor} strokeWidth="4" />
-              <line x1={T2_Q2.D.x} y1={T2_Q2.D.y} x2={T2_Q2.E.x} y2={T2_Q2.E.y} stroke={trapColor} strokeWidth="4" />
-              
-              {/* Side BC & EF */}
-              <line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T1_Q2.C.x} y2={T1_Q2.C.y} stroke={trapColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2_Q2.E.x} y1={T2_Q2.E.y} x2={T2_Q2.F.x} y2={T2_Q2.F.y} stroke={trapColor} strokeWidth="4" strokeDasharray="5 5" />
-              
-              {/* Angle A & D (NOT Included) */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y + 20} A 20 20 0 0 1 ${T1_Q2.A.x + 19} ${T1_Q2.A.y + 6}`} stroke={trapColor} {...commonProps} />
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y + 20} A 20 20 0 0 1 ${T2_Q2.D.x + 19} ${T2_Q2.D.y + 6}`} stroke={trapColor} {...commonProps} />
-            </motion.g>
-          )}
-        </AnimatePresence>
+        {/* --- Triangle T --- */}
+        <g>
+          <path d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T.A.x} y={T.A.y - 10} fill={labelColor} fontSize="14">T</text>
+          <path d={`M ${T.A.x + 15} ${T.A.y} A 15 15 0 0 1 ${T.A.x + 12.1} ${T.A.y - 8.8}`} stroke={angle1} {...commonProps} />
+          <path d={`M ${T.C.x - 13.6} ${T.C.y + 6.5} A 15 15 0 0 1 ${T.C.x} ${T.C.y + 15}`} stroke={angle2} {...commonProps} />
+          <path d={`M ${T.B.x - 15} ${T.B.y} A 15 15 0 0 0 ${T.B.x - 12.1} ${T.B.y - 8.8}`} stroke={angle3} {...commonProps} />
+          <line x1={130} y1={70} x2={140} y2={65} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={T.A.x + 45} y1={T.A.y - 3} x2={T.A.x + 55} y2={T.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={T.A.x + 50} y1={T.A.y - 3} x2={T.A.x + 60} y2={T.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
+        </g>
+        {/* --- Triangle P --- */}
+        <g>
+          <path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={P.A.x + 20} y={P.A.y + 30} fill={labelColor} fontSize="14">P</text>
+          <path d={`M ${P.B.x} ${P.B.y} A 15 15 0 0 0 ${P.B.x - 12.1} ${P.B.y - 8.8}`} stroke={angle1} {...commonProps} />
+          <line x1={330} y1={100} x2={340} y2={95} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={P.A.x + 20} y1={P.A.y + 70} x2={P.A.x + 30} y2={P.A.y + 65} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={P.A.x + 23} y1={P.A.y + 73} x2={P.A.x + 33} y2={P.A.y + 68} stroke={sideColor} strokeWidth="1.5" />
+        </g>
+        {/* --- Triangle Q --- */}
+        <g>
+          <path d={`M ${Q.A.x} ${Q.A.y} L ${Q.B.x} ${Q.B.y} L ${Q.C.x} ${Q.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={Q.C.x} y={Q.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">Q</text>
+          <line x1={130} y1={205} x2={140} y2={208} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={50} y1={205} x2={60} y2={208} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={53} y1={202} x2={63} y2={205} stroke={sideColor} strokeWidth="1.5" />
+        </g>
+        {/* --- Triangle R --- */}
+        <g>
+          <path d={`M ${R.A.x} ${R.A.y} L ${R.B.x} ${R.B.y} L ${R.C.x} ${R.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={R.C.x} y={R.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">R</text>
+          <path d={`M ${R.A.x + 15} ${R.A.y} A 15 15 0 0 1 ${R.A.x + 13.6} ${R.A.y - 6.5}`} stroke={angle1} {...commonProps} />
+          <line x1={R.A.x + 65} y1={R.A.y - 3} x2={R.A.x + 75} y2={R.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={R.A.x + 70} y1={R.A.y - 3} x2={R.A.x + 80} y2={R.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={340} y1={205} x2={350} y2={208} stroke={sideColor} strokeWidth="1.5" />
+        </g>
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Pentagon) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const A = { x: 200, y: 30 };
+  const B = { x: 80, y: 100 };
+  const C = { x: 120, y: 180 };
+  const D = { x: 280, y: 180 };
+  const E = { x: 320, y: 100 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* Draw all lines */}
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${E.x} ${E.y} Z`} stroke={strokeColor} fill={isDarkMode ? 'rgb(30 41 59 / 0.5)' : 'rgb(241 245 249 / 0.5)'} />
+        <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
+
+        {/* Labels */}
+        <text x={A.x} y={A.y - 10} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={B.x - 15} y={B.y} fill={strokeColor}>B</text>
+        <text x={C.x - 15} y={C.y + 5} fill={strokeColor}>C</text>
+        <text x={D.x + 5} y={D.y + 5} fill={strokeColor}>D</text>
+        <text x={E.x + 5} y={E.y} fill={strokeColor}>E</text>
+
+        {/* Markings */}
+        <path d={`M ${A.x - 12} ${A.y + 15} A 20 20 0 0 1 ${A.x} ${A.y + 20}`} stroke={angleOrange} strokeWidth="3" fill={angleOrange} fillOpacity="0.4" />
+        <path d={`M ${A.x} ${A.y + 20} A 20 20 0 0 1 ${A.x + 12} ${A.y + 15}`} stroke={angleGreen} strokeWidth="3" fill={angleGreen} fillOpacity="0.4" />
+        
+        <line x1={140} y1={60} x2={150} y2={65} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
+        <line x1={250} y1={65} x2={260} y2={60} stroke={strokeColor} strokeWidth="2" /> {/* AE */}
+
+        <line x1={160} y1={100} x2={170} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* AC */}
+        <line x1={162} y1={97} x2={172} y2={102} stroke={strokeColor} strokeWidth="2" />
+        <line x1={230} y1={105} x2={240} y2={100} stroke={strokeColor} strokeWidth="2" /> {/* AD */}
+        <line x1={228} y1={102} x2={238} y2={97} stroke={strokeColor} strokeWidth="2" />
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (T, P, Q, R) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 280;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
+  
+  const angle1 = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
+  const angle2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const angle3 = isDarkMode ? '#F87171' : '#EF4444'; // Red/Orange
+  const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const T = { A: { x: 80, y: 120 }, B: { x: 180, y: 120 }, C: { x: 160, y: 30 } };
+  const P = { A: { x: 250, y: 30 }, B: { x: 300, y: 120 }, C: { x: 370, y: 80 } };
+  const Q = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
+  const R = { A: { x: 230, y: 250 }, B: { x: 370, y: 250 }, C: { x: 320, y: 160 } };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* --- Triangle T --- */}
+        <g>
+          <path d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T.A.x} y={T.A.y - 10} fill={labelColor} fontSize="14">T</text>
+          <path d={`M ${T.A.x + 15} ${T.A.y} A 15 15 0 0 1 ${T.A.x + 12.1} ${T.A.y - 8.8}`} stroke={angle1} {...commonProps} />
+          <path d={`M ${T.C.x - 13.6} ${T.C.y + 6.5} A 15 15 0 0 1 ${T.C.x} ${T.C.y + 15}`} stroke={angle2} {...commonProps} />
+          <line x1={130} y1={70} x2={140} y2={65} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={T.A.x + 45} y1={T.A.y - 3} x2={T.A.x + 55} y2={T.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={T.A.x + 50} y1={T.A.y - 3} x2={T.A.x + 60} y2={T.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
+        </g>
+        {/* --- Triangle P --- */}
+        <g>
+          <path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={P.A.x + 20} y={P.A.y + 30} fill={labelColor} fontSize="14">P</text>
+          <path d={`M ${P.B.x} ${P.B.y} A 15 15 0 0 0 ${P.B.x - 12.1} ${P.B.y - 8.8}`} stroke={angle1} {...commonProps} />
+          <line x1={330} y1={100} x2={340} y2={95} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={P.A.x + 20} y1={P.A.y + 70} x2={P.A.x + 30} y2={P.A.y + 65} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={P.A.x + 23} y1={P.A.y + 73} x2={P.A.x + 33} y2={P.A.y + 68} stroke={sideColor} strokeWidth="1.5" />
+        </g>
+        {/* --- Triangle Q --- */}
+        <g>
+          <path d={`M ${Q.A.x} ${Q.A.y} L ${Q.B.x} ${Q.B.y} L ${Q.C.x} ${Q.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={Q.C.x} y={Q.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">Q</text>
+          <path d={`M ${Q.A.x + 15} ${Q.A.y} A 15 15 0 0 1 ${Q.A.x + 13.6} ${Q.A.y - 6.5}`} stroke={angle1} {...commonProps} />
+          <line x1={130} y1={205} x2={140} y2={208} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={50} y1={205} x2={60} y2={208} stroke={sideColor} strokeWidth="1.5" />
+        </g>
+        {/* --- Triangle R --- */}
+        <g>
+          <path d={`M ${R.A.x} ${R.A.y} L ${R.B.x} ${R.B.y} L ${R.C.x} ${R.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={R.C.x} y={R.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">R</text>
+          <path d={`M ${R.A.x + 15} ${R.A.y} A 15 15 0 0 1 ${R.A.x + 13.6} ${R.A.y - 6.5}`} stroke={angle1} {...commonProps} />
+          <line x1={R.A.x + 65} y1={R.A.y - 3} x2={R.A.x + 75} y2={R.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={R.A.x + 70} y1={R.A.y - 3} x2={R.A.x + 80} y2={R.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={340} y1={205} x2={350} y2={208} stroke={sideColor} strokeWidth="1.5" />
+        </g>
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function SasSlide2() {
@@ -106,40 +198,49 @@ export default function SasSlide2() {
       conceptId: 'sas-criterion-identification',
       conceptName: 'SAS Criterion Identification',
       type: 'judging',
-      description: 'Testing ability to identify SAS vs. SSA cases'
+      description: 'Testing ability to identify SAS'
     }
   ];
 
+  // --- UPDATED INTERFACE ---
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode; // Added figure
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'sas-id-q1-correct',
-      question: 'Look at the figure. Can we prove these triangles are congruent using the SAS criterion?',
+      id: 'sas-id-q1-pentagon',
+      question: 'According to the SAS criterion only, which of the following triangles are congruent to ΔABC?',
+      figure: <FigureQ1 />,
       options: [
-        "Yes, this is a perfect example of SAS.",
-        "No, the angle is not included.",
-        "No, this shows the ASA criterion."
+        "ΔABE only",
+        "None",
+        "ΔADE only",
+        "ΔACD only",
+        "ΔADE and ΔACD"
       ],
-      correctAnswer: "Yes, this is a perfect example of SAS.",
-      explanation: "Correct! The congruent angle ($\angle A$) is *between* the two congruent sides ($AB$ and $AC$). This is exactly what SAS requires."
+      correctAnswer: "ΔADE only",
+      explanation: "Correct! ΔABC has a side (AB, 1 hash), an included angle (∠BAC, orange), and a second side (AC, 2 hashes). ΔADE has a side (AE, 1 hash), an included angle (∠DAE, green), and a second side (AD, 2 hashes). Since the corresponding parts match, they are congruent by SAS. (Note: The image implies all three triangles are congruent, but only ΔADE is explicitly shown as SAS)."
     },
     {
-      id: 'sas-id-q2-trap',
-      question: 'Now look at this figure. Can we prove these triangles are congruent using the SAS criterion?',
+      id: 'sas-id-q2-triangles',
+      question: 'According to the SAS criterion only, which of the following triangles is congruent to T?',
+      figure: <FigureQ2 />,
       options: [
-        "Yes, this is also SAS.",
-        "No, the angle is not included.",
-        "Yes, this shows the ASA criterion."
+        "P, Q, and R",
+        "P and R only",
+        "R only",
+        "P only",
+        "P and Q only"
       ],
-      correctAnswer: "No, the angle is not included.",
-      explanation: "Correct! The angle ($\angle A$) is *not* between the two marked sides ($AB$ and $BC$). This is a Side-Side-Angle (SSA) pattern, which does NOT prove congruence."
+      correctAnswer: "P only",
+      explanation: "Correct! Triangle T has a side (2 hashes), an *included* angle (yellow), and a second side (1 hash). Triangle P is the only one that matches this S-A-S pattern (Side, Included Angle, Side). Triangle R shows an S-S-A pattern (the angle is not included), which is not valid."
     }
   ];
 
@@ -198,50 +299,50 @@ export default function SasSlide2() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The SAS Identification Checklist</h2>
-            <p className="text-lg leading-relaxed">
-              When you see a diagram, you must find **three specific things** in order:
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying Congruent Triangles</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              According to the SAS criterion only, which of the following triangles are congruent to $T$?
             </p>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">1.</span>
-                <span>A pair of congruent <strong>Sides</strong> (S).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">2.</span>
-                <span>The <strong>Included Angle</strong> (A) where those two sides meet.</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">3.</span>
-                <span>The next pair of congruent <strong>Sides</strong> (S).</span>
-              </li>
-            </ul>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (The Trap) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-red-600 dark:text-red-400">Warning: The "SSA" Trap</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              The most common mistake is finding two sides and an angle that is <strong>NOT</strong> included. This is called <strong>Side-Side-Angle (SSA)</strong>.
+              The SAS (side-angle-side) congruence criterion states:
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/30">
-              <p className="text-lg text-red-700 dark:text-red-300">
-                <strong>SSA CANNOT BE USED TO PROVE TRIANGLES ARE CONGRUENT.</strong>
+            <blockquote className="my-4 p-4 bg-slate-100 dark:bg-slate-700/60 border-l-4 border-blue-500 rounded-r-lg">
+              <p className="text-lg italic font-medium leading-relaxed">
+                Two triangles are congruent if and only if two sides and the <strong>included angle</strong> of one triangle are congruent to two sides and the included angle of the other triangle.
               </p>
-            </div>
+            </blockquote>
+
             <p className="text-lg leading-relaxed mt-4">
-              Look at the practice quiz. The first example shows true SAS. The second example shows the "SSA trap."
+              With that in mind, let's examine each of the given triangles:
+            </p>
+            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+                <li>
+                  <strong>$P \cong T$</strong> by SAS since two sides (1 hash, 2 hashes) and the <strong>included angle</strong> (yellow) are congruent.
+                </li>
+                <li>
+                  <strong>$Q$ is not congruent to $T$</strong> by SAS since we don't have a pair of congruent angles.
+                </li>
+                <li>
+                  <strong>$R \cong T$</strong> by SAS too, since two sides (1 hash, 2 hashes) and the <strong>included angle</strong> (yellow) are congruent.
+                </li>
+            </ul>
+            <p className="text-lg leading-relaxed mt-4 font-semibold">
+              Therefore, the correct answer is "P and R only."
             </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Identification Practice</h3>
@@ -265,8 +366,19 @@ export default function SasSlide2() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>
@@ -336,7 +448,7 @@ export default function SasSlide2() {
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "Great job spotting the SSA trap!" : 'Good practice!'}
+                  {score === questions.length ? "Great job spotting the patterns!" : 'Good practice!'}
                 </div>
               </motion.div>
             )}

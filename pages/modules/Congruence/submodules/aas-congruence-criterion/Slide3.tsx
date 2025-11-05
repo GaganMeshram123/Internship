@@ -4,102 +4,153 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const questionColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  
+  const angleYellow = isDarkMode ? '#FDE047' : '#EAB308';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const anglePurple = isDarkMode ? '#C084FC' : '#9333EA';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // --- Figure 1: Find 'x' (straightforward) ---
-  const T1_Q1 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q1 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-
-  // --- Figure 2: Find 'x' (requires finding third angle) ---
-  const T1_Q2 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q2 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  const A = { x: 50, y: 180 };
+  const B = { x: 100, y: 100 };
+  const C = { x: 130, y: 40 };
+  const D = { x: 280, y: 180 };
+  const E = { x: 200, y: 130 };
+  const F = { x: 165, y: 108 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} L ${T1_Q1.C.x} ${T1_Q1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.E.x} ${T2_Q1.E.y} L ${T2_Q1.F.x} ${T2_Q1.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* AAS Markings */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y + 20} A 20 20 0 0 1 ${T1_Q1.A.x + 19} ${T1_Q1.A.y + 6}`} stroke={highlightColor} {...commonProps} />
-              <text x={T1_Q1.A.x + 5} y={T1_Q1.A.y - 10} fill={strokeColor} fontSize="14">65°</text>
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y + 20} A 20 20 0 0 1 ${T2_Q1.D.x + 19} ${T2_Q1.D.y + 6}`} stroke={highlightColor} {...commonProps} />
-              
-              <path d={`M ${T1_Q1.B.x + 20} ${T1_Q1.B.y} A 20 20 0 0 0 ${T1_Q1.B.x + 15.45} ${T1_Q1.B.y - 12.85}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              <text x={T1_Q1.B.x + 10} y={T1_Q1.B.y - 20} fill={strokeColor} fontSize="14">80°</text>
-              <path d={`M ${T2_Q1.E.x + 20} ${T2_Q1.E.y} A 20 20 0 0 0 ${T2_Q1.E.x + 15.45} ${T2_Q1.E.y - 12.85}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              
-              <line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T1_Q1.C.x} y2={T1_Q1.C.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2_Q1.E.x} y1={T2_Q1.E.y} x2={T2_Q1.F.x} y2={T2_Q1.F.y} stroke={highlightColor} strokeWidth="4" />
+        {/* Lines */}
+        <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${E.x} ${E.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${B.x} ${B.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
 
-              {/* Question Parts */}
-              <text x={T1_Q1.C.x - 30} y={T1_Q1.C.y - 20} fill={questionColor} fontSize="14" fontWeight="bold">x</text>
-              <path d={`M ${T1_Q1.C.x - 20} ${T1_Q1.C.y} A 20 20 0 0 1 ${T1_Q1.C.x - 15.45} ${T1_Q1.C.y - 12.85}`} stroke={questionColor} {...commonProps} />
-              
-              <text x={T2_Q1.F.x - 30} y={T2_Q1.F.y - 20} fill={strokeColor} fontSize="14">35°</text>
-              <path d={`M ${T2_Q1.F.x - 20} ${T2_Q1.F.y} A 20 20 0 0 1 ${T2_Q1.F.x - 15.45} ${T2_Q1.F.y - 12.85}`} stroke={strokeColor} {...commonProps} />
-            </motion.g>
-          )}
+        {/* Labels */}
+        <text x={A.x - 15} y={A.y + 5} fill={strokeColor}>A</text>
+        <text x={B.x - 15} y={B.y} fill={strokeColor}>B</text>
+        <text x={C.x} y={C.y - 10} fill={strokeColor}>C</text>
+        <text x={D.x + 5} y={D.y + 5} fill={strokeColor}>D</text>
+        <text x={E.x + 5} y={E.y + 5} fill={strokeColor}>E</text>
+        <text x={F.x + 5} y={F.y + 5} fill={strokeColor}>F</text>
 
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} L ${T1_Q2.C.x} ${T1_Q2.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.E.x} ${T2_Q2.E.y} L ${T2_Q2.F.x} ${T2_Q2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* AAS Markings */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y + 20} A 20 20 0 0 1 ${T1_Q2.A.x + 19} ${T1_Q2.A.y + 6}`} stroke={highlightColor} {...commonProps} />
-              <text x={T1_Q2.A.x + 5} y={T1_Q2.A.y - 10} fill={strokeColor} fontSize="14">100°</text>
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y + 20} A 20 20 0 0 1 ${T2_Q2.D.x + 19} ${T2_Q2.D.y + 6}`} stroke={highlightColor} {...commonProps} />
-              
-              <path d={`M ${T1_Q2.C.x - 20} ${T1_Q2.C.y} A 20 20 0 0 1 ${T1_Q2.C.x - 15.45} ${T1_Q2.C.y - 12.85}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              <text x={T1_Q2.C.x - 30} y={T1_Q2.C.y - 20} fill={strokeColor} fontSize="14">50°</text>
-              <path d={`M ${T2_Q2.F.x - 20} ${T2_Q2.F.y} A 20 20 0 0 1 ${T2_Q2.F.x - 15.45} ${T2_Q2.F.y - 12.85}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              
-              <line x1={T1_Q2.A.x} y1={T1_Q2.A.y} x2={T1_Q2.B.x} y2={T1_Q2.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2_Q2.D.x} y1={T2_Q2.D.y} x2={T2_Q2.E.x} y2={T2_Q2.E.y} stroke={highlightColor} strokeWidth="4" />
+        {/* Angles & Given */}
+        <text x={B.x} y={B.y + 15} fill={angleYellow} fontSize="12">65°</text>
+        <path d={`M ${B.x - 8} ${B.y - 8} A 15 15 0 0 1 ${B.x + 8} ${B.y - 5}`} stroke={angleYellow} {...commonProps} />
+        
+        <text x={E.x} y={E.y + 15} fill={anglePurple} fontSize="12">5x + 15°</text>
+        <path d={`M ${E.x - 8} ${E.y - 8} A 15 15 0 0 1 ${E.x + 8} ${E.y - 5}`} stroke={anglePurple} {...commonProps} />
 
-              {/* Question Parts */}
-              <text x={T1_Q2.B.x + 10} y={T1_Q2.B.y - 20} fill={questionColor} fontSize="14" fontWeight="bold">x</text>
-              <path d={`M ${T1_Q2.B.x + 20} ${T1_Q2.B.y} A 20 20 0 0 0 ${T1_Q2.B.x + 15.45} ${T1_Q2.B.y - 12.85}`} stroke={questionColor} {...commonProps} />
-              
-              <text x={T2_Q2.E.x + 10} y={T2_Q2.E.y - 20} fill={strokeColor} fontSize="14">30°</text>
-              <path d={`M ${T2_Q2.E.x + 20} ${T2_Q2.E.y} A 20 20 0 0 0 ${T2_Q2.E.x + 15.45} ${T2_Q2.E.y - 12.85}`} stroke={strokeColor} {...commonProps} />
-            </motion.g>
-          )}
-        </AnimatePresence>
+        <path d={`M ${C.x - 12} ${C.y + 12} A 15 15 0 0 1 ${C.x + 5} ${C.y + 10}`} stroke={angleBlue} {...commonProps} />
+        <path d={`M ${D.x - 12} ${D.y - 5} A 15 15 0 0 0 ${D.x} ${D.y - 15}`} stroke={angleBlue} {...commonProps} />
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q3 from image) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleYellow = isDarkMode ? '#FDE047' : '#EAB308';
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const anglePurple = isDarkMode ? '#C084FC' : '#9333EA';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const A = { x: 100, y: 50 };
+  const B = { x: 100, y: 180 };
+  const C = { x: 300, y: 80 };
+  const D = { x: 300, y: 150 };
+  const E = { x: 200, y: 115 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`50 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${B.x} ${B.y} L ${A.x} ${A.y} L ${C.x} ${C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${B.x} ${B.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={A.x - 15} y={A.y} fill={strokeColor}>A</text>
+        <text x={B.x - 15} y={B.y + 5} fill={strokeColor}>B</text>
+        <text x={C.x + 5} y={C.y} fill={strokeColor}>C</text>
+        <text x={D.x + 5} y={D.y + 5} fill={strokeColor}>D</text>
+        <text x={E.x + 5} y={E.y} fill={strokeColor}>E</text>
+
+        {/* Angles & Given */}
+        <text x={A.x + 5} y={A.y + 30} fill={angleYellow} fontSize="12">72°</text>
+        <path d={`M ${A.x + 15} ${A.y + 12} A 20 20 0 0 1 ${A.x} ${A.y + 20}`} stroke={angleYellow} {...commonProps} />
+        
+        <text x={B.x + 5} y={B.y - 25} fill={angleOrange} fontSize="12">3x + 9°</text>
+        <path d={`M ${B.x + 15} ${B.y - 12} A 20 20 0 0 0 ${B.x} ${B.y - 20}`} stroke={angleOrange} {...commonProps} />
+
+        <path d={`M ${C.x - 15} ${C.y} A 15 15 0 0 0 ${C.x} ${C.y + 15}`} stroke={anglePurple} {...commonProps} />
+        <path d={`M ${D.x - 15} ${D.y} A 15 15 0 0 1 ${D.x} ${D.y - 15}`} stroke={anglePurple} {...commonProps} />
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q4 from image) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const anglePurple = isDarkMode ? '#C084FC' : '#9333EA';
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const A = { x: 50, y: 180 };
+  const B = { x: 350, y: 180 };
+  const C = { x: 200, y: 180 };
+  const D = { x: 120, y: 80 };
+  const E = { x: 280, y: 40 };
+  const F = { x: 240, y: 110 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* Lines */}
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${E.x} ${E.y} L ${A.x} ${A.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${C.x} ${C.y} L ${E.x} ${E.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${D.x} ${D.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
+
+        {/* Labels */}
+        <text x={A.x - 15} y={A.y + 5} fill={strokeColor}>A</text>
+        <text x={B.x + 5} y={B.y + 5} fill={strokeColor}>B</text>
+        <text x={C.x} y={C.y + 15} fill={strokeColor} textAnchor="middle">C</text>
+        <text x={D.x - 15} y={D.y} fill={strokeColor}>D</text>
+        <text x={E.x + 5} y={E.y} fill={strokeColor}>E</text>
+        <text x={F.x + 5} y={F.y} fill={strokeColor}>F</text>
+        <text x={F.x + 10} y={F.y + 15} fill={strokeColor} fontSize="12">g</text>
+        <text x={C.x - 30} y={C.y - 20} fill={angleBlue} fontSize="12">3x + 12°</text>
+
+        {/* Angles & Markings */}
+        <path d={`M ${D.x} ${D.y} l 10 0 l 0 10`} stroke={angleOrange} {...commonProps} /> {/* 90 deg at D */}
+        <path d={`M ${E.x - 14} ${E.y + 8} l 10 0 l 0 -10`} stroke={anglePurple} {...commonProps} /> {/* 90 deg at E */}
+        <path d={`M ${C.x} ${C.y - 15} A 20 20 0 0 1 ${C.x - 18} ${C.y - 8}`} stroke={angleBlue} {...commonProps} />
+        
+        <line x1={F.x} y1={F.y} x2={F.x + 5} y2={F.y + 5} stroke={strokeColor} strokeWidth="2" /> {/* CF=g */}
+        <line x1={E.x-10} y1={E.y+35} x2={E.x} y2={E.y+30} stroke={strokeColor} strokeWidth="2" /> {/* CE */}
+        <line x1={D.x+20} y1={D.y+20} x2={D.x+25} y2={D.y+25} stroke={strokeColor} strokeWidth="2" /> {/* BD */}
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function AasSlide3() {
@@ -125,35 +176,41 @@ export default function AasSlide3() {
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY (REMOVED $) ---
   const questions: QuizQuestion[] = [
     {
-      id: 'aas-find-angle-q1',
-      question: 'The triangles are congruent by AAS. What is the value of x?',
+      id: 'aas-find-angle-q3',
+      question: 'In the figure above, \u2220DBA \u2245 \u2220BAC. What is the value of x?',
+      figure: <FigureQ1 />,
       options: [
-        "35°",
-        "65°",
-        "80°",
-        "Cannot be determined"
+        "68°",
+        "18°",
+        "21°",
+        "32°",
+        "72°"
       ],
-      correctAnswer: "35°",
-      explanation: "Correct! The triangles are congruent by AAS ($\angle A \cong \angle D$, $\angle B \cong \angle E$, $BC \cong EF$). By CPCTC, the corresponding angles $\angle C$ and $\angle F$ must be congruent. Since $m\angle F = 35°$, then $x$ must also be 35°."
+      correctAnswer: "21°",
+      explanation: "Correct! We can prove \u0394ABC \u2245 \u0394BAD by AAS. We are given \u2220C \u2245 \u2220D (Angle) and \u2220BAC \u2245 \u2220DBA (Angle). They also share the side AB (Side). Since \u2220BAC \u2245 \u2220DBA, we set their values equal: 72 = 3x + 9. Solving gives 3x = 63, so x = 21."
     },
     {
-      id: 'aas-find-angle-q2',
-      question: 'The triangles are congruent by AAS. What is the value of x?',
+      id: 'aas-find-angle-q4',
+      question: 'In the figure above, BD \u2245 CE. What is the value of x?',
+      figure: <FigureQ2 />,
       options: [
+        "13°",
+        "90°",
         "30°",
-        "50°",
-        "100°",
-        "Cannot be determined"
+        "45°",
+        "26°"
       ],
-      correctAnswer: "30°",
-      explanation: "Correct! The triangles are congruent by AAS ($\angle A \cong \angle D$, $\angle C \cong \angle F$, $AB \cong DE$). By CPCTC, the corresponding angles $\angle B$ and $\angle E$ must be congruent. Since $m\angle E = 30°$, then $x$ must also be 30°."
+      correctAnswer: "26°",
+      explanation: "This is tricky! First, prove \u0394ABD \u2245 \u0394ACE by AAS: \u2220A is common (Angle), \u2220BDA \u2245 \u2220CEA (both 90\u00B0) (Angle), and BD \u2245 CE (Side). By CPCTC, \u2220ABD \u2245 \u2220ACE. The diagram labels \u2220ACD as 3x+12 and the angle \u2220ACE as 90\u00B0. We must assume the blue square applies to \u2220ACD. Thus, 3x + 12 = 90, which gives 3x = 78, and x = 26."
     }
   ];
 
@@ -212,47 +269,51 @@ export default function AasSlide3() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED, REMOVED $) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Finding Angles with AAS</h2>
-            <p className="text-lg leading-relaxed">
-              Just like with ASA, the main reason we use AAS is to prove triangles are congruent, which then allows us to find unknown measurements.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Finding an Angle Using AAS</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              In the figure below, BD ≅ CE. What is the value of x?
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              The process is the same:
-              <ol className="list-decimal list-inside ml-4 mt-2">
-                <li>Prove congruence (using AAS).</li>
-                <li>Use <strong>CPCTC</strong> to find the missing part.</li>
-              </ol>
-            </p>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (CPCTC) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">A Note on the Third Angle</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              In the first quiz question, we are given $\angle A$, $\angle B$, and side $BC$. We want to find $\angle C$.
+              Notice that ΔABD and ΔAEC are congruent by AAS since we have the following pairs of congruent angles and corresponding non-included sides:
             </p>
-            <p className="text-lg leading-relaxed mt-3">
-              We *could* find $\angle C$ using the <strong>Third Angle Theorem</strong> first:
-              $m\angle C = 180° - 65° - 80° = 35°$.
+            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+                <li>
+                  <strong>BD ≅ CE</strong> (Given Side)
+                </li>
+                <li>
+                  <strong>∠C ≅ ∠D</strong> (Given Angle, i.e., ∠ACE ≅ ∠ADB)
+                </li>
+                <li>
+                  <strong>∠A</strong> is their common angle (Angle).
+                </li>
+            </ul>
+
+            <p className="text-lg leading-relaxed mt-4">
+              Therefore, all the corresponding angles of the triangles must be congruent. In particular, <strong>∠ABD ≅ ∠AEC</strong>. So, we have
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                However, using <strong>CPCTC</strong> is often faster. If we know $\triangle ABC \cong \triangle DEF$, and $m\angle F = 35°$, then $m\angle C$ *must* be 35°.
-              </p>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
+              m∠AEC = m∠ABD<br/>
+              5x + 15° = 65°<br/>
+              5x = 50°<br/>
+              x = 10°
             </div>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Find the Missing Angle</h3>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Application Practice</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
@@ -273,8 +334,19 @@ export default function AasSlide3() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>

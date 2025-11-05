@@ -4,18 +4,22 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- SAS ANIMATION COMPONENT DEFINED INSIDE ---
+// --- SAS ANIMATION COMPONENT DEFINED INSIDE (UPDATED) ---
 const SasAnimation: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 250; // Increased height to accommodate the congruence statement below
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightStroke = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
 
-  // Triangle 1 (Left)
-  const T1 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  // Triangle 2 (Right)
-  const T2 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
+  // Colors from your image
+  const side1Color = isDarkMode ? '#F472B6' : '#DB2777'; // Pink
+  const side2Color = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const angleColor = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
+
+  // T1 (ABC)
+  const T1 = { A: { x: 30, y: 180 }, B: { x: 180, y: 180 }, C: { x: 147, y: 48 } };
+  // T2 (KLM) - rotated
+  const T2 = { K: { x: 230, y: 160 }, L: { x: 280, y: 50 }, M: { x: 378, y: 100 } };
 
   const commonProps = {
     fill: 'none',
@@ -43,57 +47,76 @@ const SasAnimation: React.FC = () => {
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
         {/* --- Triangles --- */}
-        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} strokeDasharray="4 4" {...commonProps} />
-        <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} strokeDasharray="4 4" {...commonProps} />
+        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor}>A</text>
+        <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor}>B</text>
+        <text x={T1.C.x + 5} y={T1.C.y - 5} fill={strokeColor}>C</text>
+        
+        <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor}>K</text>
+        <text x={T2.L.x} y={T2.L.y - 10} fill={strokeColor} textAnchor="middle">L</text>
+        <text x={T2.M.x + 5} y={T2.M.y + 5} fill={strokeColor}>M</text>
 
         {/* --- SAS Highlights --- */}
 
-        {/* SIDE (AB and DE) */}
+        {/* SIDE 1 (AB and KL) - Length 5 */}
         <motion.line
           x1={T1.A.x} y1={T1.A.y} x2={T1.B.x} y2={T1.B.y}
-          stroke={highlightStroke} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={0.5}
+          stroke={side1Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={0.5}
         />
-        <motion.line
-          x1={T2.D.x} y1={T2.D.y} x2={T2.E.x} y2={T2.E.y}
-          stroke={highlightStroke} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={0.5}
-        />
-        <motion.text x={T1.A.x - 30} y={(T1.A.y + T1.B.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>S</motion.text>
-        <motion.text x={T2.D.x - 30} y={(T2.D.y + T2.E.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>S</motion.text>
-
-        {/* ANGLE (B and E) - INCLUDED */}
-        <motion.path
-          d={`M ${T1.B.x + 20} ${T1.B.y} A 20 20 0 0 0 ${T1.B.x + 15.45} ${T1.B.y - 12.85}`}
-          stroke={highlightStroke} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={1.5}
-        />
-        <motion.path
-          d={`M ${T2.E.x + 20} ${T2.E.y} A 20 20 0 0 0 ${T2.E.x + 15.45} ${T2.E.y - 12.85}`}
-          stroke={highlightStroke} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={1.5}
-        />
-        <motion.text x={T1.B.x + 22} y={T1.B.y - 15} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>A</motion.text>
-        <motion.text x={T2.E.x + 22} y={T2.E.y - 15} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>A</motion.text>
+        <motion.text x={(T1.A.x + T1.B.x) / 2} y={T1.A.y + 15} fill={side1Color} fontSize="12" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>5</motion.text>
         
-        {/* SIDE (BC and EF) */}
+        <motion.line
+          x1={T2.K.x} y1={T2.K.y} x2={T2.L.x} y2={T2.L.y}
+          stroke={side1Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={0.5}
+        />
+        <motion.text x={(T2.K.x + T2.L.x) / 2 - 10} y={(T2.K.y + T2.L.y) / 2 + 10} fill={side1Color} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>5</motion.text>
+        
+        <motion.text x={svgWidth / 2 - 50} y={svgHeight - 60} fill={side1Color} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={0.9}>S</motion.text>
+
+        {/* ANGLE (B and L) - 75° */}
+        <motion.path
+          d={`M ${T1.B.x - 20} ${T1.B.y} A 20 20 0 0 0 ${T1.B.x - 14.7} ${T1.B.y - 13.5}`}
+          stroke={angleColor} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={1.5}
+        />
+        <motion.text x={T1.B.x - 25} y={T1.B.y - 20} fill={angleColor} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>75°</motion.text>
+          
+        <motion.path
+          d={`M ${T2.L.x - 10} ${T2.L.y + 15} A 20 20 0 0 1 ${T2.L.x + 10} ${T2.L.y + 15}`}
+          stroke={angleColor} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={1.5}
+        />
+        <motion.text x={T2.L.x} y={T2.L.y + 35} fill={angleColor} fontSize="12" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>75°</motion.text>
+
+        <motion.text x={svgWidth / 2} y={svgHeight - 60} fill={angleColor} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.9}>A</motion.text>
+
+        {/* SIDE 2 (BC and LM) - Length 3.6 */}
         <motion.line
           x1={T1.B.x} y1={T1.B.y} x2={T1.C.x} y2={T1.C.y}
-          stroke={highlightStroke} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={2.5}
+          stroke={side2Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={2.5}
         />
+        <motion.text x={(T1.B.x + T1.C.x) / 2 + 10} y={(T1.B.y + T1.C.y) / 2} fill={side2Color} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>3.6</motion.text>
+          
         <motion.line
-          x1={T2.E.x} y1={T2.E.y} x2={T2.F.x} y2={T2.F.y}
-          stroke={highlightStroke} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={2.5}
+          x1={T2.L.x} y1={T2.L.y} x2={T2.M.x} y2={T2.M.y}
+          stroke={side2Color} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={2.5}
         />
-        <motion.text x={(T1.B.x + T1.C.x) / 2} y={T1.C.y + 20} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>S</motion.text>
-        <motion.text x={(T2.E.x + T2.F.x) / 2} y={T2.F.y + 20} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>S</motion.text>
+        <motion.text x={(T2.L.x + T2.M.x) / 2 + 10} y={(T2.L.y + T2.M.y) / 2 - 5} fill={side2Color} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>3.6</motion.text>
+        
+        <motion.text x={svgWidth / 2 + 50} y={svgHeight - 60} fill={side2Color} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.9}>S</motion.text>
 
-        {/* Congruence Statement */}
-        <motion.text x={svgWidth / 2} y={svgHeight / 2 - 20} fill={highlightStroke} fontSize="18" fontWeight="bold" textAnchor="middle"
+        {/* Congruence Statement (Moved lower) */}
+        <motion.text x={svgWidth / 2} y={svgHeight - 20} fill={strokeColor} fontSize="18" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={3.5}>
-          ∴ &triangle;ABC &cong; &triangle;DEF
+          ∴ &triangle;ABC &cong; &triangle;KLM
         </motion.text>
       </svg>
     </div>
@@ -130,6 +153,7 @@ export default function SasSlide1() {
     explanation: string;
   }
 
+  // --- QUIZ QUESTIONS (Unchanged) ---
   const questions: QuizQuestion[] = [
     {
       id: 'sas-intro-q1-meaning',
@@ -212,52 +236,63 @@ export default function SasSlide1() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The SAS Criterion</h2>
-            <p className="text-lg leading-relaxed">
-              SAS stands for <strong>Side-Angle-Side</strong>.
-            </p>
-            <p className="text-lg leading-relaxed mt-4">
-              It states: If two sides and the <strong>included angle</strong> of one triangle are congruent to the corresponding parts of another triangle, then the triangles are congruent.
-            </p>
-          </div>
-
-          {/* --- CARD 2 (The Included Angle) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The "Included" Angle</h3>
-            <p className="text-lg leading-relaxed">
-              This is the <strong>most important rule</strong> for SAS.
-            </p>
-            <p className="text-lg leading-relaxed mt-3">
-              The "included angle" is the angle formed at the vertex where the two sides <strong>meet</strong>.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Introduction</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              The <strong>side-angle-side (SAS)</strong> congruence criterion can be used as a shortcut to prove that two triangles are congruent. It states the following:
             </p>
 
-            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-              <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400">Example:</h4>
-              <ul className="list-disc list-inside mt-2 text-lg space-y-1 text-slate-700 dark:text-slate-300">
-                <li>If you have <strong>Side $AB$</strong> and <strong>Side $BC$</strong>...</li>
-                <li>...the included angle is <strong>$\angle B$</strong>, where they connect.</li>
-              </ul>
+            <blockquote className="my-4 p-4 bg-slate-100 dark:bg-slate-700/60 border-l-4 border-blue-500 rounded-r-lg">
+              <p className="text-lg italic font-medium leading-relaxed">
+                Two triangles are congruent if and only if <strong>two sides and the included angle</strong> of one triangle are congruent to two sides and the included angle of the other triangle.
+              </p>
+            </blockquote>
+
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">To demonstrate, consider the triangles below.</h3>
+            
+            <div className="space-y-2 text-lg">
+              <p>We can see that two sides of &triangle;ABC are congruent to two sides of &triangle;KLM:</p>
+              <div className="pl-4 font-mono">
+                <p>AB &cong; KL</p>
+                <p>BC &cong; LM</p>
+              </div>
             </div>
 
+            <div className="space-y-2 text-lg mt-4">
+              <p>Also, we see that the included angles are congruent:</p>
+              <div className="pl-4 font-mono">
+                <p>&ang;B &cong; &ang;L</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <p className="text-lg leading-relaxed">
+                Therefore, the SAS congruence criterion guarantees that these two triangles are congruent, and we can write:
+              </p>
+              <p className="text-xl font-bold text-center my-4 font-mono text-blue-600 dark:text-blue-400">
+                &triangle;ABC &cong; &triangle;KLM
+              </p>
+            </div>
+
+            {/* Caution Box */}
             <div className="mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/30">
               <p className="text-lg text-red-700 dark:text-red-300">
-                <strong>Warning:</strong> The pattern <strong>"SSA"</strong> (Side-Side-Angle), where the angle is *not* included, does <strong>NOT</strong> work to prove congruence.
+                <strong>Caution:</strong> When using the SAS criterion, it's vital to make sure that the angles you compare are the <i>included</i> angles between the two pairs of congruent sides. The SAS criterion <strong>only</strong> works if the included angles are congruent.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (Quiz is Unchanged) */}
         <div className="space-y-6">
           {/* --- ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing SAS</h3>
             
-            {/* --- USE THE ANIMATION COMPONENT --- */}
+            {/* --- USE THE UPDATED ANIMATION COMPONENT --- */}
             <SasAnimation />
             
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
@@ -265,7 +300,7 @@ export default function SasSlide1() {
             </p>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (Unchanged) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>

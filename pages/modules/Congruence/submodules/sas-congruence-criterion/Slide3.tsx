@@ -4,95 +4,152 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const questionColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // --- Figure 1: Find 'x' (angle) ---
-  const T1_Q1 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q1 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-
-  // --- Figure 2: Find 'x' (algebra) ---
-  const T1_Q2 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q2 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  const A = { x: 50, y: 110 };
+  const M = { x: 180, y: 110 };
+  const B = { x: 130, y: 170 };
+  const P = { x: 230, y: 50 };
+  const Q = { x: 310, y: 110 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} L ${T1_Q1.C.x} ${T1_Q1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.E.x} ${T2_Q1.E.y} L ${T2_Q1.F.x} ${T2_Q1.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* SAS Markings */}
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T1_Q1.B.x} y2={T1_Q1.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2_Q1.D.x} y1={T2_Q1.D.y} x2={T2_Q1.E.x} y2={T2_Q1.E.y} stroke={highlightColor} strokeWidth="4" />
-              
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y + 20} A 20 20 0 0 1 ${T1_Q1.A.x + 19} ${T1_Q1.A.y + 6}`} stroke={highlightColor} {...commonProps} />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y + 20} A 20 20 0 0 1 ${T2_Q1.D.x + 19} ${T2_Q1.D.y + 6}`} stroke={highlightColor} {...commonProps} />
-              
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T1_Q1.C.x} y2={T1_Q1.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2_Q1.D.x} y1={T2_Q1.D.y} x2={T2_Q1.F.x} y2={T2_Q1.F.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
+        {/* Lines */}
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${M.x} ${M.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${Q.x} ${Q.y} L ${P.x} ${P.y} L ${M.x} ${M.y} Z`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={A.x - 15} y={A.y + 5} fill={strokeColor}>A</text>
+        <text x={M.x - 5} y={M.y + 20} fill={strokeColor}>M</text>
+        <text x={B.x} y={B.y + 15} fill={strokeColor}>B</text>
+        <text x={P.x} y={P.y - 5} fill={strokeColor}>P</text>
+        <text x={Q.x + 5} y={Q.y + 5} fill={strokeColor}>Q</text>
 
-              {/* Question Parts */}
-              <text x={T1_Q1.C.x - 30} y={T1_Q1.C.y - 20} fill={questionColor} fontSize="14" fontWeight="bold">x</text>
-              <path d={`M ${T1_Q1.C.x - 20} ${T1_Q1.C.y} A 20 20 0 0 1 ${T1_Q1.C.x - 15.45} ${T1_Q1.C.y - 12.85}`} stroke={questionColor} {...commonProps} />
-              
-              <text x={T2_Q1.F.x - 30} y={T2_Q1.F.y - 20} fill={strokeColor} fontSize="14">50°</text>
-              <path d={`M ${T2_Q1.F.x - 20} ${T2_Q1.F.y} A 20 20 0 0 1 ${T2_Q1.F.x - 15.45} ${T2_Q1.F.y - 12.85}`} stroke={strokeColor} {...commonProps} />
-            </motion.g>
-          )}
+        {/* SAS Markings */}
+        <line x1={A.x + 60} y1={A.y} x2={A.x + 70} y2={A.y} stroke={strokeColor} strokeWidth="2" /> {/* AM */}
+        <line x1={Q.x - 60} y1={Q.y} x2={Q.x - 70} y2={Q.y} stroke={strokeColor} strokeWidth="2" /> {/* MQ */}
+        
+        <line x1={155} y1={140} x2={165} y2={145} stroke={strokeColor} strokeWidth="2" /> {/* BM */}
+        <line x1={158} y1={137} x2={168} y2={142} stroke={strokeColor} strokeWidth="2" />
+        <line x1={205} y1={80} x2={215} y2={85} stroke={strokeColor} strokeWidth="2" /> {/* PM */}
+        <line x1={208} y1={77} x2={218} y2={82} stroke={strokeColor} strokeWidth="2" />
 
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} L ${T1_Q2.C.x} ${T1_Q2.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.E.x} ${T2_Q2.E.y} L ${T2_Q2.F.x} ${T2_Q2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* SAS Markings */}
-              <line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T1_Q2.C.x} y2={T1_Q2.C.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2_Q2.E.x} y1={T2_Q2.E.y} x2={T2_Q2.F.x} y2={T2_Q2.F.y} stroke={highlightColor} strokeWidth="4" />
-              
-              <path d={`M ${T1_Q2.C.x - 20} ${T1_Q2.C.y} A 20 20 0 0 1 ${T1_Q2.C.x - 15.45} ${T1_Q2.C.y - 12.85}`} stroke={highlightColor} {...commonProps} />
-              <path d={`M ${T2_Q2.F.x - 20} ${T2_Q2.F.y} A 20 20 0 0 1 ${T2_Q2.F.x - 15.45} ${T2_Q2.F.y - 12.85}`} stroke={highlightColor} {...commonProps} />
-              
-              <line x1={T1_Q2.A.x} y1={T1_Q2.A.y} x2={T1_Q2.C.x} y2={T1_Q2.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2_Q2.D.x} y1={T2_Q2.D.y} x2={T2_Q2.F.x} y2={T2_Q2.F.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-
-              {/* Question Parts */}
-              <text x={T1_Q2.A.x + 5} y={T1_Q2.A.y - 10} fill={questionColor} fontSize="14" fontWeight="bold">(7x + 1)°</text>
-              <text x={T2_Q2.D.x + 5} y={T2_Q2.D.y - 10} fill={strokeColor} fontSize="14">50°</text>
-            </motion.g>
-          )}
-        </AnimatePresence>
+        {/* Angles */}
+        <path d={`M ${A.x + 15} ${A.y} A 15 15 0 0 1 ${A.x + 10} ${A.y + 11}`} stroke={angleBlue} {...commonProps} />
+        <text x={A.x + 30} y={A.y + 20} fill={angleBlue} fontSize="12">65°</text>
+        
+        <path d={`M ${Q.x - 15} ${Q.y} A 15 15 0 0 0 ${Q.x - 10} ${Q.y - 11}`} stroke={angleOrange} {...commonProps} />
+        <text x={Q.x - 50} y={Q.y - 10} fill={angleOrange} fontSize="12">3x - 7°</text>
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q3 from image) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const A = { x: 200, y: 30 };
+  const B = { x: 50, y: 180 };
+  const C = { x: 350, y: 180 };
+  const M = { x: 200, y: 180 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${M.x} ${M.y}`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={A.x} y={A.y - 10} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={B.x - 15} y={B.y + 5} fill={strokeColor}>B</text>
+        <text x={C.x + 5} y={C.y + 5} fill={strokeColor}>C</text>
+        <text x={M.x} y={M.y + 15} fill={strokeColor} textAnchor="middle">M</text>
+
+        {/* Markings */}
+        <path d={`M ${B.x + 20} ${B.y} A 20 20 0 0 1 ${B.x + 18} ${B.y - 8}`} stroke={angleGreen} {...commonProps} />
+        <text x={B.x + 30} y={B.y - 10} fill={angleGreen} fontSize="12">65°</text>
+        
+        <path d={`M ${C.x - 20} ${C.y} A 20 20 0 0 0 ${C.x - 18} ${C.y - 8}`} stroke={angleOrange} {...commonProps} />
+        <text x={C.x - 60} y={C.y - 10} fill={angleOrange} fontSize="12">5x - 5°</text>
+
+        <path d={`M ${M.x - 10} ${M.y - 10} L ${M.x - 10} ${M.y} L ${M.x} ${M.y}`} fill="none" stroke={angleBlue} strokeWidth="2" />
+        <line x1={M.x - 40} y1={M.y - 3} x2={M.x - 50} y2={M.y + 3} stroke={strokeColor} strokeWidth="1.5" />
+        <line x1={M.x + 40} y1={M.y - 3} x2={M.x + 50} y2={M.y + 3} stroke={strokeColor} strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q4 from image) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const A = { x: 50, y: 110 };
+  const M = { x: 180, y: 110 };
+  const B = { x: 130, y: 50 };
+  const P = { x: 230, y: 170 };
+  const Q = { x: 310, y: 110 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* Lines */}
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${M.x} ${M.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${Q.x} ${Q.y} L ${P.x} ${P.y} L ${M.x} ${M.y} Z`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={A.x - 15} y={A.y + 5} fill={strokeColor}>A</text>
+        <text x={M.x - 5} y={M.y + 20} fill={strokeColor}>M</text>
+        <text x={B.x} y={B.y - 5} fill={strokeColor}>B</text>
+        <text x={P.x} y={P.y + 15} fill={strokeColor}>P</text>
+        <text x={Q.x + 5} y={Q.y + 5} fill={strokeColor}>Q</text>
+
+        {/* SAS Markings */}
+        <line x1={A.x + 60} y1={A.y} x2={A.x + 70} y2={A.y} stroke={strokeColor} strokeWidth="2" /> {/* AM */}
+        <line x1={Q.x - 60} y1={Q.y} x2={Q.x - 70} y2={Q.y} stroke={strokeColor} strokeWidth="2" /> {/* MQ */}
+        
+        <line x1={155} y1={80} x2={165} y2={85} stroke={strokeColor} strokeWidth="2" /> {/* BM */}
+        <line x1={158} y1={77} x2={168} y2={82} stroke={strokeColor} strokeWidth="2" />
+        <line x1={205} y1={140} x2={215} y2={145} stroke={strokeColor} strokeWidth="2" /> {/* PM */}
+        <line x1={208} y1={137} x2={218} y2={142} stroke={strokeColor} strokeWidth="2" />
+
+        {/* Angles */}
+        <path d={`M ${A.x + 15} ${A.y - 10} A 20 20 0 0 1 ${A.x} ${A.y - 20}`} stroke={angleBlue} {...commonProps} />
+        <text x={A.x + 30} y={A.y - 15} fill={angleBlue} fontSize="12">80°</text>
+        
+        <path d={`M ${Q.x - 15} ${Q.y + 10} A 20 20 0 0 0 ${Q.x} ${Q.y + 20}`} stroke={angleOrange} {...commonProps} />
+        <text x={Q.x - 50} y={Q.y + 25} fill={angleOrange} fontSize="12">2x + 10°</text>
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function SasSlide3() {
@@ -118,35 +175,41 @@ export default function SasSlide3() {
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'sas-find-angle-q1',
-      question: 'The triangles are congruent by SAS. What is the measure of the angle marked x?',
+      id: 'sas-find-angle-q3',
+      question: 'Find the value of x.',
+      figure: <FigureQ1 />,
       options: [
+        "13°",
+        "15°",
+        "14°",
         "50°",
-        "It must be equal to $\angle A$",
-        "It must be equal to $\angle B$",
-        "Cannot be determined"
+        "65°"
       ],
-      correctAnswer: "50°",
-      explanation: "Correct! The triangles are congruent by SAS ($\triangle ABC \cong \triangle DEF$). By CPCTC, all corresponding parts are congruent. $\angle C$ corresponds to $\angle F$. Since $m\angle F = 50°$, then $x$ must also be 50°."
+      correctAnswer: "14°",
+      explanation: "Correct! The altitude $AM$ is perpendicular to $BC$, and $BM \cong MC$. This means $AM$ is a perpendicular bisector, creating two congruent right triangles ($\triangle AMB \cong \triangle AMC$). By CPCTC, $\angle B \cong \angle C$. So, $65 = 5x - 5$. This gives $5x = 70$, and $x = 14$."
     },
     {
-      id: 'sas-find-angle-q2',
-      question: 'The triangles are congruent by SAS. What is the value of x?',
+      id: 'sas-find-angle-q4',
+      question: 'Find the value of x.',
+      figure: <FigureQ2 />,
       options: [
-        "x = 7",
-        "x = 8",
-        "x = 50",
-        "x = 6"
+        "40°",
+        "85°",
+        "80°",
+        "70°",
+        "35°"
       ],
-      correctAnswer: "x = 7",
-      explanation: "Correct! The triangles are congruent by SAS ($\triangle ACB \cong \triangle DFE$). By CPCTC, $\angle A \cong \angle D$. Set up the equation: $7x + 1 = 50$. Subtract 1: $7x = 49$. Divide by 7: $x = 7$."
+      correctAnswer: "35°",
+      explanation: "Correct! The triangles are congruent by SAS. We are given $AM \cong QM$ (S) and $BM \cong PM$ (S). The angles $\angle AMB$ and $\angle QMP$ are vertical angles, so they are the included congruent angles (A). By CPCTC, $\angle A \cong \angle Q$. So, $80 = 2x + 10$. This gives $2x = 70$, and $x = 35$."
     }
   ];
 
@@ -205,52 +268,48 @@ export default function SasSlide3() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Using SAS to Find Angles</h2>
-            <p className="text-lg leading-relaxed">
-              Once you have proven two triangles are congruent using SAS, you can find *any* other missing part.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Finding an Angle Using SAS</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              Find the value of x.
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              This is where the acronym <strong>CPCTC</strong> comes in:
-            </p>
-            <p className="text-lg leading-relaxed mt-4 font-semibold text-blue-600 dark:text-blue-400">
-              <strong>C</strong>orresponding
-              <strong>P</strong>arts of
-              <strong>C</strong>ongruent
-              <strong>T</strong>riangles are
-              <strong>C</strong>ongruent.
-            </p>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (The Steps) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The 3-Step Process</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              To solve these problems, you follow the same logic every time:
+              First, notice that ∠AMB and ∠QMP are <strong>vertical angles</strong>, which means they are congruent.
             </p>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">1. Prove Congruence:</span>
-                <span>Confirm the triangles are congruent by <strong>SAS</strong>.</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">2. Use CPCTC:</span>
-                <span>Identify the <strong>corresponding angle</strong> you need to find.</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">3. Solve:</span>
-                <span>Set the corresponding parts equal. This might give you the answer (like 50°) or an equation to solve (like $7x + 1 = 50$).</span>
-              </li>
+            <p className="text-lg leading-relaxed mt-2">
+              Now, ΔAMB and ΔQMP are congruent by the SAS criterion since we have the following pairs of congruent sides and included angles:
+            </p>
+            <ul className="list-none my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono">
+                <li>AM ≅ MQ (Side)</li>
+                <li>BM ≅ MP (Side)</li>
+                <li>∠AMB ≅ ∠QMP (Included Angle)</li>
             </ul>
+
+            <p className="text-lg leading-relaxed mt-4">
+              Therefore, all the corresponding angles must be congruent (CPCTC). In particular, <strong>∠A ≅ ∠Q</strong>.
+            </p>
+            <p className="text-lg leading-relaxed mt-2">
+              Hence,
+            </p>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
+              m∠Q = m∠A<br/>
+              3x - 7° = 65°<br/>
+              3x = 72°<br/>
+              x = 24°
+            </div>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Find the Missing Angle</h3>
@@ -274,8 +333,19 @@ export default function SasSlide3() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>

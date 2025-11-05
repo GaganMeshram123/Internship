@@ -4,19 +4,22 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- HL ANIMATION COMPONENT DEFINED INSIDE ---
+// --- HL ANIMATION COMPONENT DEFINED INSIDE (UPDATED) ---
 const HlAnimation: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 240; // Increased height to make space
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightStroke = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  
+  // Colors for H-L
+  const hypotenuseColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const legColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
   const rightAngleColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
 
-  // Triangle 1 (Left) - Right triangle
-  const T1 = { A: { x: 150, y: 50 }, B: { x: 50, y: 180 }, C: { x: 150, y: 180 } };
-  // Triangle 2 (Right) - Right triangle
-  const T2 = { D: { x: 350, y: 50 }, E: { x: 250, y: 180 }, F: { x: 350, y: 180 } };
+  // T1 (ABC): 3-4-5 triangle, right angle at B
+  const T1 = { A: { x: 30, y: 180 }, B: { x: 150, y: 180 }, C: { x: 150, y: 90 } };
+  // T2 (LKM): 3-4-5 triangle, right angle at K
+  const T2 = { L: { x: 250, y: 180 }, K: { x: 370, y: 180 }, M: { x: 370, y: 90 } };
 
   const commonProps = {
     fill: 'none',
@@ -44,53 +47,70 @@ const HlAnimation: React.FC = () => {
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
         {/* --- Triangles --- */}
-        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} strokeDasharray="4 4" {...commonProps} />
-        <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} strokeDasharray="4 4" {...commonProps} />
+        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor}>A</text>
+        <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor}>B</text>
+        <text x={T1.C.x + 5} y={T1.C.y} fill={strokeColor}>C</text>
+        
+        <path d={`M ${T2.L.x} ${T2.L.y} L ${T2.K.x} ${T2.K.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T2.L.x - 15} y={T2.L.y + 5} fill={strokeColor}>L</text>
+        <text x={T2.K.x + 5} y={T2.K.y + 5} fill={strokeColor}>K</text>
+        <text x={T2.M.x + 5} y={T2.M.y} fill={strokeColor}>M</text>
 
         {/* --- Right Angle Markers --- */}
         <motion.path
-          d={`M ${T1.C.x - 15} ${T1.C.y} L ${T1.C.x - 15} ${T1.C.y - 15} L ${T1.C.x} ${T1.C.y - 15}`}
+          d={`M ${T1.B.x - 15} ${T1.B.y} L ${T1.B.x - 15} ${T1.B.y - 15} L ${T1.B.x} ${T1.B.y - 15}`}
           stroke={rightAngleColor} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={0.5}
         />
         <motion.path
-          d={`M ${T2.F.x - 15} ${T2.F.y} L ${T2.F.x - 15} ${T2.F.y - 15} L ${T2.F.x} ${T2.F.y - 15}`}
+          d={`M ${T2.K.x - 15} ${T2.K.y} L ${T2.K.x - 15} ${T2.K.y - 15} L ${T2.K.x} ${T2.K.y - 15}`}
           stroke={rightAngleColor} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={0.5}
         />
 
         {/* --- HL Highlights --- */}
 
-        {/* HYPOTENUSE (H) (AB and DE) */}
-        <motion.line
-          x1={T1.A.x} y1={T1.A.y} x2={T1.B.x} y2={T1.B.y}
-          stroke={highlightStroke} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={1.0}
-        />
-        <motion.line
-          x1={T2.D.x} y1={T2.D.y} x2={T2.E.x} y2={T2.E.y}
-          stroke={highlightStroke} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={1.0}
-        />
-        <motion.text x={T1.A.x - 50} y={(T1.A.y + T1.B.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.2}>H</motion.text>
-        <motion.text x={T2.D.x + 10} y={(T2.D.y + T2.E.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.2}>H</motion.text>
-
-        {/* LEG (L) (AC and DF) */}
+        {/* HYPOTENUSE (H) (AC and LM) - Length 5 */}
         <motion.line
           x1={T1.A.x} y1={T1.A.y} x2={T1.C.x} y2={T1.C.y}
-          stroke={highlightStroke} strokeWidth="6" strokeDasharray="6 6" variants={anim} initial="hidden" animate="visible" custom={2.0}
+          stroke={hypotenuseColor} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={1.0}
         />
+        <motion.text x={(T1.A.x + T1.C.x)/2 - 10} y={(T1.A.y + T1.C.y)/2} fill={hypotenuseColor} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.2}>5</motion.text>
+        
         <motion.line
-          x1={T2.D.x} y1={T2.D.y} x2={T2.F.x} y2={T2.F.y}
-          stroke={highlightStroke} strokeWidth="6" strokeDasharray="6 6" variants={anim} initial="hidden" animate="visible" custom={2.0}
+          x1={T2.L.x} y1={T2.L.y} x2={T2.M.x} y2={T2.M.y}
+          stroke={hypotenuseColor} strokeWidth="6" variants={anim} initial="hidden" animate="visible" custom={1.0}
         />
-       {/*  <motion.text x={T1.C.x + 10} y={(T1.A.y + T1.C.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.2}>L</motion.text>
-        <motion.text x={T2.F.x + 10} y={(T2.A.y + T2.C.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.2}>L</motion.text>
- */}
-        {/* Congruence Statement */}
-        <motion.text x={svgWidth / 2} y={svgHeight / 2 - 20} fill={highlightStroke} fontSize="18" fontWeight="bold" textAnchor="middle"
+        <motion.text x={(T2.L.x + T2.M.x)/2 - 10} y={(T2.L.y + T2.M.y)/2} fill={hypotenuseColor} fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.2}>5</motion.text>
+        
+        {/* H Label */}
+        <motion.text x={svgWidth / 2} y={svgHeight - 30} fill={hypotenuseColor} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.4}>H</motion.text>
+
+        {/* LEG (L) (AB and LK) - Length 4 */}
+        <motion.line
+          x1={T1.A.x} y1={T1.A.y} x2={T1.B.x} y2={T1.B.y}
+          stroke={legColor} strokeWidth="6" strokeDasharray="6 6" variants={anim} initial="hidden" animate="visible" custom={2.0}
+        />
+         <motion.text x={(T1.A.x + T1.B.x)/2} y={T1.A.y + 15} fill={legColor} fontSize="12" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.2}>4</motion.text>
+        
+        <motion.line
+          x1={T2.L.x} y1={T2.L.y} x2={T2.K.x} y2={T2.K.y}
+          stroke={legColor} strokeWidth="6" strokeDasharray="6 6" variants={anim} initial="hidden" animate="visible" custom={2.0}
+        />
+        <motion.text x={(T2.L.x + T2.K.x)/2} y={T2.L.y + 15} fill={legColor} fontSize="12" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.2}>4</motion.text>
+
+        {/* L Label */}
+        <motion.text x={svgWidth / 2 - 70} y={svgHeight - 30} fill={legColor} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.4}>L</motion.text>
+
+        {/* Congruence Statement (Moved down) */}
+        <motion.text x={svgWidth / 2} y={svgHeight - 10} fill={strokeColor} fontSize="18" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={3.0}>
-          ∴ &triangle;ABC &cong; &triangle;DEF
+          ∴ &triangle;ABC &cong; &triangle;LKM
         </motion.text>
       </svg>
     </div>
@@ -209,50 +229,63 @@ export default function HlSlide1() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The HL Criterion</h2>
-            <p className="text-lg leading-relaxed">
-              HL stands for <strong>Hypotenuse-Leg</strong>.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Introduction</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              Recall that the sides of a right triangle have special names.
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              It states: If the <strong>hypotenuse</strong> and one <strong>leg</strong> of a <strong>right-angled triangle</strong> are congruent to the corresponding parts of another right-angled triangle, then the triangles are congruent.
-            </p>
-          </div>
-
-          {/* --- CARD 2 (The Special Case) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The "Special Case" of SSA</h3>
-            <p className="text-lg leading-relaxed">
-              We learned that <strong>SSA</strong> (Side-Side-Angle) does *not* work.
-            </p>
-            <p className="text-lg leading-relaxed mt-3">
-              HL is the *only* exception. Think about it:
-              <ul className="list-disc list-inside ml-4 mt-2">
-                <li>You have a Leg <strong>(S)</strong>.</li>
-                <li>You have a Hypotenuse <strong>(S)</strong>.</li>
-                <li>You have a right angle <strong>(A)</strong>, which is *not* included.</li>
-              </ul>
-              This is an "SSA" pattern!
+            <ul className="list-disc list-inside space-y-2 text-lg">
+              <li>The <strong>longest side</strong> of a right triangle is called the <strong>hypotenuse</strong>.</li>
+              <li>The <strong>two other sides</strong> are called the <strong>legs</strong>.</li>
+            </ul>
+            
+            <p className="text-lg leading-relaxed mt-6 mb-4">
+              For right triangles, it is straightforward to prove congruence. The <strong>Hypotenuse-Leg (HL)</strong> criterion states the following:
             </p>
 
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                <strong>Key Idea:</strong> HL is the special version of SSA that only works because the angle is a <strong>90° right angle</strong>.
+            <blockquote className="my-4 p-4 bg-slate-100 dark:bg-slate-700/60 border-l-4 border-blue-500 rounded-r-lg">
+              <p className="text-lg italic font-medium leading-relaxed">
+                Two right triangles are congruent if and only if they have congruent hypotenuses and a pair of congruent legs.
+              </p>
+            </blockquote>
+
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">To demonstrate, consider the right triangles below.</h3>
+            
+            <div className="space-y-2 text-lg">
+              <p>As we can see, the right triangles have congruent hypotenuses:</p>
+              <div className="pl-4 font-mono">
+                <p>AC &cong; LM</p>
+              </div>
+            </div>
+
+            <div className="space-y-2 text-lg mt-4">
+              <p>and a pair of congruent legs:</p>
+              <div className="pl-4 font-mono">
+                <p>AB &cong; LK</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <p className="text-lg leading-relaxed">
+                Therefore, the HL congruence criterion guarantees that these two triangles are congruent.
+              </p>
+              <p className="text-xl font-bold text-center my-4 font-mono text-blue-600 dark:text-blue-400">
+                &triangle;ABC &cong; &triangle;LKM
               </p>
             </div>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (Quiz is UNCHANGED) */}
         <div className="space-y-6">
           {/* --- ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing HL</h3>
             
-            {/* --- USE THE ANIMATION COMPONENT --- */}
+            {/* --- USE THE UPDATED ANIMATION COMPONENT --- */}
             <HlAnimation />
             
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
@@ -260,7 +293,7 @@ export default function HlSlide1() {
             </p>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (Unchanged) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>

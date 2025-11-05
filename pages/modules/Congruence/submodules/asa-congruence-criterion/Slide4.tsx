@@ -4,165 +4,164 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE & QUIZ QUESTION 1 (Q5 from image) ---
+// This figure is used for both the example on the left
+// and the first quiz question on the right.
+const FigureQ1: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const questionColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const highlightColor = isDarkMode ? '#F9B572' : '#F59E0B'; // Orange
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // --- Figure 1: Simple Find X ---
-  const T1_Q1 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q1 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-
-  // --- Figure 2: Mixed Correspondence ---
-  const T1_Q2 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q2 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  const A = { x: 100, y: 180 };
+  const B = { x: 150, y: 100 };
+  const C = { x: 180, y: 40 };
+  const D = { x: 300, y: 130 };
+  const E = { x: 200, y: 140 };
+  const dashLine = { stroke: strokeColor, strokeWidth: 1.5, strokeDasharray: "4 4" };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} L ${T1_Q1.C.x} ${T1_Q1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.E.x} ${T2_Q1.E.y} L ${T2_Q1.F.x} ${T2_Q1.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* Markings for Q1 (ASA) */}
-              <text x={T1_Q1.A.x + 5} y={T1_Q1.A.y - 10} fill={questionColor} fontSize="14" fontWeight="bold">x</text>
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y + 20} A 20 20 0 0 1 ${T1_Q1.A.x + 19} ${T1_Q1.A.y + 6}`} stroke={questionColor} {...commonProps} />
-              <text x={T2_Q1.D.x + 5} y={T2_Q1.D.y - 10} fill={strokeColor} fontSize="14">70°</text>
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y + 20} A 20 20 0 0 1 ${T2_Q1.D.x + 19} ${T2_Q1.D.y + 6}`} stroke={strokeColor} {...commonProps} />
+      <svg width={svgWidth} height={svgHeight} viewBox={`50 0 ${svgWidth} ${svgHeight}`}>
+        {/* Lines */}
+        <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${C.x} ${C.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
+        {/* Dashed lines to B and E */}
+        <path d={`M ${C.x} ${C.y} L ${B.x} ${B.y} L ${A.x} ${A.y}`} stroke={strokeColor} {...commonProps} fill="none" />
+        <path d={`M ${A.x} ${A.y} L ${E.x} ${E.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} fill="none" />
+        <path d={`M ${C.x} ${C.y} L ${E.x} ${E.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} fill="none" />
+        <path d={`M ${B.x} ${B.y} L ${E.x} ${E.y}`} {...dashLine} />
 
-              <path d={`M ${T1_Q1.B.x + 20} ${T1_Q1.B.y} A 20 20 0 0 0 ${T1_Q1.B.x + 15.45} ${T1_Q1.B.y - 12.85}`} stroke={highlightColor} {...commonProps} />
-              <path d={`M ${T2_Q1.E.x + 20} ${T2_Q1.E.y} A 20 20 0 0 0 ${T2_Q1.E.x + 15.45} ${T2_Q1.E.y - 12.85}`} stroke={highlightColor} {...commonProps} />
-              <text x={T1_Q1.B.x + 10} y={T1_Q1.B.y - 20} fill={strokeColor} fontSize="14">80°</text>
+        {/* Labels */}
+        <text x={A.x - 15} y={A.y + 5} fill={strokeColor}>A</text>
+        <text x={B.x - 15} y={B.y} fill={strokeColor}>B</text>
+        <text x={C.x} y={C.y - 10} fill={strokeColor}>C</text>
+        <text x={D.x + 5} y={D.y + 5} fill={strokeColor}>D</text>
+        <text x={E.x} y={E.y + 15} fill={strokeColor}>E</text>
 
-              <line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T1_Q1.C.x} y2={T1_Q1.C.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2_Q1.E.x} y1={T2_Q1.E.y} x2={T2_Q1.F.x} y2={T2_Q1.F.y} stroke={highlightColor} strokeWidth="4" />
-
-              <path d={`M ${T1_Q1.C.x - 20} ${T1_Q1.C.y} A 20 20 0 0 1 ${T1_Q1.C.x - 15.45} ${T1_Q1.C.y - 12.85}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              <path d={`M ${T2_Q1.F.x - 20} ${T2_Q1.F.y} A 20 20 0 0 1 ${T2_Q1.F.x - 15.45} ${T2_Q1.F.y - 12.85}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              <text x={T1_Q1.C.x - 20} y={T1_Q1.C.y - 20} fill={strokeColor} fontSize="14">30°</text>
-            </motion.g>
-          )}
-
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} L ${T1_Q2.C.x} ${T1_Q2.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <text x={T1_Q2.A.x} y={T1_Q2.A.y - 5} fill={strokeColor} fontSize="14">P</text>
-              <text x={T1_Q2.B.x - 15} y={T1_Q2.B.y + 5} fill={strokeColor} fontSize="14">Q</text>
-              <text x={T1_Q2.C.x + 5} y={T1_Q2.C.y + 5} fill={strokeColor} fontSize="14">R</text>
-
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.E.x} ${T2_Q2.E.y} L ${T2_Q2.F.x} ${T2_Q2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              <text x={T2_Q2.D.x} y={T2_Q2.D.y - 5} fill={strokeColor} fontSize="14">X</text>
-              <text x={T2_Q2.E.x - 15} y={T2_Q2.E.y + 5} fill={strokeColor} fontSize="14">Y</text>
-              <text x={T2_Q2.F.x + 5} y={T2_Q2.F.y + 5} fill={strokeColor} fontSize="14">Z</text>
-              
-              {/* Markings for Q2 (ASA) */}
-              {/* Angle Q & Z (TRAP!) */}
-              <path d={`M ${T1_Q2.B.x + 20} ${T1_Q2.B.y} A 20 20 0 0 0 ${T1_Q2.B.x + 15.45} ${T1_Q2.B.y - 12.85}`} stroke={highlightColor} {...commonProps} />
-              <text x={T1_Q2.B.x + 10} y={T1_Q2.B.y - 20} fill={strokeColor} fontSize="14">55°</text>
-              <path d={`M ${T2_Q2.F.x - 20} ${T2_Q2.F.y} A 20 20 0 0 1 ${T2_Q2.F.x - 15.45} ${T2_Q2.F.y - 12.85}`} stroke={highlightColor} {...commonProps} />
-              <text x={T2_Q2.F.x - 20} y={T2_Q2.F.y - 20} fill={strokeColor} fontSize="14">55°</text>
-
-              {/* Side QR & YZ */}
-              <line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T1_Q2.C.x} y2={T1_Q2.C.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2_Q2.E.x} y1={T2_Q2.E.y} x2={T2_Q2.F.x} y2={T2_Q2.F.y} stroke={highlightColor} strokeWidth="4" />
-
-              {/* Angle R & Y (TRAP!) */}
-              <path d={`M ${T1_Q2.C.x - 20} ${T1_Q2.C.y} A 20 20 0 0 1 ${T1_Q2.C.x - 15.45} ${T1_Q2.C.y - 12.85}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              <text x={T1_Q2.C.x - 20} y={T1_Q2.C.y - 20} fill={strokeColor} fontSize="14">40°</text>
-              <path d={`M ${T2_Q2.E.x + 20} ${T2_Q2.E.y} A 20 20 0 0 0 ${T2_Q2.E.x + 15.45} ${T2_Q2.E.y - 12.85}`} stroke={highlightColor} {...commonProps} strokeDasharray="4 4" />
-              <text x={T2_Q2.E.x + 10} y={T2_Q2.E.y - 20} fill={strokeColor} fontSize="14">40°</text>
-
-              {/* Question parts */}
-              <text x={T1_Q2.A.x + 5} y={T1_Q2.A.y - 10} fill={questionColor} fontSize="14" fontWeight="bold">y</text>
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y + 20} A 20 20 0 0 1 ${T1_Q2.A.x + 19} ${T1_Q2.A.y + 6}`} stroke={questionColor} {...commonProps} />
-              <text x={T2_Q2.D.x + 5} y={T2_Q2.D.y - 10} fill={strokeColor} fontSize="14">85°</text>
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y + 20} A 20 20 0 0 1 ${T2_Q2.D.x + 19} ${T2_Q2.D.y + 6}`} stroke={strokeColor} {...commonProps} />
-            </motion.g>
-          )}
-        </AnimatePresence>
+        {/* Angles */}
+        <path d={`M ${C.x - 12} ${C.y + 16} A 20 20 0 0 1 ${C.x + 4.5} ${C.y + 14.5}`} stroke={highlightColor} strokeWidth="3" fill={highlightColor} fillOpacity="0.4" />
+        <path d={`M ${D.x - 15} ${D.y - 12} A 20 20 0 0 1 ${D.x - 10} ${D.y + 5}`} stroke={highlightColor} strokeWidth="3" fill={highlightColor} fillOpacity="0.4" />
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q6 from image) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const T1 = { A: { x: 170, y: 100 }, B: { x: 140, y: 30 }, C: { x: 30, y: 100 } };
+  const T2 = { D: { x: 230, y: 100 }, E: { x: 260, y: 30 }, F: { x: 370, y: 100 } };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* Triangle 1 (ABC) */}
+        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T1.A.x + 5} y={T1.A.y + 5} fill={strokeColor}>A</text>
+        <text x={T1.B.x} y={T1.B.y - 5} fill={strokeColor}>B</text>
+        <text x={T1.C.x - 15} y={T1.C.y + 5} fill={strokeColor}>C</text>
+        <text x={(T1.B.x + T1.C.x)/2} y={T1.B.y + 30} fill={strokeColor}>5</text>
+        <text x={(T1.A.x + T1.C.x)/2} y={T1.A.y + 15} fill={strokeColor}>y</text>
+        {/* Angles for T1 */}
+        <path d={`M ${T1.A.x - 12} ${T1.A.y - 5} A 15 15 0 0 0 ${T1.A.x} ${T1.A.y - 15}`} stroke={angleBlue} {...commonProps} />
+        <path d={`M ${T1.B.x + 10} ${T1.B.y + 6} A 15 15 0 0 1 ${T1.B.x} ${T1.B.y + 15}`} stroke={angleGreen} {...commonProps} />
+        <path d={`M ${T1.B.x + 12.5} ${T1.B.y + 7.5} A 18 18 0 0 1 ${T1.B.x} ${T1.B.y + 18}`} stroke={angleGreen} {...commonProps} />
+        {/* Side Markings T1 */}
+        <line x1={158} y1={65} x2={165} y2={60} stroke={strokeColor} strokeWidth="1.5" />
+        <line x1={155} y1={68} x2={162} y2={63} stroke={strokeColor} strokeWidth="1.5" />
+
+        {/* Triangle 2 (DEF) */}
+        <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T2.D.x - 15} y={T2.D.y + 5} fill={strokeColor}>D</text>
+        <text x={T2.E.x} y={T2.E.y - 5} fill={strokeColor}>E</text>
+        <text x={T2.F.x + 5} y={T2.F.y + 5} fill={strokeColor}>F</text>
+<text x={(T2.E.x + T2.F.x)/2} y={T2.E.y + 30} fill={strokeColor}>x</text>
+        <text x={(T2.D.x + T2.F.x)/2} y={T2.D.y + 15} fill={strokeColor}>6</text>
+        {/* Angles for T2 */}
+        <path d={`M ${T2.D.x + 12} ${T2.D.y - 5} A 15 15 0 0 1 ${T2.D.x} ${T2.D.y - 15}`} stroke={angleBlue} {...commonProps} />
+        <path d={`M ${T2.E.x - 10} ${T2.E.y + 6} A 15 15 0 0 0 ${T2.E.x} ${T2.E.y + 15}`} stroke={angleGreen} {...commonProps} />
+        <path d={`M ${T2.E.x - 12.5} ${T2.E.y + 7.5} A 18 18 0 0 0 ${T2.E.x} ${T2.E.y + 18}`} stroke={angleGreen} {...commonProps} />
+        {/* Side Markings T2 */}
+        <line x1={242} y1={65} x2={249} y2={60} stroke={strokeColor} strokeWidth="1.5" />
+        <line x1={245} y1={68} x2={252} y2={63} stroke={strokeColor} strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
-export default function AsaSlide3() {
+export default function AsaSlide4() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
+  // --- UPDATED FOR 2 QUESTIONS ---
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
-  const [score, setScore] =  useState(0);
+  const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'asa-finding-angles-quiz',
-      conceptId: 'asa-finding-angles',
-      conceptName: 'ASA Finding Angles',
+      id: 'asa-calculation-quiz',
+      conceptId: 'asa-calculation',
+      conceptName: 'ASA Calculation',
       type: 'judging',
-      description: 'Testing using ASA and CPCTC to find unknown angles'
+      description: 'Using ASA and CPCTC to calculate unknown values'
     }
   ];
 
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- QUESTIONS ARRAY FROM YOUR IMAGES ---
   const questions: QuizQuestion[] = [
     {
-      id: 'asa-find-angle-q1',
-      question: 'The triangles are congruent by ASA. What is the value of x?',
+      id: 'asa-calc-q1',
+      question: 'In the figure above, $AD=4m, AB=3m, BD=3m, BC=1m$, and $CE=2x-5$. What is the value of $x$?',
+      figure: <FigureQ1 />,
       options: [
-        "30°",
-        "70°",
-        "80°",
-        "Cannot be determined"
+        "6m",
+        "3.5m",
+        "4m",
+        "8m",
+        "5m"
       ],
-      correctAnswer: "70°",
-      explanation: "Correct! The triangles are congruent by ASA ($\angle B \cong \angle E$, $BC \cong EF$, $\angle C \cong \angle F$). By CPCTC, all corresponding parts are congruent. $\angle A$ corresponds to $\angle D$. Since $\angle D = 70°$, then $x$ must also be 70°."
+      correctAnswer: "4m",
+      explanation: "Correct! We can prove $\triangle CAE \cong \triangle DAB$ by ASA. First, find $AC = AB + BC = 3 + 1 = 4m$. We are given $AD = 4m$, so $AC \cong AD$ (Side). $\angle A$ is a common angle (Angle). The orange angles $\angle ACE \cong \angle ADB$ are given (Angle). By CPCTC, $CE \cong BD$. So, $2x - 5 = 3$. This gives $2x = 8$, and $x = 4$."
     },
     {
-      id: 'asa-find-angle-q2',
-      question: 'Look carefully! The triangles are congruent by ASA. What is the value of y?',
+      id: 'asa-calc-q2',
+      question: 'Given the diagram above, calculate the value of $3x - y$.',
+      figure: <FigureQ2 />,
       options: [
-        "40°",
-        "55°",
-        "85°",
-        "Cannot be determined"
+        "18",
+        "9",
+        "6",
+        "13",
+        "15"
       ],
-      correctAnswer: "85°",
-      explanation: "Correct! This tests if you are matching the parts correctly. The ASA pattern is $\angle Q \cong \angle Z$ (55°), $QR \cong ZY$ (side), and $\angle R \cong \angle Y$ (40°). This means the congruence statement is $\triangle PQR \cong \triangle XYZ$. By CPCTC, the remaining angle $\angle P$ corresponds to $\angle X$. Since $\angle X = 85°$, then $y$ must also be 85°."
+      correctAnswer: "9",
+      explanation: "Correct! The triangles are congruent by ASA. The pattern is $\angle B \cong \angle E$ (green), $AB \cong DE$ (included side, 2 hashes), and $\angle A \cong \angle D$ (blue). By CPCTC: $AC$ corresponds to $DF$, so $y = 6$. $BC$ corresponds to $EF$, so $x = 5$. The value of $3x - y$ is $3(5) - 6 = 15 - 6 = 9$."
     }
   ];
 
@@ -186,12 +185,12 @@ export default function AsaSlide3() {
     }
 
     handleInteractionComplete({
-      interactionId: `asa-find-angle-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `asa-calc-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'asa-finding-angles',
-      conceptName: 'ASA Finding Angles',
+      conceptId: 'asa-calculation',
+      conceptName: 'ASA Calculation',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -221,58 +220,64 @@ export default function AsaSlide3() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (from image_285424.png) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The "Why" of Congruence</h2>
-            <p className="text-lg leading-relaxed">
-              Why do we prove triangles are congruent? The main reason is to find **unknown measures**.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Calculating Length Using ASA</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              In the figure below, $AC = 12, AE = 5, ED = 7, BD = 10$, and $CE = 3x - 2$. What is the value of $x$?
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              If we know two triangles are exact copies, we can use the parts we *do* know from one triangle to find the missing parts of the other.
-            </p>
-          </div>
-
-          {/* --- CARD 2 (CPCTC) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Most Important Acronym: CPCTC</h3>
-            <p className="text-lg leading-relaxed font-semibold">
-              <strong>C</strong>orresponding
-              <strong>P</strong>arts of
-              <strong>C</strong>ongruent
-              <strong>T</strong>riangles are
-              <strong>C</strong>ongruent.
-            </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                <strong>In simple terms:</strong> Once you prove two triangles are congruent (using SSS, SAS, ASA, etc.), you can claim that *all* their other matching parts are *also* congruent.
-              </p>
+            
+            <div className="w-full flex justify-center items-center p-4 my-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+               {/* Using FigureQ1 as it's the same diagram */}
+               <FigureQ1 />
             </div>
-          </div>
 
-           {/* --- CARD 3 (Steps) --- */}
-           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">How to Find a Missing Angle</h3>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">Step 1:</span>
-                <span><strong>Prove Congruence.</strong> Look at the given information. Do you have enough to prove congruence by ASA?</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">Step 2:</span>
-                <span><strong>Use CPCTC.</strong> Identify the *corresponding* angle in the other triangle. Its measure will be the same!</span>
-              </li>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
+            <p className="text-lg leading-relaxed">
+              First, notice that $AC \cong AD$ since:
+            </p>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
+              AD = AE + ED = 5 + 7 = 12
+            </div>
+            <p className="text-lg leading-relaxed">
+              And $AC$ is given as 12.
+            </p>
+
+            <p className="text-lg leading-relaxed mt-4">
+              Now, we can prove $\triangle CAE \cong \triangle DAB$ by ASA:
+            </p>
+            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+                <li>
+                  <strong>Angle (A):</strong> $\angle A$ is their common angle.
+                </li>
+                <li>
+                  <strong>Side (S):</strong> $AC \cong AD$ (as shown above).
+                </li>
+                <li>
+                  <strong>Angle (A):</strong> $\angle ACE \cong \angle ADB$ (given by the orange angle markers in the diagram).
+                </li>
             </ul>
+
+            <p className="text-lg leading-relaxed mt-4">
+              Therefore, all corresponding sides must be congruent (CPCTC). In particular, $CE \cong BD$.
+            </p>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
+              CE = BD<br/>
+              3x - 2 = 10<br/>
+              3x = 12<br/>
+              x = 4
+            </div>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Quiz (from other 2 images) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Find the Missing Angle</h3>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Calculation Practice</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
@@ -293,8 +298,19 @@ export default function AsaSlide3() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>
@@ -358,13 +374,13 @@ export default function AsaSlide3() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">🎉</div>
+                <div className="text-3xl mb-4">📊</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "You're a CPCTC expert!" : 'Great work!'}
+                  {score === questions.length ? "Perfect! You're a pro at this." : 'Well done!'}
                 </div>
               </motion.div>
             )}
@@ -376,8 +392,8 @@ export default function AsaSlide3() {
 
   return (
     <SlideComponentWrapper
-      slideId="asa-finding-angles"
-      slideTitle="Finding the Measure of an Angle Using ASA"
+      slideId="asa-calculation"
+      slideTitle="Calculating with ASA and CPCTC"
       moduleId="congruence"
       submoduleId="asa-congruence-criterion"
       interactions={localInteractions}
