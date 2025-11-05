@@ -4,90 +4,92 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE & QUIZ Q1 ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const rightAngleColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-  const questionColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // Triangle 1 (Left) - Right triangle
-  const T1 = { A: { x: 150, y: 50 }, B: { x: 50, y: 180 }, C: { x: 150, y: 180 } };
-  // Triangle 2 (Right) - Right triangle
-  const T2 = { D: { x: 350, y: 50 }, E: { x: 250, y: 180 }, F: { x: 350, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  const Q = { x: 200, y: 30 };
+  const R = { x: 50, y: 180 };
+  const P = { x: 350, y: 180 };
+  const A = { x: 200, y: 180 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* Right Angle Markers */}
-              <path d={`M ${T1.C.x - 15} ${T1.C.y} L ${T1.C.x - 15} ${T1.C.y - 15} L ${T1.C.x} ${T1.C.y - 15}`} stroke={rightAngleColor} {...commonProps} />
-              <path d={`M ${T2.F.x - 15} ${T2.F.y} L ${T2.F.x - 15} ${T2.F.y - 15} L ${T2.F.x} ${T2.F.y - 15}`} stroke={rightAngleColor} {...commonProps} />
-              
-              {/* HL Markings */}
-              <line x1={T1.A.x} y1={T1.A.y} x2={T1.B.x} y2={T1.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2.D.x} y1={T2.D.y} x2={T2.E.x} y2={T2.E.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T1.A.x} y1={T1.A.y} x2={T1.C.x} y2={T1.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2.D.x} y1={T2.D.y} x2={T2.F.x} y2={T2.F.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
+        <path d={`M ${Q.x} ${Q.y} L ${R.x} ${R.y} L ${P.x} ${P.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${Q.x} ${Q.y} L ${A.x} ${A.y}`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={Q.x} y={Q.y - 10} fill={strokeColor} textAnchor="middle">Q</text>
+        <text x={R.x - 15} y={R.y + 5} fill={strokeColor}>R</text>
+        <text x={P.x + 5} y={P.y + 5} fill={strokeColor}>P</text>
+        <text x={A.x} y={A.y + 15} fill={strokeColor} textAnchor="middle">A</text>
 
-              {/* Question Parts */}
-              <text x={T1.B.x + 20} y={T1.B.y + 15} fill={questionColor} fontSize="14" fontWeight="bold">x</text>
-              <text x={T2.E.x + 20} y={T2.E.y + 15} fill={strokeColor} fontSize="14">12</text>
-            </motion.g>
-          )}
-
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* Right Angle Markers */}
-              <path d={`M ${T1.C.x - 15} ${T1.C.y} L ${T1.C.x - 15} ${T1.C.y - 15} L ${T1.C.x} ${T1.C.y - 15}`} stroke={rightAngleColor} {...commonProps} />
-              <path d={`M ${T2.F.x - 15} ${T2.F.y} L ${T2.F.x - 15} ${T2.F.y - 15} L ${T2.F.x} ${T2.F.y - 15}`} stroke={rightAngleColor} {...commonProps} />
-              
-              {/* HL Markings */}
-              <line x1={T1.A.x} y1={T1.A.y} x2={T1.B.x} y2={T1.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2.D.x} y1={T2.D.y} x2={T2.E.x} y2={T2.E.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T1.A.x} y1={T1.A.y} x2={T1.C.x} y2={T1.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2.D.x} y1={T2.D.y} x2={T2.F.x} y2={T2.F.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-
-              {/* Question Parts */}
-              <text x={T1.B.x + 20} y={T1.B.y + 15} fill={questionColor} fontSize="14" fontWeight="bold">3x + 5</text>
-              <text x={T2.E.x + 20} y={T2.E.y + 15} fill={strokeColor} fontSize="14">20</text>
-            </motion.g>
-          )}
-        </AnimatePresence>
+        {/* Markings */}
+        <line x1={115} y1={100} x2={125} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* QR */}
+        <line x1={118} y1={97} x2={128} y2={102} stroke={strokeColor} strokeWidth="2" />
+        <line x1={275} y1={105} x2={285} y2={100} stroke={strokeColor} strokeWidth="2" /> {/* QP */}
+        <line x1={272} y1={102} x2={282} y2={97} stroke={strokeColor} strokeWidth="2" />
+        
+        <path d={`M ${A.x - 10} ${A.y - 10} L ${A.x - 10} ${A.y} L ${A.x} ${A.y}`} fill="none" stroke={angleBlue} strokeWidth="2" />
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q6 from image) ---
+// Markings corrected to be solvable (H ≅ H, L ≅ L)
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 160;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  const T1 = { A: { x: 100, y: 30 }, B: { x: 30, y: 140 }, C: { x: 170, y: 140 } };
+  const T2 = { P: { x: 300, y: 30 }, Q: { x: 230, y: 140 }, R: { x: 370, y: 140 } };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* T1 (ABC) */}
+        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T1.A.x} y={T1.A.y - 10} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={T1.B.x - 15} y={T1.B.y + 5} fill={strokeColor}>B</text>
+        <text x={T1.C.x + 5} y={T1.C.y + 5} fill={strokeColor}>C</text>
+        <text x={(T1.B.x + T1.C.x)/2} y={T1.B.y + 15} fill={strokeColor}>4</text>
+        {/* Markings */}
+        <line x1={55} y1={80} x2={65} y2={85} stroke={strokeColor} strokeWidth="1.5" /> {/* AB (1) */}
+        <line x1={145} y1={80} x2={155} y2={85} stroke={strokeColor} strokeWidth="1.5" /> {/* AC (2) */}
+        <line x1={148} y1={77} x2={158} y2={82} stroke={strokeColor} strokeWidth="1.5" />
+        {/* Angles */}
+        <path d={`M ${T1.B.x} ${T1.B.y - 12} L ${T1.B.x + 12} ${T1.B.y - 12} L ${T1.B.x + 12} ${T1.B.y}`} fill="none" stroke={angleBlue} strokeWidth="2" />
+
+        {/* T2 (PQR) */}
+        <path d={`M ${T2.P.x} ${T2.P.y} L ${T2.Q.x} ${T2.Q.y} L ${T2.R.x} ${T2.R.y} Z`} stroke={strokeColor} {...commonProps} />
+        <text x={T2.P.x} y={T2.P.y - 10} fill={strokeColor} textAnchor="middle">P</text>
+        <text x={T2.Q.x - 15} y={T2.Q.y + 5} fill={strokeColor}>Q</text>
+        <text x={T2.R.x + 5} y={T2.R.y + 5} fill={strokeColor}>R</text>
+        <text x={(T2.Q.x + T2.R.x)/2} y={T2.Q.y + 15} fill={strokeColor}>6x + 1</text>
+        {/* Markings (Corrected) */}
+        <line x1={255} y1={80} x2={265} y2={85} stroke={strokeColor} strokeWidth="1.5" /> {/* PQ (1) */}
+        <line x1={345} y1={80} x2={355} y2={85} stroke={strokeColor} strokeWidth="1.5" /> {/* PR (2) */}
+        <line x1={348} y1={77} x2={358} y2={82} stroke={strokeColor} strokeWidth="1.5" />
+        {/* Angles */}
+        <path d={`M ${T2.Q.x} ${T2.Q.y - 12} L ${T2.Q.x + 12} ${T2.Q.y - 12} L ${T2.Q.x + 12} ${T2.Q.y}`} fill="none" stroke={angleBlue} strokeWidth="2" />
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function HlSlide4() {
@@ -113,35 +115,41 @@ export default function HlSlide4() {
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'hl-find-side-q1',
-      question: 'The triangles are congruent by HL. What is the length of the side marked x?',
+      id: 'hl-find-side-q5',
+      question: 'The point A is located on the base PR of an isosceles triangle ΔPQR, where ∠QAR is a right angle. If $AP = 14$ and $AR = 3x - 19$, what is the value of $x$?',
+      figure: <FigureExample />,
       options: [
-        "12",
-        "We can't tell the length of x",
-        "It must be equal to the hypotenuse",
-        "Cannot be determined"
+        "11",
+        "22",
+        "10",
+        "21",
+        "16"
       ],
-      correctAnswer: "12",
-      explanation: "Correct! The triangles are congruent by HL. By CPCTC, all corresponding parts are congruent. The leg $BC$ corresponds to the leg $EF$. Since $EF = 12$, then $x$ must also be 12."
+      correctAnswer: "11",
+      explanation: "Correct! In an isosceles triangle, the altitude (QA) to the base (PR) also bisects the base. This means AR ≅ AP. So, 3x - 19 = 14. This gives 3x = 33, and x = 11."
     },
     {
-      id: 'hl-find-side-q2',
-      question: 'The triangles are congruent by HL. What is the value of x?',
+      id: 'hl-find-side-q6',
+      question: 'Given the diagram above, find the value of x.',
+      figure: <FigureQ2 />,
       options: [
-        "x = 5",
-        "x = 3",
-        "x = 6.67",
-        "x = 20"
+        "2",
+        "0.5",
+        "1.5",
+        "3",
+        "3.5"
       ],
-      correctAnswer: "x = 5",
-      explanation: "Correct! The triangles are congruent by HL. By CPCTC, $BC \cong EF$. Set up the equation: $3x + 5 = 20$. Subtract 5 from both sides: $3x = 15$. Divide by 3: $x = 5$."
+      correctAnswer: "0.5",
+      explanation: "Correct! The triangles are congruent by HL: Both are right triangles, the hypotenuses are congruent (AC ≅ PR, 2 hashes), and one leg is congruent (AB ≅ PQ, 1 hash). By CPCTC, the other legs are congruent: BC ≅ QR. So, 4 = 6x + 1. This gives 3 = 6x, and x = 0.5."
     }
   ];
 
@@ -200,45 +208,54 @@ export default function HlSlide4() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Using HL to Find Sides</h2>
-            <p className="text-lg leading-relaxed">
-              Just as with angles, <strong>CPCTC</strong> is the tool we use to find missing side lengths after proving congruence with HL.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Calculating Length Using HL</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              The point A is located on the base $PR$ of an isosceles triangle ΔPQR, where ∠QAR is a right angle. If $AP = 24$ and $AR = 2x + 6$, what is the value of $x$?
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              If you prove two right triangles are congruent with HL, you know that the *other* pair of legs must also be congruent.
-            </p>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (The Steps) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The 3-Step Process</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              It's the same 3-step logic as before:
+              Since ∠QAR and ∠QAP form a linear pair, we have
             </p>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">1. Prove Congruence:</span>
-                <span>Confirm the triangles are congruent by <strong>HL</strong>. (Check for Right Angle, Hypotenuse, Leg).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">2. Use CPCTC:</span>
-                <span>Identify the <strong>corresponding side</strong> you need to find. (In this case, the other leg).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">3. Solve:</span>
-                <span>Set the corresponding lengths equal. ($x = 12$ or $3x + 5 = 20$).</span>
-              </li>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono text-center">
+              m∠QAR + m∠QAP = 180°<br/>
+              90° + m∠QAP = 180°<br/>
+              m∠QAP = 90°
+            </div>
+
+            <p className="text-lg leading-relaxed mt-4">
+              Notice that ΔQAR and ΔQAP are congruent by HL (hypotenuse-leg) since we have the following congruent legs, hypotenuses, and right angles:
+            </p>
+            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+                <li>m∠QAR = m∠QAP = 90°</li>
+                <li>A common leg $QA$</li>
+                <li>$QR \cong QP$ (Hypotenuses of the right triangles)</li>
             </ul>
+
+            <p className="text-lg leading-relaxed mt-4">
+              As a consequence, all the corresponding sides must be congruent. In particular, <strong>AR ≅ AP</strong>.
+            </p>
+            <p className="text-lg leading-relaxed mt-2">
+              Thus,
+            </p>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
+              AR = AP<br/>
+              2x + 6 = 24<br/>
+              2x = 18<br/>
+              x = 9
+            </div>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Calculate the Length</h3>
@@ -262,8 +279,19 @@ export default function HlSlide4() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>

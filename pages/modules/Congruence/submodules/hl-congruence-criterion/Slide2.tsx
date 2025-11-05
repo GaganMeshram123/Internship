@@ -4,91 +4,274 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 280;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const trapColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-  const rightAngleColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
+  
+  const angle1 = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
+  const angle2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const angle3 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // --- Figure 1: Clear HL ---
-  const T1_Q1 = { A: { x: 150, y: 50 }, B: { x: 50, y: 180 }, C: { x: 150, y: 180 } };
-  const T2_Q1 = { D: { x: 350, y: 50 }, E: { x: 250, y: 180 }, F: { x: 350, y: 180 } };
-
-  // --- Figure 2: Leg-Leg Trap (which is just SAS) ---
-  const T1_Q2 = { A: { x: 150, y: 50 }, B: { x: 50, y: 180 }, C: { x: 150, y: 180 } };
-  const T2_Q2 = { D: { x: 350, y: 50 }, E: { x: 250, y: 180 }, F: { x: 350, y: 180 } };
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
+  // Triangle Defs
+  const P = { A: { x: 80, y: 120 }, B: { x: 180, y: 120 }, C: { x: 160, y: 30 } };
+  const T2 = { A: { x: 250, y: 30 }, B: { x: 300, y: 120 }, C: { x: 370, y: 80 } };
+  const T1 = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
+  const T3 = { A: { x: 230, y: 250 }, B: { x: 370, y: 250 }, C: { x: 320, y: 160 } };
+  
+  // Hash marks
+  const hash1 = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
+    const x1 = midX - 4 * Math.cos(angle);
+    const y1 = midY - 4 * Math.sin(angle);
+    const x2 = midX + 4 * Math.cos(angle);
+    const y2 = midY + 4 * Math.sin(angle);
+    return <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={sideColor} strokeWidth="1.5" />
   };
+  const hash2 = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
+    const x1 = midX - 2 * Math.cos(angle) - 4 * Math.cos(angle);
+    const y1 = midY - 2 * Math.sin(angle) - 4 * Math.sin(angle);
+    const x2 = midX - 2 * Math.cos(angle) + 4 * Math.cos(angle);
+    const y2 = midY - 2 * Math.sin(angle) + 4 * Math.sin(angle);
+    const x3 = midX + 2 * Math.cos(angle) - 4 * Math.cos(angle);
+    const y3 = midY + 2 * Math.sin(angle) - 4 * Math.sin(angle);
+    const x4 = midX + 2 * Math.cos(angle) + 4 * Math.cos(angle);
+    const y4 = midY + 2 * Math.sin(angle) + 4 * Math.sin(angle);
+    return <><line x1={x1} y1={y1} x2={x2} y2={y2} stroke={sideColor} strokeWidth="1.5" /><line x1={x3} y1={y3} x2={x4} y2={y4} stroke={sideColor} strokeWidth="1.5" /></>
+  };
+  const greenSquare = (p: {x: number, y: number}, size: number = 12) => 
+    <path d={`M ${p.x} ${p.y} l ${size} 0 l 0 ${size} l -${size} 0 Z`} fill={angle2} stroke="none" />;
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} L ${T1_Q1.C.x} ${T1_Q1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.E.x} ${T2_Q1.E.y} L ${T2_Q1.F.x} ${T2_Q1.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* Right Angle Markers */}
-              <path d={`M ${T1_Q1.C.x - 15} ${T1_Q1.C.y} L ${T1_Q1.C.x - 15} ${T1_Q1.C.y - 15} L ${T1_Q1.C.x} ${T1_Q1.C.y - 15}`} stroke={rightAngleColor} {...commonProps} />
-              <path d={`M ${T2_Q1.F.x - 15} ${T2_Q1.F.y} L ${T2_Q1.F.x - 15} ${T2_Q1.F.y - 15} L ${T2_Q1.F.x} ${T2_Q1.F.y - 15}`} stroke={rightAngleColor} {...commonProps} />
-              
-              {/* HL Markings */}
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T1_Q1.B.x} y2={T1_Q1.B.y} stroke={highlightColor} strokeWidth="4" />
-              <line x1={T2_Q1.D.x} y1={T2_Q1.D.y} x2={T2_Q1.E.x} y2={T2_Q1.E.y} stroke={highlightColor} strokeWidth="4" />
-              <text x={80} y={110} fill={highlightColor} fontSize="12">Hypotenuse</text>
-
-              <line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T1_Q1.C.x} y2={T1_Q1.C.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2_Q1.E.x} y1={T2_Q1.E.y} x2={T2_Q1.F.x} y2={T2_Q1.F.y} stroke={highlightColor} strokeWidth="4" strokeDasharray="5 5" />
-              <text x={90} y={190} fill={highlightColor} fontSize="12">Leg</text>
-            </motion.g>
-          )}
-
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} L ${T1_Q2.C.x} ${T1_Q2.C.y} Z`} stroke={strokeColor} {...commonProps} />
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.E.x} ${T2_Q2.E.y} L ${T2_Q2.F.x} ${T2_Q2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-              
-              {/* Right Angle Markers */}
-              <path d={`M ${T1_Q2.C.x - 15} ${T1_Q2.C.y} L ${T1_Q2.C.x - 15} ${T1_Q2.C.y - 15} L ${T1_Q2.C.x} ${T1_Q2.C.y - 15}`} stroke={rightAngleColor} {...commonProps} />
-              <path d={`M ${T2_Q2.F.x - 15} ${T2_Q2.F.y} L ${T2_Q2.F.x - 15} ${T2_Q2.F.y - 15} L ${T2_Q2.F.x} ${T2_Q2.F.y - 15}`} stroke={rightAngleColor} {...commonProps} />
-
-              {/* LL Markings (SAS Trap) */}
-              <line x1={T1_Q2.A.x} y1={T1_Q2.A.y} x2={T1_Q2.C.x} y2={T1_Q2.C.y} stroke={trapColor} strokeWidth="4" />
-              <line x1={T2_Q2.D.x} y1={T2_Q2.D.y} x2={T2_Q2.F.x} y2={T2_Q2.F.y} stroke={trapColor} strokeWidth="4" />
-              <text x={160} y={110} fill={trapColor} fontSize="12">Leg</text>
-
-              <line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T1_Q2.C.x} y2={T1_Q2.C.y} stroke={trapColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2_Q2.E.x} y1={T2_Q2.E.y} x2={T2_Q2.F.x} y2={T2_Q2.F.y} stroke={trapColor} strokeWidth="4" strokeDasharray="5 5" />
-              <text x={90} y={190} fill={trapColor} fontSize="12">Leg</text>
-            </motion.g>
-          )}
-        </AnimatePresence>
+        {/* --- Triangle P --- */}
+        <g>
+          <path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={P.A.x} y={P.A.y - 10} fill={labelColor} fontSize="14">P</text>
+          <path d={`M ${P.A.x + 15} ${P.A.y} A 15 15 0 0 1 ${P.A.x + 12.1} ${P.A.y - 8.8}`} stroke={angle1} {...commonProps} />
+          <path d={`M ${P.C.x} ${P.C.y} L ${P.C.x-8.8} ${P.C.y-12.1} L ${P.C.x-20.9} ${P.C.y-8.8}`} fill="none" stroke={angle3} strokeWidth="2" />
+          {greenSquare({x: P.C.x, y: P.C.y})}
+          {hash1(P.C, P.B)}
+          {hash2(P.A, P.B)}
+        </g>
+        {/* --- Triangle T2 --- */}
+        <g>
+          <path d={`M ${T2.A.x} ${T2.A.y} L ${T2.B.x} ${T2.B.y} L ${T2.C.x} ${T2.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T2.A.x + 20} y={T2.A.y + 30} fill={labelColor} fontSize="14">T₂</text>
+          {greenSquare({x: T2.A.x, y: T2.A.y})}
+          {hash1(T2.B, T2.C)}
+          {hash2(T2.A, T2.B)}
+        </g>
+        {/* --- Triangle T1 --- */}
+        <g>
+          <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T1.C.x} y={T1.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">T₁</text>
+          {greenSquare({x: T1.C.x, y: T1.C.y})}
+          {hash1(T1.A, T1.C)}
+          {hash2(T1.A, T1.B)}
+        </g>
+        {/* --- Triangle T3 --- */}
+        <g>
+          <path d={`M ${T3.A.x} ${T3.A.y} L ${T3.B.x} ${T3.B.y} L ${T3.C.x} ${T3.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T3.C.x} y={T3.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">T₃</text>
+          <path d={`M ${T3.A.x + 15} ${T3.A.y} A 15 15 0 0 1 ${T3.A.x + 13.6} ${T3.A.y - 6.5}`} stroke={angle1} {...commonProps} />
+          {greenSquare({x: T3.C.x, y: T3.C.y})}
+          {hash1(T3.A, T3.C)}
+        </g>
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q1 from image) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 280;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
+  
+  const angle1 = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
+  const angle2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const angle3 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  // Re-using layout from Example
+  const P = { A: { x: 80, y: 120 }, B: { x: 180, y: 120 }, C: { x: 160, y: 30 } };
+  const T2 = { A: { x: 250, y: 30 }, B: { x: 300, y: 120 }, C: { x: 370, y: 80 } };
+  const T1 = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
+  const T3 = { A: { x: 230, y: 250 }, B: { x: 370, y: 250 }, C: { x: 320, y: 160 } };
+
+  // Hash marks
+  const hash1 = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
+    const x1 = midX - 4 * Math.cos(angle);
+    const y1 = midY - 4 * Math.sin(angle);
+    const x2 = midX + 4 * Math.cos(angle);
+    const y2 = midY + 4 * Math.sin(angle);
+    return <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={sideColor} strokeWidth="1.5" />
+  };
+  const hash2 = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
+    const x1 = midX - 2 * Math.cos(angle) - 4 * Math.cos(angle);
+    const y1 = midY - 2 * Math.sin(angle) - 4 * Math.sin(angle);
+    const x2 = midX - 2 * Math.cos(angle) + 4 * Math.cos(angle);
+    const y2 = midY - 2 * Math.sin(angle) + 4 * Math.sin(angle);
+    const x3 = midX + 2 * Math.cos(angle) - 4 * Math.cos(angle);
+    const y3 = midY + 2 * Math.sin(angle) - 4 * Math.sin(angle);
+    const x4 = midX + 2 * Math.cos(angle) + 4 * Math.cos(angle);
+    const y4 = midY + 2 * Math.sin(angle) + 4 * Math.sin(angle);
+    return <><line x1={x1} y1={y1} x2={x2} y2={y2} stroke={sideColor} strokeWidth="1.5" /><line x1={x3} y1={y3} x2={x4} y2={y4} stroke={sideColor} strokeWidth="1.5" /></>
+  };
+  const greenSquare = (p: {x: number, y: number}, size: number = 12) => 
+    <path d={`M ${p.x} ${p.y} l ${size} 0 l 0 ${size} l -${size} 0 Z`} fill={angle2} stroke="none" />;
+  
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* --- Triangle P --- */}
+        <g>
+          <path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={P.A.x} y={P.A.y - 10} fill={labelColor} fontSize="14">P</text>
+          <path d={`M ${P.A.x + 15} ${P.A.y} A 15 15 0 0 1 ${P.A.x + 12.1} ${P.A.y - 8.8}`} stroke={angle1} {...commonProps} />
+          {greenSquare({x: P.C.x, y: P.C.y})}
+          {hash1(P.A, P.B)}
+          {hash2(P.C, P.B)}
+        </g>
+        {/* --- Triangle T2 --- */}
+        <g>
+          <path d={`M ${T2.A.x} ${T2.A.y} L ${T2.B.x} ${T2.B.y} L ${T2.C.x} ${T2.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T2.A.x + 20} y={T2.A.y + 30} fill={labelColor} fontSize="14">T₂</text>
+          {greenSquare({x: T2.A.x, y: T2.A.y})}
+          {hash1(T2.A, T2.B)}
+          {hash2(T2.B, T2.C)}
+        </g>
+        {/* --- Triangle T1 --- */}
+        <g>
+          <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T1.C.x} y={T1.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">T₁</text>
+          {greenSquare({x: T1.C.x, y: T1.C.y})}
+          {hash1(T1.A, T1.B)}
+          {hash2(T1.A, T1.C)}
+        </g>
+        {/* --- Triangle T3 --- */}
+        <g>
+          <path d={`M ${T3.A.x} ${T3.A.y} L ${T3.B.x} ${T3.B.y} L ${T3.C.x} ${T3.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T3.C.x} y={T3.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">T₃</text>
+          {greenSquare({x: T3.C.x, y: T3.C.y})}
+          {hash1(T3.A, T3.B)}
+          {hash2(T3.A, T3.C)}
+        </g>
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q2 from image) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 280;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
+  
+  const angle1 = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
+  const angle2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const angle3 = isDarkMode ? '#F87171' : '#EF4444'; // Red/Orange
+  const angle4 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
+  // Re-using layout from Example
+  const T = { A: { x: 80, y: 120 }, B: { x: 180, y: 120 }, C: { x: 160, y: 30 } };
+  const P = { A: { x: 250, y: 30 }, B: { x: 300, y: 120 }, C: { x: 370, y: 80 } };
+  const Q = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
+  const R = { A: { x: 230, y: 250 }, B: { x: 370, y: 250 }, C: { x: 320, y: 160 } };
+  
+  // Hash marks
+  const hash1 = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
+    const x1 = midX - 4 * Math.cos(angle);
+    const y1 = midY - 4 * Math.sin(angle);
+    const x2 = midX + 4 * Math.cos(angle);
+    const y2 = midY + 4 * Math.sin(angle);
+    return <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={sideColor} strokeWidth="1.5" />
+  };
+  const hash2 = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
+    const x1 = midX - 2 * Math.cos(angle) - 4 * Math.cos(angle);
+    const y1 = midY - 2 * Math.sin(angle) - 4 * Math.sin(angle);
+    const x2 = midX - 2 * Math.cos(angle) + 4 * Math.cos(angle);
+    const y2 = midY - 2 * Math.sin(angle) + 4 * Math.sin(angle);
+    const x3 = midX + 2 * Math.cos(angle) - 4 * Math.cos(angle);
+    const y3 = midY + 2 * Math.sin(angle) - 4 * Math.sin(angle);
+    const x4 = midX + 2 * Math.cos(angle) + 4 * Math.cos(angle);
+    const y4 = midY + 2 * Math.sin(angle) + 4 * Math.sin(angle);
+    return <><line x1={x1} y1={y1} x2={x2} y2={y2} stroke={sideColor} strokeWidth="1.5" /><line x1={x3} y1={y3} x2={x4} y2={y4} stroke={sideColor} strokeWidth="1.5" /></>
+  };
+  const greenSquare = (p: {x: number, y: number}, size: number = 12) => 
+    <path d={`M ${p.x} ${p.y} l ${size} 0 l 0 ${size} l -${size} 0 Z`} fill={angle2} stroke="none" />;
+  
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* --- Triangle T --- */}
+        <g>
+          <path d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={T.A.x} y={T.A.y - 10} fill={labelColor} fontSize="14">T</text>
+          <path d={`M ${T.A.x + 15} ${T.A.y} A 15 15 0 0 1 ${T.A.x + 12.1} ${T.A.y - 8.8}`} stroke={angle1} {...commonProps} />
+          <path d={`M ${T.C.x} ${T.C.y} L ${T.C.x-8.8} ${T.C.y-12.1} L ${T.C.x-20.9} ${T.C.y-8.8}`} fill="none" stroke={angle3} strokeWidth="2" />
+          {greenSquare({x: T.C.x, y: T.C.y})}
+          {hash1(T.C, T.B)}
+          {hash2(T.A, T.B)}
+        </g>
+        {/* --- Triangle P --- */}
+        <g>
+          <path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={P.A.x + 20} y={P.A.y + 30} fill={labelColor} fontSize="14">P</text>
+          {hash1(P.A, P.B)}
+          {hash2(P.B, P.C)}
+        </g>
+        {/* --- Triangle Q --- */}
+        <g>
+          <path d={`M ${Q.A.x} ${Q.A.y} L ${Q.B.x} ${Q.B.y} L ${Q.C.x} ${Q.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={Q.C.x} y={Q.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">Q</text>
+          <path d={`M ${Q.A.x + 15} ${Q.A.y} A 15 15 0 0 1 ${Q.A.x + 13.6} ${Q.A.y - 6.5}`} stroke={angle1} {...commonProps} />
+          {hash1(Q.C, Q.B)}
+          {hash2(Q.A, Q.C)}
+        </g>
+        {/* --- Triangle R --- */}
+        <g>
+          <path d={`M ${R.A.x} ${R.A.y} L ${R.B.x} ${R.B.y} L ${R.C.x} ${R.C.y} Z`} stroke={strokeColor} {...commonProps} />
+          <text x={R.C.x} y={R.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">R</text>
+          {hash1(R.A, R.C)}
+          {hash2(R.A, R.B)}
+        </g>
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function HlSlide2() {
@@ -114,33 +297,41 @@ export default function HlSlide2() {
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'hl-id-q1-correct',
-      question: 'Look at the figure. Can we prove these triangles are congruent using the HL criterion?',
+      id: 'hl-id-q1',
+      question: 'According to the HL criterion only, which of the following triangles are congruent to P?',
+      figure: <FigureQ1 />,
       options: [
-        "Yes, this is a perfect example of HL.",
-        "No, we are missing a leg.",
-        "No, we are missing the hypotenuse."
+        "T₂ and T₃ only",
+        "T₂ only",
+        "T₃ only",
+        "T₁ only",
+        "T₁, T₂, and T₃"
       ],
-      correctAnswer: "Yes, this is a perfect example of HL.",
-      explanation: "Correct! We have: (1) Two right triangles. (2) The hypotenuses are congruent. (3) One pair of corresponding legs are congruent. This is exactly what HL requires."
+      correctAnswer: "T₂ only",
+      explanation: "Correct! P has a right angle, its hypotenuse marked with 2 hashes, and a leg with 1 hash. T₂ is the only other triangle with a right angle, a hypotenuse with 2 hashes, and a leg with 1 hash."
     },
     {
-      id: 'hl-id-q2-trap',
-      question: 'Now look at this figure. Can we prove these triangles are congruent using the HL criterion?',
+      id: 'hl-id-q2',
+      question: 'According to the HL criterion only, which of the following triangles are congruent to T?',
+      figure: <FigureQ2 />,
       options: [
-        "Yes, this is also HL.",
-        "No, the hypotenuse is not marked as congruent.",
-        "Yes, this is Leg-Leg (LL)."
+        "None",
+        "T₂ only",
+        "T₁ only",
+        "T₁ and T₃ only",
+        "T₃ only"
       ],
-      correctAnswer: "No, the hypotenuse is not marked as congruent.",
-      explanation: "Correct! This is not HL. To use HL, you *must* have the hypotenuse. This diagram shows two congruent legs (Leg-Leg), which is actually just a special case of SAS, since the right angle is *included* between the two legs."
+      correctAnswer: "None",
+      explanation: "This is a trick! T has a right angle (H), a hypotenuse (2 hashes), and a leg (1 hash). T₁, T₂, and T₃ are all missing a right angle, so HL cannot be used for any of them. (Note: T₂ has 3 congruent sides, so it's congruent by SSS, but not by HL)."
     }
   ];
 
@@ -199,50 +390,50 @@ export default function HlSlide2() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The HL Identification Checklist</h2>
-            <p className="text-lg leading-relaxed">
-              To use HL, you must check **three** specific conditions. If any one is missing, you cannot use HL.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying Congruent Triangles</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              According to the HL criterion only, which of the triangles above are congruent to P?
             </p>
-            <ul className="mt-4 space-y-3 text-lg">
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">1.</span>
-                <span>You must have two <strong>Right-Angled Triangles</strong>.</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">2.</span>
-                <span>The <strong>Hypotenuses</strong> (plural of hypotenuse) must be congruent (H).</span>
-              </li>
-              <li className="flex items-start">
-                <span className="font-bold text-blue-500 mr-2">3.</span>
-                <span>One pair of corresponding <strong>Legs</strong> must be congruent (L).</span>
-              </li>
-            </ul>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (The Trap) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-red-600 dark:text-red-400">Common Mistake: The "LL" Trap</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              Sometimes you will see two right triangles where both pairs of *legs* are congruent, but the hypotenuse is not mentioned.
+              The HL (hypotenuse-leg) congruence criterion states:
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/30">
-              <p className="text-lg text-red-700 dark:text-red-300">
-                <strong>This is not HL!</strong> It's actually the <strong>SAS</strong> criterion in disguise (Leg-Angle-Leg), since the right angle is *included* between the two legs.
+            <blockquote className="my-4 p-4 bg-slate-100 dark:bg-slate-700/60 border-l-4 border-blue-500 rounded-r-lg">
+              <p className="text-lg italic font-medium leading-relaxed">
+                Two right triangles are congruent if and only if they have a pair of congruent hypotenuses and a pair of congruent legs.
               </p>
-            </div>
+            </blockquote>
+
             <p className="text-lg leading-relaxed mt-4">
-              HL is *only* for when you have the **Hypotenuse**.
+              With that in mind, let's examine each of the given triangles:
+            </p>
+            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+                <li>
+                  <strong>P ≅ T₁</strong> by HL since we have a pair of right angles, a pair of congruent legs, and a pair of congruent hypotenuses.
+                </li>
+                <li>
+                  <strong>P ≅ T₂</strong> by HL since we have a pair of right angles, a pair of congruent legs, and a pair of congruent hypotenuses.
+                </li>
+                <li>
+                  <strong>P is not congruent to T₃</strong> by HL since we don't have a pair of congruent legs and congruent hypotenuses.
+                </li>
+            </ul>
+            <p className="text-lg leading-relaxed mt-4 font-semibold">
+              Therefore, the correct answer is "T₁ and T₂ only."
             </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Identification Practice</h3>
@@ -266,8 +457,19 @@ export default function HlSlide2() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>
