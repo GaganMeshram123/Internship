@@ -40,8 +40,9 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               exit={{ opacity: 0 }}
             >
               {/* Triangles with Vertical Angles */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.M.x} ${T1_Q1.M.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} Z`} stroke={strokeColor} {...commonProps} stroke="none" />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.M.x} ${T2_Q1.M.y} L ${T2_Q1.C.x} ${T2_Q1.C.y} Z`} stroke={strokeColor} {...commonProps} stroke="none" />
+              {/* --- FIX: Removed conflicting stroke attributes --- */}
+              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.M.x} ${T1_Q1.M.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} Z`} stroke="none" fill="none" />
+              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.M.x} ${T2_Q1.M.y} L ${T2_Q1.C.x} ${T2_Q1.C.y} Z`} stroke="none" fill="none" />
               <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T2_Q1.C.x} y2={T2_Q1.C.y} stroke={strokeColor} />
               <line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T2_Q1.D.x} y2={T2_Q1.D.y} stroke={strokeColor} />
               
@@ -49,12 +50,12 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               {/* A (Given) */}
               <path d={`M ${T1_Q1.A.x + 20} ${T1_Q1.A.y} A 20 20 0 0 1 ${T1_Q1.A.x + 12} ${T1_Q1.A.y + 16}`} {...commonProps} />
               <path d={`M ${T2_Q1.C.x - 20} ${T2_Q1.C.y} A 20 20 0 0 0 ${T2_Q1.C.x - 12} ${T2_Q1.C.y - 16}`} {...commonProps} />
-              <text x={30} y={40} fill={markColor} fontSize="12">Given: &angle;A &cong; &angle;C</text>
+              <text x={30} y={40} fill={markColor} fontSize="12">{"Given: $\angle A \cong \angle C$"}</text>
               
               {/* S (Given) */}
               <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T1_Q1.M.x} y2={T1_Q1.M.y} {...commonProps} strokeWidth="4" />
               <line x1={T2_Q1.C.x} y1={T2_Q1.C.y} x2={T2_Q1.M.x} y2={T2_Q1.M.y} {...commonProps} strokeWidth="4" />
-              <text x={90} y={70} fill={markColor} fontSize="12">Given: AM &cong; CM</text>
+              <text x={90} y={70} fill={markColor} fontSize="12">{"Given: AM $\cong$ CM"}</text>
 
               {/* A (Hidden - Vertical) */}
               <path d={`M ${T1_Q1.M.x - 17} ${T1_Q1.M.y - 10} A 20 20 0 0 0 ${T1_Q1.M.x} ${T1_Q1.M.y - 20}`} {...commonProps} stroke={hiddenMarkColor} strokeDasharray="5 5" />
@@ -71,8 +72,9 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               exit={{ opacity: 0 }}
             >
               {/* Triangles with Vertical Angles */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.M.x} ${T1_Q2.M.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} Z`} stroke={strokeColor} {...commonProps} stroke="none" />
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.M.x} ${T2_Q2.M.y} L ${T2_Q2.C.x} ${T2_Q2.C.y} Z`} stroke={strokeColor} {...commonProps} stroke="none" />
+              {/* --- FIX: Removed conflicting stroke attributes --- */}
+              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.M.x} ${T1_Q2.M.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} Z`} stroke="none" fill="none" />
+              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.M.x} ${T2_Q2.M.y} L ${T2_Q2.C.x} ${T2_Q2.C.y} Z`} stroke="none" fill="none" />
               <line x1={T1_Q2.A.x} y1={T1_Q2.A.y} x2={T2_Q2.C.x} y2={T2_Q2.C.y} stroke={strokeColor} />
               <line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T2_Q2.D.x} y2={T2_Q2.D.y} stroke={strokeColor} />
               
@@ -80,7 +82,7 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               {/* A (Given) */}
               <path d={`M ${T1_Q2.A.x + 20} ${T1_Q2.A.y} A 20 20 0 0 1 ${T1_Q2.A.x + 12} ${T1_Q2.A.y + 16}`} {...commonProps} />
               <path d={`M ${T2_Q2.C.x - 20} ${T2_Q2.C.y} A 20 20 0 0 0 ${T2_Q2.C.x - 12} ${T2_Q2.C.y - 16}`} {...commonProps} />
-              <text x={30} y={40} fill={markColor} fontSize="12">Given: &angle;A &cong; &angle;C</text>
+              <text x={30} y={40} fill={markColor} fontSize="12">{"Given: $\angle A \cong \angle C$"}</text>
 
               {/* A (Hidden - Vertical) */}
               <path d={`M ${T1_Q2.M.x - 17} ${T1_Q2.M.y - 10} A 20 20 0 0 0 ${T1_Q2.M.x} ${T1_Q2.M.y - 20}`} {...commonProps} stroke={hiddenMarkColor} strokeDasharray="5 5" />
@@ -90,7 +92,7 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               {/* S (Given - Non-included) */}
               <line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T1_Q2.M.x} y2={T1_Q2.M.y} {...commonProps} strokeWidth="4" />
               <line x1={T2_Q2.D.x} y1={T2_Q2.D.y} x2={T2_Q2.M.x} y2={T2_Q2.M.y} {...commonProps} strokeWidth="4" />
-              <text x={30} y={190} fill={markColor} fontSize="12">Given: BM &cong; DM</text>
+              <text x={30} y={190} fill={markColor} fontSize="12">{"Given: BM $\cong$ DM"}</text>
             </motion.g>
           )}
         </AnimatePresence>
@@ -324,7 +326,7 @@ export default function CombiningSlide3() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4"> intersecting_lines </div>
+                <div className="text-3xl mb-4">{"<-->"}</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}

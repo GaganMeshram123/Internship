@@ -5,70 +5,91 @@ import SlideComponentWrapper from '../../../common-components/SlideComponentWrap
 import { useThemeContext } from '@/lib/ThemeContext';
 
 // --- ANIMATION COMPONENT DEFINED INSIDE ---
-const CongruenceVsEqualityAnimation: React.FC = () => {
+const CpctcProofAnimation: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 250; // Made taller for the 5th step
   const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const strokeColor = isDarkMode ? '#CBD5E1' : '#A0AEC0';
+  const textColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
+  const hiddenColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const triangleColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const proveColor = isDarkMode ? '#A78BFA' : '#8B5CF6'; // Purple (CPCTC step)
   
   const itemAnim = (delay: number) => ({
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { delay: delay } },
+    hidden: { opacity: 0, x: -10 },
+    visible: { opacity: 1, x: 0, transition: { delay: delay } },
   });
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* Title */}
-        <motion.text x={200} y={30} fill={strokeColor} fontSize="18" textAnchor="middle"
+        {/* Headers */}
+        <motion.text x={100} y={30} fill={textColor} fontSize="18" textAnchor="middle" fontWeight="bold"
           initial="hidden" animate="visible" variants={itemAnim(0.5)}>
-          Congruence vs. Equality
+          Statements
         </motion.text>
-        
-        {/* Equality Side */}
-        <motion.text x={100} y={80} fill={color1} fontSize="20" textAnchor="middle" fontWeight="bold"
+        <motion.text x={300} y={30} fill={textColor} fontSize="18" textAnchor="middle" fontWeight="bold"
+          initial="hidden" animate="visible" variants={itemAnim(0.5)}>
+          Reasons
+        </motion.text>
+        <motion.line x1="200" y1="10" x2="200" y2={240} stroke={strokeColor} strokeWidth="2"
+          initial="hidden" animate="visible" variants={itemAnim(0.5)} />
+        <motion.line x1="10" y1="45" x2="390" y2="45" stroke={strokeColor} strokeWidth="2"
+          initial="hidden" animate="visible" variants={itemAnim(0.5)} />
+          
+        {/* Step 1 (Given) */}
+        <motion.text x={20} y={70} fill={givenColor} fontSize="14" fontFamily="monospace"
           initial="hidden" animate="visible" variants={itemAnim(1.0)}>
-          Equality (=)
+          1. $AB \cong CB$ (S)
         </motion.text>
-        <motion.text x={100} y={110} fill={strokeColor} fontSize="16" textAnchor="middle"
+        <motion.text x={220} y={70} fill={givenColor} fontSize="14" fontFamily="monospace"
           initial="hidden" animate="visible" variants={itemAnim(1.2)}>
-          For Numbers / Measures
+          1. Given
         </motion.text>
-        <motion.text x={100} y={150} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.4)}>
-          {"$AB = 5$"}
-        </motion.text>
-         <motion.text x={100} y={175} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.6)}>
-          {"$CD = 5$"}
-        </motion.text>
-         <motion.text x={100} y={200} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.8)}>
-          {"$AB = CD$"}
-        </motion.text>
-
-        {/* Dividing Line */}
-        <motion.line x1={200} y1={60} x2={200} y2={210} stroke={strokeColor} strokeWidth="2"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }}
-        />
         
-        {/* Congruence Side */}
-        <motion.text x={300} y={80} fill={color1} fontSize="20" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(2.2)}>
-          Congruence ($\cong$)
+        {/* Step 2 (Given) */}
+        <motion.text x={20} y={100} fill={givenColor} fontSize="14" fontFamily="monospace"
+          initial="hidden" animate="visible" variants={itemAnim(1.7)}>
+          2. $\angle ABD \cong \angle CBD$ (A)
         </motion.text>
-        <motion.text x={300} y={110} fill={strokeColor} fontSize="16" textAnchor="middle"
+        <motion.text x={220} y={100} fill={givenColor} fontSize="14" fontFamily="monospace"
+          initial="hidden" animate="visible" variants={itemAnim(1.9)}>
+          2. Given
+        </motion.text>
+        
+        {/* Step 3 (Reflexive) */}
+        <motion.text x={20} y={130} fill={hiddenColor} fontSize="14" fontFamily="monospace"
           initial="hidden" animate="visible" variants={itemAnim(2.4)}>
-          For Figures / Objects
+          3. $BD \cong BD$ (S)
         </motion.text>
-        <motion.text x={300} y={160} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
+        <motion.text x={220} y={130} fill={hiddenColor} fontSize="14" fontFamily="monospace"
           initial="hidden" animate="visible" variants={itemAnim(2.6)}>
-          {"$\overline{AB} \cong \overline{CD}$"}
+          3. Reflexive Property
         </motion.text>
-        <motion.text x={300} y={190} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(2.8)}>
-          (Segments are congruent)
+        
+        {/* Step 4 (Triangle Congruence) */}
+        <motion.line x1="10" y1="145" x2="390" y2="145" stroke={strokeColor} strokeWidth="1.5"
+          initial="hidden" animate="visible" variants={itemAnim(3.1)} />
+        <motion.text x={20} y={170} fill={triangleColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
+          initial="hidden" animate="visible" variants={itemAnim(3.3)}>
+          4. $\triangle ABD \cong \triangle CBD$
+        </motion.text>
+        <motion.text x={220} y={170} fill={triangleColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
+          initial="hidden" animate="visible" variants={itemAnim(3.5)}>
+          4. SAS (from 1, 2, 3)
+        </motion.text>
+        
+        {/* Step 5 (CPCTC) */}
+        <motion.line x1="10" y1="185" x2="390" y2="185" stroke={strokeColor} strokeWidth="1.5"
+          initial="hidden" animate="visible" variants={itemAnim(4.0)} />
+      {/*   <motion.text x={20} y={210} fill={proveColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
+          initial="hidden" animate="visible" variants={itemAnim(4.2)}>
+          5. $\overline{AD} \cong \overline{CD}$
+        </motion.text> */}
+        <motion.text x={220} y={210} fill={proveColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
+          initial="hidden" animate="visible" variants={itemAnim(4.4)}>
+          5. CPCTC
         </motion.text>
       </svg>
     </div>
@@ -77,7 +98,7 @@ const CongruenceVsEqualityAnimation: React.FC = () => {
 // --- END OF ANIMATION COMPONENT DEFINITION ---
 
 
-export default function PropertiesSlide4() {
+export default function ProvingSlide4() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -89,11 +110,11 @@ export default function PropertiesSlide4() {
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'properties-segment-congruence-quiz',
-      conceptId: 'properties-segment-congruence',
-      conceptName: 'Congruence of Segments',
+      id: 'proving-cpctc-quiz',
+      conceptId: 'proving-cpctc',
+      conceptName: 'CPCTC',
       type: 'judging',
-      description: 'Testing understanding of congruence vs. equality'
+      description: 'Testing understanding of CPCTC'
     }
   ];
 
@@ -107,28 +128,28 @@ export default function PropertiesSlide4() {
 
   const questions: QuizQuestion[] = [
     {
-      id: 'properties-segment-q1',
-      question: 'Which statement correctly compares the *lengths* of two segments?',
+      id: 'proving-cpctc-q1',
+      question: 'What does the acronym "CPCTC" stand for?',
       options: [
-        "$\overline{AB} \cong \overline{CD}$",
-        "$AB = CD$",
-        "$AB \cong CD$",
-        "$\overline{AB} = CD$"
+        "Congruent Parts of Congruent Triangles are Congruent",
+        "Corresponding Parts of Congruent Triangles are Congruent",
+        "Congruent Polygons are Congruent Triangles",
+        "Corresponding Parts of Corresponding Triangles are Congruent"
       ],
-      correctAnswer: "$AB = CD$",
-      explanation: "Correct! AB and CD (without the bars) represent the lengths, which are numbers. We use the equals sign ($=$) to compare numbers."
+      correctAnswer: "Corresponding Parts of Congruent Triangles are Congruent",
+      explanation: "Correct! This is the full name for this very important theorem."
     },
     {
-      id: 'properties-segment-q2',
-      question: 'Which statement correctly compares the *figures* (the segments themselves)?',
+      id: 'proving-cpctc-q2',
+      question: 'In a proof, when is it valid to use "CPCTC" as a reason?',
       options: [
-        "$\overline{AB} \cong \overline{CD}$",
-        "$AB = CD$",
-        "$AB \cong CD$",
-        "$\overline{AB} = \overline{CD}$"
+        "As the very first step, to state your 'Given'.",
+        "At any time you want to prove two parts are equal.",
+        "Only *after* you have already proven that the triangles are congruent.",
+        "Only for sides, not for angles."
       ],
-      correctAnswer: "$\overline{AB} \cong \overline{CD}$",
-      explanation: "Correct! \overline{AB} and \overline{CD} (with the bars) represent the geometric figures. We use the congruence sign ($\cong$) to compare figures."
+      correctAnswer: "Only *after* you have already proven that the triangles are congruent.",
+      explanation: "Correct! This is the most important rule. You *must* prove the triangles are congruent first (using SSS, SAS, etc.). CPCTC is the reason you use for *all the steps that come after*."
     }
   ];
 
@@ -152,12 +173,12 @@ export default function PropertiesSlide4() {
     }
 
     handleInteractionComplete({
-      interactionId: `properties-segment-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `proving-cpctc-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'properties-segment-congruence',
-      conceptName: 'Congruence of Segments',
+      conceptId: 'proving-cpctc',
+      conceptName: 'CPCTC',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -191,46 +212,43 @@ export default function PropertiesSlide4() {
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Congruence vs. Equality</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The "Why" of Proofs: CPCTC</h2>
             <p className="text-lg leading-relaxed">
-              This is a small but very important piece of notation in formal proofs.
+              You've proven two triangles are congruent. So what?
             </p>
-            <ul className="list-disc list-inside mt-4 text-lg space-y-2">
-              <li>
-                We use the **Equals sign ($=$)** to compare **numbers** or **measures**.
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Length $AB = 5$</span>
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$m\angle A = 30^\circ$</span>
-              </li>
-              <li>
-                We use the **Congruence sign ($\cong$)** to compare **figures** or **objects**.
-                <br/>
-{/*                 <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Segment $\overline{AB} \cong \overline{CD}$</span>
- */}                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$\angle A \cong \angle B$</span>
-              </li>
-            </ul>
+            <p className="text-lg leading-relaxed mt-4">
+              The main reason we do this is to then prove that their *other parts* are congruent. The reason we use is <strong>CPCTC</strong>.
+            </p>
+            <p className="text-lg leading-relaxed mt-4 font-semibold text-blue-600 dark:text-blue-400">
+              <strong>C</strong>orresponding
+              <strong>P</strong>arts of
+              <strong>C</strong>ongruent
+              <strong>T</strong>riangles are
+              <strong>C</strong>ongruent.
+            </p>
           </div>
 
-          {/* --- CARD 2 (The Definition) --- */}
+          {/* --- CARD 2 (The 2-Step Process) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Definition of Congruent Segments</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The 2-Step Proof Process</h3>
             <p className="text-lg leading-relaxed">
-              The two concepts are directly linked.
+              Almost every congruence proof follows this pattern:
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-               {/*  <strong>$\overline{AB} \cong \overline{CD}$</strong> (The segments are congruent) */}
-                <br/>
-                is the same as saying
-                <br/>
-                <strong>$AB = CD$</strong> (Their lengths are equal)
+            <ol className="list-decimal list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+              <li>
+                <strong>Prove Triangles Congruent:</strong>
+                <br/>Use your "Givens" and "Hidden Clues" to prove $\triangle ABC \cong \triangle DEF$ by SSS, SAS, ASA, AAS, or HL.
+              </li>
+              <li>
+                <strong>Use CPCTC:</strong>
+                <br/>Now that the triangles are congruent, you can state that *any* of their corresponding parts are congruent. The reason is "CPCTC".
+              </li>
+            </ol>
+             <div className="mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/30">
+              <p className="text-lg text-red-700 dark:text-red-300">
+                <strong>CRITICAL RULE:</strong> You can <strong>NEVER</strong> use CPCTC as a reason *until after* you have already proven the triangles are congruent.
               </p>
             </div>
-            <p className="text-lg leading-relaxed mt-4">
-              In a proof, you can switch between these two statements. The reason is the "Definition of Congruent Segments."
-            </p>
           </div>
         </div>
 
@@ -238,20 +256,20 @@ export default function PropertiesSlide4() {
         <div className="space-y-6">
           {/* --- ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Numbers vs. Figures</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Final Step</h3>
             
             {/* --- USE THE ANIMATION COMPONENT --- */}
-            <CongruenceVsEqualityAnimation />
+            <CpctcProofAnimation />
             
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Use ($=$) for lengths. Use ($\cong$) for the segments themselves.
+              We first prove the triangles congruent (Step 4, by SAS), *then* we can use CPCTC (Step 5).
             </p>
           </div>
 
           {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Check Your Notation</h3>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
@@ -333,13 +351,13 @@ export default function PropertiesSlide4() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">✍️</div>
+                <div className="text-3xl mb-4">🎉</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "Your notation is perfect!" : 'Great job!'}
+                  {score === questions.length ? "You've mastered the most important part of proofs!" : 'Great job!'}
                 </div>
               </motion.div>
             )}
@@ -351,10 +369,10 @@ export default function PropertiesSlide4() {
 
   return (
     <SlideComponentWrapper
-      slideId="properties-segment-congruence"
-      slideTitle="Congruence of Segments"
+      slideId="proving-cpctc"
+      slideTitle="CPCTC"
       moduleId="congruence"
-      submoduleId="properties-of-congruence"
+      submoduleId="proving-congruence-statements"
       interactions={localInteractions}
     >
       {slideContent}

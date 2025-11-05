@@ -94,7 +94,7 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
 
 export default function AasSlide4() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);

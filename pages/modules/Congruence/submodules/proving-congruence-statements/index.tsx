@@ -28,7 +28,7 @@ export const provingSlides: Slide[] = [
     id: 'proving-two-column'
   },
   {
-    type:s: 'interactive',
+    type: 'interactive',
     title: 'CPCTC',
     component: Slide4,
     id: 'proving-cpctc'

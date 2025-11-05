@@ -5,70 +5,78 @@ import SlideComponentWrapper from '../../../common-components/SlideComponentWrap
 import { useThemeContext } from '@/lib/ThemeContext';
 
 // --- ANIMATION COMPONENT DEFINED INSIDE ---
-const CongruenceVsEqualityAnimation: React.FC = () => {
+const TwoColumnProofAnimation: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const strokeColor = isDarkMode ? '#CBD5E1' : '#A0AEC0';
+  const textColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
+  const hiddenColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const proveColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
   
   const itemAnim = (delay: number) => ({
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { delay: delay } },
+    hidden: { opacity: 0, x: -10 },
+    visible: { opacity: 1, x: 0, transition: { delay: delay } },
   });
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* Title */}
-        <motion.text x={200} y={30} fill={strokeColor} fontSize="18" textAnchor="middle"
+        {/* Headers */}
+        <motion.text x={100} y={30} fill={textColor} fontSize="18" textAnchor="middle" fontWeight="bold"
           initial="hidden" animate="visible" variants={itemAnim(0.5)}>
-          Congruence vs. Equality
+          Statements
         </motion.text>
-        
-        {/* Equality Side */}
-        <motion.text x={100} y={80} fill={color1} fontSize="20" textAnchor="middle" fontWeight="bold"
+        <motion.text x={300} y={30} fill={textColor} fontSize="18" textAnchor="middle" fontWeight="bold"
+          initial="hidden" animate="visible" variants={itemAnim(0.5)}>
+          Reasons
+        </motion.text>
+        <motion.line x1="200" y1="10" x2="200" y2={210} stroke={strokeColor} strokeWidth="2"
+          initial="hidden" animate="visible" variants={itemAnim(0.5)} />
+        <motion.line x1="10" y1="45" x2="390" y2="45" stroke={strokeColor} strokeWidth="2"
+          initial="hidden" animate="visible" variants={itemAnim(0.5)} />
+          
+        {/* Step 1 (Given) */}
+        <motion.text x={20} y={70} fill={givenColor} fontSize="14" fontFamily="monospace"
           initial="hidden" animate="visible" variants={itemAnim(1.0)}>
-          Equality (=)
+          1. $AB \cong CB$ (S)
         </motion.text>
-        <motion.text x={100} y={110} fill={strokeColor} fontSize="16" textAnchor="middle"
+        <motion.text x={220} y={70} fill={givenColor} fontSize="14" fontFamily="monospace"
           initial="hidden" animate="visible" variants={itemAnim(1.2)}>
-          For Numbers / Measures
+          1. Given
         </motion.text>
-        <motion.text x={100} y={150} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.4)}>
-          {"$AB = 5$"}
-        </motion.text>
-         <motion.text x={100} y={175} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.6)}>
-          {"$CD = 5$"}
-        </motion.text>
-         <motion.text x={100} y={200} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.8)}>
-          {"$AB = CD$"}
-        </motion.text>
-
-        {/* Dividing Line */}
-        <motion.line x1={200} y1={60} x2={200} y2={210} stroke={strokeColor} strokeWidth="2"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }}
-        />
         
-        {/* Congruence Side */}
-        <motion.text x={300} y={80} fill={color1} fontSize="20" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(2.2)}>
-          Congruence ($\cong$)
+        {/* Step 2 (Given) */}
+        <motion.text x={20} y={100} fill={givenColor} fontSize="14" fontFamily="monospace"
+          initial="hidden" animate="visible" variants={itemAnim(1.7)}>
+          2. $\angle ABD \cong \angle CBD$ (A)
         </motion.text>
-        <motion.text x={300} y={110} fill={strokeColor} fontSize="16" textAnchor="middle"
+        <motion.text x={220} y={100} fill={givenColor} fontSize="14" fontFamily="monospace"
+          initial="hidden" animate="visible" variants={itemAnim(1.9)}>
+          2. Given
+        </motion.text>
+        
+        {/* Step 3 (Reflexive) */}
+        <motion.text x={20} y={130} fill={hiddenColor} fontSize="14" fontFamily="monospace"
           initial="hidden" animate="visible" variants={itemAnim(2.4)}>
-          For Figures / Objects
+          3. $BD \cong BD$ (S)
         </motion.text>
-        <motion.text x={300} y={160} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
+        <motion.text x={220} y={130} fill={hiddenColor} fontSize="14" fontFamily="monospace"
           initial="hidden" animate="visible" variants={itemAnim(2.6)}>
-          {"$\overline{AB} \cong \overline{CD}$"}
+          3. Reflexive Property
         </motion.text>
-        <motion.text x={300} y={190} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(2.8)}>
-          (Segments are congruent)
+        
+        {/* Step 4 (Conclusion) */}
+        <motion.line x1="10" y1="145" x2="390" y2="145" stroke={strokeColor} strokeWidth="1.5"
+          initial="hidden" animate="visible" variants={itemAnim(3.1)} />
+        <motion.text x={20} y={170} fill={proveColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
+          initial="hidden" animate="visible" variants={itemAnim(3.3)}>
+          4. $\triangle ABD \cong \triangle CBD$
+        </motion.text>
+        <motion.text x={220} y={170} fill={proveColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
+          initial="hidden" animate="visible" variants={itemAnim(3.5)}>
+          4. SAS (from 1, 2, 3)
         </motion.text>
       </svg>
     </div>
@@ -77,7 +85,7 @@ const CongruenceVsEqualityAnimation: React.FC = () => {
 // --- END OF ANIMATION COMPONENT DEFINITION ---
 
 
-export default function PropertiesSlide4() {
+export default function ProvingSlide3() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -89,11 +97,11 @@ export default function PropertiesSlide4() {
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'properties-segment-congruence-quiz',
-      conceptId: 'properties-segment-congruence',
-      conceptName: 'Congruence of Segments',
+      id: 'proving-two-column-quiz',
+      conceptId: 'proving-two-column',
+      conceptName: 'Two-Column Proofs',
       type: 'judging',
-      description: 'Testing understanding of congruence vs. equality'
+      description: 'Testing understanding of two-column proof structure'
     }
   ];
 
@@ -107,28 +115,28 @@ export default function PropertiesSlide4() {
 
   const questions: QuizQuestion[] = [
     {
-      id: 'properties-segment-q1',
-      question: 'Which statement correctly compares the *lengths* of two segments?',
+      id: 'proving-two-column-q1',
+      question: 'In a two-column proof, what is the "Reason" for the statement $\overline{BD} \cong \overline{BD}$?',
       options: [
-        "$\overline{AB} \cong \overline{CD}$",
-        "$AB = CD$",
-        "$AB \cong CD$",
-        "$\overline{AB} = CD$"
+        "Given",
+        "Reflexive Property of Congruence",
+        "Symmetric Property of Congruence",
+        "Definition of Midpoint"
       ],
-      correctAnswer: "$AB = CD$",
-      explanation: "Correct! AB and CD (without the bars) represent the lengths, which are numbers. We use the equals sign ($=$) to compare numbers."
+      correctAnswer: "Reflexive Property of Congruence",
+      explanation: "Correct! When a part is shared by two triangles, the reason it is congruent to itself is the Reflexive Property."
     },
     {
-      id: 'properties-segment-q2',
-      question: 'Which statement correctly compares the *figures* (the segments themselves)?',
+      id: 'proving-two-column-q2',
+      question: 'The final "Reason" in this proof is "SAS". This reason refers to which previous steps?',
       options: [
-        "$\overline{AB} \cong \overline{CD}$",
-        "$AB = CD$",
-        "$AB \cong CD$",
-        "$\overline{AB} = \overline{CD}$"
+        "Just step 1 (Side)",
+        "Just step 2 (Angle)",
+        "Steps 1, 2, and 3 (Side, Angle, Side)",
+        "There is no reason for the last step."
       ],
-      correctAnswer: "$\overline{AB} \cong \overline{CD}$",
-      explanation: "Correct! \overline{AB} and \overline{CD} (with the bars) represent the geometric figures. We use the congruence sign ($\cong$) to compare figures."
+      correctAnswer: "Steps 1, 2, and 3 (Side, Angle, Side)",
+      explanation: "Correct! The final step is a conclusion based on all the evidence you've gathered. Steps 1, 2, and 3 give you the S, A, and S needed to conclude SAS."
     }
   ];
 
@@ -152,12 +160,12 @@ export default function PropertiesSlide4() {
     }
 
     handleInteractionComplete({
-      interactionId: `properties-segment-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `proving-two-column-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'properties-segment-congruence',
-      conceptName: 'Congruence of Segments',
+      conceptId: 'proving-two-column',
+      conceptName: 'Two-Column Proofs',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -191,46 +199,36 @@ export default function PropertiesSlide4() {
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Congruence vs. Equality</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The Two-Column Format</h2>
             <p className="text-lg leading-relaxed">
-              This is a small but very important piece of notation in formal proofs.
+              The "paragraph proof" from the last slide is good for thinking, but most geometry classes use the **two-column proof**.
+            </p>
+            <p className="text-lg leading-relaxed mt-4">
+              It's a more organized way to show the exact same logic.
             </p>
             <ul className="list-disc list-inside mt-4 text-lg space-y-2">
               <li>
-                We use the **Equals sign ($=$)** to compare **numbers** or **measures**.
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Length $AB = 5$</span>
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$m\angle A = 30^\circ$</span>
+                <strong>Left Column (Statements):</strong> What you know. This is the step-by-step path of your logic.
               </li>
               <li>
-                We use the **Congruence sign ($\cong$)** to compare **figures** or **objects**.
-                <br/>
-{/*                 <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Segment $\overline{AB} \cong \overline{CD}$</span>
- */}                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$\angle A \cong \angle B$</span>
+                <strong>Right Column (Reasons):</strong> Why you know it. This is the definition, postulate, or "Given" that justifies each statement.
               </li>
             </ul>
           </div>
 
-          {/* --- CARD 2 (The Definition) --- */}
+          {/* --- CARD 2 (The Logic) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Definition of Congruent Segments</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Proof-Building Strategy</h3>
             <p className="text-lg leading-relaxed">
-              The two concepts are directly linked.
+              Always follow this order:
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-               {/*  <strong>$\overline{AB} \cong \overline{CD}$</strong> (The segments are congruent) */}
-                <br/>
-                is the same as saying
-                <br/>
-                <strong>$AB = CD$</strong> (Their lengths are equal)
-              </p>
-            </div>
-            <p className="text-lg leading-relaxed mt-4">
-              In a proof, you can switch between these two statements. The reason is the "Definition of Congruent Segments."
-            </p>
+            <ol className="list-decimal list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+              <li>List all your **Givens** first.</li>
+              <li>Look for **Hidden Clues** (Reflexive Side, Vertical Angles, etc.) and add them.</li>
+              <li>Mark each S, A, or R (for Right Angle) as you find it.</li>
+              <li>Once you have a full criterion (like SSS, SAS, etc.), state that the **triangles are congruent**.</li>
+              <li>The "Reason" is the criterion you found (e.g., "SAS Postulate").</li>
+            </ol>
           </div>
         </div>
 
@@ -238,20 +236,20 @@ export default function PropertiesSlide4() {
         <div className="space-y-6">
           {/* --- ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Numbers vs. Figures</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Our Proof in Two Columns</h3>
             
             {/* --- USE THE ANIMATION COMPONENT --- */}
-            <CongruenceVsEqualityAnimation />
+            <TwoColumnProofAnimation />
             
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Use ($=$) for lengths. Use ($\cong$) for the segments themselves.
+              This is the same logic as the paragraph proof, just organized in a table.
             </p>
           </div>
 
           {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Check Your Notation</h3>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Check Your Reasons</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
@@ -333,13 +331,13 @@ export default function PropertiesSlide4() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">✍️</div>
+                <div className="text-3xl mb-4">🏛️</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "Your notation is perfect!" : 'Great job!'}
+                  {score === questions.length ? "You're a logical thinker!" : 'Great job!'}
                 </div>
               </motion.div>
             )}
@@ -351,10 +349,10 @@ export default function PropertiesSlide4() {
 
   return (
     <SlideComponentWrapper
-      slideId="properties-segment-congruence"
-      slideTitle="Congruence of Segments"
+      slideId="proving-two-column"
+      slideTitle="Stating the Full Proof Using the Two-Column Format"
       moduleId="congruence"
-      submoduleId="properties-of-congruence"
+      submoduleId="proving-congruence-statements"
       interactions={localInteractions}
     >
       {slideContent}

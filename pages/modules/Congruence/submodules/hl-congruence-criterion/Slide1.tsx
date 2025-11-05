@@ -82,11 +82,11 @@ const HlAnimation: React.FC = () => {
           x1={T2.D.x} y1={T2.D.y} x2={T2.F.x} y2={T2.F.y}
           stroke={highlightStroke} strokeWidth="6" strokeDasharray="6 6" variants={anim} initial="hidden" animate="visible" custom={2.0}
         />
-        <motion.text x={T1.C.x + 10} y={(T1.A.y + T1.C.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
+       {/*  <motion.text x={T1.C.x + 10} y={(T1.A.y + T1.C.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
           variants={textAnim} initial="hidden" animate="visible" custom={2.2}>L</motion.text>
         <motion.text x={T2.F.x + 10} y={(T2.A.y + T2.C.y) / 2} fill={highlightStroke} fontSize="16" fontWeight="bold"
           variants={textAnim} initial="hidden" animate="visible" custom={2.2}>L</motion.text>
-
+ */}
         {/* Congruence Statement */}
         <motion.text x={svgWidth / 2} y={svgHeight / 2 - 20} fill={highlightStroke} fontSize="18" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={3.0}>

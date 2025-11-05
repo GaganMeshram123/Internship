@@ -39,9 +39,9 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               exit={{ opacity: 0 }}
             >
               {/* Kite with diagonal BD */}
-              <path d={`M ${Q1.A.x} ${Q1.A.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.C.x} ${Q1.C.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} {...commonProps} stroke="none" />
-              <path d={`M ${Q1.A.x} ${Q1.A.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} {...commonProps} stroke="none" />
-              <path d={`M ${Q1.C.x} ${Q1.C.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} {...commonProps} stroke="none" />
+              {/* --- FIX: Removed conflicting stroke attributes --- */}
+              <path d={`M ${Q1.A.x} ${Q1.A.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} fill="none" />
+              <path d={`M ${Q1.C.x} ${Q1.C.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} fill="none" />
               <path d={`M ${Q1.A.x} ${Q1.A.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.C.x} ${Q1.C.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} fill="none" />
               <line x1={Q1.B.x} y1={Q1.B.y} x2={Q1.D.x} y2={Q1.D.y} stroke={strokeColor} />
 
@@ -49,12 +49,12 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               {/* S (Given) */}
               <line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.B.x} y2={Q1.B.y} {...commonProps} strokeWidth="4" />
               <line x1={Q1.C.x} y1={Q1.C.y} x2={Q1.B.x} y2={Q1.B.y} {...commonProps} strokeWidth="4" />
-              <text x={125} y={65} fill={markColor} fontSize="12">Given: AB &cong; CB</text>
+              <text x={125} y={65} fill={markColor} fontSize="12">{"Given: $\overline{AB} \cong \overline{CB}$"}</text>
               
               {/* A (Given) */}
               <path d={`M ${Q1.B.x - 18} ${Q1.B.y + 10} A 20 20 0 0 1 ${Q1.B.x - 5} ${Q1.B.y + 19}`} {...commonProps} />
               <path d={`M ${Q1.B.x + 18} ${Q1.B.y + 10} A 20 20 0 0 0 ${Q1.B.x + 5} ${Q1.B.y + 19}`} {...commonProps} />
-              <text x={210} y={65} fill={markColor} fontSize="12">Given: &angle;ABD &cong; &angle;CBD</text>
+              <text x={210} y={65} fill={markColor} fontSize="12">{"Given: $\angle ABD \cong \angle CBD$"}</text>
 
               {/* S (Hidden - Shared) */}
               <line x1={Q1.B.x} y1={Q1.B.y} x2={Q1.D.x} y2={Q1.D.y} {...commonProps} stroke={hiddenMarkColor} strokeWidth="4" strokeDasharray="5 5" />
@@ -78,16 +78,19 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               {/* S (Given) */}
               <line x1="50" y1="110" x2="200" y2="40" {...commonProps} strokeWidth="4" />
               <line x1="50" y1="110" x2="200" y2="180" {...commonProps} strokeWidth="4" />
-              <text x="125" y="65} fill={markColor} fontSize="12">Given: AB &cong; AD</text>
+              {/* --- FIX: Fixed y-attribute and wrapped text --- */}
+              <text x={125} y={65} fill={markColor} fontSize="12">{"Given: $\overline{AB} \cong \overline{AD}$"}</text>
 
               {/* S (Given) */}
               <line x1="350" y1="110" x2="200" y2="40" {...commonProps} strokeWidth="4" strokeDasharray="5 5" />
               <line x1="350" y1="110" x2="200" y2="180" {...commonProps} strokeWidth="4" strokeDasharray="5 5" />
-              <text x="275" y="65} fill={markColor} fontSize="12">Given: CB &cong; CD</text>
+              {/* --- FIX: Fixed y-attribute and wrapped text --- */}
+              <text x={275} y={65} fill={markColor} fontSize="12">{"Given: $\overline{CB} \cong \overline{CD}$"}</text>
               
               {/* S (Hidden - Shared) */}
               <line x1="50" y1="110" x2="350" y2="110" {...commonProps} stroke={hiddenMarkColor} strokeWidth="4" strokeDasharray="1 5" />
-              <text x="180" y="125} fill={hiddenMarkColor} fontSize="12">Shared Side</text>
+              {/* --- FIX: Fixed y-attribute and wrapped text --- */}
+              <text x={180} y={125} fill={hiddenMarkColor} fontSize="12">Shared Side</text>
             </motion.g>
           )}
         </AnimatePresence>
@@ -131,17 +134,17 @@ export default function CombiningSlide4() {
   const questions: QuizQuestion[] = [
     {
       id: 'combining-common-side-q1',
-      question: 'Given $AB \cong CB$ and $\angle ABD \cong \angle CBD$. Which criterion proves $\triangle ABD \cong \triangle CBD$?',
+      question: 'Given $\overline{AB} \cong \overline{CB}$ and $\angle ABD \cong \angle CBD$. Which criterion proves $\triangle ABD \cong \triangle CBD$?',
       options: allOptions,
       correctAnswer: "SAS",
-      explanation: "Correct! We are given $AB \cong CB$ (S) and $\angle ABD \cong \angle CBD$ (A). The *hidden* clue is the shared side $BD \cong BD$ (S). The angle $\angle ABD$ is *included* between sides $AB$ and $BD$. This is a perfect SAS pattern."
+      explanation: "Correct! We are given $\overline{AB} \cong \overline{CB}$ (S) and $\angle ABD \cong \angle CBD$ (A). The *hidden* clue is the shared side $\overline{BD} \cong \overline{BD}$ (S). The angle $\angle ABD$ is *included* between sides $\overline{AB}$ and $\overline{BD}$. This is a perfect SAS pattern."
     },
     {
       id: 'combining-common-side-q2',
-      question: 'Given $AB \cong AD$ and $CB \cong CD$. Which criterion proves $\triangle ABC \cong \triangle ADC$?',
+      question: 'Given $\overline{AB} \cong \overline{AD}$ and $\overline{CB} \cong \overline{CD}$. Which criterion proves $\triangle ABC \cong \triangle ADC$?',
       options: allOptions,
       correctAnswer: "SSS",
-      explanation: "Correct! We are given $AB \cong AD$ (S) and $CB \cong CD$ (S). The *hidden* clue is the shared side $AC \cong AC$ (S). This gives us all three sides, a perfect SSS pattern."
+      explanation: "Correct! We are given $\overline{AB} \cong \overline{AD}$ (S) and $\overline{CB} \cong \overline{CD}$ (S). The *hidden* clue is the shared side $\overline{AC} \cong \overline{AC}$ (S). This gives us all three sides, a perfect SSS pattern."
     }
   ];
 
@@ -208,9 +211,9 @@ export default function CombiningSlide4() {
             <p className="text-lg leading-relaxed">
               The other most common "hidden" clue is a **Common Side** (or shared side).
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              If two triangles share a side, that side is obviously the same length in both. This is formally called the **Reflexive Property** ($BD \cong BD$).
-            </p>
+            {/* <p className="text-lg leading-relaxed mt-4">
+              If two triangles share a side, that side is obviously the same length in both. This is formally called the **Reflexive Property** ($\overline{BD} \cong \overline{BD}$).
+            </p> */}
           </div>
 
           {/* --- CARD 2 (The Strategy) --- */}

@@ -88,7 +88,7 @@ const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
               
               {/* Shared Side AC */}
               <line x1="50" y1="110" x2="350" y2="110" stroke={highlightColor} strokeWidth="4" strokeDasharray="1 5" />
-              <text x="180" y="125" fill={highlightColor} fontSize="12">Shared: AC &cong; AC</Dtext>
+              <text x="180" y="125" fill={highlightColor} fontSize="12">Shared: AC &cong; AC</text>
             </motion.g>
           )}
         </AnimatePresence>

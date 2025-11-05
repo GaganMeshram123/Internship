@@ -42,10 +42,10 @@ const PropertiesAnimation: React.FC = () => {
           transition={{ delay: 1.0, duration: 1 }}
           variants={anim(1.0)}
         />
-        <motion.text x="255" y="140" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>A'</text>
-        <motion.text x="155" y="140" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>C'</text>
-        <motion.text x="175" y="50" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>B'</text>
-        <motion.text x="190" y="165" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>Side = 100</text>
+        <motion.text x="255" y="140" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>A'</motion.text>
+        <motion.text x="155" y="140" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>C'</motion.text>
+        <motion.text x="175" y="50" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>B'</motion.text>
+        <motion.text x="190" y="165" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>Side = 100</motion.text>
         <motion.path d="M 170 150 A 20 20 0 0 0 150 130" fill="none" stroke={color2} strokeWidth="2" initial="hidden" animate="visible" variants={anim(2.0)} />
         <motion.text x="195" y="125" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>Angle C'</motion.text>
         

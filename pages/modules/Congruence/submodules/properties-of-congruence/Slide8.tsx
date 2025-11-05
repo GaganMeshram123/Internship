@@ -14,9 +14,9 @@ const AnglePropertiesFigure: React.FC<{ questionIndex: number }> = ({ questionIn
   const color2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
   
   const textProps = {
-    fontSize: 20,
+    fontSize: "20", // <-- FIX: Changed to string
     fontFamily: "monospace",
-    textAnchor: "middle",
+    textAnchor: "middle" as const, // <-- FIX: Added 'as const'
     fill: color1
   };
 
@@ -29,18 +29,18 @@ const AnglePropertiesFigure: React.FC<{ questionIndex: number }> = ({ questionIn
               {/* Figure: Transitive Property */}
               <path d="M 50 150 L 100 80 L 150 150 Z" stroke={strokeColor} fill="none" strokeWidth="2" />
               <path d="M 80 150 A 20 20 0 0 1 100 130" fill="none" stroke={color1} strokeWidth="2"/>
-              <text x={100} y={170} fill={color1} textAnchor="middle">$\angle A$</text>
+              <text x={100} y={170} fill={color1} textAnchor="middle">{"$\angle A$"}</text>
               
               <path d="M 170 150 L 220 80 L 270 150 Z" stroke={strokeColor} fill="none" strokeWidth="2" />
               <path d="M 200 150 A 20 20 0 0 1 220 130" fill="none" stroke={color1} strokeWidth="2"/>
-              <text x={220} y={170} fill={color1} textAnchor="middle">$\angle B$</text>
+              <text x={220} y={170} fill={color1} textAnchor="middle">{"$\angle B$"}</text>
               
               <path d="M 290 150 L 340 80 L 390 150 Z" stroke={strokeColor} fill="none" strokeWidth="2" />
               <path d="M 320 150 A 20 20 0 0 1 340 130" fill="none" stroke={color1} strokeWidth="2"/>
-              <text x={340} y={170} fill={color1} textAnchor="middle">$\angle C$</text>
+              <text x={340} y={170} fill={color1} textAnchor="middle">{"$\angle C$"}</text>
               
-              <text x={200} y={30} {...textProps} fontSize="16">Given: $\angle A \cong \angle B$ and $\angle B \cong \angle C$</text>
-              <text x={200} y={60} {...textProps} fill={color2} fontWeight="bold" fontSize="16">Conclude: $\angle A \cong \angle C$</text>
+              <text x={200} y={30} {...textProps} fontSize="16">{"Given: $\angle A \cong \angle B$ and $\angle B \cong \angle C$"}</text>
+              <text x={200} y={60} {...textProps} fill={color2} fontWeight="bold" fontSize="16">{"Conclude: $\angle A \cong \angle C$"}</text>
             </motion.g>
           )}
 
@@ -50,15 +50,15 @@ const AnglePropertiesFigure: React.FC<{ questionIndex: number }> = ({ questionIn
               <path d="M 50 180 L 200 50 L 350 180 Z" stroke={strokeColor} fill="none" strokeWidth="2" />
               <line x1="200" y1="50" x2="200" y2="180" stroke={color2} strokeWidth="4" strokeDasharray="5 5" />
               <text x={210} y={115} fill={color2} fontSize="14">Angle Bisector</text>
-              <text x={200} y={30} fill={strokeColor} textAnchor="middle" fontSize="16">Statement: $\angle ABD \cong \angle CBD$ ? No...</text>
-              <text x={200} y={30} fill={strokeColor} textAnchor="middle" fontSize="16">Statement: $\angle ADB \cong \angle CDB$ ? No...</text>
+              {/* <text x={200} y={30} fill={strokeColor} textAnchor="middle" fontSize="16">Statement: $\angle ABD \cong \angle CBD$ ? No...</text> */}
+              {/* <text x={200} y={30} fill={strokeColor} textAnchor="middle" fontSize="16">Statement: $\angle ADB \cong \angle CDB$ ? No...</text> */}
               
               {/* Better example for reflexive angle: None. Reflexive is for SHARED parts. */}
               {/* Let's change this to a statement about a single angle. */}
               <path d="M 120 150 L 200 80 L 280 150 Z" stroke={strokeColor} fill="none" strokeWidth="2" />
               <path d="M 180 150 A 20 20 0 0 1 200 130" fill="none" stroke={color1} strokeWidth="2"/>
-              <text x={200} y={170} fill={color1} textAnchor="middle">$\angle A$</text>
-              <text x={200} y={40} fill={strokeColor} textAnchor="middle" fontSize="16">Statement: $\angle A \cong \angle A$</text>
+              <text x={200} y={170} fill={color1} textAnchor="middle">{"$\angle A$"}</text>
+              <text x={200} y={40} fill={strokeColor} textAnchor="middle" fontSize="16">{"Statement: $\angle A \cong \angle A$"}</text>
             </motion.g>
           )}
         </AnimatePresence>
@@ -198,7 +198,7 @@ export default function PropertiesSlide8() {
                 <strong>Reflexive Property:</strong>
                 <br/>Used when an angle is part of two different triangles that overlap.
                 <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Statement: $\angle C \cong \angle C$</span>
+                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">{"Statement: $\angle C \cong \angle C$"}</span>
                 <br/>
                 <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Reason: Reflexive Property</span>
               </li>
@@ -206,9 +206,9 @@ export default function PropertiesSlide8() {
                 <strong>Transitive Property:</strong>
                 <br/>Used to link "Given" statements.
                 <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Given: $\angle 1 \cong \angle 2$, $\angle 2 \cong \angle 3$</span>
+                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">{"Given: $\angle 1 \cong \angle 2$, $\angle 2 \cong \angle 3$"}</span>
                 <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Statement: $\angle 1 \cong \angle 3$</span>
+                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">{"Statement: $\angle 1 \cong \angle 3$"}</span>
                 <br/>
                 <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">Reason: Transitive Property</span>
               </li>

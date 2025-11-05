@@ -23,7 +23,7 @@ const CongruencePropertiesFigure: React.FC<{ questionIndex: number }> = ({ quest
   const textProps = {
     fontSize: 20,
     fontFamily: "monospace",
-    textAnchor: "middle",
+    textAnchor: "middle" as const, // <-- FIX: Added 'as const'
     fill: color1
   };
   
@@ -47,22 +47,22 @@ const CongruencePropertiesFigure: React.FC<{ questionIndex: number }> = ({ quest
               <line x1="200" y1="180" x2="300" y2="50" stroke={color1} strokeWidth="4" />
               <line x1="200" y1="180" x2="200" y2="50" stroke={color2} strokeWidth="4" strokeDasharray="5 5" />
               <text x={210} y={115} fill={color2} fontSize="14">Shared Side</text>
-              <text x={200} y={30} fill={strokeColor} textAnchor="middle" fontSize="16">Statement: $\overline{BD} \cong \overline{BD}$</text>
+              <text x={200} y={30} fill={strokeColor} textAnchor="middle" fontSize="16">{"Statement: $\overline{BD} \cong \overline{BD}$"}</text>
             </motion.g>
           )}
 
           {questionIndex === 1 && (
             <motion.g key="q2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <text x={200} y={90} {...textProps}>Given: $\triangle ABC \cong \triangle DEF$</text>
-              <text x={200} y={130} {...textProps}>Conclusion: $\triangle DEF \cong \triangle ABC$</text>
+              <text x={200} y={90} {...textProps}>{"Given: $\triangle ABC \cong \triangle DEF$"}</text>
+              <text x={200} y={130} {...textProps}>{"Conclusion: $\triangle DEF \cong \triangle ABC$"}</text>
             </motion.g>
           )}
           
           {questionIndex === 2 && (
             <motion.g key="q3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <text x={200} y={90} {...textProps}>If: $\overline{AB} \cong \overline{CD}$</text>
-              <text x={200} y={120} {...textProps}>and $\overline{CD} \cong \overline{EF}$</text>
-              <text x={200} y={160} {...textProps} fill={color2} fontWeight="bold">Then: $\overline{AB} \cong \overline{EF}$</text>
+              <text x={200} y={90} {...textProps}>{"If: $\overline{AB} \cong \overline{CD}$"}</text>
+              <text x={200} y={120} {...textProps}>{"and $\overline{CD} \cong \overline{EF}$"}</text>
+              <text x={200} y={160} {...textProps} fill={color2} fontWeight="bold">{"Then: $\overline{AB} \cong \overline{EF}$"}</text>
             </motion.g>
           )}
         </AnimatePresence>
@@ -210,19 +210,19 @@ export default function PropertiesSlide5() {
                 <strong>Reflexive Property of Congruence:</strong>
                 <br/>Any figure is congruent to itself.
                 <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$\overline{AB} \cong \overline{AB}$</span>
+                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">{"$\overline{AB} \cong \overline{AB}$"}</span>
               </li>
               <li>
                 <strong>Symmetric Property of Congruence:</strong>
                 <br/>Congruence statements can be flipped.
                 <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">If $\angle A \cong \angle B$, then $\angle B \cong \angle A$</span>
+                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">{"If $\angle A \cong \angle B$, then $\angle B \cong \angle A$"}</span>
               </li>
               <li>
                 <strong>Transitive Property of Congruence:</strong>
                 <br/>Congruence can be passed along a chain.
                 <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">If $\triangle A \cong \triangle B$ and $\triangle B \cong \triangle C$, then $\triangle A \cong \triangle C$</span>
+                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">{"If $\triangle A \cong \triangle B$ and $\triangle B \cong \triangle C$, then $\triangle A \cong \triangle C$"}</span>
               </li>
             </ul>
           </div>

@@ -117,7 +117,7 @@ export default function AsaSlide3() {
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
-  const [score, setScore] = = useState(0);
+  const [score, setScore] =  useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 

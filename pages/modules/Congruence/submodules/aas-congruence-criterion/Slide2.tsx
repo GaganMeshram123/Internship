@@ -154,7 +154,8 @@ export default function AasSlide2() {
     }));
   };
 
-  const handleQuizAnswer = (answerText: string) = > {
+  // --- THIS IS THE CORRECTED LINE ---
+  const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
