@@ -3,64 +3,36 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import  katex  from 'katex'; // Assuming you have katex for math rendering
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
-const SymmetricPropertyAnimation: React.FC = () => {
-  const svgWidth = 400;
-  const svgHeight = 220;
-  const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  
-  const textProps = {
-    fontSize: 20,
-    fontFamily: "monospace",
-    textAnchor: "middle",
-    fill: color1
-  };
+// --- TABLE COMPONENT DEFINED INSIDE ---
+type ProofRow = { num: string; statement: string; reason: string };
 
-  const itemAnim = (delay: number) => ({
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { delay: delay } },
-  });
-
+const ProofTableExample: React.FC<{ rows: ProofRow[] }> = ({ rows }) => {
   return (
-    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ minHeight: svgHeight }}>
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        
-      {/*   <motion.text x={200} y={60} {...textProps} initial="hidden" animate="visible" variants={itemAnim(0.5)}>
-          Given: $m\angle B = m\angle A$
-        </motion.text>
-         */}
-        <motion.path 
-          d="M 150 80 C 200 100, 200 100, 250 80" 
-          stroke={strokeColor} 
-          strokeWidth="2"
-          strokeDasharray="4 4"
-          fill="none"
-          initial="hidden" animate="visible" variants={itemAnim(1.0)}
-        />
-        <motion.text x={280} y={90} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(1.2)}>
-          (Symmetric Property)
-        </motion.text>
-        
-       {/*  <motion.text x={200} y={130} {...textProps} initial="hidden" animate="visible" variants={itemAnim(1.5)}>
-          Use: $m\angle A = m\angle B$
-        </motion.text> */}
-        
-        <motion.text x={200} y={180} fill={strokeColor} fontSize="16" textAnchor="middle"
-          initial="hidden" animate="visible" variants={itemAnim(2.0)}>
-          In proofs, we often do this "flip"
-        </motion.text>
-        <motion.text x={200} y={200} fill={strokeColor} fontSize="16" textAnchor="middle"
-          initial="hidden" animate="visible" variants={itemAnim(2.2)}>
-          without writing a separate step.
-        </motion.text>
-      </svg>
+    <div className="w-full my-4">
+      <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-slate-800">
+        <thead>
+          <tr className="bg-slate-200 dark:bg-slate-700">
+            <th className="p-3 w-12 text-center text-sm font-semibold text-slate-700 dark:text-slate-300"></th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Statement</th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, index) => (
+            <tr key={index} className="border-t border-slate-300 dark:border-slate-600">
+              <td className="p-3 text-center font-mono text-slate-500">{row.num}</td>
+              <td className="p-3 font-mono" dangerouslySetInnerHTML={{ __html: katex.renderToString(row.statement, { throwOnError: false }) }}></td>
+              <td className="p-3 text-slate-600 dark:text-slate-400">{row.reason}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
-// --- END OF ANIMATION COMPONENT DEFINITION ---
+// --- END OF TABLE COMPONENT DEFINITION ---
 
 
 export default function PropertiesSlide9() {
@@ -68,7 +40,8 @@ export default function PropertiesSlide9() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  // --- UPDATED: Now has 3 booleans for 3 questions ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -91,6 +64,7 @@ export default function PropertiesSlide9() {
     explanation: string;
   }
 
+  // --- UPDATED: New questions array ---
   const questions: QuizQuestion[] = [
     {
       id: 'properties-omitting-q1',
@@ -101,22 +75,49 @@ export default function PropertiesSlide9() {
         "It is considered obvious and is omitted for brevity (to save time)."
       ],
       correctAnswer: "It is considered obvious and is omitted for brevity (to save time).",
-      explanation: "Correct! Most proofs assume that if $A \cong B$ is true, then $B \cong A$ is also true without needing a separate line item. It's a common convention."
+      explanation: "Correct! Most proofs assume that if $A = B$ is true, then $B = A$ is also true without needing a separate line item. It's a common convention."
     },
     {
       id: 'properties-omitting-q2',
-      question: 'If a "Given" is $\overline{XY} \cong \overline{AB}$ and you write $\overline{AB} \cong \overline{XY}$ in your proof, what is the *technical* reason?',
+      question: 'In the formal proof, how do we get $y^2 = 2$ on line 4?',
       options: [
-        "The Transitive Property",
-        "The Symmetric Property",
-        "The Reflexive Property"
+        "From $x = y^2$ (line 1) and $x = 2$ (line 3)",
+        "From $y^2 = x$ (line 2) and $x = 2$ (line 3)",
+        "From $x = y^2$ (line 1) and $y^2 = x$ (line 2)"
       ],
-      correctAnswer: "The Symmetric Property",
-      explanation: "Correct! Even though we often skip this step, the Symmetric Property is the formal, logical reason that allows you to 'flip' the congruence statement."
+      correctAnswer: "From $y^2 = x$ (line 2) and $x = 2$ (line 3)",
+      explanation: "Correct! The Transitive Property requires $A=B$ and $B=C$. In this case, $A$ is $y^2$, $B$ is $x$, and $C$ is $2$. We use lines 2 ($y^2 = x$) and 3 ($x = 2$) to get $y^2 = 2$."
+    },
+    {
+      id: 'properties-omitting-q3',
+      question: 'In the *shorter* proof, how is the Transitive Property applied?',
+      options: [
+        "It uses $x = y^2$ and $x = 2$ directly.",
+        "It *implicitly* flips $x = y^2$ to $y^2 = x$ 'under the hood' first.",
+        "The shorter proof does not use the Transitive Property."
+      ],
+      correctAnswer: "It *implicitly* flips $x = y^2$ to $y^2 = x$ 'under the hood' first.",
+      explanation: "Exactly! The proof *looks* like it's just using $x = y^2$ and $x = 2$. But to be formal, it's 'under the hood' using the Symmetric Property on line 1 first (to get $y^2 = x$) and *then* using the Transitive Property with $x = 2$."
     }
   ];
 
+  // --- Data for the tables ---
+  const longProof: ProofRow[] = [
+    { num: "1", statement: "x = y^2", reason: "Given" },
+    { num: "2", statement: "y^2 = x", reason: "Symmetric property of equality" },
+    { num: "3", statement: "x = 2", reason: "Given" },
+    { num: "4", statement: "y^2 = 2", reason: "Transitive property of equality" },
+  ];
+  
+  // Note: I numbered this 1, 2, 3 for clarity, as the '3' '3' in the image was likely a typo.
+  const shortProof: ProofRow[] = [
+    { num: "1", statement: "x = y^2", reason: "Given" },
+    { num: "2", statement: "x = 2", reason: "Given" },
+    { num: "3", statement: "y^2 = 2", reason: "Transitive property of equality" },
+  ];
+
   const handleInteractionComplete = (response: InteractionResponse) => {
+    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -124,6 +125,7 @@ export default function PropertiesSlide9() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
+    // ... (This function remains unchanged, but I'll fix the template literal string)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -152,6 +154,7 @@ export default function PropertiesSlide9() {
   };
 
   const handleNextQuestion = () => {
+    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -167,6 +170,7 @@ export default function PropertiesSlide9() {
   };
 
 
+  // --- UPDATED: All new slideContent ---
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
@@ -175,47 +179,54 @@ export default function PropertiesSlide9() {
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">A Note on Proofs</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Omitting the Symmetric Property</h2>
             <p className="text-lg leading-relaxed">
-              You may have noticed that the **Symmetric Property** feels a little... obvious.
+              We occasionally skip referencing the symmetric property when proving mathematical statements involving equality and congruence. This helps to make our proofs a bit shorter.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              If $\triangle ABC \cong \triangle DEF$, *of course* $\triangle DEF \cong \triangle ABC$.
+              For example, suppose we have the following two equations:
             </p>
+            <div className="flex justify-center font-mono text-xl p-4 my-4 rounded-lg bg-slate-100 dark:bg-slate-700/60">
+              <span dangerouslySetInnerHTML={{ __html: katex.renderToString("x = y^2", { throwOnError: false }) }} />
+              <span className="mx-8">,</span>
+              <span dangerouslySetInnerHTML={{ __html: katex.renderToString("x = 2", { throwOnError: false }) }} />
+            </div>
           </div>
 
-          {/* --- CARD 2 (The Convention) --- */}
+          {/* --- CARD 2 (The Formal Proof) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Omitting the Step</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">A Formal Proof</h3>
             <p className="text-lg leading-relaxed">
-              Because it is so obvious, most two-column proofs **omit** this step for brevity.
+              We can construct a formal proof that <span dangerouslySetInnerHTML={{ __html: katex.renderToString("y^2 = 2", { throwOnError: false }) }} /> using a two-column format as follows:
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              {/* <p className="text-lg">
-                For example, if your "Given" is $\overline{CD} \cong \overline{AB}$, you will often just write $\overline{AB} \cong \overline{CD}$ in your proof and re-use the reason "Given".
-              </p> */}
-            </div>
+            
+            {/* --- USE THE TABLE COMPONENT (Long) --- */}
+            <ProofTableExample rows={longProof} />
+
             <p className="text-lg leading-relaxed mt-4">
-              Technically, this is not 100% precise, as the *real* reason is the Symmetric Property. However, it is a universally accepted convention to keep proofs from becoming too long and repetitive.
+              The last line is true because, from rows 2 and 3 respectively, we have <span dangerouslySetInnerHTML={{ __html: katex.renderToString("y^2 = x", { throwOnError: false }) }} /> and <span dangerouslySetInnerHTML={{ __html: katex.renderToString("x = 2", { throwOnError: false }) }} />, so by the transitive property of equality, <span dangerouslySetInnerHTML={{ __html: katex.renderToString("y^2 = 2", { throwOnError: false }) }} />.
             </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Shorter Proof and Quiz */}
         <div className="space-y-6">
-          {/* --- ANIMATION CARD --- */}
+          {/* --- REPLACED ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">A Common Shortcut</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Shorter Proof</h3>
+            <p className="text-lg leading-relaxed">
+              We can construct a shorter proof by omitting the second line:
+            </p>
             
-            {/* --- USE THE ANIMATION COMPONENT --- */}
-            <SymmetricPropertyAnimation />
+            {/* --- USE THE TABLE COMPONENT (Short) --- */}
+            <ProofTableExample rows={shortProof} />
             
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              We "flip" statements all the time without writing a new step.
+            <p className="text-lg leading-relaxed mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
+              In this proof, the symmetric property is still applied <strong>"under the hood,"</strong> but we don't explicitly refer to it.
             </p>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (Now reflects 3 questions) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -223,7 +234,7 @@ export default function PropertiesSlide9() {
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
             </div>
-            {/* --- Progress Bar --- */}
+            {/* --- Progress Bar (updates automatically) --- */}
             <div className="flex space-x-2 mb-6">
               {questions.map((_, index) => (
                 <div
@@ -238,9 +249,11 @@ export default function PropertiesSlide9() {
                 />
               ))}
             </div>
+
+            {/* --- Quiz Logic (remains the same, but I'll fix the broken template literals) --- */}
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                <div className="text-lg mb-4" dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}></div>
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
@@ -265,6 +278,7 @@ export default function PropertiesSlide9() {
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
                       >
+                        {/* Render Katex in options if needed, but plain text is fine here */}
                         {option}
                       </motion.button>
                     );
@@ -283,8 +297,9 @@ export default function PropertiesSlide9() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
+                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4"
+                           dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].explanation, { throwOnError: false }) }}
+                      >
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}
@@ -299,6 +314,7 @@ export default function PropertiesSlide9() {
                 </AnimatePresence>
               </>
             ) : (
+              // --- Quiz Complete State (unchanged) ---
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
                 <div className="text-3xl mb-4">👍</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>

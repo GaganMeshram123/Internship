@@ -3,83 +3,180 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import katex from 'katex';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const FullProofFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
-  const svgWidth = 400;
+// --- TABLE COMPONENT DEFINED INSIDE ---
+type ProofRow = { num: string; statement: string; reason: string };
+
+const ProofTable: React.FC<{ rows: ProofRow[] }> = ({ rows }) => {
+  return (
+    <div className="w-full my-4">
+      <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-slate-800">
+        <thead>
+          <tr className="bg-slate-200 dark:bg-slate-700">
+            <th className="p-3 w-12 text-center text-sm font-semibold text-slate-700 dark:text-slate-300"></th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Statement</th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.num} className="border-t border-slate-300 dark:border-slate-600">
+              <td className="p-3 text-center font-mono text-slate-500">{row.num}</td>
+              <td className="p-3 font-mono" dangerouslySetInnerHTML={{ __html: katex.renderToString(row.statement, { throwOnError: false }) }}></td>
+              <td className="p-3 text-slate-600 dark:text-slate-400">{row.reason}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+// --- END OF TABLE COMPONENT ---
+
+// --- FIGURE FOR LEFT COLUMN ---
+const AasExampleFigure: React.FC = () => {
+  const svgWidth = 300;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-  const hiddenColor1 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const hiddenColor2 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const angleColor1 = isDarkMode ? '#F472B6' : '#EC4899'; // Pink
+  const angleColor2 = isDarkMode ? '#C084FC' : '#A855F7'; // Purple
   
-  // Figure: Intersecting transversals between parallel lines
-  const T1 = { A: { x: 50, y: 50 }, B: { x: 150, y: 50 }, C: { x: 180, y: 110 } };
-  const T2 = { E: { x: 350, y: 170 }, D: { x: 250, y: 170 }, C: { x: 220, y: 110 } };
-  // C is the intersection. Let's make C the same point.
-  const C_intersect = { x: 200, y: 110 };
-  const T1_A = { x: 50, y: 50 };
-  const T1_B = { x: 150, y: 50 };
-  const T2_E = { x: 350, y: 170 };
-  const T2_D = { x: 250, y: 170 };
+  const P={x: 100, y: 180}, Q={x: 280, y: 180}, R={x: 50, y: 50}, S={x: 200, y: 180};
+  const T_on_PR = { x: 75, y: 115 };
+  
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* Triangle PQT */}
+        <path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${T_on_PR.x} ${T_on_PR.y} Z`} stroke={strokeColor} strokeWidth="2" fill="none" />
+        {/* Triangle PRS */}
+        <path d={`M ${P.x} ${P.y} L ${R.x} ${R.y} L ${S.x} ${S.y} Z`} stroke={strokeColor} strokeWidth="2" fill="none" />
+        
+        {/* Angle Q (Pink) */}
+        <path d={`M ${Q.x - 20} ${Q.y} A 20 20 0 0 0 ${Q.x - 15} ${Q.y - 14}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+        {/* Angle R (Pink) */}
+        <path d={`M ${R.x + 20} ${R.y} A 20 20 0 0 1 ${R.x + 15} ${R.y + 14}`} stroke={angleColor1} fill="none" strokeWidth="2" />
 
+        {/* Side QT, RS (Purple) */}
+        <path d="M 183 145 L 175 152" stroke={angleColor2} strokeWidth="3" />
+        <path d="M 120 180 L 130 180" stroke={angleColor2} strokeWidth="3" />
+        
+        <text x={P.x - 15} y={P.y + 15} fill={strokeColor}>P</text>
+        <text x={Q.x + 10} y={Q.y + 15} fill={strokeColor}>Q</text>
+        <text x={R.x - 20} y={R.y + 10} fill={strokeColor}>R</text>
+        <text x={S.x - 5} y={S.y + 15} fill={strokeColor}>S</text>
+        <text x={T_on_PR.x - 20} y={T_on_PR.y} fill={strokeColor}>T</text>
+      </svg>
+    </div>
+  );
+}
+
+// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
+const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+  const svgWidth = 350;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleColor1 = isDarkMode ? '#F472B6' : '#EC4899'; // Pink
+  const angleColor2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ minHeight: svgHeight }}>
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        
-        {/* Parallel Lines */}
-        <line x1="0" y1="50" x2="400" y2="50" stroke={strokeColor} strokeDasharray="4 4" />
-        <line x1="0" y1="170" x2="400" y2="170" stroke={strokeColor} strokeDasharray="4 4" />
-        
-        {/* Transversals */}
-        <line x1={T1_A.x} y1={T1_A.y} x2={T2_E.x} y2={T2_E.y} stroke={strokeColor} />
-        <line x1={T1_B.x} y1={T1_B.y} x2={T2_D.x} y2={T2_D.y} stroke={strokeColor} />
-        
-        {/* Labels */}
-        <text x={T1_A.x - 20} y={T1_A.y + 5} fill={strokeColor}>A</text>
-        <text x={T1_B.x + 10} y={T1_B.y + 5} fill={strokeColor}>B</text>
-        <text x={C_intersect.x - 5} y={C_intersect.y + 15} fill={strokeColor}>C</text>
-        <text x={T2_D.x - 20} y={T2_D.y + 15} fill={strokeColor}>D</text>
-        <text x={T2_E.x + 10} y={T2_E.y + 15} fill={strokeColor}>E</text>
-        
-        {/* Given: AB || DE */}
-        <text x={100} y={40} fill={givenColor} fontSize="12">Given: $AB \parallel DE$</text>
-
-        {/* Given: C is midpoint of AE */}
-        <line x1={T1_A.x} y1={T1_A.y} x2={C_intersect.x} y2={C_intersect.y} stroke={givenColor} strokeWidth="4" />
-        <line x1={T2_E.x} y1={T2_E.y} x2={C_intersect.x} y2={C_intersect.y} stroke={givenColor} strokeWidth="4" />
-        <text x={100} y={90} fill={givenColor} fontSize="12">Given: $C$ is midpoint of $AE$ (S)</text>
-
-        {/* Hidden 1: Vertical Angles */}
         <AnimatePresence>
-        {(questionIndex === 0 || questionIndex === 1) && (
-          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-            <path d={`M ${C_intersect.x - 15} ${C_intersect.y - 10} A 20 20 0 0 1 ${C_intersect.x + 2} ${C_intersect.y - 18}`} stroke={hiddenColor1} fill="none" strokeWidth="2" />
-            <path d={`M ${C_intersect.x + 15} ${C_intersect.y + 10} A 20 20 0 0 1 ${C_intersect.x - 2} ${C_intersect.y + 18}`} stroke={hiddenColor1} fill="none" strokeWidth="2" />
-            <text x={220} y={100} fill={hiddenColor1} fontSize="12">Hidden 1: Vertical $\angle$s (A)</text>
-          </motion.g>
-        )}
-        </AnimatePresence>
+          {questionIndex === 0 && (
+            <motion.g key="q6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* SSS Figure (Question 6) */}
+              <SssQuizFigure strokeColor={strokeColor} />
+            </motion.g>
+          )}
 
-        {/* Hidden 2: Alternate Interior Angles */}
-        <AnimatePresence>
-        {(questionIndex === 0 || questionIndex === 1) && (
-          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
-            <path d={`M ${T1_A.x + 20} ${T1_A.y} A 20 20 0 0 1 ${T1_A.x + 10} ${T1_A.y + 17}`} stroke={hiddenColor2} fill="none" strokeWidth="2" />
-            <path d={`M ${T2_E.x - 20} ${T2_E.y} A 20 20 0 0 0 ${T2_E.x - 10} ${T2_E.y - 17}`} stroke={hiddenColor2} fill="none" strokeWidth="2" />
-            <text x={300} y={150} fill={hiddenColor2} fontSize="12">Hidden 2: Alt. Int. $\angle$s (A)</text>
-          </motion.g>
-        )}
+          {questionIndex === 1 && (
+            <motion.g key="q7" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* ASA Figure (Question 7) */}
+              <AsaQuizFigure strokeColor={strokeColor} angleColor1={angleColor1} angleColor2={angleColor2} />
+            </motion.g>
+          )}
+          
+          {questionIndex === 2 && (
+            <motion.g key="q8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* HL Figure (Question 8) */}
+              <HlQuizFigure strokeColor={strokeColor} />
+            </motion.g>
+          )}
         </AnimatePresence>
-
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- Helper figures for the quiz ---
+const SssQuizFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+  const P={x: 250, y: 180}, Q={x: 300, y: 50}, R={x: 50, y: 100}, S={x: 100, y: 50};
+  return (
+    <g>
+      <path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} fill="none" />
+      <path d={`M ${P.x} ${P.y} L ${S.x} ${S.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
+      {/* Ticks PQ cong PR */}
+      <path d="M 278 110 L 270 117" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 140 146 L 150 142" stroke={strokeColor} strokeWidth="2" />
+      {/* Ticks SQ cong SR */}
+      <path d="M 195 50 L 200 50" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 195 53 L 200 53" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 72 78 L 78 72" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 75 81 L 81 75" stroke={strokeColor} strokeWidth="2" />
+      
+      <text x={P.x + 10} y={P.y + 15} fill={strokeColor}>P</text>
+      <text x={Q.x + 10} y={Q.y + 5} fill={strokeColor}>Q</text>
+      <text x={R.x - 20} y={R.y + 5} fill={strokeColor}>R</text>
+      <text x={S.x - 10} y={S.y - 10} fill={strokeColor}>S</text>
+    </g>
+  );
+};
+
+const AsaQuizFigure: React.FC<{ strokeColor: string, angleColor1: string, angleColor2: string }> = ({ strokeColor, angleColor1, angleColor2 }) => {
+  const P={x: 50, y: 110}, Q={x: 300, y: 110}, R={x: 200, y: 180}, S={x: 200, y: 40};
+  return (
+    <g>
+      <path d={`M ${P.x} ${P.y} L ${S.x} ${S.y} L ${Q.x} ${Q.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
+      <path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
+      {/* Angle RPS (Pink) */}
+      <path d={`M ${P.x + 20} ${P.y - 5} A 20 20 0 0 1 ${P.x + 18} ${P.y + 18}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+      {/* Angle RQS (Green) */}
+      <path d={`M ${Q.x - 20} ${Q.y - 5} A 20 20 0 0 0 ${Q.x - 18} ${Q.y + 18}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+      <path d={`M ${Q.x - 23} ${Q.y - 7} A 23 23 0 0 0 ${Q.x - 20} ${Q.y + 21}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+
+      <text x={P.x - 20} y={P.y + 5} fill={strokeColor}>P</text>
+      <text x={Q.x + 10} y={Q.y + 5} fill={strokeColor}>Q</text>
+      <text x={R.x - 10} y={R.y + 20} fill={strokeColor}>R</text>
+      <text x={S.x - 10} y={S.y - 10} fill={strokeColor}>S</text>
+    </g>
+  );
+};
+
+const HlQuizFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+  const P={x: 280, y: 180}, Q={x: 175, y: 50}, R={x: 70, y: 180}, A={x: 175, y: 180};
+  return (
+    <g>
+      <path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
+      <path d={`M ${Q.x} ${Q.y} L ${A.x} ${A.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
+      {/* Right angle A (blue square) */}
+      <path d={`M ${A.x} ${A.y - 12} L ${A.x - 12} ${A.y - 12} L ${A.x - 12} ${A.y}`} stroke="#3B82F6" fill="none" strokeWidth="2" />
+      
+      {/* Ticks QP cong QR */}
+      <path d="M 233 110 L 225 117" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 118 110 L 126 117" stroke={strokeColor} strokeWidth="2" />
+      
+      <text x={P.x + 10} y={P.y + 15} fill={strokeColor}>P</text>
+      <text x={Q.x - 10} y={Q.y - 10} fill={strokeColor}>Q</text>
+      <text x={R.x - 20} y={R.y + 15} fill={strokeColor}>R</text>
+      <text x={A.x - 5} y={A.y + 20} fill={strokeColor}>A</text>
+    </g>
+  );
+};
+// --- END OF QUIZ FIGURE COMPONENT ---
 
 
 export default function ProvingSlide7() {
@@ -110,33 +207,45 @@ export default function ProvingSlide7() {
     explanation: string;
   }
   
-  const allReasons = ["Given", "Definition of Midpoint", "Vertical Angles are Congruent", "Alternate Interior Angles", "ASA", "CPCTC"];
+  const allReasons = ["SSS", "SAS", "ASA", "AAS", "HL", "CPCTC", "Given", "Reflexive property", "Def. of angle bisector"];
 
+  // --- UPDATED: New questions based on Q6, Q7, Q8 ---
   const questions: QuizQuestion[] = [
     {
-      id: 'proving-complete-q1',
-      question: 'Given $AB \parallel DE$ and $C$ is the midpoint of $AE$. What is the reason for $\angle BAC \cong \angle DEC$?',
-      options: allReasons,
-      correctAnswer: "Alternate Interior Angles",
-      explanation: "Correct! The parallel lines form a 'Z' shape with the transversal $AE$, creating congruent alternate interior angles."
+      id: 'proving-q6-sss',
+      question: 'Diagram 1 (Q6): What is the reason for Step 4: $\\triangle PQS \\cong \\triangle PRS$?',
+      options: ["SSS", "SAS", "ASA", "CPCTC"],
+      correctAnswer: "SSS",
+      explanation: "Correct! We have $\overline{PQ} \cong \overline{PR}$ (S, Step 1), $\overline{SQ} \cong \overline{SR}$ (S, Step 2), and $\overline{PS} \cong \overline{PS}$ (S, Step 3). This is SSS."
     },
     {
-      id: 'proving-complete-q2',
-      question: 'We also know $AC \cong EC$ (Def. of Midpoint) and $\angle BCA \cong \angle DCE$ (Vertical Angles). Which criterion proves $\triangle BCA \cong \triangle DCE$?',
-      options: ["SSS", "SAS", "ASA", "AAS", "HL"],
+      id: 'proving-q7-asa',
+      question: 'Diagram 2 (Q7): What is the reason for Step 6: $\\triangle PQR \\cong \\triangle PQS$?',
+      options: ["SSS", "SAS", "ASA", "AAS"],
       correctAnswer: "ASA",
-      explanation: "Correct! We have $\angle BAC$ (A), the *included* side $AC$ (S), and $\angle BCA$ (A). This is the ASA criterion."
+      explanation: "Correct! We have $\angle RPQ \cong \angle SPQ$ (A, Step 2), the included side $\overline{PQ} \cong \overline{PQ}$ (S, Step 5), and $\angle RQP \cong \angle SQP$ (A, Step 4)."
     },
     {
-      id: 'proving-complete-q3',
-      question: 'Now that we know $\triangle BCA \cong \triangle DCE$, what is the reason for the final statement, $BC \cong DC$?',
-      options: allReasons,
-      correctAnswer: "CPCTC",
-      explanation: "Correct! *After* proving the triangles are congruent, we use CPCTC (Corresponding Parts of Congruent Triangles are Congruent) to prove their other parts are congruent."
+      id: 'proving-q8-hl',
+      question: 'Diagram 3 (Q8): What is the reason for Step 6: $\\triangle QAP \cong \\triangle QAR$?',
+      options: ["SAS", "ASA", "AAS", "HL"],
+      correctAnswer: "HL",
+      explanation: "Correct! We have Right Triangles (Step 3), congruent Hypotenuses $\overline{QP} \cong \overline{QR}$ (Step 4), and a congruent Leg $\overline{QA} \cong \overline{QA}$ (Step 5)."
     }
+  ];
+  
+  // --- Data for the table in the left column ---
+  const proofRows: ProofRow[] = [
+    { num: "1", statement: "\\angle P \\cong \\angle P", reason: "Reflexive property of congruence" },
+    { num: "2", statement: "m\\angle Q = m\\angle R", reason: "Given" },
+    { num: "3", statement: "\\angle Q \\cong \\angle R", reason: "Definition of congruent angles" },
+    { num: "4", statement: "QT = RS", reason: "Given" },
+    { num: "5", statement: "\\overline{QT} \\cong \\overline{RS}", reason: "Definition of congruent segments" },
+    { num: "6", statement: "\\triangle PQT \\cong \\triangle PRS", reason: "AAS congruence criterion" },
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
+    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -144,6 +253,7 @@ export default function ProvingSlide7() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
+    // ... (This function remains unchanged)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -172,6 +282,7 @@ export default function ProvingSlide7() {
   };
 
   const handleNextQuestion = () => {
+    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -187,6 +298,7 @@ export default function ProvingSlide7() {
   };
 
 
+  // --- UPDATED: New slide content ---
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
@@ -195,61 +307,46 @@ export default function ProvingSlide7() {
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Constructing a Complete Proof</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: AAS Proof</h2>
             <p className="text-lg leading-relaxed">
-              This is the final challenge. Let's combine all our skills to build a complete proof from start to finish.
+              In the diagram above, <span dangerouslySetInnerHTML={{ __html: katex.renderToString("m\\angle Q = m\\angle R", { throwOnError: false }) }} /> and <span dangerouslySetInnerHTML={{ __html: katex.renderToString("QT = RS", { throwOnError: false }) }} />.
             </p>
+            <AasExampleFigure />
             <p className="text-lg leading-relaxed mt-4">
-              Look at the diagram. We have to use *multiple* definitions and properties to find all the pieces.
+              Consider the following statement:
             </p>
+            <div className="my-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60"
+                 dangerouslySetInnerHTML={{ __html: katex.renderToString("\\triangle PQT \\cong \\triangle PRS", { throwOnError: false, displayMode: true }) }}
+            />
           </div>
 
-          {/* --- CARD 2 (The 5-Step Strategy) --- */}
+          {/* --- CARD 2 (The Logic) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The 5-Step Strategy</h3>
-            <p className="text-lg leading-relaxed">
-              For any proof, follow these steps:
-            </p>
-            <ol className="list-decimal list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Correct Proof</h3>
+            <ProofTable rows={proofRows} />
+            <ul className="list-disc list-outside mt-4 ml-5 text-lg space-y-2 text-slate-700 dark:text-slate-300">
               <li>
-                <strong>List Givens:</strong>
-                <br/>
-                $AB \parallel DE$
-                <br/>
-                $C$ is midpoint of $AE \implies AC \cong EC$ (S)
+                <strong>Row 1:</strong> We have that <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle P", { throwOnError: false }) }} /> is congruent to itself by the <strong>Reflexive property</strong>. This is our first Angle (A).
               </li>
               <li>
-                <strong>Find Hidden Clues:</strong>
-                <br/>
-                $AB \parallel DE \implies \angle A \cong \angle E$ (A) (Alt. Int. Angles)
-                <br/>
-                $\angle BCA \cong \angle DCE$ (A) (Vertical Angles)
+                <strong>Row 3:</strong> We are given <span dangerouslySetInnerHTML={{ __html: katex.renderToString("m\\angle Q = m\\angle R", { throwOnError: false }) }} />, so <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle Q \\cong \\angle R", { throwOnError: false }) }} />. This is our second Angle (A).
               </li>
               <li>
-                <strong>Find Criterion:</strong>
-                <br/>
-                We have Angle-Side-Angle (ASA).
+                <strong>Row 5:</strong> We are given <span dangerouslySetInnerHTML={{ __html: katex.renderToString("QT = RS", { throwOnError: false }) }} />, so <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{QT} \\cong \\overline{RS}", { throwOnError: false }) }} />. This is our Side (S).
               </li>
               <li>
-                <strong>State $\triangle$ Congruence:</strong>
-                <br/>
-                $\triangle BCA \cong \triangle DCE$ by ASA.
+                <strong>Row 6:</strong> The side <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{QT}", { throwOnError: false }) }} /> is *non-included*. Therefore, we use the <strong>AAS criterion</strong>.
               </li>
-              <li>
-                <strong>Use CPCTC:</strong>
-                <br/>
-                Now we can prove $BC \cong DC$ by CPCTC.
-              </li>
-            </ol>
+            </ul>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Quiz */}
         <div className="space-y-6">
           {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Complete the Proof</h3>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Complete the Proofs</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
@@ -271,11 +368,11 @@ export default function ProvingSlide7() {
             </div>
 
             {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <FullProofFigure questionIndex={currentQuestionIndex} />
+            <ProofQuizFigure questionIndex={currentQuestionIndex} />
 
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
+                <div className="text-lg mb-4 mt-6" dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}></div>
                 {/* --- Answer Options --- */}
                 <div className="grid grid-cols-2 gap-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
@@ -315,11 +412,12 @@ export default function ProvingSlide7() {
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
                           ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct
-                          : 'bg-red-50 dark:bg-red-900/3s0 border border-red-200 dark:border-red-700' // Incorrect
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
+                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4 break-words"
+                           dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].explanation, { throwOnError: false }) }}
+                      >
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}
@@ -353,8 +451,9 @@ export default function ProvingSlide7() {
 
   return (
     <SlideComponentWrapper
+      // --- UPDATED Props ---
       slideId="proving-constructing-complete"
-      slideTitle="Constructing Complete Proofs of Congruence Statements"
+      slideTitle="Constructing Complete Proofs"
       moduleId="congruence"
       submoduleId="proving-congruence-statements"
       interactions={localInteractions}

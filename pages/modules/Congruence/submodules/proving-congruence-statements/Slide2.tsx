@@ -3,69 +3,76 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import katex from 'katex'; // Assuming katex is available
 
 // --- ANIMATION COMPONENT DEFINED INSIDE ---
-const SimpleProofFigure: React.FC = () => {
-  const svgWidth = 400;
-  const svgHeight = 220;
+const SSSProofFigure: React.FC = () => {
+  const svgWidth = 350;
+  const svgHeight = 250;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-  const hiddenColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  
+  // Colors from the user's images
+  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue (Side 1)
+  const color2 = isDarkMode ? '#F59E0B' : '#D97706'; // Orange (Side 2)
+  const color3 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green (Side 3)
   
   const itemAnim = (delay: number) => ({
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { delay: delay } },
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { delay: delay, duration: 0.5 } },
   });
 
-  // Figure: Two triangles sharing a side
-  const Q1 = { A: { x: 50, y: 110 }, B: { x: 200, y: 40 }, C: { x: 350, y: 110 }, D: { x: 200, y: 180 } };
+  // Coordinates based on the user's diagram
+  const A = { x: 280, y: 190 };
+  const B = { x: 230, y: 60 };
+  const C = { x: 70, y: 200 };
+  const D = { x: 50, y: 70 };
+
+  // Tick mark paths
+  const tick1_AB = "M 253 118 L 257 127";
+  const tick1_AC = "M 166 200 L 174 196";
+  const tick2_BD = "M 130 64 L 140 66";
+  const tick2_CD = "M 59 125 L 61 135";
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
         
-        {/* Figure */}
-        <motion.path d={`M ${Q1.A.x} ${Q1.A.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2"
+        {/* Triangle ABD */}
+        <motion.path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${D.x} ${D.y} Z`} stroke="none" fill={strokeColor} fillOpacity="0.05"
+          initial="hidden" animate="visible" variants={itemAnim(0.2)} />
+        {/* Triangle ACD */}
+        <motion.path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${D.x} ${D.y} Z`} stroke="none" fill={strokeColor} fillOpacity="0.05"
+          initial="hidden" animate="visible" variants={itemAnim(0.2)} />
+
+        {/* Step 1: AB and AC (Blue) */}
+        <motion.line x1={A.x} y1={A.y} x2={B.x} y2={B.y} stroke={color1} strokeWidth="4"
           initial="hidden" animate="visible" variants={itemAnim(0.5)} />
-        <motion.path d={`M ${Q1.C.x} ${Q1.C.y} L ${Q1.B.x} ${Q1.B.y} L ${Q1.D.x} ${Q1.D.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2"
+        <motion.line x1={A.x} y1={A.y} x2={C.x} y2={C.y} stroke={color1} strokeWidth="4"
           initial="hidden" animate="visible" variants={itemAnim(0.5)} />
+        <motion.path d={tick1_AB} stroke={color1} strokeWidth="3" initial="hidden" animate="visible" variants={itemAnim(0.5)} />
+        <motion.path d={tick1_AC} stroke={color1} strokeWidth="3" initial="hidden" animate="visible" variants={itemAnim(0.5)} />
+
+        {/* Step 2: BD and CD (Orange) */}
+        <motion.line x1={B.x} y1={B.y} x2={D.x} y2={D.y} stroke={color2} strokeWidth="4"
+          initial="hidden" animate="visible" variants={itemAnim(1.0)} />
+        <motion.line x1={C.x} y1={C.y} x2={D.x} y2={D.y} stroke={color2} strokeWidth="4"
+          initial="hidden" animate="visible" variants={itemAnim(1.0)} />
+        <motion.path d={tick2_BD} stroke={color2} strokeWidth="3" initial="hidden" animate="visible" variants={itemAnim(1.0)} />
+        <motion.path d={`${tick2_BD} transform="translate(-10, 2)"`} stroke={color2} strokeWidth="3" initial="hidden" animate="visible" variants={itemAnim(1.0)} />
+        <motion.path d={tick2_CD} stroke={color2} strokeWidth="3" initial="hidden" animate="visible" variants={itemAnim(1.0)} />
+        <motion.path d={`${tick2_CD} transform="translate(2, -10)"`} stroke={color2} strokeWidth="3" initial="hidden" animate="visible" variants={itemAnim(1.0)} />
+
+
+        {/* Step 3: AD (Green) */}
+        <motion.line x1={A.x} y1={A.y} x2={D.x} y2={D.y} stroke={color3} strokeWidth="4"
+          initial="hidden" animate="visible" variants={itemAnim(1.5)} />
         
         {/* Labels */}
-        <motion.text x={Q1.A.x - 20} y={Q1.A.y} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(0.7)}>A</motion.text>
-        <motion.text x={Q1.B.x - 5} y={Q1.B.y - 10} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(0.7)}>B</motion.text>
-        <motion.text x={Q1.C.x + 10} y={Q1.C.y} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(0.7)}>C</motion.text>
-        <motion.text x={Q1.D.x - 5} y={Q1.D.y + 15} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(0.7)}>D</motion.text>
-
-        {/* Givens */}
-        <motion.line x1={Q1.A.x} y1={Q1.A.y} x2={Q1.B.x} y2={Q1.B.y} stroke={givenColor} strokeWidth="4"
-          initial="hidden" animate="visible" variants={itemAnim(1.0)} />
-        <motion.line x1={Q1.C.x} y1={Q1.C.y} x2={Q1.B.x} y2={Q1.B.y} stroke={givenColor} strokeWidth="4"
-          initial="hidden" animate="visible" variants={itemAnim(1.0)} />
-        <motion.text x={125} y={65} fill={givenColor} fontSize="12" initial="hidden" animate="visible" variants={itemAnim(1.2)}>
-          Given: $AB \cong CB$ (S)
-        </motion.text>
-        
-        <motion.path d={`M ${Q1.B.x - 18} ${Q1.B.y + 10} A 20 20 0 0 1 ${Q1.B.x - 5} ${Q1.B.y + 19}`} stroke={givenColor} fill="none" strokeWidth="2"
-          initial="hidden" animate="visible" variants={itemAnim(1.5)} />
-        <motion.path d={`M ${Q1.B.x + 18} ${Q1.B.y + 10} A 20 20 0 0 0 ${Q1.B.x + 5} ${Q1.B.y + 19}`} stroke={givenColor} fill="none" strokeWidth="2"
-          initial="hidden" animate="visible" variants={itemAnim(1.5)} />
-        <motion.text x={210} y={65} fill={givenColor} fontSize="12" initial="hidden" animate="visible" variants={itemAnim(1.7)}>
-          Given: $\angle ABD \cong \angle CBD$ (A)
-        </motion.text>
-
-        {/* Hidden Clue */}
-        <motion.line x1={Q1.B.x} y1={Q1.B.y} x2={Q1.D.x} y2={Q1.D.y} stroke={hiddenColor} strokeWidth="4" strokeDasharray="5 5"
-          initial="hidden" animate="visible" variants={itemAnim(2.0)} />
-        <motion.text x={210} y={115} fill={hiddenColor} fontSize="12" initial="hidden" animate="visible" variants={itemAnim(2.2)}>
-          Reflexive Prop: $BD \cong BD$ (S)
-        </motion.text>
-        
-        {/* Conclusion */}
-        <motion.text x={200} y={205} fill={strokeColor} fontSize="16" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(2.5)}>
-          Conclusion: $\triangle ABD \cong \triangle CBD$ by SAS
-        </motion.text>
+        <motion.text x={A.x + 10} y={A.y + 5} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(0.3)}>A</motion.text>
+        <motion.text x={B.x + 5} y={B.y - 10} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(0.3)}>B</motion.text>
+        <motion.text x={C.x - 15} y={C.y + 5} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(0.3)}>C</motion.text>
+        <motion.text x={D.x - 15} y={D.y} fill={strokeColor} initial="hidden" animate="visible" variants={itemAnim(0.3)}>D</motion.text>
       </svg>
     </div>
   );
@@ -75,21 +82,22 @@ const SimpleProofFigure: React.FC = () => {
 
 export default function ProvingSlide2() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] =  useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false]); // Only one question
+  // --- UPDATED: Now 3 questions ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'proving-statements-quiz',
-      conceptId: 'proving-statements',
-      conceptName: 'Proving Statements',
+      id: 'proving-sss-example-quiz',
+      conceptId: 'proving-sss-example',
+      conceptName: 'Proving Statements (SSS)',
       type: 'judging',
-      description: 'Testing the logical flow of a proof'
+      description: 'Testing the logical flow of an SSS proof'
     }
   ];
 
@@ -101,22 +109,48 @@ export default function ProvingSlide2() {
     explanation: string;
   }
 
+  // --- UPDATED: New questions based on the SSS proof ---
   const questions: QuizQuestion[] = [
     {
-      id: 'proving-statements-q1',
-      question: 'Based on the diagram, what is the *hidden* piece of information that we get for "free"?',
+      id: 'proving-sss-q1',
+      question: 'In this proof, what is the reason for $AB \\cong AC$ and $BD \\cong CD$?',
       options: [
-        "$AB \cong CB$",
-        "$\angle A \cong \angle C$",
-        "$BD \cong BD$",
-        "$\angle ABD \cong \angle CBD$"
+        "Reflexive Property",
+        "Given",
+        "SSS Criterion",
+        "Definition of a Midpoint"
       ],
-      correctAnswer: "$BD \cong BD$",
-      explanation: "Correct! The triangles share the side $BD$. By the Reflexive Property, $BD \cong BD$. This is the 'hidden' (S) in our SAS proof."
+      correctAnswer: "Given",
+      explanation: "Correct! The tick marks on the diagram indicate that this information is 'Given' to us at the start of the problem."
+    },
+    {
+      id: 'proving-sss-q2',
+      question: 'What is the reason for stating $AD \\cong AD$?',
+      options: [
+        "Given",
+        "Transitive Property",
+        "Symmetric Property",
+        "Reflexive Property"
+      ],
+      correctAnswer: "Reflexive Property",
+      explanation: "Correct! The segment $AD$ is a *common side* to both triangles. The Reflexive Property states that any segment is congruent to itself."
+    },
+    {
+      id: 'proving-sss-q3',
+      question: 'With these 3 steps, which criterion lets us conclude that $\\triangle ABD \\cong \\triangle ACD$?',
+      options: [
+        "SAS (Side-Angle-Side)",
+        "ASA (Angle-Side-Angle)",
+        "SSS (Side-Side-Side)",
+        "HL (Hypotenuse-Leg)"
+      ],
+      correctAnswer: "SSS (Side-Side-Side)",
+      explanation: "Correct! We proved three pairs of sides are congruent: (S) $AB \\cong AC$, (S) $BD \\cong CD$, and (S) $AD \\cong AD$. This is the SSS criterion."
     }
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
+    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -124,6 +158,7 @@ export default function ProvingSlide2() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
+    // ... (This function remains unchanged, but I'll fix the template literal)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -136,12 +171,12 @@ export default function ProvingSlide2() {
     }
 
     handleInteractionComplete({
-      interactionId: `proving-statements-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `proving-sss-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'proving-statements',
-      conceptName: 'Proving Statements',
+      conceptId: 'proving-sss-example',
+      conceptName: 'Proving Statements (SSS)',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -152,6 +187,7 @@ export default function ProvingSlide2() {
   };
 
   const handleNextQuestion = () => {
+    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -167,6 +203,7 @@ export default function ProvingSlide2() {
   };
 
 
+  // --- UPDATED: All new slide content ---
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
@@ -175,39 +212,43 @@ export default function ProvingSlide2() {
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Anatomy of a Simple Proof</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Proving Congruence Statements</h2>
             <p className="text-lg leading-relaxed">
-              Let's look at a typical problem. The diagram shows all the information we need.
+              Consider the following diagram. Suppose we wish to formally prove the following congruence statement:
             </p>
-            <ul className="list-disc list-inside mt-4 text-lg space-y-2">
-              <li>
-                <strong>Given:</strong>
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$AB \cong CB$</span>
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$\angle ABD \cong \angle CBD$</span>
-              </li>
-              <li>
-                <strong>Prove:</strong>
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$\triangle ABD \cong \triangle CBD$</span>
-              </li>
-            </ul>
+            <div className="my-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60"
+                 dangerouslySetInnerHTML={{ __html: katex.renderToString("\\triangle ABD \\cong \\triangle ACD", { throwOnError: false, displayMode: true }) }}
+            />
+            <p className="text-lg leading-relaxed">
+              In this instance, we can prove this statement using the SSS congruence criterion.
+            </p>
           </div>
 
           {/* --- CARD 2 (The Logic) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Logical Argument</h3>
             <p className="text-lg leading-relaxed">
-              Before we write a formal proof, let's think it through in plain English.
+              We proceed as follows:
             </p>
-            <p className="text-lg leading-relaxed mt-3">
-              "We are <strong>given</strong> that $AB \cong CB$, which is a <strong>Side (S)</strong>. We are also <strong>given</strong> that $\angle ABD \cong \angle CBD$, which is an <strong>Angle (A)</strong>.
-              <br/><br/>
-              Then, we can see from the diagram that both triangles <strong>share the side $BD$</strong>. By the <strong>Reflexive Property</strong>, $BD \cong BD$. This is our second <strong>Side (S)</strong>.
-              <br/><br/>
-              The angle is *included* between the two sides, so we have a <strong>S-A-S</strong> pattern. Therefore, the triangles are congruent by SAS."
-            </p>
+            <ul className="list-decimal list-outside mt-4 ml-5 text-lg space-y-4">
+              <li>
+                We're <strong>given</strong> that the segments $AB$ and $AC$ are congruent (Side 1).
+                <div className="mt-1" dangerouslySetInnerHTML={{ __html: katex.renderToString("AB \\cong AC", { throwOnError: false, displayMode: true }) }} />
+              </li>
+              <li>
+                We are also <strong>given</strong> that the segments $BD$ and $CD$ are congruent (Side 2).
+                <div className="mt-1" dangerouslySetInnerHTML={{ __html: katex.renderToString("BD \\cong CD", { throwOnError: false, displayMode: true }) }} />
+              </li>
+              <li>
+                By the <strong>Reflexive Property of Congruence</strong>, $AD$ is congruent to itself, as it is a common side to both triangles (Side 3).
+                <div className="mt-1" dangerouslySetInnerHTML={{ __html: katex.renderToString("AD \\cong AD", { throwOnError: false, displayMode: true }) }} />
+              </li>
+            </ul>
+            <div className="mt-6 p-4 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+              <p className="text-lg font-semibold">
+                Therefore, by the SSS criterion, we conclude that $\triangle ABD \cong \triangle ACD$.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -215,17 +256,17 @@ export default function ProvingSlide2() {
         <div className="space-y-6">
           {/* --- ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing the Proof</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing the SSS Proof</h3>
             
             {/* --- USE THE ANIMATION COMPONENT --- */}
-            <SimpleProofFigure />
+            <SSSProofFigure />
             
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              We find a Side (Given), an Angle (Given), and a Side (Hidden) to prove SAS.
+              We find two pairs of Sides (Given) and one shared Side (Reflexive) to prove SSS.
             </p>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (Now 3 questions) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Finding the Clues</h3>
@@ -250,7 +291,7 @@ export default function ProvingSlide2() {
             </div>
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                <div className="text-lg mb-4" dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}></div>
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
@@ -274,8 +315,8 @@ export default function ProvingSlide2() {
                         className={className}
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
+                        dangerouslySetInnerHTML={{ __html: katex.renderToString(option, { throwOnError: false }) }}
                       >
-                        {option}
                       </motion.button>
                     );
                   })}
@@ -293,8 +334,9 @@ export default function ProvingSlide2() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
+                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4"
+                           dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].explanation, { throwOnError: false }) }}
+                      >
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}
@@ -310,13 +352,13 @@ export default function ProvingSlide2() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">🕵️‍♂️</div>
+                <div className="text-3xl mb-4">🎉</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "You found the hidden clue!" : 'Great job!'}
+                  {score === questions.length ? "You've mastered this SSS proof!" : 'Great job!'}
                 </div>
               </motion.div>
             )}
@@ -328,8 +370,9 @@ export default function ProvingSlide2() {
 
   return (
     <SlideComponentWrapper
-      slideId="proving-statements"
-      slideTitle="Proving Congruence Statements"
+      // --- UPDATED Props ---
+      slideId="proving-sss-example"
+      slideTitle="Proving Statements: SSS Example"
       moduleId="congruence"
       submoduleId="proving-congruence-statements"
       interactions={localInteractions}

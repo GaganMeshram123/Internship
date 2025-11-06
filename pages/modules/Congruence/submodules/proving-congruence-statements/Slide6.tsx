@@ -3,99 +3,103 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import katex from 'katex';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
-  const svgWidth = 400;
+// --- TABLE COMPONENT DEFINED INSIDE ---
+type ProofRow = { num: string; statement: string; reason: string };
+
+const ProofTable: React.FC<{ rows: ProofRow[] }> = ({ rows }) => {
+  return (
+    <div className="w-full my-4">
+      <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-slate-800">
+        <thead>
+          <tr className="bg-slate-200 dark:bg-slate-700">
+            <th className="p-3 w-12 text-center text-sm font-semibold text-slate-700 dark:text-slate-300"></th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Statement</th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.num} className="border-t border-slate-300 dark:border-slate-600">
+              <td className="p-3 text-center font-mono text-slate-500">{row.num}</td>
+              <td className="p-3 font-mono" dangerouslySetInnerHTML={{ __html: katex.renderToString(row.statement, { throwOnError: false }) }}></td>
+              <td className="p-3 text-slate-600 dark:text-slate-400">{row.reason}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+// --- END OF TABLE COMPONENT ---
+
+// --- FIGURE FOR LEFT COLUMN ---
+const AsaExampleFigure: React.FC = () => {
+  const svgWidth = 300;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-  const hiddenColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const rightAngleColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-    stroke: strokeColor,
-  };
+  const angleColor1 = isDarkMode ? '#FCD34D' : '#F59E0B'; // Yellow
+  const angleColor2 = isDarkMode ? '#93C5FD' : '#3B82F6'; // Blue
   
-  // --- Figure 1: ASA Proof ---
-  const T1_Q1 = { A: { x: 30, y: 50 }, M: { x: 150, y: 110 }, B: { x: 30, y: 170 } };
-  const T2_Q1 = { D: { x: 370, y: 50 }, M: { x: 250, y: 110 }, C: { x: 370, y: 170 } };
+  const T={x: 150, y: 50}, V={x: 280, y: 110}, U={x: 150, y: 200}, W={x: 20, y: 110};
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${T.x} ${T.y} L ${V.x} ${V.y} L ${U.x} ${U.y} L ${W.x} ${W.y} Z`} stroke={strokeColor} strokeWidth="2" fill="none" />
+        <path d={`M ${T.x} ${T.y} L ${U.x} ${U.y}`} stroke={strokeColor} strokeWidth="2" />
+        
+        {/* Angle VUW (Blue) */}
+        <path d={`M ${U.x - 25} ${U.y - 12} A 25 25 0 0 1 ${U.x} ${U.y - 25}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+        <path d={`M ${U.x + 25} ${U.y - 12} A 25 25 0 0 0 ${U.x} ${U.y - 25}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+        <path d={`M ${U.x - 22} ${U.y - 10} A 22 22 0 0 1 ${U.x} ${U.y - 22}`} stroke={angleColor2} fill="none" strokeWidth="2" transform="translate(-1, 0)" />
+        <path d={`M ${U.x + 22} ${U.y - 10} A 22 22 0 0 0 ${U.x} ${U.y - 22}`} stroke={angleColor2} fill="none" strokeWidth="2" transform="translate(1, 0)" />
 
-  // --- Figure 2: AAS Proof ---
-  // Re-using the same figure, just different markings
-  
-  // --- Figure 3: HL Proof ---
-  const Q3 = { A: { x: 200, y: 50 }, B: { x: 100, y: 180 }, C: { x: 300, y: 180 }, M: { x: 200, y: 180 } };
+        {/* Angle VTW (Yellow) */}
+        <path d={`M ${T.x - 22} ${T.y + 10} A 25 25 0 0 0 ${T.x} ${T.y + 25}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+        <path d={`M ${T.x + 22} ${T.y + 10} A 25 25 0 0 1 ${T.x} ${T.y + 25}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+        
+        <text x={T.x - 5} y={T.y - 10} fill={strokeColor}>T</text>
+        <text x={V.x + 10} y={V.y + 5} fill={strokeColor}>V</text>
+        <text x={U.x - 5} y={U.y + 20} fill={strokeColor}>U</text>
+        <text x={W.x - 20} y={W.y + 5} fill={strokeColor}>W</text>
+      </svg>
+    </div>
+  );
+}
 
+// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
+const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+  const svgWidth = 350;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleColor1 = isDarkMode ? '#93C5FD' : '#3B82F6'; // Blue
+  const angleColor2 = isDarkMode ? '#F472B6' : '#EC4899'; // Pink
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ minHeight: svgHeight }}>
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
         <AnimatePresence>
           {questionIndex === 0 && (
-            <motion.g key="q1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* Triangles with Vertical Angles */}
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T2_Q1.C.x} y2={T2_Q1.C.y} stroke={strokeColor} />
-              <line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T2_Q1.D.x} y2={T2_Q1.D.y} stroke={strokeColor} />
-              
-              {/* ASA Markings */}
-            {/*   <path d={`M ${T1_Q1.A.x + 20} ${T1_Q1.A.y} A 20 20 0 0 1 ${T1_Q1.A.x + 12} ${T1_Q1.A.y + 16}`} stroke={givenColor} {...commonProps} strokeWidth="2" />
-              <path d={`M ${T2_Q1.C.x - 20} ${T2_Q1.C.y} A 20 20 0 0 0 ${T2_Q1.C.x - 12} ${T2_Q1.C.y - 16}`} stroke={givenColor} {...commonProps} strokeWidth="2" />
-              */} <text x={30} y={40} fill={givenColor} fontSize="12">Given: $\angle A \cong \angle C$ (A)</text>
-              
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T1_Q1.M.x} y2={T1_Q1.M.y} stroke={givenColor} strokeWidth="4" />
-              <line x1={T2_Q1.C.x} y1={T2_Q1.C.y} x2={T2_Q1.M.x} y2={T2_Q1.M.y} stroke={givenColor} strokeWidth="4" />
-              <text x={90} y={70} fill={givenColor} fontSize="12">Given: $AM \cong CM$ (S)</text>
-
-              <path d={`M ${T1_Q1.M.x - 17} ${T1_Q1.M.y - 10} A 20 20 0 0 0 ${T1_Q1.M.x} ${T1_Q1.M.y - 20}`} stroke={hiddenColor} strokeWidth="2" />
-              <path d={`M ${T2_Q1.M.x + 17} ${T2_Q1.M.y + 10} A 20 20 0 0 0 ${T2_Q1.M.x} ${T2_Q1.M.y + 20}`} stroke={hiddenColor} strokeWidth="2" />
-              <text x={160} y={140} fill={hiddenColor} fontSize="12">Hidden: $\angle AMB \cong \angle CMD$ (A)</text>
+            <motion.g key="q3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* ASA Figure (Question 3) */}
+              <AsaQuizFigure strokeColor={strokeColor} angleColor1={angleColor1} angleColor2={angleColor2} />
             </motion.g>
           )}
 
           {questionIndex === 1 && (
-            <motion.g key="q2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* Triangles with Vertical Angles */}
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T2_Q1.C.x} y2={T2_Q1.C.y} stroke={strokeColor} />
-              <line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T2_Q1.D.x} y2={T2_Q1.D.y} stroke={strokeColor} />
-              
-              {/* AAS Markings */}
-            {/*   <path d={`M ${T1_Q1.A.x + 20} ${T1_Q1.A.y} A 20 20 0 0 1 ${T1_Q1.A.x + 12} ${T1_Q1.A.y + 16}`} stroke={givenColor} {...commonProps} strokeWidth="2" />
-              <path d={`M ${T2_Q1.C.x - 20} ${T2_Q1.C.y} A 20 20 0 0 0 ${T2_Q1.C.x - 12} ${T2_Q1.C.y - 16}`} stroke={givenColor} {...commonProps} strokeWidth="2" />
-              */} <text x={30} y={40} fill={givenColor} fontSize="12">Given: $\angle A \cong \angle C$ (A)</text>
-              
-              <line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T1_Q1.M.x} y2={T1_Q1.M.y} stroke={givenColor} strokeWidth="4" />
-              <line x1={T2_Q1.D.x} y1={T2_Q1.D.y} x2={T2_Q1.M.x} y2={T2_Q1.M.y} stroke={givenColor} strokeWidth="4" />
-              <text x={30} y={190} fill={givenColor} fontSize="12">Given: $BM \cong DM$ (S)</text>
-
-              <path d={`M ${T1_Q1.M.x - 17} ${T1_Q1.M.y - 10} A 20 20 0 0 0 ${T1_Q1.M.x} ${T1_Q1.M.y - 20}`} stroke={hiddenColor} strokeWidth="2" />
-              <path d={`M ${T2_Q1.M.x + 17} ${T2_Q1.M.y + 10} A 20 20 0 0 0 ${T2_Q1.M.x} ${T2_Q1.M.y + 20}`} stroke={hiddenColor} strokeWidth="2" />
-              <text x={160} y={140} fill={hiddenColor} fontSize="12">Hidden: $\angle AMB \cong \angle CMD$ (A)</text>
+            <motion.g key="q4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* AAS Figure (Question 4) */}
+              <AasQuizFigure strokeColor={strokeColor} />
             </motion.g>
           )}
           
           {questionIndex === 2 && (
-            <motion.g key="q3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* Isosceles Triangle with Altitude */}
-              <path d={`M ${Q3.A.x} ${Q3.A.y} L ${Q3.B.x} ${Q3.B.y} L ${Q3.C.x} ${Q3.C.y} Z`} {...commonProps} />
-              <line x1={Q3.A.x} y1={Q3.A.y} x2={Q3.M.x} y2={Q3.M.y} {...commonProps} />
-              
-              {/* Right Angle Marker */}
-            {/*   <path d={`M ${Q3.M.x - 15} ${Q3.M.y} L ${Q3.M.x - 15} ${Q3.M.y - 15} L ${Q3.M.x} ${Q3.M.y - 15}`} stroke={rightAngleColor} {...commonProps} strokeWidth="2" />
-              <text x={100} y={160} fill={givenColor} fontSize="12">Given: $AM \perp BC$ (Right $\triangle$s)</text>
- */}
-              {/* H (Given) */}
-              <line x1={Q3.A.x} y1={Q3.A.y} x2={Q3.B.x} y2={Q3.B.y} stroke={givenColor} strokeWidth="4" />
-              <line x1={Q3.A.x} y1={Q3.A.y} x2={Q3.C.x} y2={Q3.C.y} stroke={givenColor} strokeWidth="4" />
-              <text x={260} y={100} fill={givenColor} fontSize="12">Given: $AB \cong AC$ (H)</text>
-
-              {/* L (Hidden) */}
-              <line x1={Q3.A.x} y1={Q3.A.y} x2={Q3.M.x} y2={Q3.M.y} stroke={hiddenColor} strokeWidth="4" strokeDasharray="5 5" />
-              <text x={210} y={115} fill={hiddenColor} fontSize="12">Hidden: $AM \cong AM$ (L)</text>
+            <motion.g key="q5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* HL Figure (Question 5) */}
+              <HlQuizFigure strokeColor={strokeColor} />
             </motion.g>
           )}
         </AnimatePresence>
@@ -103,7 +107,76 @@ const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex })
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- Helper figures for the quiz ---
+const AsaQuizFigure: React.FC<{ strokeColor: string, angleColor1: string, angleColor2: string }> = ({ strokeColor, angleColor1, angleColor2 }) => {
+  const A={x: 70, y: 120}, C={x: 50, y: 50}, D={x: 175, y: 80}, B={x: 300, y: 120};
+  return (
+    <g>
+      <path d={`M ${C.x} ${C.y} L ${A.x} ${A.y} L ${D.x} ${D.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`} stroke={strokeColor} fill="none" />
+      <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y}`} stroke={strokeColor} fill="none" />
+      <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} fill="none" />
+      
+      {/* Angle BAC (Blue) */}
+      <path d={`M ${A.x + 18} ${A.y - 7} A 20 20 0 0 0 ${A.x + 7} ${A.y + 18}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+      <path d={`M ${A.x + 22} ${A.y - 5} A 24 24 0 0 0 ${A.x + 10} ${A.y + 21}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+
+      {/* Angle BDC (Pink) */}
+      <path d={`M ${D.x - 17} ${D.y + 9} A 20 20 0 0 1 ${D.x} ${D.y - 18}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+      <path d={`M ${D.x - 19} ${D.y + 7} A 22 22 0 0 1 ${D.x - 2} ${D.y - 20}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+      
+      <text x={A.x - 20} y={A.y + 20} fill={strokeColor}>A</text>
+      <text x={B.x + 10} y={B.y + 20} fill={strokeColor}>B</text>
+      <text x={C.x - 20} y={C.y} fill={strokeColor}>C</text>
+      <text x={D.x - 10} y={D.y - 10} fill={strokeColor}>D</text>
+    </g>
+  );
+};
+
+const AasQuizFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+  const A={x: 280, y: 180}, C={x: 300, y: 50}, O={x: 175, y: 115}, D={x: 50, y: 180}, B={x: 20, y: 50};
+  return (
+    <g>
+      <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
+      <path d={`M ${C.x} ${C.y} L ${D.x} ${D.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
+      {/* Right angle A (blue square) */}
+      <path d={`M ${A.x - 12} ${A.y} L ${A.x - 12} ${A.y - 12} L ${A.x} ${A.y - 12}`} stroke="#3B82F6" fill="none" strokeWidth="2" />
+      {/* Right angle B (pink square) */}
+      <path d={`M ${B.x + 12} ${B.y} L ${B.x + 12} ${B.y + 12} L ${B.x} ${B.y + 12}`} stroke="#EC4899" fill="none" strokeWidth="2" />
+      
+      <text x={A.x + 10} y={A.y + 15} fill={strokeColor}>A</text>
+      <text x={C.x + 10} y={C.y} fill={strokeColor}>C</text>
+      <text x={O.x - 10} y={O.y + 15} fill={strokeColor}>O</text>
+      <text x={D.x - 10} y={D.y + 15} fill={strokeColor}>D</text>
+      <text x={B.x - 20} y={B.y} fill={strokeColor}>B</text>
+    </g>
+  );
+};
+
+const HlQuizFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+  const A={x: 50, y: 50}, C={x: 200, y: 50}, B={x: 280, y: 200}, D={x: 120, y: 180};
+  return (
+    <g>
+      <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${B.x} ${B.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} fill="none" />
+      <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
+      
+      {/* Right angle C (blue square) */}
+      <path d={`M ${C.x} ${C.y + 12} L ${C.x - 12} ${C.y + 12} L ${C.x - 12} ${C.y}`} stroke="#3B82F6" fill="none" strokeWidth="2" />
+      {/* Right angle D (blue square) */}
+      <path d={`M ${D.x} ${D.y - 12} L ${D.x + 12} ${D.y - 12} L ${D.x + 12} ${D.y}`} stroke="#3B82F6" fill="none" strokeWidth="2" />
+      
+      {/* Ticks BC cong BD */}
+      <path d="M 243 135 L 237 127" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 194 188 L 202 183" stroke={strokeColor} strokeWidth="2" />
+
+      <text x={A.x - 20} y={A.y + 10} fill={strokeColor}>A</text>
+      <text x={B.x + 10} y={B.y + 10} fill={strokeColor}>B</text>
+      <text x={C.x + 10} y={C.y + 10} fill={strokeColor}>C</text>
+      <text x={D.x - 10} y={D.y + 20} fill={strokeColor}>D</text>
+    </g>
+  );
+};
+// --- END OF QUIZ FIGURE COMPONENT ---
 
 
 export default function ProvingSlide6() {
@@ -134,33 +207,46 @@ export default function ProvingSlide6() {
     explanation: string;
   }
   
-  const allReasons = ["SSS", "SAS", "ASA", "AAS", "HL", "CPCTC"];
+  const allReasons = ["SSS", "SAS", "ASA", "AAS", "HL", "CPCTC", "Given", "Reflexive property", "Vertical angles", "All right angles are congruent"];
 
+  // --- UPDATED: New questions based on Q3, Q4, Q5 ---
   const questions: QuizQuestion[] = [
     {
       id: 'proving-asa-q1',
-      question: 'Proof 1: Given $\angle A \cong \angle C$ and $AM \cong CM$. What is the final reason to prove $\triangle ABM \cong \triangle CDM$?',
-      options: allReasons,
+      question: 'Diagram 1 (Q3): What is the reason for Step 6: $\\triangle ADC \\cong \\triangle ADB$?',
+      options: ["SSS", "SAS", "ASA", "AAS"],
       correctAnswer: "ASA",
-      explanation: "Correct! We have $\angle A \cong \angle C$ (A), $AM \cong CM$ (S), and $\angle AMB \cong \angle CMD$ (Vertical Angles - A). The side is *included*, so the reason is ASA."
+      explanation: "Correct! We have $\angle CAD \cong \angle BAD$ (A, Step 3), $\overline{AD} \cong \overline{AD}$ (S, Step 5), and $\angle CDA \cong \angle BDA$ (A, Step 4). The side is *included* between the angles."
     },
     {
       id: 'proving-aas-q2',
-      question: 'Proof 2: Given $\angle A \cong \angle C$ and $BM \cong DM$. What is the final reason to prove $\triangle ABM \cong \triangle CDM$?',
-      options: allReasons,
+      question: 'Diagram 2 (Q4): What is the reason for Step 7: $\\triangle OAC \\cong \\triangle OBD$?',
+      options: ["SAS", "ASA", "AAS", "HL"],
       correctAnswer: "AAS",
-      explanation: "Correct! We have $\angle A \cong \angle C$ (A), $\angle AMB \cong \angle CMD$ (Vertical Angles - A), and $BM \cong DM$ (S). The side is *non-included*, so the reason is AAS."
+      explanation: "Correct! We have $\angle OAC \cong \angle OBD$ (A, Step 5), $\angle AOC \cong \angle BOD$ (A, Step 6), and $\overline{OA} \cong \overline{OB}$ (S, Step 4). The side is *non-included*."
     },
     {
       id: 'proving-hl-q3',
-      question: 'Proof 3: Given $AM \perp BC$ and $AB \cong AC$. What is the final reason to prove $\triangle ABM \cong \triangle ACM$?',
-      options: allReasons,
+      question: 'Diagram 3 (Q5): What is the reason for Step 5: $\\triangle ACB \\cong \\triangle ADB$?',
+      options: ["SAS", "ASA", "AAS", "HL"],
       correctAnswer: "HL",
-      explanation: "Correct! $AM \perp BC$ gives us two right triangles. $AB \cong AC$ is the Hypotenuse (H). The shared side $AM \cong AM$ is a Leg (L). The reason is HL."
+      explanation: "Correct! Steps 1 & 2 give us Right triangles. Step 3 ($\overline{BC} \cong \overline{BD}$) gives us the Leg (L). Step 4 ($\overline{AB} \cong \overline{AB}$) gives us the Hypotenuse (H)."
     }
   ];
-
+  
+  // --- Data for the table in the left column ---
+  // --- Data for the table in the left column ---
+  const proofRows: ProofRow[] = [
+    { num: "1", statement: "\\overline{TU} \\text{ bisects } \\angle VUW", reason: "Given" },
+    { num: "2", statement: "\\angle TUV \\cong \\angle TUW", reason: "Definition of an angle bisector" },
+    { num: "3", statement: "\\overline{TU} \\text{ bisects } \\angle VTW", reason: "Given" },
+    { num: "4", statement: "\\angle UTV \\cong \\angle UTW", reason: "Definition of an angle bisector" },
+    { num: "5", statement: "\\overline{TU} \\cong \\overline{TU}", reason: "Reflexive property of congruence" },
+    { num: "6", statement: "\\triangle TUV \\cong \\triangle TUW", reason: "ASA congruence criterion" },
+    { num: "7", statement: "\\overline{TW} \\cong \\overline{TV}", reason: "CPCTC" },
+  ];
   const handleInteractionComplete = (response: InteractionResponse) => {
+    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -168,6 +254,7 @@ export default function ProvingSlide6() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
+    // ... (This function remains unchanged)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -196,6 +283,7 @@ export default function ProvingSlide6() {
   };
 
   const handleNextQuestion = () => {
+    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -211,6 +299,7 @@ export default function ProvingSlide6() {
   };
 
 
+  // --- UPDATED: New slide content ---
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
@@ -219,42 +308,34 @@ export default function ProvingSlide6() {
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Practice Proof: ASA vs. AAS</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: ASA & CPCTC</h2>
             <p className="text-lg leading-relaxed">
-              ASA and AAS are very similar and often use the same hidden clues (like vertical angles).
+              In the diagram below, <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{TU}", { throwOnError: false }) }} /> bisects both <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle VUW", { throwOnError: false }) }} /> and <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle VTW", { throwOnError: false }) }} />.
             </p>
+            <AsaExampleFigure />
             <p className="text-lg leading-relaxed mt-4">
-              <strong>For Proof 1 (ASA):</strong>
-              <br/>
-              We are given an Angle ($\angle A$) and a Side ($AM$). The hidden clue is the Vertical Angle ($\angle AMB$). The side $AM$ is *included* between the two angles, so we use <strong>ASA</strong>.
+              Consider the following statement:
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              <strong>For Proof 2 (AAS):</strong>
-              <br/>
-              We are given an Angle ($\angle A$) and a Side ($BM$). The hidden clue is the Vertical Angle ($\angle AMB$). The side $BM$ is *non-included*, so we use <strong>AAS</strong>.
-            </p>
+            <div className="my-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60"
+                 dangerouslySetInnerHTML={{ __html: katex.renderToString("TW \\cong TV", { throwOnError: false, displayMode: true }) }}
+            />
           </div>
 
           {/* --- CARD 2 (The Logic) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Practice Proof: HL</h3>
-            <p className="text-lg leading-relaxed">
-              For <strong>Proof 3</strong>, you must check the three conditions for HL.
-            </p>
-            <ol className="list-decimal list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Correct Proof</h3>
+            <ProofTable rows={proofRows} />
+           <ul className="list-disc list-outside mt-4 ml-5 text-lg space-y-2 text-slate-700 dark:text-slate-300">
               <li>
-                <strong>Right Triangles?</strong> Yes, "Given $AM \perp BC$".
+                <strong>Row 5:</strong> We have that <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{TU}", { throwOnError: false }) }} /> is congruent to itself by the <strong>Reflexive property of congruence</strong>.
               </li>
               <li>
-                <strong>Hypotenuses Congruent?</strong> Yes, "Given $AB \cong AC$".
+                <strong>Row 6:</strong> From rows 2 and 4, we have two pairs of congruent angles. Also, <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{TU}", { throwOnError: false }) }} /> is a <strong>common side</strong> (from row 5) that is *included* between these angles. Therefore, we use the <strong>ASA criterion</strong>.
               </li>
               <li>
-                <strong>Legs Congruent?</strong> Yes, $AM \cong AM$ by the **Reflexive Property**.
+                <strong>Row 7:</strong> From row 6, we know the triangles are congruent. Therefore, we can conclude that <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{TW} \\cong \\overline{TV}", { throwOnError: false }) }} /> by <strong>CPCTC</strong>.
               </li>
-            </ol>
-             <p className="text-lg leading-relaxed mt-2">
-              Since all three are true, the reason is <strong>HL</strong>.
-            </p>
+            </ul>
           </div>
         </div>
 
@@ -263,7 +344,7 @@ export default function ProvingSlide6() {
           {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Complete the Proof</h3>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Complete the Proofs</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
@@ -289,7 +370,7 @@ export default function ProvingSlide6() {
 
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
+                <div className="text-lg mb-4 mt-6" dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}></div>
                 {/* --- Answer Options --- */}
                 <div className="grid grid-cols-2 gap-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
@@ -332,8 +413,9 @@ export default function ProvingSlide6() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
+                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4 break-words"
+                           dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].explanation, { throwOnError: false }) }}
+                      >
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}
@@ -367,8 +449,9 @@ export default function ProvingSlide6() {
 
   return (
     <SlideComponentWrapper
+      // --- UPDATED Props ---
       slideId="proving-asa-aas-hl"
-      slideTitle="Proving Congruence Using the ASA, AAS, and HL Criteria"
+      slideTitle="Proving Congruence: ASA, AAS, HL"
       moduleId="congruence"
       submoduleId="proving-congruence-statements"
       interactions={localInteractions}

@@ -3,94 +3,58 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import katex from 'katex';
 
 // --- ANIMATION COMPONENT DEFINED INSIDE ---
-const CpctcProofAnimation: React.FC = () => {
+const CpctcAsaFigure: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 250; // Made taller for the 5th step
+  const svgHeight = 200;
   const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#CBD5E1' : '#A0AEC0';
-  const textColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-  const hiddenColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const triangleColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  const proveColor = isDarkMode ? '#A78BFA' : '#8B5CF6'; // Purple (CPCTC step)
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleColor1 = isDarkMode ? '#F59E0B' : '#D97706'; // Orange
+  const angleColor2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const sideColor = isDarkMode ? '#60A5FA' : '#2563EB';   // Blue
   
-  const itemAnim = (delay: number) => ({
-    hidden: { opacity: 0, x: -10 },
-    visible: { opacity: 1, x: 0, transition: { delay: delay } },
-  });
+  // Triangle 1 (ABC)
+  const A = { x: 50, y: 150 };
+  const B = { x: 190, y: 150 };
+  const C = { x: 120, y: 50 };
+
+  // Triangle 2 (KLM)
+  const K = { x: 250, y: 150 };
+  const L = { x: 390, y: 150 };
+  const M = { x: 320, y: 50 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* Headers */}
-        <motion.text x={100} y={30} fill={textColor} fontSize="18" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(0.5)}>
-          Statements
-        </motion.text>
-        <motion.text x={300} y={30} fill={textColor} fontSize="18" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(0.5)}>
-          Reasons
-        </motion.text>
-        <motion.line x1="200" y1="10" x2="200" y2={240} stroke={strokeColor} strokeWidth="2"
-          initial="hidden" animate="visible" variants={itemAnim(0.5)} />
-        <motion.line x1="10" y1="45" x2="390" y2="45" stroke={strokeColor} strokeWidth="2"
-          initial="hidden" animate="visible" variants={itemAnim(0.5)} />
-          
-        {/* Step 1 (Given) */}
-        <motion.text x={20} y={70} fill={givenColor} fontSize="14" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.0)}>
-          1. $AB \cong CB$ (S)
-        </motion.text>
-        <motion.text x={220} y={70} fill={givenColor} fontSize="14" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.2)}>
-          1. Given
-        </motion.text>
+        {/* Triangle ABC */}
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
+        <text x={A.x - 15} y={A.y + 15} fill={strokeColor}>A</text>
+        <text x={B.x + 5} y={B.y + 15} fill={strokeColor}>B</text>
+        <text x={C.x - 5} y={C.y - 10} fill={strokeColor}>C</text>
+
+        {/* Triangle KLM */}
+        <path d={`M ${K.x} ${K.y} L ${L.x} ${L.y} L ${M.x} ${M.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
+        <text x={K.x - 15} y={K.y + 15} fill={strokeColor}>K</text>
+        <text x={L.x + 5} y={L.y + 15} fill={strokeColor}>L</text>
+        <text x={M.x - 5} y={M.y - 10} fill={strokeColor}>M</text>
+
+        {/* ASA Markings */}
+        {/* Angle A & K (Orange) */}
+        <path d={`M ${A.x + 20} ${A.y} A 20 20 0 0 1 ${A.x + 15} ${A.y - 14}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+        <path d={`M ${K.x + 20} ${K.y} A 20 20 0 0 1 ${K.x + 15} ${K.y - 14}`} stroke={angleColor1} fill="none" strokeWidth="2" />
         
-        {/* Step 2 (Given) */}
-        <motion.text x={20} y={100} fill={givenColor} fontSize="14" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.7)}>
-          2. $\angle ABD \cong \angle CBD$ (A)
-        </motion.text>
-        <motion.text x={220} y={100} fill={givenColor} fontSize="14" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.9)}>
-          2. Given
-        </motion.text>
+        {/* Side AB & KL (Blue) */}
+        <line x1={A.x + 65} y1={A.y} x2={A.x + 75} y2={A.y} stroke={sideColor} strokeWidth="3" />
+        <line x1={K.x + 65} y1={K.y} x2={K.x + 75} y2={K.y} stroke={sideColor} strokeWidth="3" />
         
-        {/* Step 3 (Reflexive) */}
-        <motion.text x={20} y={130} fill={hiddenColor} fontSize="14" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(2.4)}>
-          3. $BD \cong BD$ (S)
-        </motion.text>
-        <motion.text x={220} y={130} fill={hiddenColor} fontSize="14" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(2.6)}>
-          3. Reflexive Property
-        </motion.text>
+        {/* Angle B & L (Green) */}
+        <path d={`M ${B.x - 20} ${B.y} A 20 20 0 0 0 ${B.x - 15} ${B.y - 14}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+        <path d={`M ${B.x - 23} ${B.y - 3} A 20 20 0 0 0 ${B.x - 18} ${B.y - 17}`} stroke={angleColor2} fill="none" strokeWidth="2" />
         
-        {/* Step 4 (Triangle Congruence) */}
-        <motion.line x1="10" y1="145" x2="390" y2="145" stroke={strokeColor} strokeWidth="1.5"
-          initial="hidden" animate="visible" variants={itemAnim(3.1)} />
-        <motion.text x={20} y={170} fill={triangleColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(3.3)}>
-          4. $\triangle ABD \cong \triangle CBD$
-        </motion.text>
-        <motion.text x={220} y={170} fill={triangleColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(3.5)}>
-          4. SAS (from 1, 2, 3)
-        </motion.text>
-        
-        {/* Step 5 (CPCTC) */}
-        <motion.line x1="10" y1="185" x2="390" y2="185" stroke={strokeColor} strokeWidth="1.5"
-          initial="hidden" animate="visible" variants={itemAnim(4.0)} />
-      {/*   <motion.text x={20} y={210} fill={proveColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(4.2)}>
-          5. $\overline{AD} \cong \overline{CD}$
-        </motion.text> */}
-        <motion.text x={220} y={210} fill={proveColor} fontSize="14" fontFamily="monospace" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(4.4)}>
-          5. CPCTC
-        </motion.text>
+        <path d={`M ${L.x - 20} ${L.y} A 20 20 0 0 0 ${L.x - 15} ${L.y - 14}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+        <path d={`M ${L.x - 23} ${L.y - 3} A 20 20 0 0 0 ${L.x - 18} ${L.y - 17}`} stroke={angleColor2} fill="none" strokeWidth="2" />
       </svg>
     </div>
   );
@@ -103,16 +67,17 @@ export default function ProvingSlide4() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  // --- UPDATED: Now 3 questions ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'proving-cpctc-quiz',
+      id: 'proving-cpctc-asa-quiz',
       conceptId: 'proving-cpctc',
-      conceptName: 'CPCTC',
+      conceptName: 'CPCTC (ASA Example)',
       type: 'judging',
       description: 'Testing understanding of CPCTC'
     }
@@ -126,34 +91,47 @@ export default function ProvingSlide4() {
     explanation: string;
   }
 
+  // --- UPDATED: New questions based on ASA example ---
   const questions: QuizQuestion[] = [
     {
       id: 'proving-cpctc-q1',
-      question: 'What does the acronym "CPCTC" stand for?',
+      question: 'Based on the markings, $\\triangle ABC \\cong \\triangle KLM$ by which criterion?',
       options: [
-        "Congruent Parts of Congruent Triangles are Congruent",
-        "Corresponding Parts of Congruent Triangles are Congruent",
-        "Congruent Polygons are Congruent Triangles",
-        "Corresponding Parts of Corresponding Triangles are Congruent"
+        "SSS (Side-Side-Side)",
+        "SAS (Side-Angle-Side)",
+        "ASA (Angle-Side-Angle)",
+        "CPCTC"
       ],
-      correctAnswer: "Corresponding Parts of Congruent Triangles are Congruent",
-      explanation: "Correct! This is the full name for this very important theorem."
+      correctAnswer: "ASA (Angle-Side-Angle)",
+      explanation: "Correct! We are given two angles and the *included* side (the side between them), which is the ASA criterion."
     },
     {
       id: 'proving-cpctc-q2',
-      question: 'In a proof, when is it valid to use "CPCTC" as a reason?',
+      question: 'The statement $AB \\cong KL$ is true because...',
       options: [
-        "As the very first step, to state your 'Given'.",
-        "At any time you want to prove two parts are equal.",
-        "Only *after* you have already proven that the triangles are congruent.",
-        "Only for sides, not for angles."
+        "It is Given.",
+        "It is proven by CPCTC.",
+        "It is proven by the Reflexive Property."
       ],
-      correctAnswer: "Only *after* you have already proven that the triangles are congruent.",
-      explanation: "Correct! This is the most important rule. You *must* prove the triangles are congruent first (using SSS, SAS, etc.). CPCTC is the reason you use for *all the steps that come after*."
+      correctAnswer: "It is Given.",
+      explanation: "Correct! The single tick mark on side $AB$ and $KL$ shows this was given. We don't need to use CPCTC to prove it."
+    },
+    {
+      id: 'proving-cpctc-q3',
+      question: 'Which of these statements is a conclusion from CPCTC (and *not* a "Given")?',
+      options: [
+        "$AB \\cong KL$",
+        "$\\angle A \\cong \\angle K$",
+        "$AC \\cong KM$",
+        "$\\angle B \\cong \\angle L$"
+      ],
+      correctAnswer: "$AC \\cong KM$",
+      explanation: "Correct! Once we prove the triangles are congruent by ASA, we can use CPCTC to state that the *other* corresponding parts, like $AC$ and $KM$, are also congruent."
     }
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
+    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -161,6 +139,7 @@ export default function ProvingSlide4() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
+    // ... (This function remains unchanged, but I'll fix the template literal)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -189,6 +168,7 @@ export default function ProvingSlide4() {
   };
 
   const handleNextQuestion = () => {
+    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -204,6 +184,7 @@ export default function ProvingSlide4() {
   };
 
 
+  // --- UPDATED: New slide content ---
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
@@ -212,61 +193,61 @@ export default function ProvingSlide4() {
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">The "Why" of Proofs: CPCTC</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">CPCTC</h2>
             <p className="text-lg leading-relaxed">
-              You've proven two triangles are congruent. So what?
+              Before we proceed, we first need to state a theorem that's often abbreviated to CPCTC:
             </p>
+            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60">
+              <p className="text-lg italic font-semibold text-center">
+                Corresponding parts of congruent triangles are congruent.
+              </p>
+            </div>
             <p className="text-lg leading-relaxed mt-4">
-              The main reason we do this is to then prove that their *other parts* are congruent. The reason we use is <strong>CPCTC</strong>.
-            </p>
-            <p className="text-lg leading-relaxed mt-4 font-semibold text-blue-600 dark:text-blue-400">
-              <strong>C</strong>orresponding
-              <strong>P</strong>arts of
-              <strong>C</strong>ongruent
-              <strong>T</strong>riangles are
-              <strong>C</strong>ongruent.
+              When two triangles are shown to be congruent using a congruence criterion (like SSS, SAS, ASA), CPCTC allows us to conclude that **all** corresponding angles and sides of those triangles are congruent.
             </p>
           </div>
 
-          {/* --- CARD 2 (The 2-Step Process) --- */}
+          {/* --- CARD 2 (The Figure) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The 2-Step Proof Process</h3>
-            <p className="text-lg leading-relaxed">
-              Almost every congruence proof follows this pattern:
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Demonstration</h3>
+            <p className="text-lg leading-relaxed mb-4">
+              To demonstrate, consider the following congruent triangles:
             </p>
-            <ol className="list-decimal list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
-              <li>
-                <strong>Prove Triangles Congruent:</strong>
-                <br/>Use your "Givens" and "Hidden Clues" to prove $\triangle ABC \cong \triangle DEF$ by SSS, SAS, ASA, AAS, or HL.
-              </li>
-              <li>
-                <strong>Use CPCTC:</strong>
-                <br/>Now that the triangles are congruent, you can state that *any* of their corresponding parts are congruent. The reason is "CPCTC".
-              </li>
-            </ol>
-             <div className="mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/30">
-              <p className="text-lg text-red-700 dark:text-red-300">
-                <strong>CRITICAL RULE:</strong> You can <strong>NEVER</strong> use CPCTC as a reason *until after* you have already proven the triangles are congruent.
-              </p>
-            </div>
+            {/* --- USE THE ANIMATION COMPONENT --- */}
+            <CpctcAsaFigure />
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Logic and Quiz */}
         <div className="space-y-6">
-          {/* --- ANIMATION CARD --- */}
+          {/* --- LOGIC CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Final Step</h3>
-            
-            {/* --- USE THE ANIMATION COMPONENT --- */}
-            <CpctcProofAnimation />
-            
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              We first prove the triangles congruent (Step 4, by SAS), *then* we can use CPCTC (Step 5).
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Using CPCTC</h3>
+            <p className="text-lg leading-relaxed">
+              We won't prove this formally, but it's easy to see that since:
             </p>
+            <div className="my-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 font-mono text-center text-lg"
+                 dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle A \\cong \\angle K, \\quad AB \\cong KL, \\quad \\angle B \\cong \\angle L", { throwOnError: false }) }}
+            />
+            <p className="text-lg leading-relaxed">
+              ...then <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\triangle ABC \\cong \\triangle KLM", { throwOnError: false }) }} /> by the <strong>ASA criterion</strong>.
+            </p>
+            <p className="text-lg leading-relaxed mt-4">
+              Now that triangle congruence has been established, we can use <strong>CPCTC</strong> to list *all other* congruent sides and angles:
+            </p>
+            <ul className="list-disc list-outside mt-4 ml-5 text-lg space-y-2">
+              <li>
+                According to CPCTC, the following statements about segment congruence must be true:
+                <div className="my-2" dangerouslySetInnerHTML={{ __html: katex.renderToString("AC \\cong KM, \\quad BC \\cong LM", { throwOnError: false, displayMode: true }) }} />
+              </li>
+              <li>
+                Also, according to CPCTC, we have:
+                <div className="my-2" dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle C \\cong \\angle M", { throwOnError: false, displayMode: true }) }} />
+              </li>
+            </ul>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (Now 3 questions) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -291,7 +272,7 @@ export default function ProvingSlide4() {
             </div>
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                <div className="text-lg mb-4" dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}></div>
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
@@ -315,8 +296,8 @@ export default function ProvingSlide4() {
                         className={className}
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
+                        dangerouslySetInnerHTML={{ __html: katex.renderToString(option, { throwOnError: false }) }}
                       >
-                        {option}
                       </motion.button>
                     );
                   })}
@@ -334,8 +315,9 @@ export default function ProvingSlide4() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
+                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4"
+                           dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].explanation, { throwOnError: false }) }}
+                      >
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}
@@ -357,7 +339,7 @@ export default function ProvingSlide4() {
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "You've mastered the most important part of proofs!" : 'Great job!'}
+                  {score === questions.length ? "You've mastered this concept!" : 'Great job!'}
                 </div>
               </motion.div>
             )}
@@ -369,6 +351,7 @@ export default function ProvingSlide4() {
 
   return (
     <SlideComponentWrapper
+      // --- UPDATED Props ---
       slideId="proving-cpctc"
       slideTitle="CPCTC"
       moduleId="congruence"

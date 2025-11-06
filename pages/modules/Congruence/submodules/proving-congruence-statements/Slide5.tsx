@@ -3,73 +3,83 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import katex from 'katex';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
-  const svgWidth = 400;
+// --- TABLE COMPONENT DEFINED INSIDE ---
+type ProofRow = { num: string; statement: string; reason: string };
+
+const ProofTable: React.FC<{ rows: ProofRow[] }> = ({ rows }) => {
+  return (
+    <div className="w-full my-4">
+      <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-slate-800">
+        <thead>
+          <tr className="bg-slate-200 dark:bg-slate-700">
+            <th className="p-3 w-12 text-center text-sm font-semibold text-slate-700 dark:text-slate-300"></th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Statement</th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.num} className="border-t border-slate-300 dark:border-slate-600">
+              <td className="p-3 text-center font-mono text-slate-500">{row.num}</td>
+              <td className="p-3 font-mono" dangerouslySetInnerHTML={{ __html: katex.renderToString(row.statement, { throwOnError: false }) }}></td>
+              <td className="p-3 text-slate-600 dark:text-slate-400">{row.reason}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+// --- END OF TABLE COMPONENT ---
+
+// --- FIGURE FOR LEFT COLUMN ---
+const SasCpctcFigure: React.FC = () => {
+  const svgWidth = 300;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-  const hiddenColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const N={x: 50, y: 50}, M={x: 100, y: 180}, O={x: 150, y: 115}, K={x: 250, y: 180}, L={x: 200, y: 50};
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${N.x} ${N.y} L ${K.x} ${K.y}`} stroke={strokeColor} strokeWidth="2" />
+        <path d={`M ${M.x} ${M.y} L ${L.x} ${L.y}`} stroke={strokeColor} strokeWidth="2" />
+        <path d={`M ${N.x} ${N.y} L ${M.x} ${M.y}`} stroke={strokeColor} strokeWidth="2" />
+        <path d={`M ${K.x} ${K.y} L ${L.x} ${L.y}`} stroke={strokeColor} strokeWidth="2" />
+        <text x={N.x - 20} y={N.y} fill={strokeColor}>N</text>
+        <text x={M.x - 15} y={M.y + 15} fill={strokeColor}>M</text>
+        <text x={O.x - 5} y={O.y + 15} fill={strokeColor}>O</text>
+        <text x={K.x + 5} y={K.y + 15} fill={strokeColor}>K</text>
+        <text x={L.x + 10} y={L.y} fill={strokeColor}>L</text>
+      </svg>
+    </div>
+  );
+}
 
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-    stroke: strokeColor,
-  };
-  
-  // --- Figure 1 & 2: SSS Proof ---
-  const Q1 = { A: { x: 50, y: 110 }, B: { x: 200, y: 40 }, C: { x: 350, y: 110 }, D: { x: 200, y: 180 } };
-  
-  // --- Figure 3: SAS Proof ---
-  const T1_Q3 = { A: { x: 30, y: 50 }, M: { x: 150, y: 110 }, B: { x: 30, y: 170 } };
-  const T2_Q3 = { D: { x: 370, y: 50 }, M: { x: 250, y: 110 }, C: { x: 370, y: 170 } };
+// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
+const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+  const svgWidth = 350;
+  const svgHeight = 250;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ minHeight: svgHeight }}>
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
         <AnimatePresence>
           {(questionIndex === 0 || questionIndex === 1) && (
-            <motion.g key="q1q2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* Kite with diagonal AC */}
-              <path d="M 50 110 L 200 40 L 350 110 Z" {...commonProps} />
-              <path d="M 50 110 L 200 180 L 350 110 Z" {...commonProps} />
-              <line x1="50" y1="110" x2="350" y2="110" {...commonProps} />
-              
-              {/* SSS Markings */}
-              <line x1="50" y1="110" x2="200" y2="40" stroke={givenColor} strokeWidth="4" />
-              <line x1="50" y1="110" x2="200" y2="180" stroke={givenColor} strokeWidth="4" />
-              <text x={125} y={65} fill={givenColor} fontSize="12">Given: $AB \cong AD$ (S)</text>
-
-              <line x1="350" y1="110" x2="200" y2="40" stroke={givenColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1="350" y1="110" x2="200" y2="180" stroke={givenColor} strokeWidth="4" strokeDasharray="5 5" />
-              <text x={275} y={65} fill={givenColor} fontSize="12">Given: $CB \cong CD$ (S)</text>
-              
-              <line x1="50" y1="110" x2="350" y2="110" stroke={hiddenColor} strokeWidth="4" strokeDasharray="1 5" />
-              <text x={180} y={125} fill={hiddenColor} fontSize="12">Hidden: $AC \cong AC$ (S)</text>
+            <motion.g key="q1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* SSS Figure (Question 1 from image) */}
+              <SSSFigure strokeColor={strokeColor} />
             </motion.g>
           )}
 
-          {questionIndex === 2 && (
-            <motion.g key="q3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* Triangles with Vertical Angles */}
-              <line x1={T1_Q3.A.x} y1={T1_Q3.A.y} x2={T2_Q3.C.x} y2={T2_Q3.C.y} stroke={strokeColor} />
-              <line x1={T1_Q3.B.x} y1={T1_Q3.B.y} x2={T2_Q3.D.x} y2={T2_Q3.D.y} stroke={strokeColor} />
-              
-              {/* SAS Markings */}
-              <line x1={T1_Q3.A.x} y1={T1_Q3.A.y} x2={T1_Q3.M.x} y2={T1_Q3.M.y} stroke={givenColor} strokeWidth="4" />
-              <line x1={T2_Q3.C.x} y1={T2_Q3.C.y} x2={T2_Q3.M.x} y2={T2_Q3.M.y} stroke={givenColor} strokeWidth="4" />
-              <text x={90} y={70} fill={givenColor} fontSize="12">Given: $AM \cong CM$ (S)</text>
-              
-              <line x1={T1_Q3.B.x} y1={T1_Q3.B.y} x2={T1_Q3.M.x} y2={T1_Q3.M.y} stroke={givenColor} strokeWidth="4" strokeDasharray="5 5" />
-              <line x1={T2_Q3.D.x} y1={T2_Q3.D.y} x2={T2_Q3.M.x} y2={T2_Q3.M.y} stroke={givenColor} strokeWidth="4" strokeDasharray="5 5" />
-              <text x={30} y={190} fill={givenColor} fontSize="12">Given: $BM \cong DM$ (S)</text>
-
-              <path d={`M ${T1_Q3.M.x - 17} ${T1_Q3.M.y - 10} A 20 20 0 0 0 ${T1_Q3.M.x} ${T1_Q3.M.y - 20}`} stroke={hiddenColor} strokeWidth="2" />
-              <path d={`M ${T2_Q3.M.x + 17} ${T2_Q3.M.y + 10} A 20 20 0 0 0 ${T2_Q3.M.x} ${T2_Q3.M.y + 20}`} stroke={hiddenColor} strokeWidth="2" />
-              <text x={160} y={140} fill={hiddenColor} fontSize="12">Hidden: $\angle AMB \cong \angle CMD$ (A)</text>
+          {(questionIndex === 2 || questionIndex === 3) && (
+            <motion.g key="q2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* SAS Pentagon Figure (Question 2 from image) */}
+              <SASPentagonFigure strokeColor={strokeColor} />
             </motion.g>
           )}
         </AnimatePresence>
@@ -77,7 +87,67 @@ const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex })
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- Helper figures for the quiz ---
+const SSSFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+  const A={x: 175, y: 220}, C={x: 50, y: 100}, D={x: 175, y: 40}, B={x: 300, y: 100};
+  return (
+    <g>
+      <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} fill="none" />
+      <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} strokeWidth="1" strokeDasharray="4 4" />
+      
+      {/* Ticks: AB cong CD (1) */}
+      <path d="M 242 163 L 234 156" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 108 67 L 116 74" stroke={strokeColor} strokeWidth="2" />
+
+      {/* Ticks: AC cong BD (2) */}
+      <path d="M 105 165 L 113 158" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 102 162 L 110 155" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 245 67 L 237 74" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 248 70 L 240 77" stroke={strokeColor} strokeWidth="2" />
+
+      <text x={A.x - 10} y={A.y + 20} fill={strokeColor}>A</text>
+      <text x={B.x + 10} y={B.y + 5} fill={strokeColor}>B</text>
+      <text x={C.x - 20} y={C.y + 5} fill={strokeColor}>C</text>
+      <text x={D.x - 10} y={D.y - 10} fill={strokeColor}>D</text>
+    </g>
+  );
+};
+
+const SASPentagonFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+  const A={x: 175, y: 40}, B={x: 75, y: 100}, C={x: 125, y: 200}, D={x: 225, y: 200}, E={x: 275, y: 100};
+  return (
+    <g>
+      <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${E.x} ${E.y} Z`} stroke={strokeColor} fill="none" />
+      {/* Diagonals */}
+      <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y}`} stroke={strokeColor} strokeWidth="1" />
+      <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} strokeWidth="1" />
+      
+      {/* Ticks: AB cong AE (1) */}
+      <path d="M 120 67 L 128 74" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 230 67 L 222 74" stroke={strokeColor} strokeWidth="2" />
+
+      {/* Ticks: ACD is equilateral (2) */}
+      <path d="M 148 120 L 152 112" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 145 122 L 149 114" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 198 120 L 202 112" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 195 122 L 199 114" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 172 200 L 178 200" stroke={strokeColor} strokeWidth="2" />
+      <path d="M 172 203 L 178 203" stroke={strokeColor} strokeWidth="2" />
+      
+      {/* Angle: BAC cong DAE */}
+      <path d="M 166 58 A 20 20 0 0 0 148 70" stroke={strokeColor} fill="none" strokeWidth="1.5" />
+      <path d="M 184 58 A 20 20 0 0 1 202 70" stroke={strokeColor} fill="none" strokeWidth="1.5" />
+      
+      <text x={A.x - 10} y={A.y - 10} fill={strokeColor}>A</text>
+      <text x={B.x - 20} y={B.y + 5} fill={strokeColor}>B</text>
+      <text x={C.x - 10} y={C.y + 20} fill={strokeColor}>C</text>
+      <text x={D.x + 0} y={D.y + 20} fill={strokeColor}>D</text>
+      <text x={E.x + 10} y={E.y + 5} fill={strokeColor}>E</text>
+    </g>
+  );
+};
+// --- END OF QUIZ FIGURE COMPONENT ---
 
 
 export default function ProvingSlide5() {
@@ -85,18 +155,19 @@ export default function ProvingSlide5() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
+  // --- UPDATED: Now 4 questions ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'proving-sss-sas-quiz',
-      conceptId: 'proving-sss-sas',
+      id: 'proving-practice-quiz',
+      conceptId: 'proving-practice-problems',
       conceptName: 'Proving with SSS/SAS',
       type: 'judging',
-      description: 'Testing completion of SSS and SAS proofs'
+      description: 'Testing completion of various proofs'
     }
   ];
 
@@ -108,38 +179,51 @@ export default function ProvingSlide5() {
     explanation: string;
   }
   
-  const allReasons = ["Given", "Reflexive Property", "Vertical Angles", "SSS", "SAS", "CPCTC"];
-
+  // --- UPDATED: New questions based on images ---
   const questions: QuizQuestion[] = [
     {
-      id: 'proving-sss-sas-q1',
-      question: 'Proof 1: What is the reason for the statement $\overline{AC} \cong \overline{AC}$?',
-      options: allReasons,
-      correctAnswer: "Reflexive Property",
-      explanation: "Correct! The Reflexive Property is the reason we use when a side is shared by both triangles."
+      id: 'proving-q1-sss-step2',
+      question: 'Diagram 1: Given $\overline{AB} \cong \overline{CD}$. What is the missing "Given" statement in Step 2?',
+      options: ["$\overline{AC} \cong \overline{BD}$", "$\overline{AD} \cong \overline{AD}$", "$\angle A \cong \angle D$", "$\angle B \cong \angle C$"],
+      correctAnswer: "$\overline{AC} \cong \overline{BD}$",
+      explanation: "Correct! This is the second 'Given' pair of sides (marked with double tick marks) needed for the SSS proof."
     },
     {
-      id: 'proving-sss-sas-q2',
-      question: 'Proof 1: After step 3, which criterion proves $\triangle ABC \cong \triangle ADC$?',
-      options: allReasons,
-      correctAnswer: "SSS",
-      explanation: "Correct! We have $AB \cong AD$ (Given - S), $CB \cong CD$ (Given - S), and $AC \cong AC$ (Reflexive - S). This is SSS."
+      id: 'proving-q1-sss-step3',
+      question: 'Diagram 1: What is the reason for Step 3: $\overline{AD} \cong \overline{AD}$?',
+      options: ["Given", "Reflexive property of congruence", "Symmetric property", "SSS criterion"],
+      correctAnswer: "Reflexive property of congruence",
+      explanation: "Correct! The diagonal $\overline{AD}$ is a shared side for both $\triangle ABD$ and $\triangle DCA$. The reason it's congruent to itself is the Reflexive Property."
     },
     {
-      id: 'proving-sss-sas-q3',
-      question: 'Proof 2: We are given two pairs of congruent sides (S, S). What is the *hidden* piece of information we need to prove $\triangle AMB \cong \triangle CMD$ by SAS?',
-      options: [
-        "$\overline{AB} \cong \overline{CD}$",
-        "$\angle A \cong \angle C$",
-        "$\angle AMB \cong \angle CMD$",
-        "$\overline{AC} \cong \overline{BD}$"
-      ],
-      correctAnswer: "$\angle AMB \cong \angle CMD$",
-      explanation: "Correct! The included angle is at vertex M. We know $\angle AMB \cong \angle CMD$ because they are Vertical Angles. This gives us the 'A' in SAS."
+      id: 'proving-q2-sas-step2',
+      question: 'Diagram 2: What is the missing "Given" statement in Step 2?',
+      options: ["$\overline{AC} \cong \overline{AD}$", "$\overline{AB} \cong \overline{AE}$", "$\angle BAC \cong \angle DAE$", "$\triangle ACD$ is equilateral"],
+      correctAnswer: "$\overline{AB} \cong \overline{AE}$",
+      explanation: "Correct! This is one of the 'Given' statements, providing the first 'Side' (S) for our SAS proof."
+    },
+    {
+      id: 'proving-q2-sas-step4',
+      question: 'Diagram 2: What is the missing Statement in Step 4 that provides the second "Side" for SAS?',
+      options: ["$\overline{AC} \cong \overline{AD}$", "$\overline{BC} \cong \overline{ED}$", "$\angle C \cong \angle D$", "CPCTC"],
+      correctAnswer: "$\overline{AC} \cong \overline{AD}$",
+      explanation: "Correct! Because $\triangle ACD$ is equilateral (Step 1), we know all its sides are congruent. This gives us our second 'Side' (S)."
     }
+  ];
+  
+  // --- Data for the table in the left column ---
+  const proofRows: ProofRow[] = [
+    { num: "1", statement: "NO = OK", reason: "Definition of a midpoint" },
+    { num: "2", statement: "NO \\cong OK", reason: "Definition of congruent segments" },
+    { num: "3", statement: "MO = OL", reason: "Definition of a midpoint" },
+    { num: "4", statement: "MO \\cong OL", reason: "Definition of congruent segments" },
+    { num: "5", statement: "\\angle NOM \\cong \\angle KOL", reason: "Vertical angles theorem" },
+    { num: "6", statement: "\\triangle NOM \\cong \\triangle KOL", reason: "SAS congruence criterion" },
+    { num: "7", statement: "NM \\cong KL", reason: "CPCTC" },
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
+    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -147,6 +231,7 @@ export default function ProvingSlide5() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
+    // ... (This function remains unchanged)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -159,11 +244,11 @@ export default function ProvingSlide5() {
     }
 
     handleInteractionComplete({
-      interactionId: `proving-sss-sas-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `proving-practice-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'proving-sss-sas',
+      conceptId: 'proving-practice-problems',
       conceptName: 'Proving with SSS/SAS',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
@@ -175,6 +260,7 @@ export default function ProvingSlide5() {
   };
 
   const handleNextQuestion = () => {
+    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -190,6 +276,7 @@ export default function ProvingSlide5() {
   };
 
 
+  // --- UPDATED: New slide content ---
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
@@ -198,55 +285,40 @@ export default function ProvingSlide5() {
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Practice Proof: SSS</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: SAS & CPCTC</h2>
             <p className="text-lg leading-relaxed">
-              Let's build a proof for the figure in <strong>Question 1 & 2</strong>.
+  In the diagram below, **O is the midpoint** of the segments{' '}
+  <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{LM}", { throwOnError: false }) }} />
+  {' '}and{' '}
+  <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{NK}", { throwOnError: false }) }} />.
+</p>
+            <SasCpctcFigure />
+            <p className="text-lg leading-relaxed mt-4">
+              Consider the following statement:
             </p>
-            <ul className="list-disc list-inside mt-4 text-lg space-y-2">
-              <li>
-                <strong>Given:</strong> $AB \cong AD$ (S) and $CB \cong CD$ (S)
-              </li>
-              <li>
-                <strong>Prove:</strong> $\triangle ABC \cong \triangle ADC$
-              </li>
-            </ul>
-            <p className="text-lg leading-relaxed mt-4 font-semibold">
-              The "missing step" is finding the shared side $AC \cong AC$, which is our third (S). The reason is the **Reflexive Property**.
-            </p>
-            <p className="text-lg leading-relaxed mt-2">
-              The final reason is <strong>SSS</strong>.
-            </p>
+            <div className="my-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60"
+                 dangerouslySetInnerHTML={{ __html: katex.renderToString("NM \\cong KL", { throwOnError: false, displayMode: true }) }}
+            />
           </div>
 
           {/* --- CARD 2 (The Logic) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Practice Proof: SAS</h3>
-            <p className="text-lg leading-relaxed">
-              Now let's build a proof for the figure in <strong>Question 3</strong>.
-            </p>
-            <ul className="list-disc list-inside mt-4 text-lg space-y-2">
-              <li>
-                <strong>Given:</strong> $AM \cong CM$ (S) and $BM \cong DM$ (S)
-              </li>
-              <li>
-                <strong>Prove:</strong> $\triangle AMB \cong \triangle CMD$
-              </li>
-            </ul>
-            <p className="text-lg leading-relaxed mt-4 font-semibold">
-              The "missing step" is finding the included angle. $\angle AMB$ and $\angle CMD$ are **Vertical Angles**, so they are congruent (A).
-            </p>
-             <p className="text-lg leading-relaxed mt-2">
-              The final reason is <strong>SAS</strong>.
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Correct Proof</h3>
+            {/* --- USE THE TABLE COMPONENT --- */}
+            <ProofTable rows={proofRows} />
+            
+            <p className="text-lg leading-relaxed mt-4">
+              This proof uses the **SAS congruence criterion** (Step 6) and then **CPCTC** (Step 7) to reach the final conclusion.
             </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Quiz */}
         <div className="space-y-6">
           {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Complete the Proof</h3>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Complete the Proofs</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
@@ -272,7 +344,7 @@ export default function ProvingSlide5() {
 
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
+                <div className="text-lg mb-4 mt-6" dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}></div>
                 {/* --- Answer Options --- */}
                 <div className="grid grid-cols-2 gap-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
@@ -296,8 +368,8 @@ export default function ProvingSlide5() {
                         className={className}
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
+                        dangerouslySetInnerHTML={{ __html: katex.renderToString(option, { throwOnError: false }) }}
                       >
-                        {option}
                       </motion.button>
                     );
                   })}
@@ -315,9 +387,10 @@ export default function ProvingSlide5() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
-                      </div>
+                     <div className="text-lg text-slate-600 dark:text-slate-400 mb-4 break-words"
+     dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].explanation, { throwOnError: false }) }}
+>
+</div>
                       <motion.button
                         onClick={handleNextQuestion}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
@@ -350,8 +423,9 @@ export default function ProvingSlide5() {
 
   return (
     <SlideComponentWrapper
-      slideId="proving-sss-sas"
-      slideTitle="Proving Congruence Using the SSS and SAS Criteria"
+      // --- UPDATED Props ---
+      slideId="proving-practice-problems"
+      slideTitle="Proving Congruence: Practice"
       moduleId="congruence"
       submoduleId="proving-congruence-statements"
       interactions={localInteractions}

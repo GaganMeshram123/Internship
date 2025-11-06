@@ -1,342 +1,368 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Interaction, InteractionResponse } from '../../../common-components/concept';
-import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
-import { useThemeContext } from '@/lib/ThemeContext';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Interaction, InteractionResponse } from "../../../common-components/concept";
+import SlideComponentWrapper from "../../../common-components/SlideComponentWrapper";
+import { useThemeContext } from "@/lib/ThemeContext";
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
-const CongruenceVsEqualityAnimation: React.FC = () => {
-  const svgWidth = 400;
-  const svgHeight = 220;
+/* ---------- ANGLE COLLECTION FIGURE (top illustration) ---------- */
+const AngleCollectionFigure: React.FC = () => {
   const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  
-  const itemAnim = (delay: number) => ({
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { delay: delay } },
+  const stroke = isDarkMode ? "#E2E8F0" : "#475569";
+  const blue = isDarkMode ? "#60A5FA" : "#2563EB";
+
+  const angles = [
+    { x: 160, y: 60, r1: 40, r2: 25 },
+    { x: 110, y: 55, r1: 60, r2: 40 },
+    { x: 75,  y: 110, r1: 70, r2: 45 },
+    { x: 160, y: 140, r1: 35, r2: 25 },
+    { x: 120, y: 150, r1: 45, r2: 30 }
+  ];
+
+  return (
+    <div className="flex justify-center">
+      <svg width="260" height="200" viewBox="0 0 260 200">
+        <circle cx="130" cy="100" r="80" stroke={stroke} strokeWidth="2" fill="none" />
+        {angles.map((a, i) => (
+          <g key={i}>
+            <line x1={a.x} y1={a.y} x2={a.x + a.r1} y2={a.y + a.r2} stroke={blue} strokeWidth="4" />
+            <line x1={a.x} y1={a.y} x2={a.x - a.r2} y2={a.y + a.r1} stroke={blue} strokeWidth="4" />
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+};
+
+/* ---------- MINI EXPLAINER ANIMATION (right column) ---------- */
+const CongruenceVsEqualityAnimation: React.FC = () => {
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? "#E2E8F0" : "#4A5568";
+  const color1 = isDarkMode ? "#60A5FA" : "#2563EB";
+
+  const item = (d: number) => ({
+    hidden: { opacity: 0, y: 8 },
+    visible: { opacity: 1, y: 0, transition: { delay: d } }
   });
 
   return (
-    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* Title */}
-        <motion.text x={200} y={30} fill={strokeColor} fontSize="18" textAnchor="middle"
-          initial="hidden" animate="visible" variants={itemAnim(0.5)}>
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60">
+      <svg width={400} height={220} viewBox="0 0 400 220">
+        <motion.text
+          x={200}
+          y={28}
+          fill={strokeColor}
+          fontSize="18"
+          textAnchor="middle"
+          initial="hidden"
+          animate="visible"
+          variants={item(0.2)}
+        >
           Congruence vs. Equality (Angles)
         </motion.text>
-        
-        {/* Equality Side */}
-        <motion.text x={100} y={80} fill={color1} fontSize="20" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(1.0)}>
+
+        {/* Equality side */}
+        <motion.text x={100} y={70} fill={color1} fontSize="18" textAnchor="middle" variants={item(0.4)} initial="hidden" animate="visible">
           Equality (=)
         </motion.text>
-        <motion.text x={100} y={110} fill={strokeColor} fontSize="16" textAnchor="middle"
-          initial="hidden" animate="visible" variants={itemAnim(1.2)}>
-          For Numbers / Measures
+        <motion.text x={100} y={98} fill={strokeColor} fontSize="14" textAnchor="middle" variants={item(0.5)} initial="hidden" animate="visible">
+          For measures (numbers)
         </motion.text>
-        <motion.text x={100} y={150} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.4)}>
-          $m\angle A = 45^\circ$
+        <motion.text x={100} y={132} fill={color1} fontSize="16" textAnchor="middle" variants={item(0.6)} initial="hidden" animate="visible">
+          {`m∠A = 45°`}
         </motion.text>
-         <motion.text x={100} y={175} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.6)}>
-          $m\angle B = 45^\circ$
+        <motion.text x={100} y={156} fill={color1} fontSize="16" textAnchor="middle" variants={item(0.7)} initial="hidden" animate="visible">
+          {`m∠B = 45°`}
         </motion.text>
-         <motion.text x={100} y={200} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(1.8)}>
-          $m\angle A = m\angle B$
+        <motion.text x={100} y={182} fill={color1} fontSize="16" textAnchor="middle" variants={item(0.8)} initial="hidden" animate="visible">
+          {`m∠A = m∠B`}
         </motion.text>
 
-        {/* Dividing Line */}
-        <motion.line x1={200} y1={60} x2={200} y2={210} stroke={strokeColor} strokeWidth="2"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }}
-        />
-        
-        {/* Congruence Side */}
-        <motion.text x={300} y={80} fill={color1} fontSize="20" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(2.2)}>
-          Congruence ($\cong$)
+        {/* Divider */}
+        <motion.line x1={200} y1={55} x2={200} y2={190} stroke={strokeColor} strokeWidth={2} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }} />
+
+        {/* Congruence side */}
+        <motion.text x={300} y={70} fill={color1} fontSize="18" textAnchor="middle" variants={item(1.0)} initial="hidden" animate="visible">
+          {`Congruence (≅)`}
         </motion.text>
-        <motion.text x={300} y={110} fill={strokeColor} fontSize="16" textAnchor="middle"
-          initial="hidden" animate="visible" variants={itemAnim(2.4)}>
-          For Figures / Objects
+        <motion.text x={300} y={98} fill={strokeColor} fontSize="14" textAnchor="middle" variants={item(1.1)} initial="hidden" animate="visible">
+          For figures (angles)
         </motion.text>
-        <motion.text x={300} y={160} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(2.6)}>
-          $\angle A \cong \angle B$
+        <motion.text x={300} y={140} fill={color1} fontSize="16" textAnchor="middle" variants={item(1.2)} initial="hidden" animate="visible">
+          {`∠A ≅ ∠B`}
         </motion.text>
-        <motion.text x={300} y={190} fill={color1} fontSize="18" textAnchor="middle" fontFamily="monospace"
-          initial="hidden" animate="visible" variants={itemAnim(2.8)}>
-          (Angles are congruent)
+        <motion.text x={300} y={166} fill={strokeColor} fontSize="14" textAnchor="middle" variants={item(1.3)} initial="hidden" animate="visible">
+          Angles are congruent
         </motion.text>
       </svg>
     </div>
   );
 };
-// --- END OF ANIMATION COMPONENT DEFINITION ---
 
+/* ---------- QUIZ FIGURE PER QUESTION ---------- */
+const AngleQuizFigure: React.FC<{ index: number }> = ({ index }) => {
+  const { isDarkMode } = useThemeContext();
+  const blue = isDarkMode ? "#60A5FA" : "#2563EB";
 
+  return (
+    <div className="flex justify-center p-4">
+      <svg width="320" height="170" viewBox="0 0 320 170">
+        {index === 0 && (
+          <>
+            <line x1="160" y1="140" x2="90" y2="40" stroke={blue} strokeWidth="5" />
+            <line x1="160" y1="140" x2="230" y2="40" stroke={blue} strokeWidth="5" />
+            <text x="160" y="30" textAnchor="middle" fill={blue}>
+              {`∠A ≅ ∠A`}
+            </text>
+          </>
+        )}
+        {index === 1 && (
+          <>
+            {/* angle A */}
+            <line x1="80" y1="120" x2="160" y2="40" stroke={blue} strokeWidth="5" />
+            <line x1="80" y1="120" x2="160" y2="120" stroke={blue} strokeWidth="5" />
+            <text x="80" y="138" textAnchor="middle" fill={blue}>
+              {`∠A`}
+            </text>
+            {/* angle B */}
+            <line x1="240" y1="120" x2="160" y2="40" stroke={blue} strokeWidth="5" />
+            <line x1="240" y1="120" x2="160" y2="120" stroke={blue} strokeWidth="5" />
+            <text x="240" y="138" textAnchor="middle" fill={blue}>
+              {`∠B`}
+            </text>
+
+            <text x="160" y="22" textAnchor="middle" fill={blue}>
+              {`∠A ≅ ∠B ⇒ ∠B ≅ ∠A`}
+            </text>
+          </>
+        )}
+        {index === 2 && (
+          <>
+            <text x="160" y="60" textAnchor="middle" fill={blue}>
+              {`If ∠A ≅ ∠B`}
+            </text>
+            <text x="160" y="86" textAnchor="middle" fill={blue}>
+              {`and ∠B ≅ ∠C`}
+            </text>
+            <text x="160" y="122" textAnchor="middle" fill={blue} fontWeight="bold">
+              {`Then ∠A ≅ ∠C`}
+            </text>
+          </>
+        )}
+      </svg>
+    </div>
+  );
+};
+
+/* ================================================================
+   MAIN SLIDE COMPONENT
+================================================================ */
 export default function PropertiesSlide7() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+  const [qIndex, setQIndex] = useState(0);
+  const [selected, setSelected] = useState<string>("");
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  const [answered, setAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
-  const [isQuizComplete, setIsQuizComplete] = useState(false);
-  const { isDarkMode } = useThemeContext();
+  const [complete, setComplete] = useState(false);
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'properties-angle-congruence-quiz',
-      conceptId: 'properties-angle-congruence',
-      conceptName: 'Congruence of Angles',
-      type: 'judging',
-      description: 'Testing understanding of angle congruence vs. equality'
+      id: "properties-angle-congruence-quiz",
+      conceptId: "properties-angle-congruence",
+      conceptName: "Congruence of Angles",
+      type: "judging",
+      description: "Identify R/S/T properties for angle congruence"
     }
   ];
 
-  interface QuizQuestion {
+  type Quiz = {
     id: string;
     question: string;
     options: string[];
-    correctAnswer: string;
+    correct: string;
     explanation: string;
-  }
+  };
 
-  const questions: QuizQuestion[] = [
+  const questions: Quiz[] = [
     {
-      id: 'properties-angle-q1',
-      question: 'Which statement correctly compares the *measures* (the numbers) of two angles?',
-      options: [
-        "$\angle A \cong \angle B$",
-        "$m\angle A = m\angle B$",
-        "$m\angle A \cong m\angle B$",
-        "$\angle A = \angle B$"
-      ],
-      correctAnswer: "$m\angle A = m\angle B$",
-      explanation: "Correct! $m\angle A$ and $m\angle B$ represent numbers (like 45°). We use the equals sign ($=$) to compare numbers."
+      id: "ang-q1",
+      question: "Which property explains why ∠A ≅ ∠A is always true?",
+      options: ["Reflexive Property", "Symmetric Property", "Transitive Property"],
+      correct: "Reflexive Property",
+      explanation: "Every angle is congruent to itself. That's the Reflexive Property of Congruence."
     },
     {
-      id: 'properties-angle-q2',
-      question: 'Which statement correctly compares the *angles themselves* (the geometric figures)?',
-      options: [
-        "$\angle A \cong \angle B$",
-        "$m\angle A = m\angle B$",
-        "$m\angle A \cong m\angle B$",
-        "$\angle A = \angle B$"
-      ],
-      correctAnswer: "$\angle A \cong \angle B$",
-      explanation: "Correct! $\angle A$ and $\angle B$ (with the angle symbol) represent the geometric figures. We use the congruence sign ($\cong$) to compare figures."
+      id: "ang-q2",
+      question: "If ∠A ≅ ∠B, then ∠B ≅ ∠A. Which property is used?",
+      options: ["Reflexive Property", "Symmetric Property", "Transitive Property"],
+      correct: "Symmetric Property",
+      explanation: "We can flip a congruence statement: if first is congruent to second, then second is congruent to first."
+    },
+    {
+      id: "ang-q3",
+      question: "If ∠A ≅ ∠B and ∠B ≅ ∠C, then ∠A ≅ ∠C. Which property is used?",
+      options: ["Reflexive Property", "Symmetric Property", "Transitive Property"],
+      correct: "Transitive Property",
+      explanation: "We pass congruence along a chain: A ≅ B and B ≅ C implies A ≅ C."
     }
   ];
 
-  const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
+  const logInteraction = (resp: InteractionResponse) => {
+    setLocalInteractions(prev => ({ ...prev, [resp.interactionId]: resp }));
   };
 
-  const handleQuizAnswer = (answerText: string) => {
-    if (showFeedback || isQuizComplete) return;
-
-    setSelectedAnswer(answerText);
+  const handleAnswer = (opt: string) => {
+    if (showFeedback || complete) return;
+    setSelected(opt);
     setShowFeedback(true);
 
-    const current = questions[currentQuestionIndex];
-    const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
+    const current = questions[qIndex];
+    const isCorrect = opt === current.correct;
 
-    handleInteractionComplete({
-      interactionId: `properties-angle-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
+    if (isCorrect) setScore(s => s + 1);
+
+    logInteraction({
+      interactionId: `angle-quiz-${current.id}-${Date.now()}`,
+      value: opt,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'properties-angle-congruence',
-      conceptName: 'Congruence of Angles',
-      conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      conceptId: "properties-angle-congruence",
+      conceptName: "Congruence of Angles",
+      question: { type: "mcq", question: current.question, options: current.options }
     });
   };
 
-  const handleNextQuestion = () => {
-    const newAnswered = [...questionsAnswered];
-    newAnswered[currentQuestionIndex] = true;
-    setQuestionsAnswered(newAnswered);
-
-    setSelectedAnswer('');
+  const next = () => {
+    const a = [...answered];
+    a[qIndex] = true;
+    setAnswered(a);
+    setSelected("");
     setShowFeedback(false);
 
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      setIsQuizComplete(true);
-    }
+    if (qIndex < questions.length - 1) setQIndex(qIndex + 1);
+    else setComplete(true);
   };
 
+  const { isDarkMode } = useThemeContext();
 
   const slideContent = (
-    <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
+    <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left column */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Congruence vs. Equality (for Angles)</h2>
-            <p className="text-lg leading-relaxed">
-              Just like with segments, we have a formal way to talk about angles being "the same."
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow">
+            <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-3">Congruence of Angles</h2>
+            <AngleCollectionFigure />
+            <p className="mt-4">
+              Congruent <em>angles</em> satisfy the same three equivalence properties as equality:
+              reflexive, symmetric, and transitive.
             </p>
-            <ul className="list-disc list-inside mt-4 text-lg space-y-2">
-              <li>
-                We use the **Equals sign ($=$)** for **measures (numbers)**.
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$m\angle A = 45^\circ$</span>
-              </li>
-              <li>
-                We use the **Congruence sign ($\cong$)** for **figures (the angles themselves)**.
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">$\angle A \cong \angle B$</span>
-              </li>
+            <ul className="list-disc list-inside mt-3 space-y-2">
+              <li><b>Reflexive:</b> {`∠a ≅ ∠a`}</li>
+              <li><b>Symmetric:</b> {`If ∠a ≅ ∠b, then ∠b ≅ ∠a`}</li>
+              <li><b>Transitive:</b> {`If ∠a ≅ ∠b and ∠b ≅ ∠c, then ∠a ≅ ∠c`}</li>
             </ul>
-          </div>
-
-          {/* --- CARD 2 (The Definition) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Definition of Congruent Angles</h3>
-            <p className="text-lg leading-relaxed">
-              The two notations are linked by a formal definition.
-            </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                <strong>$\angle A \cong \angle B$</strong> (The angles are congruent)
-                <br/>
-                is the same as saying
-                <br/>
-                <strong>$m\angle A = m\angle B$</strong> (Their measures are equal)
-              </p>
-            </div>
-            <p className="text-lg leading-relaxed mt-4">
-              In a proof, you can switch between these two. The reason is the "Definition of Congruent Angles."
-            </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right column */}
         <div className="space-y-6">
-          {/* --- ANIMATION CARD --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Numbers vs. Figures</h3>
-            
-            {/* --- USE THE ANIMATION COMPONENT --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow">
+            <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-3 text-center">Numbers vs Figures</h3>
             <CongruenceVsEqualityAnimation />
-            
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              Use ($=$) for measures. Use ($\cong$) for the angles themselves.
+            <p className="text-sm text-center mt-2 opacity-80">
+              Use "=" for measures (numbers). Use "≅" for the angles themselves (figures).
             </p>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Check Your Notation</h3>
-              <div className="text-lg text-slate-600 dark:text-slate-400">
-                Question {currentQuestionIndex + 1} of {questions.length}
-              </div>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Name That Property</h3>
+              <div>Question {qIndex + 1} of {questions.length}</div>
             </div>
-            {/* --- Progress Bar --- */}
+
+            {/* Progress */}
             <div className="flex space-x-2 mb-6">
-              {questions.map((_, index) => (
+              {questions.map((_, i) => (
                 <div
-                  key={index}
+                  key={i}
                   className={`h-2 flex-1 rounded ${
-                    index === currentQuestionIndex
-                      ? 'bg-blue-500' // Active
-                      : questionsAnswered[index]
-                      ? 'bg-blue-300 dark:bg-blue-800' // Answered
-                      : 'bg-slate-300 dark:bg-slate-600' // Unanswered
-                  }`}
+                    i === qIndex ? "bg-blue-500"
+                      : answered[i] ? "bg-blue-300 dark:bg-blue-800"
+                      : "bg-slate-300 dark:bg-slate-600"} `}
                 />
               ))}
             </div>
-            {!isQuizComplete ? (
+
+            {/* Figure */}
+            <AngleQuizFigure index={qIndex} />
+
+            {/* Question + options */}
+            {!complete ? (
               <>
-                <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
-                {/* --- Answer Options --- */}
+                <div className="text-lg mb-4">{questions[qIndex].question}</div>
                 <div className="space-y-3">
-                  {questions[currentQuestionIndex].options.map((option, idx) => {
-                    const disabled = showFeedback;
-                    const selected = selectedAnswer === option;
-                    const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-red-500 bg-red-100 dark:bg-red-800 opacity-70' // INCORRECT
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
-                    } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                  {questions[qIndex].options.map((opt, i) => {
+                    const correct = opt === questions[qIndex].correct;
+                    const selectedState = selected === opt;
+                    const base = "w-full p-3 rounded-lg text-left transition-all border-2";
+                    const visual =
+                      selectedState && showFeedback
+                        ? correct
+                          ? "border-green-500 bg-green-50 dark:bg-green-900/20"
+                          : "border-red-500 bg-red-50 dark:bg-red-900/20"
+                        : selectedState
+                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                        : "border-slate-300 dark:border-slate-600 hover:border-blue-400";
                     return (
                       <motion.button
-                        key={idx}
-                        onClick={() => handleQuizAnswer(option)}
-                        disabled={disabled}
-                        className={className}
-                        whileHover={!disabled ? { scale: 1.02 } : {}}
-                        whileTap={!disabled ? { scale: 0.98 } : {}}
+                        key={i}
+                        whileHover={!showFeedback ? { scale: 1.02 } : {}}
+                        whileTap={!showFeedback ? { scale: 0.98 } : {}}
+                        className={`${base} ${visual}`}
+                        disabled={showFeedback}
+                        onClick={() => handleAnswer(opt)}
                       >
-                        {option}
+                        {opt}
                       </motion.button>
                     );
                   })}
                 </div>
-                {/* --- Feedback Box --- */}
+
                 <AnimatePresence>
                   {showFeedback && (
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className={`mt-4 p-4 rounded-lg ${
-                        selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
+                      exit={{ opacity: 0, y: -12 }}
+                      className={`mt-4 p-4 rounded-lg border ${
+                        selected === questions[qIndex].correct
+                          ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700"
+                          : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700"
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
-                      </div>
+                      <div className="mb-4">{questions[qIndex].explanation}</div>
                       <motion.button
-                        onClick={handleNextQuestion}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                        onClick={next}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
                       >
-                        {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Complete Quiz'}
+                        {qIndex < questions.length - 1 ? "Next Question" : "Complete Quiz"}
                       </motion.button>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </>
             ) : (
-              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">✍️</div>
-                <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
-                <div className="text-lg text-slate-600 dark:text-slate-400">
-                  You scored {score} out of {questions.length}
-                </div>
-                <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "Your notation is perfect!" : 'Great job!'}
-                </div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-8"
+              >
+                <div className="text-3xl mb-2">✅</div>
+                <div className="text-lg">You scored {score} / {questions.length}</div>
               </motion.div>
             )}
           </div>

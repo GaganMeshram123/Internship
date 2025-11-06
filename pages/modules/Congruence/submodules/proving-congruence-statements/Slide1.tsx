@@ -4,74 +4,16 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
-const ProofIntroAnimation: React.FC = () => {
-  const svgWidth = 400;
-  const svgHeight = 220;
-  const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const color1 = isDarkMode ? '#F87171' : '#EF4444'; // Red (Given)
-  const color2 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue (Logic)
-  const color3 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green (Prove)
-  
-  const itemAnim = (delay: number) => ({
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { delay: delay } },
-  });
-
-  return (
-    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        
-        {/* Given */}
-        <motion.rect x={20} y={20} width={100} height={40} rx="8" fill={color1} opacity="0.7"
-          initial="hidden" animate="visible" variants={itemAnim(0.5)} />
-        <motion.text x={70} y={45} fill="white" fontSize="16" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(0.7)}>
-          GIVEN
-        </motion.text>
-        
-        {/* Arrow */}
-        <motion.path d="M 130 45 L 180 45" stroke={strokeColor} strokeWidth="2"
-          initial="hidden" animate="visible" variants={itemAnim(1.0)} />
-        <motion.path d="M 175 40 L 180 45 L 175 50" stroke={strokeColor} strokeWidth="2" fill="none"
-          initial="hidden" animate="visible" variants={itemAnim(1.0)} />
-        
-        {/* Logic / Definitions */}
-        <motion.rect x={190} y={20} width={190} height={40} rx="8" fill={color2} opacity="0.7"
-          initial="hidden" animate="visible" variants={itemAnim(1.2)} />
-        <motion.text x={285} y={45} fill="white" fontSize="16" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(1.4)}>
-          LOGIC & DEFINITIONS
-        </motion.text>
-        <motion.text x={285} y={70} fill={color2} fontSize="14" textAnchor="middle"
-          initial="hidden" animate="visible" variants={itemAnim(1.6)}>
-          (SAS, Reflexive Prop., etc.)
-        </motion.text>
-        
-        {/* Arrow */}
-        <motion.path d="M 200 90 L 200 130" stroke={strokeColor} strokeWidth="2"
-          initial="hidden" animate="visible" variants={itemAnim(2.0)} />
-        <motion.path d="M 195 125 L 200 130 L 205 125" stroke={strokeColor} strokeWidth="2" fill="none"
-          initial="hidden" animate="visible" variants={itemAnim(2.0)} />
-        
-        {/* Prove */}
-        <motion.rect x={150} y={140} width={100} height={40} rx="8" fill={color3} opacity="0.7"
-          initial="hidden" animate="visible" variants={itemAnim(2.2)} />
-        <motion.text x={200} y={165} fill="white" fontSize="16" textAnchor="middle" fontWeight="bold"
-          initial="hidden" animate="visible" variants={itemAnim(2.4)}>
-          PROVE
-        </motion.text>
-        
-        <motion.text x={200} y={200} fill={strokeColor} fontSize="16" textAnchor="middle"
-          initial="hidden" animate="visible" variants={itemAnim(3.0)}>
-          A proof is a logical path from Given to Prove.
-        </motion.text>
-      </svg>
+// --- HELPER COMPONENT FOR DEFINITIONS ---
+const DefinitionItem: React.FC<{ term: string; definition: string }> = ({ term, definition }) => (
+  <li className="mb-4">
+    <h4 className="text-lg font-semibold">{term}:</h4>
+    <div className="mt-2 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300">
+      {definition}
     </div>
-  );
-};
-// --- END OF ANIMATION COMPONENT DEFINITION ---
+  </li>
+);
+// --- END OF HELPER COMPONENT ---
 
 
 export default function ProvingSlide1() {
@@ -79,18 +21,19 @@ export default function ProvingSlide1() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  // --- UPDATED: Now 3 questions ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'proving-intro-quiz',
-      conceptId: 'proving-introduction',
-      conceptName: 'Introduction to Proofs',
+      id: 'proving-definitions-quiz',
+      conceptId: 'proving-definitions',
+      conceptName: 'Proof Prerequisites: Definitions',
       type: 'judging',
-      description: 'Testing understanding of the components of a proof'
+      description: 'Testing understanding of core geometry definitions'
     }
   ];
 
@@ -102,30 +45,43 @@ export default function ProvingSlide1() {
     explanation: string;
   }
 
+  // --- UPDATED: New questions based on definitions ---
   const questions: QuizQuestion[] = [
     {
-      id: 'proving-intro-q1',
-      question: 'What is the "Given" in a proof?',
+      id: 'proving-definitions-q1',
+      question: 'What is the definition of a midpoint?',
       options: [
-        "The final conclusion.",
-        "The information you are allowed to assume is true at the start.",
-        "The list of all congruence criteria.",
-        "The name of the theorem."
+        "The point that splits a line segment into two segments of equal length.",
+        "A line that divides an angle into two congruent angles.",
+        "A line segment from a vertex to the midpoint of the opposite side.",
+        "A triangle with three congruent sides."
       ],
-      correctAnswer: "The information you are allowed to assume is true at the start.",
-      explanation: "Correct! The 'Given' is your starting point—the set of facts you don't have to prove."
+      correctAnswer: "The point that splits a line segment into two segments of equal length.",
+      explanation: "Correct! A midpoint divides a segment into two equal parts."
     },
     {
-      id: 'proving-intro-q2',
-      question: 'What is the "Prove" statement in a proof?',
+      id: 'proving-definitions-q2',
+      question: 'A line that divides an angle into two congruent angles is called...?',
       options: [
-        "The first step.",
-        "A hidden clue, like a shared side.",
-        "The 'Reason' for a statement.",
-        "The destination, or the logical conclusion you must reach."
+        "A median",
+        "An angle bisector",
+        "An altitude",
+        "A perpendicular line"
       ],
-      correctAnswer: "The destination, or the logical conclusion you must reach.",
-      explanation: "Correct! The 'Prove' statement is your goal. The entire proof is a step-by-step argument to show how you get from the 'Given' to this 'Prove' statement."
+      correctAnswer: "An angle bisector",
+      explanation: "Correct! 'Bi-sect' means to cut in two, so an angle bisector cuts an angle into two equal, congruent angles."
+    },
+    {
+      id: 'proving-definitions-q3',
+      question: 'What is an altitude (height) of a triangle?',
+      options: [
+        "A line segment joining a vertex to the midpoint of the opposite side.",
+        "A line segment from a vertex perpendicular to the opposite side.",
+        "A triangle with a right angle.",
+        "A line that divides an angle into two congruent angles."
+      ],
+      correctAnswer: "A line segment from a vertex perpendicular to the opposite side.",
+      explanation: "Correct! An altitude measures the height of a triangle by forming a right angle with the opposite base."
     }
   ];
 
@@ -149,12 +105,12 @@ export default function ProvingSlide1() {
     }
 
     handleInteractionComplete({
-      interactionId: `proving-intro-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `proving-definitions-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'proving-introduction',
-      conceptName: 'Introduction to Proofs',
+      conceptId: 'proving-definitions',
+      conceptName: 'Proof Definitions',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -180,61 +136,88 @@ export default function ProvingSlide1() {
   };
 
 
+  // --- UPDATED: All new slide content ---
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
         {/* Left Column - Content */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
+          {/* --- CARD 1: Introduction --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">What is a Proof?</h2>
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Introduction</h2>
             <p className="text-lg leading-relaxed">
-              You've now learned all the tools. This final submodule is about putting them all together.
+              In this lesson, we'll learn how to prove statements concerning congruent triangles.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              A <strong>proof</strong> is a formal, step-by-step logical argument that shows *why* a statement must be true.
-            </p>
-            <p className="text-lg leading-relaxed mt-4">
-              It's like showing your work in an algebra problem, but every single step must be justified with a **Reason**.
+              Before we start, let's remind ourselves of some definitions. These will be useful for the proofs that follow:
             </p>
           </div>
 
-          {/* --- CARD 2 (The Parts) --- */}
+          {/* --- CARD 2: Core Concepts --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The Parts of a Proof</h3>
-            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
-              <li>
-                <strong>Given:</strong>
-                <br/>The information you are *given* at the start. These are the facts you can assume are true.
-              </li>
-              <li>
-                <strong>Prove:</strong>
-                <br/>The destination. This is the statement you are trying to reach as your final conclusion.
-              </li>
-              <li>
-                <strong>Two-Column Proof:</strong>
-                <br/>The most common format. One column lists your "Statements" (the steps) and the other column lists the "Reasons" (the definitions, postulates, or theorems) that justify each step.
-              </li>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Core Concepts</h3>
+            <ul className="list-none space-y-2 text-lg text-slate-700 dark:text-slate-300">
+              <DefinitionItem
+                term="Congruent segments"
+                definition="Two segments are congruent if they have the same length."
+              />
+              <DefinitionItem
+                term="Angle bisector"
+                definition="An angle bisector is a line that divides an angle into two congruent angles."
+              />
+              <DefinitionItem
+                term="Midpoint"
+                definition="The midpoint of a line segment is the point that splits it into two segments of equal length."
+              />
+              <DefinitionItem
+                term="Perpendicular lines"
+                definition="Two lines are perpendicular if they form a right angle at their intersection point."
+              />
+            </ul>
+          </div>
+          
+          {/* --- CARD 3: Other Tools --- */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Other Tools We'll Use</h3>
+            <ul className="list-disc list-inside text-lg space-y-2 text-slate-700 dark:text-slate-300">
+              <li>The right angle postulate: <strong>All right angles are congruent.</strong></li>
+              <li>The <strong>SSS, SAS, AAS, ASA, and HL</strong> congruence criteria for triangles.</li>
+              <li>The <strong>reflexive, symmetric, and transitive properties</strong> of equality and congruence.</li>
             </ul>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Definitions and Quiz */}
         <div className="space-y-6">
-          {/* --- ANIMATION CARD --- */}
+          {/* --- CARD 4: Triangle Terms --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Path of a Proof</h3>
-            
-            {/* --- USE THE ANIMATION COMPONENT --- */}
-            <ProofIntroAnimation />
-            
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              You use logic to build a bridge from what you are "Given" to what you must "Prove".
-            </p>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Key Triangle Terms</h3>
+            <ul className="list-none space-y-2 text-lg text-slate-700 dark:text-slate-300">
+              <DefinitionItem
+                term="Equilateral triangle"
+                definition="A triangle is equilateral if all three sides are congruent."
+              />
+              <DefinitionItem
+                term="Isosceles triangle"
+                definition="A triangle is isosceles if two (and only two) sides are congruent."
+              />
+              <DefinitionItem
+                term="Right triangle"
+                definition="A triangle is right if one of its internal angles is a right angle."
+              />
+              <DefinitionItem
+                term="Median"
+                definition="A median of a triangle is a line segment joining a vertex to the midpoint of the opposite side."
+              />
+              <DefinitionItem
+                term="Altitude (or Height)"
+                definition="An altitude (height) of a triangle is a line segment drawn from one vertex of the triangle perpendicular to the opposite side (or the extension of the opposite side)."
+              />
+            </ul>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (Now 3 questions) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -319,13 +302,13 @@ export default function ProvingSlide1() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">📝</div>
+                <div className="text-3xl mb-4">📚</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "You're ready to start proving!" : 'Great job!'}
+                  {score === questions.length ? "You've mastered the definitions!" : 'Great review!'}
                 </div>
               </motion.div>
             )}
@@ -337,8 +320,9 @@ export default function ProvingSlide1() {
 
   return (
     <SlideComponentWrapper
-      slideId="proving-introduction"
-      slideTitle="Introduction to Proofs"
+      // --- UPDATED Props ---
+      slideId="proving-definitions"
+      slideTitle="Proof Prerequisites: Definitions"
       moduleId="congruence"
       submoduleId="proving-congruence-statements"
       interactions={localInteractions}

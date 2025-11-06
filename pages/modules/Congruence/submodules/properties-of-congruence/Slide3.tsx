@@ -4,113 +4,81 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
+// --- ANIMATED QUIZ FIGURE ---
 const EqualityQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
-  const svgWidth = 400;
-  const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
-  const textColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  
-  const itemAnim = (delay: number) => ({
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { delay: delay } },
-  });
-  
-  const quizText = [
-    "10 = 10",
-    "If $x = 5$ and $y = 5$, then $x = y$",
-    "If $m\angle A = 45^\circ$, then $45^\circ = m\angle A$"
+  const textColor = isDarkMode ? '#E2E8F0' : '#1E293B';
+  const highlight = isDarkMode ? '#60A5FA' : '#2563EB';
+
+  const equations = [
+    "5 = 5",
+    "1 + 1 = 2   →   2 = 1 + 1",
+    "8 - 2 = 6   and   6 = 2 · 3   →   8 - 2 = 2 · 3"
   ];
 
   return (
-    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ minHeight: svgHeight }}>
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          <motion.text 
-            key={questionIndex}
-            x={200} y={110} 
-            fill={color1} 
-            fontSize="24" 
-            textAnchor="middle"
-            fontFamily="monospace"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            {quizText[questionIndex]}
-          </motion.text>
-        </AnimatePresence>
-      </svg>
+    <div className="w-full flex justify-center items-center p-6 rounded-lg bg-slate-100 dark:bg-slate-700/60">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={questionIndex}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.45 }}
+          className="text-center font-mono text-xl font-semibold"
+          style={{ color: highlight, whiteSpace: 'pre-line' }}
+        >
+          {equations[questionIndex]}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
-
+// --- END FIGURE ---
 
 export default function PropertiesSlide3() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  // Updated for 3 questions
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 
-  const slideInteractions: Interaction[] = [
-    {
-      id: 'properties-equality-numbers-quiz',
-      conceptId: 'properties-of-equality-numbers',
-      conceptName: 'Equality of Numbers',
-      type: 'judging',
-      description: 'Testing identification of equivalence properties with numbers'
-    }
-  ];
-
-  interface QuizQuestion {
-    id: string;
-    question: string;
-    options: string[];
-    correctAnswer: string;
-    explanation: string;
-  }
-
-  const questions: QuizQuestion[] = [
+  const questions = [
     {
       id: 'properties-numbers-q1',
-      question: 'Which property is shown in the diagram?',
+      question: 'Which property of equality makes "5 = 5" true?',
       options: [
-        "Symmetric Property of Equality",
-        "Reflexive Property of Equality",
-        "Transitive Property of Equality"
+        "Reflexive Property",
+        "Symmetric Property",
+        "Transitive Property"
       ],
-      correctAnswer: "Reflexive Property of Equality",
-      explanation: "Correct! The Reflexive Property states that any value is equal to itself. $10 = 10$."
+      correctAnswer: "Reflexive Property",
+      explanation: "Every number is equal to itself. That is the Reflexive Property."
     },
     {
       id: 'properties-numbers-q2',
-      question: 'Which property is shown in the diagram?',
+      question: 'Which property of equality makes "2 = 1 + 1" true?',
       options: [
-        "Symmetric Property of Equality",
-        "Reflexive Property of Equality",
-        "Transitive Property of Equality"
+        "Transitive Property",
+        "Symmetric Property",
+        "Reflexive Property"
       ],
-      correctAnswer: "Transitive Property of Equality",
-      explanation: "Correct! This is a common use of the Transitive Property (or Substitution). If $x=5$ and $5=y$, then $x=y$."
+      correctAnswer: "Symmetric Property",
+      explanation: "If 1 + 1 = 2, then 2 = 1 + 1. This is flipping the equation → Symmetric Property."
     },
     {
       id: 'properties-numbers-q3',
-      question: 'Which property is shown in the diagram?',
+      question: 'Which property is used to conclude "8 - 2 = 2 · 3"?',
       options: [
-        "Symmetric Property of Equality",
-        "Reflexive Property of Equality",
-        "Transitive Property of Equality"
+        "Reflexive Property",
+        "Transitive Property",
+        "Symmetric Property"
       ],
-      correctAnswer: "Symmetric Property of Equality",
-      explanation: "Correct! The Symmetric Property allows you to 'flip' the two sides of an equation."
+      correctAnswer: "Transitive Property",
+      explanation: "We chain equal values: if A = B and B = C, then A = C."
     }
   ];
 
@@ -123,206 +91,148 @@ export default function PropertiesSlide3() {
 
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
 
     const current = questions[currentQuestionIndex];
     const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
+    if (isCorrect) setScore(prev => prev + 1);
 
     handleInteractionComplete({
-      interactionId: `properties-numbers-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `properties-numbers-q${currentQuestionIndex + 1}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
       conceptId: 'properties-of-equality-numbers',
       conceptName: 'Equality of Numbers',
-      conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
+      conceptDescription: `Slide 3 quiz answer`,
+      question: { type: 'mcq', question: current.question, options: current.options }
     });
   };
 
   const handleNextQuestion = () => {
-    const newAnswered = [...questionsAnswered];
-    newAnswered[currentQuestionIndex] = true;
-    setQuestionsAnswered(newAnswered);
+    const updated = [...questionsAnswered];
+    updated[currentQuestionIndex] = true;
+    setQuestionsAnswered(updated);
 
     setSelectedAnswer('');
     setShowFeedback(false);
 
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      setIsQuizComplete(true);
-    }
+    if (currentQuestionIndex < questions.length - 1) setCurrentQuestionIndex(prev => prev + 1);
+    else setIsQuizComplete(true);
   };
-
-
-  const slideContent = (
-    <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
-
-        {/* Left Column - Content */}
-        <div className="space-y-6">
-          {/* --- CARD 1 --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Applying Properties to Numbers</h2>
-            <p className="text-lg leading-relaxed">
-              These properties are the 'common sense' rules of math. We use them for numbers, segment lengths, and angle measures.
-            </p>
-          </div>
-
-          {/* --- CARD 2 (The Properties Review) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Examples with Numbers</h3>
-            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
-              <li>
-                <strong>Reflexive:</strong>
-                <br/>"A number is equal to itself."
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">5 = 5</span>
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">m$\angle A$ = m$\angle A$</span>
-              </li>
-              <li>
-                <strong>Symmetric:</strong>
-                <br/>"An equation can be flipped."
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">If $x = 7$, then $7 = x$</span>
-              </li>
-              <li>
-                <strong>Transitive:</strong>
-                <br/>"Pass the equality on."
-                <br/>
-                <span className="font-mono text-sm bg-slate-100 dark:bg-slate-700 p-1 rounded">If $AB = 5$ and $CD = 5$, then $AB = CD$</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Right Column - Animation and Quiz */}
-        <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Name That Property</h3>
-              <div className="text-lg text-slate-600 dark:text-slate-400">
-                Question {currentQuestionIndex + 1} of {questions.length}
-              </div>
-            </div>
-            {/* --- Progress Bar --- */}
-            <div className="flex space-x-2 mb-6">
-              {questions.map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-2 flex-1 rounded ${
-                    index === currentQuestionIndex
-                      ? 'bg-blue-500' // Active
-                      : questionsAnswered[index]
-                      ? 'bg-blue-300 dark:bg-blue-800' // Answered
-                      : 'bg-slate-300 dark:bg-slate-600' // Unanswered
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <EqualityQuizFigure questionIndex={currentQuestionIndex} />
-
-            {!isQuizComplete ? (
-              <>
-                <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
-                {/* --- Answer Options --- */}
-                <div className="space-y-3">
-                  {questions[currentQuestionIndex].options.map((option, idx) => {
-                    const disabled = showFeedback;
-                    const selected = selectedAnswer === option;
-                    const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-red-500 bg-red-100 dark:bg-red-800 opacity-70' // INCORRECT
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
-                    } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
-                    return (
-                      <motion.button
-                        key={idx}
-                        onClick={() => handleQuizAnswer(option)}
-                        disabled={disabled}
-                        className={className}
-                        whileHover={!disabled ? { scale: 1.02 } : {}}
-                        whileTap={!disabled ? { scale: 0.98 } : {}}
-                      >
-                        {option}
-                      </motion.button>
-                    );
-                  })}
-                </div>
-                {/* --- Feedback Box --- */}
-                <AnimatePresence>
-                  {showFeedback && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className={`mt-4 p-4 rounded-lg ${
-                        selectedAnswer === questions[currentQuestionIndex].correctAnswer
-                          ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct
-                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
-                      }`}
-                    >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
-                      </div>
-                      <motion.button
-                        onClick={handleNextQuestion}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Complete Quiz'}
-                      </motion.button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </>
-            ) : (
-              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">🔢</div>
-                <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
-                <div className="text-lg text-slate-600 dark:text-slate-400">
-                  You scored {score} out of {questions.length}
-                </div>
-                <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "You're a logic pro!" : 'Great review!'}
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <SlideComponentWrapper
       slideId="properties-equality-numbers"
-      slideTitle="Equality of Numbers"
+      slideTitle="Equality of Numbers Example"
       moduleId="congruence"
       submoduleId="properties-of-congruence"
       interactions={localInteractions}
     >
-      {slideContent}
+      <div className="w-full min-h-screen p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        {/* Left Section */}
+        <div className="space-y-6">
+         <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
+  <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Explanation</h2>
+
+  <p className="text-lg leading-relaxed mb-6">
+    The following properties are valid for all integers <em>a</em>, <em>b</em>, and <em>c</em>:
+  </p>
+
+  <ul className="list-disc list-inside space-y-6 text-lg text-slate-700 dark:text-slate-300">
+
+    <li>
+      <strong>Reflexive property of equality:</strong>
+      <div className="mt-2 font-mono bg-slate-100 dark:bg-slate-700 p-2 rounded text-center">a = a</div>
+      <p className="mt-1">This states that every number equals itself.</p>
+    </li>
+
+    <li>
+      <strong>Symmetric property of equality:</strong>
+      <div className="mt-2 font-mono bg-slate-100 dark:bg-slate-700 p-2 rounded text-center">If a = b, then b = a</div>
+      <p className="mt-1">This states that if the first number equals the second, the second must equal the first.</p>
+    </li>
+
+    <li>
+      <strong>Transitive property of equality:</strong>
+      <div className="mt-2 font-mono bg-slate-100 dark:bg-slate-700 p-2 rounded text-center">If a = b and b = c, then a = c</div>
+      <p className="mt-1">This states that if the first equals the second and the second equals the third, then the first equals the third.</p>
+    </li>
+
+  </ul>
+
+  <div className="mt-8 p-4 rounded-lg bg-slate-100 dark:bg-slate-700 text-center font-mono text-lg">
+    If 2·5 = 10 and 10 = 4 + 6, then 2·5 = 4 + 6.
+  </div>
+
+  <p className="mt-4 text-lg">
+    Therefore, this statement is true by the <strong className="text-blue-600 dark:text-blue-400">transitive</strong> property of equality.
+  </p>
+</div>
+
+
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Review: Properties of Equality</h3>
+            <ul className="space-y-3">
+              <li><strong>Reflexive:</strong> a = a</li>
+              <li><strong>Symmetric:</strong> If a = b, then b = a</li>
+              <li><strong>Transitive:</strong> If a = b and b = c, then a = c</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Right Section - Quiz */}
+        <div className="space-y-6 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
+          <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Name the Property</h3>
+
+          <div className="w-full h-2 bg-slate-300 dark:bg-slate-600 rounded flex overflow-hidden mb-4">
+            {questions.map((_, i) => (
+              <div key={i} className={`flex-1 ${i === currentQuestionIndex ? 'bg-blue-500' : questionsAnswered[i] ? 'bg-blue-300 dark:bg-blue-700' : ''}`} />
+            ))}
+          </div>
+
+          <EqualityQuizFigure questionIndex={currentQuestionIndex} />
+
+          {!isQuizComplete ? (
+            <>
+              <div className="mt-6 text-lg">{questions[currentQuestionIndex].question}</div>
+              <div className="space-y-3">
+                {questions[currentQuestionIndex].options.map((op, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleQuizAnswer(op)}
+                    className={`w-full p-3 rounded-lg border transition ${
+                      selectedAnswer === op ? 'border-blue-500' : 'border-slate-400'
+                    }`}
+                    disabled={showFeedback}
+                  >
+                    {op}
+                  </button>
+                ))}
+              </div>
+
+              {showFeedback && (
+                <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
+                  <p>{questions[currentQuestionIndex].explanation}</p>
+                  <button
+                    onClick={handleNextQuestion}
+                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+                  >
+                    {currentQuestionIndex < questions.length - 1 ? 'Next' : 'Finish'}
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-6">
+              <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400">Quiz Complete!</h2>
+              <p className="mt-2 text-lg">Score: {score} / {questions.length}</p>
+            </div>
+          )}
+        </div>
+      </div>
     </SlideComponentWrapper>
   );
 }
