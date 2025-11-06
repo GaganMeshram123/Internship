@@ -4,92 +4,153 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- SSA AMBIGUITY ANIMATION COMPONENT ---
-const SsaAmbiguityAnimation: React.FC = () => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const givenColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
-  const ambiguousColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
   
-  const A = { x: 50, y: 180 };
-  const B = { x: 200, y: 50 };
-  
-  // Side 1 (Given)
-  const S1_Length = Math.hypot(B.x - A.x, B.y - A.y); // approx 198
-  
-  // Angle A (Given)
-  const angleA_rad = Math.atan2(B.y - A.y, B.x - A.x); // approx -0.92 rad
-  
-  // Side 2 (The swinging, ambiguous side)
-  const S2_Length = 160;
-  
-  // Calculate the two intersection points
-  const C1_x = 300;
-  const C2_x = 96.5;
-  const C_y = 180;
+  const Q = { x: 30, y: 50 };
+  const P = { x: 180, y: 110 };
+  const R = { x: 80, y: 170 };
+  const M = { x: 370, y: 170 };
+  const N = { x: 320, y: 50 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* Base line */}
-        <line x1="0" y1={C_y} x2={svgWidth} y2={C_y} stroke={strokeColor} strokeWidth="2" />
+        <path d={`M ${Q.x} ${Q.y} L ${P.x} ${P.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${M.x} ${M.y} L ${P.x} ${P.y} L ${N.x} ${N.y} Z`} stroke={strokeColor} {...commonProps} />
         
-        {/* Angle A and Vertex A */}
-        <circle cx={A.x} cy={A.y} r="4" fill={givenColor} />
-        <text x={A.x - 15} y={A.y + 15} fill={givenColor} fontSize="14">A</text>
-        <path d={`M ${A.x + 20} ${A.y} A 20 20 0 0 0 ${A.x + 18} ${A.y - 9}`} fill="none" stroke={givenColor} strokeWidth="2" />
-        <text x={A.x + 30} y={A.y - 15} fill={givenColor} fontSize="16" fontWeight="bold">A</text>
+        {/* Labels */}
+        <text x={Q.x - 15} y={Q.y} fill={strokeColor}>Q</text>
+        <text x={R.x - 15} y={R.y + 5} fill={strokeColor}>R</text>
+        <text x={P.x} y={P.y + 20} fill={strokeColor} textAnchor="middle">P</text>
+        <text x={N.x + 5} y={N.y} fill={strokeColor}>N</text>
+        <text x={M.x + 5} y={M.y + 5} fill={strokeColor}>M</text>
 
-        {/* Side 1 (AB) */}
-        <line x1={A.x} y1={A.y} x2={B.x} y2={B.y} stroke={givenColor} strokeWidth="4" />
-        <text x={B.x + 5} y={B.y - 5} fill={givenColor} fontSize="14">B</text>
-        <text x={(A.x + B.x) / 2 - 20} y={(A.y + B.y) / 2} fill={givenColor} fontSize="16" fontWeight="bold">S</text>
+        {/* Markings */}
+        <line x1={95} y1={75} x2={105} y2={80} stroke={strokeColor} strokeWidth="2" /> {/* QP */}
+        <line x1={98} y1={72} x2={108} y2={77} stroke={strokeColor} strokeWidth="2" />
+        <line x1={265} y1={77} x2={275} y2={72} stroke={strokeColor} strokeWidth="2" /> {/* PM */}
+        <line x1={262} y1={80} x2={272} y2={75} stroke={strokeColor} strokeWidth="2" />
 
-        {/* Side 2 (Swinging side) - Arc */}
-        <motion.path
-          d={`M ${B.x} ${B.y} L ${B.x + S2_Length * Math.cos(Math.PI / 2)} ${B.y + S2_Length * Math.sin(Math.PI / 2)}`}
-          style={{ transformOrigin: `${B.x}px ${B.y}px` }}
-          initial={{ rotate: -15 }}
-          animate={{ rotate: 33 }}
-          transition={{ 
-            duration: 2, 
-            ease: "easeInOut", 
-            repeat: Infinity, 
-            repeatType: "mirror" 
-          }}
-          stroke={ambiguousColor}
-          strokeWidth="4"
-          strokeDasharray="6 6"
-        />
-        <text x={B.x + 70} y={B.y + 70} fill={ambiguousColor} fontSize="16" fontWeight="bold">S</text>
+        <line x1={125} y1={143} x2={135} y2={138} stroke={strokeColor} strokeWidth="2" /> {/* PR */}
+        <line x1={225} y1={138} x2={235} y2={143} stroke={strokeColor} strokeWidth="2" /> {/* PN */}
 
-        {/* Triangle 1 (Obtuse) */}
-        <line x1={B.x} y1={B.y} x2={C2_x} y2={C_y} stroke={ambiguousColor} strokeWidth="2" />
-        <line x1={A.x} y1={A.y} x2={C2_x} y2={C_y} stroke={strokeColor} strokeWidth="2" />
-        <text x={C2_x - 10} y={C_y + 15} fill={ambiguousColor} fontSize="14">C1</text>
-        
-        {/* Triangle 2 (Acute) */}
-        <line x1={B.x} y1={B.y} x2={C1_x} y2={C_y} stroke={ambiguousColor} strokeWidth="2" />
-        <line x1={A.x} y1={A.y} x2={C1_x} y2={C_y} stroke={strokeColor} strokeWidth="2" />
-        <text x={C1_x + 5} y={C_y + 15} fill={ambiguousColor} fontSize="14">C2</text>
-        
-        <text x={svgWidth / 2} y={20} fill={ambiguousColor} fontSize="14" textAnchor="middle">
-          The "swinging" side can form two different triangles!
-        </text>
+        {/* Vertical Angles */}
+        <path d={`M ${P.x - 15} ${P.y - 8} A 15 15 0 0 0 ${P.x + 5} ${P.y - 14}`} stroke={angleBlue} {...commonProps} />
+        <path d={`M ${P.x + 15} ${P.y + 8} A 15 15 0 0 0 ${P.x - 5} ${P.y + 14}`} stroke={angleBlue} {...commonProps} />
       </svg>
     </div>
   );
 };
-// --- END OF ANIMATION COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q4) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
+  const A = { x: 200, y: 110 };
+  const B = { x: 300, y: 150 };
+  const C = { x: 50, y: 170 };
+  const D = { x: 100, y: 70 };
+  const E = { x: 350, y: 50 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${C.x} ${C.y} L ${A.x} ${A.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${E.x} ${E.y} L ${A.x} ${A.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={A.x} y={A.y + 20} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={B.x + 5} y={B.y + 5} fill={strokeColor}>B</text>
+        <text x={C.x - 15} y={C.y + 5} fill={strokeColor}>C</text>
+        <text x={D.x - 15} y={D.y} fill={strokeColor}>D</text>
+        <text x={E.x + 5} y={E.y} fill={strokeColor}>E</text>
+
+        {/* Markings */}
+        <line x1={245} y1={133} x2={255} y2={130} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
+        <line x1={155} y1={87} x2={165} y2={90} stroke={strokeColor} strokeWidth="2" /> {/* AD */}
+        
+        <path d={`M ${B.x - 15} ${B.y} A 15 15 0 0 0 ${B.x - 10} ${B.y - 11}`} stroke={angleOrange} {...commonProps} />
+        <path d={`M ${D.x + 15} ${D.y} A 15 15 0 0 1 ${D.x + 10} ${D.y + 11}`} stroke={angleOrange} {...commonProps} />
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q5) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
+  const Y = { x: 80, y: 110 };
+  const X = { x: 180, y: 110 };
+  const Z = { x: 180, y: 30 };
+  const S = { x: 280, y: 110 };
+  const T = { x: 180, y: 190 };
+  
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${Y.x} ${Y.y} L ${Z.x} ${Z.y} L ${X.x} ${X.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${S.x} ${S.y} L ${T.x} ${T.y} L ${X.x} ${X.y} Z`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={Y.x - 15} y={Y.y + 5} fill={strokeColor}>Y</text>
+        <text x={X.x} y={X.y + 20} fill={strokeColor} textAnchor="middle">X</text>
+        <text x={Z.x + 5} y={Z.y} fill={strokeColor}>Z</text>
+        <text x={S.x + 5} y={S.y + 5} fill={strokeColor}>S</text>
+        <text x={T.x + 5} y={T.y + 5} fill={strokeColor}>T</text>
+
+        {/* Markings */}
+        <line x1={125} y1={107} x2={135} y2={113} stroke={strokeColor} strokeWidth="2" /> {/* YX */}
+        <line x1={128} y1={104} x2={138} y2={110} stroke={strokeColor} strokeWidth="2" />
+        <line x1={225} y1={107} x2={235} y2={113} stroke={strokeColor} strokeWidth="2" /> {/* XS */}
+        <line x1={228} y1={104} x2={238} y2={110} stroke={strokeColor} strokeWidth="2" />
+
+        <line x1={180} y1={70} x2={175} y2={80} stroke={strokeColor} strokeWidth="2" /> {/* ZX */}
+        <line x1={180} y1={150} x2={175} y2={160} stroke={strokeColor} strokeWidth="2" /> {/* TX */}
+        
+        <path d={`M ${X.x - 10} ${X.y - 10} L ${X.x - 10} ${X.y} L ${X.x} ${X.y}`} fill="none" stroke={angleBlue} strokeWidth="2" />
+      </svg>
+    </div>
+  );
+};
 
 
-export default function CombiningSlide5() {
+// --- Main Quiz Figure Component ---
+const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+  if (questionIndex === 0) {
+    return <FigureQ1 />;
+  }
+  if (questionIndex === 1) {
+    return <FigureQ2 />;
+  }
+  return null;
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
+
+
+export default function CombiningSlide3() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
+  // --- UPDATED FOR 2 QUESTIONS ---
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
@@ -97,46 +158,42 @@ export default function CombiningSlide5() {
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'combining-no-ssa-quiz',
-      conceptId: 'combining-criteria-no-ssa',
-      conceptName: 'Why No SSA',
+      id: 'combining-vertical-quiz',
+      conceptId: 'combining-criteria-vertical',
+      conceptName: 'Combining Criteria Vertical Angles',
       type: 'judging',
-      description: 'Testing understanding of why SSA fails'
+      description: 'Testing identification of criteria using vertical angles'
     }
   ];
   
+  const allOptions = ["SSS", "SAS", "ASA", "AAS", "HL"];
+
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'combining-no-ssa-q1',
-      question: 'Why is SSA not a valid congruence criterion?',
-      options: [
-        "It is too difficult to measure the non-included angle.",
-        "It can create two different possible triangles (the ambiguous case).",
-        "It only works for isosceles triangles.",
-        "It is the same as SSS."
-      ],
-      correctAnswer: "It can create two different possible triangles (the ambiguous case).",
-      explanation: "Correct! As the animation shows, the non-included side can 'swing' to create two different valid triangles, so SSA is ambiguous."
+      id: 'combining-vertical-q4',
+      question: 'By which congruence criterion does it follow that ΔABC ≅ ΔADE?',
+      figure: <FigureQ1 />,
+      options: allOptions,
+      correctAnswer: "ASA",
+      explanation: "Correct! We are given $\angle B \cong \angle D$ (Angle) and $AB \cong AD$ (Side). The *hidden* clue is that $\angle BAC \cong \angle DAE$ are vertical angles (Angle). The side $AB$ is *included* between $\angle B$ and $\angle BAC$. This is a perfect Angle-Side-Angle (ASA) pattern."
     },
     {
-      id: 'combining-no-ssa-q2',
-      question: 'What is the ONE special exception where the SSA pattern *does* work?',
-      options: [
-        "When the triangle is isosceles (ASS)",
-        "When all sides are equal (SSS)",
-        "When the angle is obtuse",
-        "When the angle is a right angle (HL)"
-      ],
-      correctAnswer: "When the angle is a right angle (HL)",
-      explanation: "Correct! The Hypotenuse-Leg (HL) criterion is a special case of SSA that only works because the 90° angle locks the 'swinging' side into one unique position."
+      id: 'combining-vertical-q5',
+      question: 'By which congruence criterion does it follow that ΔXYZ ≅ ΔXST?',
+      figure: <FigureQ2 />,
+      options: allOptions,
+      correctAnswer: "SAS",
+      explanation: "Correct! We are given $YX \cong XS$ (Side) and $ZX \cong TX$ (Side). The *hidden* clue is that $\angle YXZ \cong \angle SXT$ are vertical angles (Angle). The angle $\angle YXZ$ is *included* between sides $YX$ and $ZX$. This is a Side-Angle-Side (SAS) pattern."
     }
   ];
 
@@ -160,12 +217,12 @@ export default function CombiningSlide5() {
     }
 
     handleInteractionComplete({
-      interactionId: `combining-no-ssa-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `combining-vertical-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'combining-criteria-no-ssa',
-      conceptName: 'Why No SSA',
+      conceptId: 'combining-criteria-vertical',
+      conceptName: 'Combining Criteria Vertical Angles',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -195,59 +252,61 @@ export default function CombiningSlide5() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-red-600 dark:text-red-400">The Impostor: Why SSA Fails</h2>
-            <p className="text-lg leading-relaxed">
-              We've saved the biggest trap for last: <strong>SSA (Side-Side-Angle)</strong>.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Cases With Vertical Angles</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              By which congruence criterion does it follow that ΔPQR ≅ ΔPMN?
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              This criterion does not work because it is **ambiguous**. Given two sides and a *non-included* angle, you can often construct **two entirely different triangles**.
-            </p>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (The Strategy) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">The "Swinging Side"</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              Think of the second side (the one not connected to the angle) as a "swinging gate."
+              First, we recall the SAS (Side-Angle-Side) congruence criterion:
             </p>
-            <p className="text-lg leading-relaxed mt-3">
-              As the animation shows, this swinging side can often touch the base line in **two different places**, creating one acute triangle and one obtuse triangle.
+            <blockquote className="my-4 p-4 bg-slate-100 dark:bg-slate-700/60 border-l-4 border-blue-500 rounded-r-lg">
+              <p className="text-lg italic font-medium leading-relaxed">
+                Two triangles are congruent if and only if two sides and the included angle of one triangle are congruent to two sides and the included angle of the other triangle.
+              </p>
+            </blockquote>
+
+            <p className="text-lg leading-relaxed mt-4">
+              Notice that <strong>∠QPR ≅ ∠MPN</strong> since these two angles are <strong>vertical</strong>.
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                Since SSA can lead to two different triangles, it cannot be used to prove that two triangles are *congruent*.
-              </p>
+
+            <p className="text-lg leading-relaxed mt-4">
+              Now, we have:
+            </p>
+            <div className="flex justify-around items-center text-center my-4">
+              <div>
+                <p className="text-lg font-mono">PR ≅ PN</p>
+                <p className="text-sm text-slate-500">Side</p>
+              </div>
+              <div>
+                <p className="text-lg font-mono">∠QPR ≅ ∠MPN</p>
+                <p className="text-sm text-slate-500">(Included) Angle</p>
+              </div>
+              <div>
+                <p className="text-lg font-mono">PQ ≅ PM</p>
+                <p className="text-sm text-slate-500">Side</p>
+              </div>
             </div>
-            <div className="mt-4 p-4 rounded-lg bg-green-100 dark:bg-green-900/30">
-              <p className="text-lg text-green-700 dark:text-green-300">
-                <strong>The Only Exception:</strong> The <strong>HL (Hypotenuse-Leg)</strong> criterion is a special type of SSA that *only* works because the 90° angle locks the "swinging" side into one place.
-              </p>
-            </div>
+            
+            <p className="text-lg leading-relaxed mt-4 font-semibold">
+              Therefore, ΔPQR and ΔPMN are congruent by SAS.
+            </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- ANIMATION CARD --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">The Ambiguous Case</h3>
-            
-            {/* --- USE THE ANIMATION COMPONENT --- */}
-            <SsaAmbiguityAnimation />
-            
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The same S-S-A information (Red Angle, Red Side, Blue Side) can create $\triangle ABC_1$ and $\triangle ABC_2$.
-            </p>
-          </div>
-
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Final Check</h3>
+              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Find the Vertical Angle</h3>
               <div className="text-lg text-slate-600 dark:text-slate-400">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </div>
@@ -268,11 +327,25 @@ export default function CombiningSlide5() {
               ))}
             </div>
 
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
+
             {!isQuizComplete ? (
               <>
                 <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
                 {/* --- Answer Options --- */}
-                <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
                     const disabled = showFeedback;
                     const selected = selectedAnswer === option;
@@ -330,13 +403,13 @@ export default function CombiningSlide5() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">🚫</div>
+                <div className="text-3xl mb-4">{"<-->"}</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "You've mastered the SSA trap!" : 'Great job!'}
+                  {score === questions.length ? "You've mastered spotting vertical angles!" : 'Great job!'}
                 </div>
               </motion.div>
             )}
@@ -348,8 +421,8 @@ export default function CombiningSlide5() {
 
   return (
     <SlideComponentWrapper
-      slideId="combining-no-ssa"
-      slideTitle="Why Is There No SSA Criterion?"
+      slideId="combining-vertical-angles"
+      slideTitle="Cases With Vertical Angles"
       moduleId="congruence"
       submoduleId="combining-congruence-criteria"
       interactions={localInteractions}

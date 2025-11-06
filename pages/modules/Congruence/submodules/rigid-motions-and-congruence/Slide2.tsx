@@ -4,60 +4,88 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
-const PropertiesAnimation: React.FC = () => {
+// --- REFLECTION ANIMATION COMPONENT ---
+const ReflectionAnimation: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 300; // Increased height for grid
   const { isDarkMode } = useThemeContext();
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  const color2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const color3 = isDarkMode ? '#F87171' : '#EF4444'; // Red
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const gridColor = isDarkMode ? '#475569' : '#CBD5E1';
+  const colorP = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const colorQ = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const arrowColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
 
-  const triangle = "M 50 150 L 130 50 L 150 150 Z";
+  // Center of the SVG
+  const cx = svgWidth / 2;
+  const cy = svgHeight / 2;
+  const gridSpacing = 20;
 
-  const anim = (delay: number) => ({
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { delay: delay } },
+  // Triangle P vertices (scaled and centered)
+  const P1 = { x: cx + 2 * gridSpacing, y: cy - 2 * gridSpacing };
+  const P2 = { x: cx + 4 * gridSpacing, y: cy - 3 * gridSpacing };
+  const P3 = { x: cx + 3 * gridSpacing, y: cy - 4 * gridSpacing };
+
+  // Triangle Q vertices (reflected)
+  const Q1 = { x: P1.x, y: cy + (cy - P1.y) };
+  const Q2 = { x: P2.x, y: cy + (cy - P2.y) };
+  const Q3 = { x: P3.x, y: cy + (cy - P3.y) };
+
+  const arrowProps = {
+    stroke: arrowColor,
+    strokeWidth: 2,
+    strokeDasharray: "4 4",
+  };
+
+  const textAnim = (delay: number) => ({
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { delay: delay } },
   });
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* Pre-image */}
-        <path d={triangle} fill={color1} opacity="0.5" />
-        <text x="55" y="140" fill={color1} fontSize="14">A(50, 150)</text>
-        <text x="135" y="140" fill={color1} fontSize="14">C(150, 150)</text>
-        <text x="135" y="50" fill={color1} fontSize="14">B(130, 50)</text>
-        <text x="90" y="165" fill={color1} fontSize="14">Side = 100</text>
-        <path d="M 130 150 A 20 20 0 0 1 150 130" fill="none" stroke={color1} strokeWidth="2" />
-        <text x="105" y="125" fill={color1} fontSize="14">Angle C</text>
+        {/* Grid Lines */}
+        <defs>
+          <pattern id="grid" width={gridSpacing} height={gridSpacing} patternUnits="userSpaceOnUse">
+            <path d={`M ${gridSpacing} 0 L 0 0 0 ${gridSpacing}`} fill="none" stroke={gridColor} strokeWidth="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
 
-        {/* Reflection (Image) */}
+        {/* Axes */}
+        <line x1="0" y1={cy} x2={svgWidth} y2={cy} stroke={strokeColor} strokeWidth="2" />
+        <line x1={cx} y1="0" x2={cx} y2={svgHeight} stroke={strokeColor} strokeWidth="2" />
+        <text x={svgWidth - 10} y={cy - 5} fill={strokeColor} fontSize="14">x</text>
+        <text x={cx + 5} y={15} fill={strokeColor} fontSize="14">y</text>
+
+        {/* Triangle P */}
         <motion.path 
-          d={triangle} 
-          fill={color2} 
+          d={`M ${P1.x} ${P1.y} L ${P2.x} ${P2.y} L ${P3.x} ${P3.y} Z`} 
+          fill={colorP} 
           opacity="0.7"
-          initial={{ x: 0, scaleX: 1, transformOrigin: "150px 150px" }}
-          animate={{ x: 100, scaleX: -1 }}
-          transition={{ delay: 1.0, duration: 1 }}
-          variants={anim(1.0)}
+          initial="hidden" animate="visible" variants={textAnim(0.5)}
         />
-        <motion.text x="255" y="140" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>A'</motion.text>
-        <motion.text x="155" y="140" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>C'</motion.text>
-        <motion.text x="175" y="50" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>B'</motion.text>
-        <motion.text x="190" y="165" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>Side = 100</motion.text>
-        <motion.path d="M 170 150 A 20 20 0 0 0 150 130" fill="none" stroke={color2} strokeWidth="2" initial="hidden" animate="visible" variants={anim(2.0)} />
-        <motion.text x="195" y="125" fill={color2} fontSize="14" initial="hidden" animate="visible" variants={anim(2.0)}>Angle C'</motion.text>
-        
-        {/* Property labels */}
-        <motion.text x="200" y="200" fill={isDarkMode ? '#E2E8F0' : '#4A5568'} fontSize="14" textAnchor="middle"
-          initial="hidden" animate="visible" variants={anim(2.5)}>
-          <strong>Distances</strong> and <strong>Angles</strong> are preserved!
+        <motion.text x={cx + 3 * gridSpacing} y={cy - 3 * gridSpacing} fill={isDarkMode ? 'black' : 'white'} fontSize="14" textAnchor="middle" dominantBaseline="middle"
+          initial="hidden" animate="visible" variants={textAnim(0.5)}>
+          P
         </motion.text>
-        <motion.text x="200" y="20" fill={color3} fontSize="14" textAnchor="middle"
-          initial="hidden" animate="visible" variants={anim(3.0)}>
-          But <strong>Orientation</strong> is reversed (flipped).
+
+        {/* Triangle Q */}
+        <motion.path 
+          d={`M ${Q1.x} ${Q1.y} L ${Q2.x} ${Q2.y} L ${Q3.x} ${Q3.y} Z`} 
+          fill={colorQ} 
+          opacity="0.7"
+          initial="hidden" animate="visible" variants={textAnim(1.0)}
+        />
+         <motion.text x={cx + 3 * gridSpacing} y={cy + 3 * gridSpacing} fill={isDarkMode ? 'black' : 'white'} fontSize="14" textAnchor="middle" dominantBaseline="middle"
+          initial="hidden" animate="visible" variants={textAnim(1.0)}>
+          Q
         </motion.text>
+
+        {/* Reflection Arrows */}
+        <motion.line x1={P1.x} y1={P1.y} x2={Q1.x} y2={Q1.y} {...arrowProps} initial="hidden" animate="visible" variants={textAnim(1.5)} />
+        <motion.line x1={P2.x} y1={P2.y} x2={Q2.x} y2={Q2.y} {...arrowProps} initial="hidden" animate="visible" variants={textAnim(1.7)} />
+        <motion.line x1={P3.x} y1={P3.y} x2={Q3.x} y2={Q3.y} {...arrowProps} initial="hidden" animate="visible" variants={textAnim(1.9)} />
       </svg>
     </div>
   );
@@ -65,7 +93,7 @@ const PropertiesAnimation: React.FC = () => {
 // --- END OF ANIMATION COMPONENT DEFINITION ---
 
 
-export default function RigidMotionsSlide2() {
+export default function RigidMotionsSlide1() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -77,11 +105,11 @@ export default function RigidMotionsSlide2() {
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'rigid-motions-properties-quiz',
-      conceptId: 'rigid-motions-properties',
-      conceptName: 'Properties of Rigid Motions',
+      id: 'rigid-motions-intro-quiz',
+      conceptId: 'rigid-motions-intro',
+      conceptName: 'Rigid Motions Introduction',
       type: 'judging',
-      description: 'Testing understanding of what rigid motions preserve'
+      description: 'Testing understanding of rigid motions and congruence'
     }
   ];
 
@@ -95,28 +123,28 @@ export default function RigidMotionsSlide2() {
 
   const questions: QuizQuestion[] = [
     {
-      id: 'rigid-motions-prop-q1',
-      question: 'What does it mean for a transformation to "preserve distance"?',
+      id: 'rigid-motions-intro-q1',
+      question: 'What is the formal definition of "congruent figures"?',
       options: [
-        "The figure gets bigger.",
-        "The figure moves far away.",
-        "The lengths of line segments in the figure do not change.",
-        "The figure's area is preserved, but not its shape."
+        "They have the same area.",
+        "One figure can be mapped onto the other using rigid motions.",
+        "They have the same angles, but can be different sizes.",
+        "They are both polygons."
       ],
-      correctAnswer: "The lengths of line segments in the figure do not change.",
-      explanation: "Correct! 'Preserving distance' means a line segment in the pre-image will have the exact same length in the image."
+      correctAnswer: "One figure can be mapped onto the other using rigid motions.",
+      explanation: "Correct! This is the formal definition. The criteria (SSS, SAS, etc.) are just shortcuts for proving this is possible."
     },
     {
-      id: 'rigid-motions-prop-q2',
-      question: 'Which two rigid motions preserve "orientation" (which way it faces)?',
+      id: 'rigid-motions-intro-q2',
+      question: 'Which of these is NOT a rigid motion?',
       options: [
-        "Rotation and Reflection",
-        "Translation and Dilation",
-        "Translation and Rotation",
-        "Reflection and Translation"
+        "Translation (slide)",
+        "Rotation (turn)",
+        "Dilation (resize)",
+        "Reflection (flip)"
       ],
-      correctAnswer: "Translation and Rotation",
-      explanation: "Correct! A Translation (slide) and a Rotation (turn) do not 'flip' the figure, so they preserve orientation. A Reflection (flip) reverses the orientation."
+      correctAnswer: "Dilation (resize)",
+      explanation: "Correct! A dilation changes the *size* of a figure, so it is not 'rigid'. It creates a *similar* figure, not a *congruent* one."
     }
   ];
 
@@ -140,12 +168,12 @@ export default function RigidMotionsSlide2() {
     }
 
     handleInteractionComplete({
-      interactionId: `rigid-motions-prop-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
+      interactionId: `rigid-motions-intro-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'rigid-motions-properties',
-      conceptName: 'Properties of Rigid Motions',
+      conceptId: 'rigid-motions-intro',
+      conceptName: 'Rigid Motions Introduction',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -175,61 +203,52 @@ export default function RigidMotionsSlide2() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Key Properties</h2>
-            <p className="text-lg leading-relaxed">
-              Rigid motions have two main properties that make them the basis for congruence:
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Introduction</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              A <strong>rigid motion</strong> is any transformation that does not change the distances and angles between points. Rigid motions are also called <strong>isometries</strong>.
             </p>
-            <ul className="list-disc list-inside mt-4 text-lg space-y-2">
-              <li>
-                <strong>Preservation of Distance:</strong> The length of any line segment in the pre-image is equal to the length of the corresponding segment in the image. (Side lengths don't change).
-              </li>
-              <li>
-                <strong>Preservation of Angle Measure:</strong> The measure of any angle in the pre-image is equal to the measure of the corresponding angle in the image. (Angles don't change).
-              </li>
+            
+            <p className="text-lg leading-relaxed mb-4">
+              There are <i>only three</i> types of rigid motions:
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-2 text-lg">
+              <li>Translations</li>
+              <li>Rotations</li>
+              <li>Reflections</li>
             </ul>
-          </div>
 
-          {/* --- CARD 2 (Other Properties) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Other Properties</h3>
-            <p className="text-lg leading-relaxed">
-              Because they preserve distance and angles, rigid motions also preserve:
+            <p className="text-lg leading-relaxed mt-6 mb-4">
+              <strong>Watch out!</strong> The following types of transformations are <strong>not</strong> rigid motions:
             </p>
-            <ul className="list-disc list-inside mt-2 text-lg space-y-1 text-slate-700 dark:text-slate-300">
-              <li><strong>Collinearity:</strong> If points are on a line, their images will also be on a line.</li>
-              <li><strong>Betweenness:</strong> If $B$ is between $A$ and $C$, its image $B'$ will be between $A'$ and $C'$.</li>
-              <li><strong>Parallelism:</strong> If two lines are parallel, their images will also be parallel.</li>
+            <ul className="list-disc list-inside ml-4 space-y-2 text-lg text-red-600 dark:text-red-400">
+              <li>Dilations</li>
+              <li>Stretches</li>
             </ul>
-             <div className="mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/30">
-              <p className="text-lg text-red-700 dark:text-red-300">
-                <strong>The One Exception: Orientation!</strong>
-              </p>
-              <p className="text-lg text-red-700 dark:text-red-300 mt-2">
-                A <strong>Reflection</strong> (flip) *reverses* the orientation (clockwise vs. counter-clockwise order) of the vertices. Translations and Rotations preserve orientation.
-              </p>
-            </div>
           </div>
         </div>
 
         {/* Right Column - Animation and Quiz */}
         <div className="space-y-6">
-          {/* --- ANIMATION CARD --- */}
+          {/* --- ANIMATION CARD (UPDATED) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Preserving Properties</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Example: Reflection</h3>
             
-            {/* --- USE THE ANIMATION COMPONENT --- */}
-            <PropertiesAnimation />
+            {/* --- USE THE UPDATED ANIMATION COMPONENT --- */}
+            <ReflectionAnimation />
             
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">
-              The blue pre-image is reflected to the green image. Notice the side lengths and angles match, but the orientation is flipped.
+            <p className="text-lg text-slate-700 dark:text-slate-300 mt-4 text-center">
+              Notice that $Q$ is the image of $P$ under a reflection in the x-axis.
+            </p>
+            <p className="text-lg text-slate-700 dark:text-slate-300 mt-2 text-center">
+              Since $P$ is mapped to $Q$ under a rigid motion (reflection), $P$ and $Q$ must be <strong>congruent</strong>.
             </p>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (Unchanged) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -314,13 +333,13 @@ export default function RigidMotionsSlide2() {
               </>
             ) : (
               <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8">
-                <div className="text-3xl mb-4">📐📏</div>
+                <div className="text-3xl mb-4">🔄</div>
                 <div className="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Quiz Complete!</div>
                 <div className="text-lg text-slate-600 dark:text-slate-400">
                   You scored {score} out of {questions.length}
                 </div>
                 <div className="text-lg text-slate-600 dark:text-slate-400 mt-2">
-                  {score === questions.length ? "You know what is preserved!" : 'Great job!'}
+                  {score === questions.length ? "You've got the definition down!" : 'Great job!'}
                 </div>
               </motion.div>
             )}
@@ -332,8 +351,8 @@ export default function RigidMotionsSlide2() {
 
   return (
     <SlideComponentWrapper
-      slideId="rigid-motions-properties"
-      slideTitle="Properties of Rigid Motions"
+      slideId="rigid-motions-introduction"
+      slideTitle="Introduction to Rigid Motions"
       moduleId="congruence"
       submoduleId="rigid-motions-and-congruence"
       interactions={localInteractions}

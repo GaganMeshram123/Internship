@@ -4,103 +4,182 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-// This component shows a different figure based on the current quiz question
-const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const markColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  const hiddenMarkColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-    stroke: markColor,
-  };
-
-  // --- Figure 1: Vertical Angles (ASA) ---
-  const T1_Q1 = { A: { x: 30, y: 50 }, M: { x: 150, y: 110 }, B: { x: 30, y: 170 } };
-  const T2_Q1 = { D: { x: 370, y: 50 }, M: { x: 250, y: 110 }, C: { x: 370, y: 170 } };
-
-  // --- Figure 2: Vertical Angles (AAS) ---
-  const T1_Q2 = { A: { x: 30, y: 50 }, M: { x: 150, y: 110 }, B: { x: 30, y: 170 } };
-  const T2_Q2 = { D: { x: 370, y: 50 }, M: { x: 250, y: 110 }, C: { x: 370, y: 170 } };
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
+  const Q = { x: 30, y: 50 };
+  const P = { x: 180, y: 110 };
+  const R = { x: 80, y: 170 };
+  const M = { x: 370, y: 170 };
+  const N = { x: 320, y: 50 };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g
-              key="q1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles with Vertical Angles */}
-              {/* --- FIX: Removed conflicting stroke attributes --- */}
-              <path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.M.x} ${T1_Q1.M.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} Z`} stroke="none" fill="none" />
-              <path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.M.x} ${T2_Q1.M.y} L ${T2_Q1.C.x} ${T2_Q1.C.y} Z`} stroke="none" fill="none" />
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T2_Q1.C.x} y2={T2_Q1.C.y} stroke={strokeColor} />
-              <line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T2_Q1.D.x} y2={T2_Q1.D.y} stroke={strokeColor} />
-              
-              {/* ASA Markings */}
-              {/* A (Given) */}
-              <path d={`M ${T1_Q1.A.x + 20} ${T1_Q1.A.y} A 20 20 0 0 1 ${T1_Q1.A.x + 12} ${T1_Q1.A.y + 16}`} {...commonProps} />
-              <path d={`M ${T2_Q1.C.x - 20} ${T2_Q1.C.y} A 20 20 0 0 0 ${T2_Q1.C.x - 12} ${T2_Q1.C.y - 16}`} {...commonProps} />
-              <text x={30} y={40} fill={markColor} fontSize="12">{"Given: $\angle A \cong \angle C$"}</text>
-              
-              {/* S (Given) */}
-              <line x1={T1_Q1.A.x} y1={T1_Q1.A.y} x2={T1_Q1.M.x} y2={T1_Q1.M.y} {...commonProps} strokeWidth="4" />
-              <line x1={T2_Q1.C.x} y1={T2_Q1.C.y} x2={T2_Q1.M.x} y2={T2_Q1.M.y} {...commonProps} strokeWidth="4" />
-              <text x={90} y={70} fill={markColor} fontSize="12">{"Given: AM $\cong$ CM"}</text>
+        <path d={`M ${Q.x} ${Q.y} L ${P.x} ${P.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${M.x} ${M.y} L ${P.x} ${P.y} L ${N.x} ${N.y} Z`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={Q.x - 15} y={Q.y} fill={strokeColor}>Q</text>
+        <text x={R.x - 15} y={R.y + 5} fill={strokeColor}>R</text>
+        <text x={P.x} y={P.y + 20} fill={strokeColor} textAnchor="middle">P</text>
+        <text x={N.x + 5} y={N.y} fill={strokeColor}>N</text>
+        <text x={M.x + 5} y={M.y + 5} fill={strokeColor}>M</text>
 
-              {/* A (Hidden - Vertical) */}
-              <path d={`M ${T1_Q1.M.x - 17} ${T1_Q1.M.y - 10} A 20 20 0 0 0 ${T1_Q1.M.x} ${T1_Q1.M.y - 20}`} {...commonProps} stroke={hiddenMarkColor} strokeDasharray="5 5" />
-              <path d={`M ${T2_Q1.M.x + 17} ${T2_Q1.M.y + 10} A 20 20 0 0 0 ${T2_Q1.M.x} ${T2_Q1.M.y + 20}`} {...commonProps} stroke={hiddenMarkColor} strokeDasharray="5 5" />
-              <text x={160} y={140} fill={hiddenMarkColor} fontSize="12">Vertical Angles</text>
-            </motion.g>
-          )}
+        {/* Markings */}
+        <line x1={95} y1={75} x2={105} y2={80} stroke={strokeColor} strokeWidth="2" /> {/* QP */}
+        <line x1={98} y1={72} x2={108} y2={77} stroke={strokeColor} strokeWidth="2" />
+        <line x1={265} y1={77} x2={275} y2={72} stroke={strokeColor} strokeWidth="2" /> {/* PM */}
+        <line x1={262} y1={80} x2={272} y2={75} stroke={strokeColor} strokeWidth="2" />
 
-          {questionIndex === 1 && (
-            <motion.g
-              key="q2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Triangles with Vertical Angles */}
-              {/* --- FIX: Removed conflicting stroke attributes --- */}
-              <path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.M.x} ${T1_Q2.M.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} Z`} stroke="none" fill="none" />
-              <path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.M.x} ${T2_Q2.M.y} L ${T2_Q2.C.x} ${T2_Q2.C.y} Z`} stroke="none" fill="none" />
-              <line x1={T1_Q2.A.x} y1={T1_Q2.A.y} x2={T2_Q2.C.x} y2={T2_Q2.C.y} stroke={strokeColor} />
-              <line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T2_Q2.D.x} y2={T2_Q2.D.y} stroke={strokeColor} />
-              
-              {/* AAS Markings */}
-              {/* A (Given) */}
-              <path d={`M ${T1_Q2.A.x + 20} ${T1_Q2.A.y} A 20 20 0 0 1 ${T1_Q2.A.x + 12} ${T1_Q2.A.y + 16}`} {...commonProps} />
-              <path d={`M ${T2_Q2.C.x - 20} ${T2_Q2.C.y} A 20 20 0 0 0 ${T2_Q2.C.x - 12} ${T2_Q2.C.y - 16}`} {...commonProps} />
-              <text x={30} y={40} fill={markColor} fontSize="12">{"Given: $\angle A \cong \angle C$"}</text>
+        <line x1={125} y1={143} x2={135} y2={138} stroke={strokeColor} strokeWidth="2" /> {/* PR */}
+        <line x1={225} y1={138} x2={235} y2={143} stroke={strokeColor} strokeWidth="2" /> {/* PN */}
 
-              {/* A (Hidden - Vertical) */}
-              <path d={`M ${T1_Q2.M.x - 17} ${T1_Q2.M.y - 10} A 20 20 0 0 0 ${T1_Q2.M.x} ${T1_Q2.M.y - 20}`} {...commonProps} stroke={hiddenMarkColor} strokeDasharray="5 5" />
-              <path d={`M ${T2_Q2.M.x + 17} ${T2_Q2.M.y + 10} A 20 20 0 0 0 ${T2_Q2.M.x} ${T2_Q2.M.y + 20}`} {...commonProps} stroke={hiddenMarkColor} strokeDasharray="5 5" />
-              <text x={160} y={140} fill={hiddenMarkColor} fontSize="12">Vertical Angles</text>
-              
-              {/* S (Given - Non-included) */}
-              <line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T1_Q2.M.x} y2={T1_Q2.M.y} {...commonProps} strokeWidth="4" />
-              <line x1={T2_Q2.D.x} y1={T2_Q2.D.y} x2={T2_Q2.M.x} y2={T2_Q2.M.y} {...commonProps} strokeWidth="4" />
-              <text x={30} y={190} fill={markColor} fontSize="12">{"Given: BM $\cong$ DM"}</text>
-            </motion.g>
-          )}
-        </AnimatePresence>
+        {/* Vertical Angles */}
+        <path d={`M ${P.x - 15} ${P.y - 8} A 15 15 0 0 0 ${P.x + 5} ${P.y - 14}`} stroke={angleBlue} {...commonProps} />
+        <path d={`M ${P.x + 15} ${P.y + 8} A 15 15 0 0 0 ${P.x - 5} ${P.y + 14}`} stroke={angleBlue} {...commonProps} />
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q4) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
+  const A = { x: 200, y: 110 };
+  const B = { x: 300, y: 150 };
+  const C = { x: 50, y: 170 };
+  const D = { x: 100, y: 70 };
+  const E = { x: 350, y: 50 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${C.x} ${C.y} L ${A.x} ${A.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${E.x} ${E.y} L ${A.x} ${A.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={A.x} y={A.y + 20} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={B.x + 5} y={B.y + 5} fill={strokeColor}>B</text>
+        <text x={C.x - 15} y={C.y + 5} fill={strokeColor}>C</text>
+        <text x={D.x - 15} y={D.y} fill={strokeColor}>D</text>
+        <text x={E.x + 5} y={E.y} fill={strokeColor}>E</text>
+
+        {/* Markings */}
+        <line x1={245} y1={133} x2={255} y2={130} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
+        <line x1={248} y1={136} x2={258} y2={133} stroke={strokeColor} strokeWidth="2" />
+        <line x1={155} y1={87} x2={165} y2={90} stroke={strokeColor} strokeWidth="2" /> {/* AD */}
+        <line x1={152} y1={84} x2={162} y2={87} stroke={strokeColor} strokeWidth="2" />
+        
+        <path d={`M ${B.x - 15} ${B.y} A 15 15 0 0 0 ${B.x - 10} ${B.y - 11}`} stroke={angleOrange} {...commonProps} />
+        <path d={`M ${D.x + 15} ${D.y} A 15 15 0 0 1 ${D.x + 10} ${D.y + 11}`} stroke={angleOrange} {...commonProps} />
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q5) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
+  const Y = { x: 80, y: 110 };
+  const X = { x: 180, y: 110 };
+  const Z = { x: 180, y: 30 };
+  const S = { x: 280, y: 110 };
+  const T = { x: 180, y: 190 };
+  
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${Y.x} ${Y.y} L ${Z.x} ${Z.y} L ${S.x} ${S.y} L ${T.x} ${T.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${Y.x} ${Y.y} L ${S.x} ${S.y}`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={Y.x - 15} y={Y.y + 5} fill={strokeColor}>Y</text>
+        <text x={X.x} y={X.y + 20} fill={strokeColor} textAnchor="middle">X</text>
+        <text x={Z.x + 5} y={Z.y} fill={strokeColor}>Z</text>
+        <text x={S.x + 5} y={S.y + 5} fill={strokeColor}>S</text>
+        <text x={T.x + 5} y={T.y + 5} fill={strokeColor}>T</text>
+
+        {/* Markings */}
+        <line x1={125} y1={107} x2={135} y2={113} stroke={strokeColor} strokeWidth="2" /> {/* YX */}
+        <line x1={128} y1={104} x2={138} y2={110} stroke={strokeColor} strokeWidth="2" />
+        <line x1={225} y1={107} x2={235} y2={113} stroke={strokeColor} strokeWidth="2" /> {/* XS */}
+        <line x1={228} y1={104} x2={238} y2={110} stroke={strokeColor} strokeWidth="2" />
+
+        <line x1={180} y1={70} x2={175} y2={80} stroke={strokeColor} strokeWidth="2" /> {/* ZX */}
+        <line x1={180} y1={150} x2={175} y2={160} stroke={strokeColor} strokeWidth="2" /> {/* TX */}
+        
+        <path d={`M ${X.x - 10} ${X.y - 10} L ${X.x - 10} ${X.y} L ${X.x} ${X.y}`} fill="none" stroke={angleBlue} strokeWidth="2" />
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 3 (Q1) ---
+const FigureQ3: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const anglePink = isDarkMode ? '#F472B6' : '#DB2777';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
+  const A = { x: 150, y: 110 };
+  const B = { x: 200, y: 50 };
+  const C = { x: 50, y: 50 };
+  const X = { x: 300, y: 110 };
+  const Y = { x: 250, y: 50 };
+  const Z = { x: 350, y: 170 };
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${X.x} ${X.y} L ${Y.x} ${Y.y} L ${Z.x} ${Z.y} Z`} stroke={strokeColor} {...commonProps} />
+        
+        {/* Labels */}
+        <text x={A.x} y={A.y + 20} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={B.x + 5} y={B.y} fill={strokeColor}>B</text>
+        <text x={C.x - 15} y={C.y} fill={strokeColor}>C</text>
+        <text x={X.x} y={X.y + 20} fill={strokeColor} textAnchor="middle">X</text>
+        <text x={Y.x - 5} y={Y.y} fill={strokeColor}>Y</text>
+        <text x={Z.x + 5} y={Z.y + 5} fill={strokeColor}>Z</text>
+
+        {/* Markings */}
+        <line x1={175} y1={80} x2={185} y2={85} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
+        <line x1={178} y1={77} x2={188} y2={82} stroke={strokeColor} strokeWidth="2" />
+        <line x1={275} y1={80} x2={265} y2={85} stroke={strokeColor} strokeWidth="2" /> {/* YX */}
+        <line x1={272} y1={77} x2={262} y2={82} stroke={strokeColor} strokeWidth="2" />
+        
+        <path d={`M ${A.x - 15} ${A.y} A 15 15 0 0 0 ${A.x - 10} ${A.y - 11}`} stroke={anglePink} {...commonProps} />
+        <path d={`M ${X.x + 15} ${X.y} A 15 15 0 0 0 ${X.x + 10} ${X.y - 11}`} stroke={anglePink} {...commonProps} />
+        
+        <path d={`M ${C.x + 15} ${C.y} A 15 15 0 0 1 ${C.x + 10} ${C.y + 11}`} stroke={angleBlue} {...commonProps} />
+        <path d={`M ${Z.x - 15} ${Z.y} A 15 15 0 0 1 ${Z.x - 10} ${Z.y - 11}`} stroke={angleBlue} {...commonProps} />
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function CombiningSlide3() {
@@ -108,7 +187,8 @@ export default function CombiningSlide3() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  // --- UPDATED FOR 3 QUESTIONS ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -123,30 +203,42 @@ export default function CombiningSlide3() {
     }
   ];
   
-  const allOptions = ["SSS", "SAS", "ASA", "AAS", "HL", "Not Enough Information"];
+  const allOptions = ["SSS", "SAS", "ASA", "AAS", "HL"];
 
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
       id: 'combining-vertical-q1',
-      question: 'Given $\angle A \cong \angle C$ and $AM \cong CM$. Which criterion proves $\triangle ABM \cong \triangle CDM$?',
+      question: 'By which congruence criterion does it follow that ΔABC ≅ ΔXYZ?',
+      figure: <FigureQ3 />,
       options: allOptions,
-      correctAnswer: "ASA",
-      explanation: "Correct! We are given $\angle A \cong \angle C$ (A) and $AM \cong CM$ (S). The *hidden* clue is that $\angle AMB \cong \angle CMD$ are vertical angles (A). The side $AM$ is *included* between $\angle A$ and $\angle AMB$. This is a perfect ASA pattern."
+      correctAnswer: "AAS",
+      explanation: "Correct! We have ∠C ≅ ∠Z (Angle), ∠A ≅ ∠X (Angle, marked pink), and a non-included side $AB \cong XY$ (Side). This is an Angle-Angle-Side (AAS) pattern."
     },
     {
       id: 'combining-vertical-q2',
-      question: 'Given $\angle A \cong \angle C$ and $BM \cong DM$. Which criterion proves $\triangle ABM \cong \triangle CDM$?',
+      question: 'By which congruence criterion does it follow that ΔABC ≅ ΔADE?',
+      figure: <FigureQ1 />,
       options: allOptions,
-      correctAnswer: "AAS",
-      explanation: "Correct! We are given $\angle A \cong \angle C$ (A). The *hidden* clue is $\angle AMB \cong \angle CMD$ (A) from vertical angles. We are also given $BM \cong DM$ (S). The side $BM$ is *not* included between $\angle A$ and $\angle AMB$. This is an Angle-Angle-Side (AAS) pattern."
+      correctAnswer: "ASA",
+      explanation: "Correct! We are given $\angle C \cong \angle D$ (Angle) and $AC \cong AD$ (Side). The *hidden* clue is that $\angle BAC \cong \angle EAD$ are vertical angles (Angle). The side $AC$ is *included* between $\angle C$ and $\angle BAC$. This is an Angle-Side-Angle (ASA) pattern."
+    },
+    {
+      id: 'combining-vertical-q3',
+      question: 'By which congruence criterion does it follow that ΔXYZ ≅ ΔXST?',
+      figure: <FigureQ2 />,
+      options: allOptions,
+      correctAnswer: "SAS",
+      explanation: "Correct! We are given $YX \cong XS$ (Side) and $ZX \cong TX$ (Side). The *hidden* clue is that $\angle YXZ \cong \angle SXT$ are vertical angles (Angle). The angle $\angle YXZ$ is *included* between sides $YX$ and $ZX$. This is a Side-Angle-Side (SAS) pattern."
     }
   ];
 
@@ -205,39 +297,58 @@ export default function CombiningSlide3() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Hidden Clue: Vertical Angles</h2>
-            <p className="text-lg leading-relaxed">
-              One of the most common "hidden" clues in geometry is **Vertical Angles**.
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Cases With Vertical Angles</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              By which congruence criterion does it follow that ΔPQR ≅ ΔPMN?
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              When two lines intersect, the angles opposite each other are called vertical angles, and they are **always congruent**.
-            </p>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (The Strategy) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">How to Use This Clue</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              When you see two triangles that meet at a single point, immediately look for vertical angles.
+              First, we recall the SAS (Side-Angle-Side) congruence criterion:
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                This gives you a free pair of congruent <strong>Angles (A)</strong> to use in your proof, often for <strong>ASA</strong> or <strong>AAS</strong>.
+            <blockquote className="my-4 p-4 bg-slate-100 dark:bg-slate-700/60 border-l-4 border-blue-500 rounded-r-lg">
+              <p className="text-lg italic font-medium leading-relaxed">
+                Two triangles are congruent if and only if two sides and the included angle of one triangle are congruent to two sides and the included angle of the other triangle.
               </p>
-            </div>
+            </blockquote>
+
             <p className="text-lg leading-relaxed mt-4">
-              Look at the quiz. Both examples use vertical angles, but they lead to *different* criteria based on which side is given.
+              Notice that <strong>∠QPR ≅ ∠MPN</strong> since these two angles are <strong>vertical</strong>.
+            </p>
+
+            <p className="text-lg leading-relaxed mt-4">
+              Now, we have:
+            </p>
+            <div className="flex justify-around items-center text-center my-4">
+              <div>
+                <p className="text-lg font-mono">PR ≅ PN</p>
+                <p className="text-sm text-slate-500">Side</p>
+              </div>
+              <div>
+                <p className="text-lg font-mono">∠QPR ≅ ∠MPN</p>
+                <p className="text-sm text-slate-500">(Included) Angle</p>
+              </div>
+              <div>
+                <p className="text-lg font-mono">PQ ≅ PM</p>
+                <p className="text-sm text-slate-500">Side</p>
+              </div>
+            </div>
+            
+            <p className="text-lg leading-relaxed mt-4 font-semibold">
+              Therefore, ΔPQR and ΔPMN are congruent by SAS.
             </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Find the Vertical Angle</h3>
@@ -261,8 +372,19 @@ export default function CombiningSlide3() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <QuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>

@@ -6,71 +6,122 @@ import { useThemeContext } from '@/lib/ThemeContext';
 
 // --- ANIMATION COMPONENT DEFINED INSIDE ---
 const FunctionNotationAnimation: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 220;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#CBD5E1' : '#A0AEC0';
+  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const color2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  
+  const P = { x: 100, y: 150 };
+  const P_prime = { x: 100 + 150, y: 150 - 80 }; // T(x, y) = (x+150, y-80)
+
+  const textAnim = (delay: number) => ({
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { delay: delay } },
+  });
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* Grid lines */}
+        <path d="M 0 50 H 400 M 0 100 H 400 M 0 150 H 400 M 50 0 V 220 M 100 0 V 220 M 150 0 V 220 M 200 0 V 220 M 250 0 V 220 M 300 0 V 220 M 350 0 V 220" stroke={strokeColor} strokeWidth="0.5" />
+        
+        {/* Pre-image Point */}
+        <motion.circle 
+          cx={P.x} cy={P.y} r="5" fill={color1}
+          initial="hidden" animate="visible" variants={textAnim(0.5)}
+        />
+        <motion.text x={P.x - 40} y={P.y + 15} fill={color1} fontSize="14"
+          initial="hidden" animate="visible" variants={textAnim(0.7)}>
+          P(x, y)
+        </motion.text>
+        
+        {/* Image Point */}
+        <motion.circle 
+          cx={P_prime.x} cy={P_prime.y} r="5" fill={color2}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 1.5, duration: 0.5 }}
+        />
+        <motion.text x={P_prime.x + 5} y={P_prime.y + 15} fill={color2} fontSize="14"
+          initial="hidden" animate="visible" variants={textAnim(2.0)}>
+          P'(x+150, y-80)
+        </motion.text>
+        
+        {/* Arrow */}
+        <motion.path 
+          d={`M ${P.x + 10} ${P.y - 10} Q ${(P.x + P_prime.x) / 2} ${P_prime.y - 50} ${P_prime.x - 10} ${P_prime.y + 10}`}
+          fill="none"
+          stroke={isDarkMode ? '#E2E8F0' : '#4A5568'}
+          strokeWidth="2"
+          strokeDasharray="4 4"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 1.0, duration: 1.0 }}
+        />
+        
+        {/* Notation */}
+        <motion.text x={200} y={190} fill={isDarkMode ? '#E2E8F0' : '#4A5568'} fontSize="16" textAnchor="middle"
+          initial="hidden" animate="visible" variants={textAnim(2.5)}>
+          Notation: <tspan fill={color2} fontWeight="bold">T(x, y) = (x+150, y-80)</tspan>
+        </motion.text>
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR NEW QUIZ QUESTION ---
+const FigureQ3: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#CBD5E1' : '#A0AEC0';
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  const color2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const gridColor = isDarkMode ? '#475569' : '#CBD5E1';
+  const colorP = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
   
-  const P = { x: 100, y: 150 };
-  const P_prime = { x: 100 + 150, y: 150 - 80 }; // T(x, y) = (x+150, y-80)
+  const cx = svgWidth / 2;
+  const cy = svgHeight / 2;
+  const gridSpacing = 20;
 
-  const textAnim = (delay: number) => ({
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { delay: delay } },
-  });
+  // A: (0, -2), B: (3, 1), C: (0, 4), D: (-3, 1)
+  const polyP = `${cx},${cy + 2*gridSpacing} ${cx + 3*gridSpacing},${cy - 1*gridSpacing} ${cx},${cy - 4*gridSpacing} ${cx - 3*gridSpacing},${cy - 1*gridSpacing}`;
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* Grid lines */}
-        <path d="M 0 50 H 400 M 0 100 H 400 M 0 150 H 400 M 50 0 V 220 M 100 0 V 220 M 150 0 V 220 M 200 0 V 220 M 250 0 V 220 M 300 0 V 220 M 350 0 V 220" stroke={strokeColor} strokeWidth="0.5" />
+        <defs>
+          <pattern id="grid-q3" width={gridSpacing} height={gridSpacing} patternUnits="userSpaceOnUse">
+            <path d={`M ${gridSpacing} 0 L 0 0 0 ${gridSpacing}`} fill="none" stroke={gridColor} strokeWidth="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid-q3)" />
+        <line x1="0" y1={cy} x2={svgWidth} y2={cy} stroke={strokeColor} strokeWidth="2" />
+        <line x1={cx} y1="0" x2={cx} y2={svgHeight} stroke={strokeColor} strokeWidth="2" />
+        <text x={svgWidth - 10} y={cy - 5} fill={strokeColor} fontSize="14">x</text>
+        <text x={cx + 5} y={15} fill={strokeColor} fontSize="14">y</text>
         
-        {/* Pre-image Point */}
-        <motion.circle 
-          cx={P.x} cy={P.y} r="5" fill={color1}
-          initial="hidden" animate="visible" variants={textAnim(0.5)}
-        />
-        <motion.text x={P.x - 40} y={P.y + 15} fill={color1} fontSize="14"
-          initial="hidden" animate="visible" variants={textAnim(0.7)}>
-          P(x, y)
-        </motion.text>
-        
-        {/* Image Point */}
-        <motion.circle 
-          cx={P_prime.x} cy={P_prime.y} r="5" fill={color2}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 1.5, duration: 0.5 }}
-        />
-        <motion.text x={P_prime.x + 5} y={P_prime.y + 15} fill={color2} fontSize="14"
-          initial="hidden" animate="visible" variants={textAnim(2.0)}>
-          P'(x+150, y-80)
-        </motion.text>
-        
-        {/* Arrow */}
-        <motion.path 
-          d={`M ${P.x + 10} ${P.y - 10} Q ${(P.x + P_prime.x) / 2} ${P_prime.y - 50} ${P_prime.x - 10} ${P_prime.y + 10}`}
-          fill="none"
-          stroke={isDarkMode ? '#E2E8F0' : '#4A5568'}
-          strokeWidth="2"
-          strokeDasharray="4 4"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ delay: 1.0, duration: 1.0 }}
-        />
-        
-        {/* Notation */}
-        <motion.text x={200} y={190} fill={isDarkMode ? '#E2E8F0' : '#4A5568'} fontSize="16" textAnchor="middle"
-          initial="hidden" animate="visible" variants={textAnim(2.5)}>
-          Notation: <tspan fill={color2} fontWeight="bold">T(x, y) = (x+150, y-80)</tspan>
-        </motion.text>
+        <polygon points={polyP} fill={colorP} opacity="0.7" stroke={strokeColor} strokeWidth="1" />
+        <text x={cx} y={cy + 2*gridSpacing + 15} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={cx + 3*gridSpacing + 5} y={cy - 1*gridSpacing + 5} fill={strokeColor}>B</text>
+        <text x={cx} y={cy - 4*gridSpacing - 5} fill={strokeColor} textAnchor="middle">C</text>
+        <text x={cx - 3*gridSpacing - 5} y={cy - 1*gridSpacing + 5} fill={strokeColor}>D</text>
       </svg>
     </div>
   );
 };
-// --- END OF ANIMATION COMPONENT DEFINITION ---
+
+// --- Main Quiz Figure Component ---
+const QuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+  // This component is not used by the original questions,
+  // but we add the new one for questionIndex 2.
+  if (questionIndex === 2) {
+    return <FigureQ3 />;
+  }
+  // Return null or a default/empty state for other questions if they don't have figures
+  return null; 
+};
+// --- END OF FIGURE COMPONENT DEFINITION ---
 
 
 export default function RigidMotionsSlide5() {
@@ -78,7 +129,8 @@ export default function RigidMotionsSlide5() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]);
+  // --- UPDATED FOR 3 QUESTIONS ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -93,14 +145,18 @@ export default function RigidMotionsSlide5() {
     }
   ];
 
+  // --- UPDATED INTERFACE ---
   interface QuizQuestion {
     id: string;
     question: string;
+    figure?: React.ReactNode; // Optional figure
+    statements?: string[]; // Optional statements
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
       id: 'rigid-motions-notation-q1',
@@ -125,6 +181,25 @@ export default function RigidMotionsSlide5() {
       ],
       correctAnswer: "Yes, because it swaps x and y, which preserves distance.",
       explanation: "Correct! All rotations are rigid motions. This rule, $R(x, y) = (-y, x)$, may look strange, but it perfectly preserves all distances and angles, just 'turning' the figure."
+    },
+    {
+      id: 'rigid-motions-notation-q3',
+      question: 'Which of the following combinations of transformations map the polygon ABCD to a congruent polygon?',
+      figure: <FigureQ3 />,
+      statements: [
+        'I.   A reflection in the line $\overleftrightarrow{AB}$, followed by a dilation of scale factor 2 with center of dilation $A$.',
+        'II.  A horizontal stretch of scale factor 1/2, followed by a reflection in the axis $\overleftrightarrow{AC}$.',
+        'III. A rotation of 36° counterclockwise about the point $A$, followed by a translation of 3 units to the right and 1 unit down.'
+      ],
+      options: [
+        "I and II only",
+        "III only",
+        "I and III only",
+        "II only",
+        "I only"
+      ],
+      correctAnswer: "III only",
+      explanation: "Correct! To map to a *congruent* polygon, *all* transformations in the sequence must be rigid motions. Statement I has a dilation (not rigid). Statement II has a stretch (not rigid). Statement III has a rotation and a translation, both of which are rigid motions."
     }
   ];
 
@@ -158,8 +233,9 @@ export default function RigidMotionsSlide5() {
       question: {
         type: 'mcq',
         question: current.question,
-        options: current.options
-      }
+        options: current.options,
+/*         statements: current.statements // Pass statements if they exist
+ */      }
     });
   };
 
@@ -183,7 +259,7 @@ export default function RigidMotionsSlide5() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UNCHANGED) */}
         <div className="space-y-6">
           {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
@@ -235,7 +311,7 @@ export default function RigidMotionsSlide5() {
 
         {/* Right Column - Animation and Quiz */}
         <div className="space-y-6">
-          {/* --- ANIMATION CARD --- */}
+          {/* --- ANIMATION CARD (UNCHANGED) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Mapping a Point</h3>
             
@@ -247,7 +323,7 @@ export default function RigidMotionsSlide5() {
             </p>
           </div>
 
-          {/* --- KNOWLEDGE CHECK CARD --- */}
+          {/* --- KNOWLEDGE CHECK CARD (UPDATED) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Knowledge Check</h3>
@@ -270,9 +346,31 @@ export default function RigidMotionsSlide5() {
                 />
               ))}
             </div>
+            
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION (if it exists) --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
+                {/* --- RENDER STATEMENTS (if they exist) --- */}
+                {questions[currentQuestionIndex].statements && (
+                  <ul className="list-none p-4 mb-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono">
+                    {questions[currentQuestionIndex].statements?.map((stmt, i) => (
+                      <li key={i}>{stmt}</li>
+                    ))}
+                  </ul>
+                )}
+                <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {

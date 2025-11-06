@@ -4,53 +4,160 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
-// --- QUIZ FIGURE COMPONENT DEFINED INSIDE ---
-const MappingQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
+// --- FIGURE FOR EXAMPLE (Left Side) ---
+const FigureExample: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 220;
+  const svgHeight = 300;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  const color2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const gridColor = isDarkMode ? '#475569' : '#CBD5E1';
+  const colorP = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const colorQ = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const arrowColor = isDarkMode ? '#F87171' : '#EF4444'; // Red
 
-  // L-shape
-  const lShape = "M 50 50 L 100 50 L 100 150 L 80 150 L 80 70 L 50 70 Z";
-  
-  // 'F' shape
-  const fShape = "M 50 50 L 100 50 L 100 80 L 80 80 L 80 110 L 100 110 L 100 140 L 50 140 Z";
+  const cx = svgWidth / 2;
+  const cy = svgHeight / 2;
+  const gridSpacing = 20;
+
+  // Polygon P (2,1) (4,1) (4,3) (2,3)
+  const polyP = `${cx + 2*gridSpacing},${cy - 1*gridSpacing} ${cx + 4*gridSpacing},${cy - 1*gridSpacing} ${cx + 4*gridSpacing},${cy - 3*gridSpacing} ${cx + 2*gridSpacing},${cy - 3*gridSpacing}`;
+  // Polygon Q (-1,2) (-1,4) (-3,4) (-3,2)
+  const polyQ = `${cx - 1*gridSpacing},${cy - 2*gridSpacing} ${cx - 1*gridSpacing},${cy - 4*gridSpacing} ${cx - 3*gridSpacing},${cy - 4*gridSpacing} ${cx - 3*gridSpacing},${cy - 2*gridSpacing}`;
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <AnimatePresence>
-          {questionIndex === 0 && (
-            <motion.g key="q1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* Figure 1: Translation */}
-              <path d={lShape} fill={color1} opacity="0.7" />
-              <text x="60" y="90" fill={color1} fontSize="14">Figure A</text>
-              
-              <path d={lShape} fill={color2} opacity="0.7" transform="translate(180, 20)" />
-              <text x="240" y="110" fill={color2} fontSize="14">Figure B</text>
-            </motion.g>
-          )}
+        <defs>
+          <pattern id="grid" width={gridSpacing} height={gridSpacing} patternUnits="userSpaceOnUse">
+            <path d={`M ${gridSpacing} 0 L 0 0 0 ${gridSpacing}`} fill="none" stroke={gridColor} strokeWidth="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+        <line x1="0" y1={cy} x2={svgWidth} y2={cy} stroke={strokeColor} strokeWidth="2" />
+        <line x1={cx} y1="0" x2={cx} y2={svgHeight} stroke={strokeColor} strokeWidth="2" />
+        <text x={svgWidth - 10} y={cy - 5} fill={strokeColor} fontSize="14">x</text>
+        <text x={cx + 5} y={15} fill={strokeColor} fontSize="14">y</text>
+        
+        <polygon points={polyP} fill={colorP} opacity="0.7" stroke={strokeColor} strokeWidth="1" />
+        <text x={cx + 3*gridSpacing} y={cy - 2*gridSpacing} fill={isDarkMode ? 'black' : 'white'} textAnchor="middle" dominantBaseline="middle">P</text>
+        
+        <polygon points={polyQ} fill={colorQ} opacity="0.7" stroke={strokeColor} strokeWidth="1" />
+        <text x={cx - 2*gridSpacing} y={cy - 3*gridSpacing} fill={isDarkMode ? 'black' : 'white'} textAnchor="middle" dominantBaseline="middle">Q</text>
 
-          {questionIndex === 1 && (
-            <motion.g key="q2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* Figure 2: Rotation + Reflection */}
-              <path d={fShape} fill={color1} opacity="0.7" />
-              <text x="60" y="160" fill={color1} fontSize="14">Figure C</text>
-              
-              {/* Rotated 90deg CCW and Flipped over Y axis */}
-              <path d={fShape} fill={color2} opacity="0.7" transform="translate(300, 100) rotate(-90) scaleY(-1)" />
-              <text x="250" y="100" fill={color2} fontSize="14">Figure D</text>
-            </motion.g>
-          )}
-        </AnimatePresence>
+        {/* Rotation visualization */}
+        <motion.path 
+          d={`M ${cx} ${cy} L ${cx + 2*gridSpacing} ${cy - 1*gridSpacing} L ${cx + 2.5*gridSpacing} ${cy - 3*gridSpacing}`} 
+          fill="none" 
+          stroke={arrowColor} 
+          strokeDasharray="3 3"
+          initial={{ rotate: 0, transformOrigin: `${cx}px ${cy}px` }}
+          animate={{ rotate: 90 }}
+          transition={{ delay: 0.5, duration: 1 }}
+        />
+        <motion.path 
+          d={`M ${cx} ${cy} L ${cx + 4*gridSpacing} ${cy - 1*gridSpacing}`} 
+          fill="none" 
+          stroke={arrowColor} 
+          strokeDasharray="3 3"
+          initial={{ rotate: 0, transformOrigin: `${cx}px ${cy}px` }}
+          animate={{ rotate: 90 }}
+          transition={{ delay: 0.5, duration: 1 }}
+        />
+        <motion.path 
+          d="M 260 140 A 40 40 0 0 1 200 100" 
+          fill="none" 
+          stroke={arrowColor} 
+          strokeWidth="2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        />
+        <motion.text x="210" y="100" fill={arrowColor} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>90°</motion.text>
       </svg>
     </div>
   );
 };
-// --- END OF QUIZ FIGURE COMPONENT DEFINITION ---
+
+// --- FIGURE FOR QUIZ QUESTION 1 (Q3 from image) ---
+const FigureQ1: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 300;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const gridColor = isDarkMode ? '#475569' : '#CBD5E1';
+  const colorP = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const colorQ = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  
+  const cx = svgWidth / 2;
+  const cy = svgHeight / 2;
+  const gridSpacing = 20;
+
+  const polyP = `${cx - 2*gridSpacing},${cy + 2*gridSpacing} ${cx - 4*gridSpacing},${cy + 4*gridSpacing} ${cx - 2*gridSpacing},${cy + 4*gridSpacing}`;
+  const polyQ = `${cx - 2*gridSpacing},${cy - 2*gridSpacing} ${cx - 4*gridSpacing},${cy - 4*gridSpacing} ${cx - 2*gridSpacing},${cy - 4*gridSpacing}`;
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <defs>
+          <pattern id="grid-q1" width={gridSpacing} height={gridSpacing} patternUnits="userSpaceOnUse">
+            <path d={`M ${gridSpacing} 0 L 0 0 0 ${gridSpacing}`} fill="none" stroke={gridColor} strokeWidth="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid-q1)" />
+        <line x1="0" y1={cy} x2={svgWidth} y2={cy} stroke={strokeColor} strokeWidth="2" />
+        <line x1={cx} y1="0" x2={cx} y2={svgHeight} stroke={strokeColor} strokeWidth="2" />
+        <text x={svgWidth - 10} y={cy - 5} fill={strokeColor} fontSize="14">x</text>
+        <text x={cx + 5} y={15} fill={strokeColor} fontSize="14">y</text>
+        
+        <polygon points={polyP} fill={colorP} opacity="0.7" stroke={strokeColor} strokeWidth="1" />
+        <text x={cx - 2.7*gridSpacing} y={cy + 3.3*gridSpacing} fill={isDarkMode ? 'black' : 'white'} textAnchor="middle" dominantBaseline="middle">P</text>
+        <polygon points={polyQ} fill={colorQ} opacity="0.7" stroke={strokeColor} strokeWidth="1" />
+        <text x={cx - 2.7*gridSpacing} y={cy - 3.3*gridSpacing} fill={isDarkMode ? 'black' : 'white'} textAnchor="middle" dominantBaseline="middle">Q</text>
+      </svg>
+    </div>
+  );
+};
+
+// --- FIGURE FOR QUIZ QUESTION 2 (Q4 from image) ---
+const FigureQ2: React.FC = () => {
+  const svgWidth = 400;
+  const svgHeight = 300;
+  const { isDarkMode } = useThemeContext();
+  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const gridColor = isDarkMode ? '#475569' : '#CBD5E1';
+  const colorP = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const colorQ = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
+
+  const cx = svgWidth / 2;
+  const cy = svgHeight / 2;
+  const gridSpacing = 20;
+
+  const polyP = `${cx - 2*gridSpacing},${cy + 1*gridSpacing} ${cx - 5*gridSpacing},${cy + 1*gridSpacing} ${cx - 6*gridSpacing},${cy + 3*gridSpacing} ${cx - 3*gridSpacing},${cy + 3*gridSpacing}`;
+  const polyQ = `${cx + 2*gridSpacing},${cy - 1*gridSpacing} ${cx + 5*gridSpacing},${cy - 1*gridSpacing} ${cx + 6*gridSpacing},${cy - 3*gridSpacing} ${cx + 3*gridSpacing},${cy - 3*gridSpacing}`;
+
+  return (
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <defs>
+          <pattern id="grid-q2" width={gridSpacing} height={gridSpacing} patternUnits="userSpaceOnUse">
+            <path d={`M ${gridSpacing} 0 L 0 0 0 ${gridSpacing}`} fill="none" stroke={gridColor} strokeWidth="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid-q2)" />
+        <line x1="0" y1={cy} x2={svgWidth} y2={cy} stroke={strokeColor} strokeWidth="2" />
+        <line x1={cx} y1="0" x2={cx} y2={svgHeight} stroke={strokeColor} strokeWidth="2" />
+        <text x={svgWidth - 10} y={cy - 5} fill={strokeColor} fontSize="14">x</text>
+        <text x={cx + 5} y={15} fill={strokeColor} fontSize="14">y</text>
+        
+        <polygon points={polyP} fill={colorP} opacity="0.7" stroke={strokeColor} strokeWidth="1" />
+        <text x={cx - 4*gridSpacing} y={cy + 2*gridSpacing} fill={isDarkMode ? 'black' : 'white'} textAnchor="middle" dominantBaseline="middle">P</text>
+        <polygon points={polyQ} fill={colorQ} opacity="0.7" stroke={strokeColor} strokeWidth="1" />
+        <text x={cx + 4*gridSpacing} y={cy - 2*gridSpacing} fill={isDarkMode ? 'black' : 'white'} textAnchor="middle" dominantBaseline="middle">Q</text>
+      </svg>
+    </div>
+  );
+};
+// --- END OF FIGURE COMPONENT DEFINITIONS ---
 
 
 export default function RigidMotionsSlide4() {
@@ -76,35 +183,41 @@ export default function RigidMotionsSlide4() {
   interface QuizQuestion {
     id: string;
     question: string;
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
+  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'rigid-motions-why-q1',
-      question: 'Figure A is congruent to Figure B. Why?',
+      id: 'rigid-motions-why-q3',
+      question: 'In terms of rigid motions, why are the polygons $P$ and $Q$ congruent?',
+      figure: <FigureQ1 />,
       options: [
-        "A single translation maps A onto B.",
-        "A dilation maps A onto B.",
-        "They have the same color.",
-        "They are not congruent."
+        "Q is the image of P under the action of rotation by 180° around the origin",
+        "Q is the image of P under the action of translation by 6 units up",
+        "Q is the image of P under the action of reflection in the x-axis",
+        "The polygons are not congruent",
+        "Q is the image of P under the action of rotation by 90° clockwise around the origin"
       ],
-      correctAnswer: "A single translation maps A onto B.",
-      explanation: "Correct! Figure A can be 'slid' up and to the right to fit perfectly on Figure B. A translation is a rigid motion, so they are congruent."
+      correctAnswer: "Q is the image of P under the action of reflection in the x-axis",
+      explanation: "Correct! If you take a point on P like (-2, -2) and reflect it over the x-axis, it becomes (-2, 2), which is a point on Q. This works for all points, so it's a reflection."
     },
     {
-      id: 'rigid-motions-why-q2',
-      question: 'Figure C is congruent to Figure D. Why?',
+      id: 'rigid-motions-why-q4',
+      question: 'In terms of rigid motions, why are the polygons $P$ and $Q$ congruent?',
+      figure: <FigureQ2 />,
       options: [
-        "A single translation maps C onto D.",
-        "A single reflection maps C onto D.",
-        "A sequence of rigid motions (e.g., a rotation then a reflection) maps C onto D.",
-        "They are not congruent."
+        "Q is the image of P under the action of reflection in the line y = -x",
+        "Q is the image of P under the action of translation by 6 units to the right and 4 units up",
+        "Q is the image of P under the action of translation by 6 units up and 4 to the right",
+        "Q is the image of P under the action of rotation by 180° around the origin",
+        "The polygons are not congruent"
       ],
-      correctAnswer: "A sequence of rigid motions (e.g., a rotation then a reflection) maps C onto D.",
-      explanation: "Correct! No single motion will work. You need a *sequence* (like a rotation and a reflection) to map C onto D. Since a sequence of rigid motions works, they are congruent."
+      correctAnswer: "Q is the image of P under the action of rotation by 180° around the origin",
+      explanation: "Correct! A 180° rotation maps any point (x, y) to (-x, -y). If we test a point on P like (-2, -1), it maps to (2, 1), which is on Q. This works for all vertices."
     }
   ];
 
@@ -163,47 +276,30 @@ export default function RigidMotionsSlide4() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
-          {/* --- CARD 1 --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Asking "Why?"</h2>
-            <p className="text-lg leading-relaxed">
-              When a problem asks *why* two figures are congruent, the answer is no longer "SSS" or "SAS".
+            
+            <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying Rigid Motions</h2>
+            <p className="text-lg leading-relaxed mb-4">
+              In terms of rigid motions, why are the polygons $P$ and $Q$ congruent?
             </p>
-            <p className="text-lg leading-relaxed mt-4">
-              The true, formal reason is:
-            </p>
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                <strong>"Because a rigid motion (or sequence of rigid motions) maps one figure onto the other."</strong>
-              </p>
-            </div>
-          </div>
+            
+            <FigureExample />
 
-          {/* --- CARD 2 (The Strategy) --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">How to Answer</h3>
+            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
+            
             <p className="text-lg leading-relaxed">
-              To answer *why* two figures are congruent, you must mentally find the sequence of motions:
+              The polygons $P$ and $Q$ are congruent because <strong>$Q$ is the image of $P$ under the action of rotation by 90° counterclockwise around the origin.</strong>
             </p>
-            <ul className="list-disc list-inside mt-2 text-lg space-y-1 text-slate-700 dark:text-slate-300">
-              <li>Can I just <strong>slide</strong> it over? (Translation)</li>
-              <li>Can I just <strong>turn</strong> it? (Rotation)</li>
-              <li>Can I just <strong>flip</strong> it? (Reflection)</li>
-              <li>Do I need to <strong>combine</strong> them? (e.g., slide, then flip)</li>
-            </ul>
-             <div className="mt-4 p-4 rounded-lg bg-green-100 dark:bg-green-900/30">
-              <p className="text-lg text-green-700 dark:text-green-300">
-                If the answer to any of those is "yes," then the figures are congruent!
-              </p>
-            </div>
+            <p className="text-lg leading-relaxed mt-2">
+              Since a rotation is a rigid motion, it preserves the size and shape, and therefore the two figures are congruent.
+            </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz */}
+        {/* Right Column - Animation and Quiz (UPDATED) */}
         <div className="space-y-6">
-          {/* --- KNOWLEDGE CHECK CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Why Are They Congruent?</h3>
@@ -227,8 +323,19 @@ export default function RigidMotionsSlide4() {
               ))}
             </div>
 
-            {/* --- USE THE QUIZ FIGURE COMPONENT --- */}
-            <MappingQuizFigure questionIndex={currentQuestionIndex} />
+            {/* --- RENDER THE FIGURE FOR THE CURRENT QUESTION --- */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.2 }}
+              >
+                {questions[currentQuestionIndex].figure}
+              </motion.div>
+            </AnimatePresence>
+
 
             {!isQuizComplete ? (
               <>
