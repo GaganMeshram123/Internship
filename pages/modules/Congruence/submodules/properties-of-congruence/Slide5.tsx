@@ -3,41 +3,142 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import katex from 'katex';
 
 const CongruencePropertiesFigure: React.FC<{ questionIndex: number }> = ({ questionIndex }) => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const color1 = isDarkMode ? '#60A5FA' : '#2563EB';
-  const color2 = isDarkMode ? '#4ADE80' : '#22C55E';
+  
+  // --- Colors ---
+  const color1 = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
+  const color2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const color3 = isDarkMode ? '#F59E0B' : '#D97706'; // Orange
+  const textColor = isDarkMode ? '#E2E8F0' : '#4A5568';
 
-  const textProps = {
-    fontSize: 20,
-    fontFamily: "monospace",
-    textAnchor: "middle" as const,
-    fill: color1
+  // --- Animation Variants ---
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: { opacity: 1, scale: 1, transition: { staggerChildren: 0.3 } },
+    exit: { opacity: 0, scale: 0.9 },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
-    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60" style={{ minHeight: svgHeight }}>
-      <svg width={svgWidth} height={svgHeight}>
-        {questionIndex === 0 && (
-          <text x={200} y={120} {...textProps}>¯AB ≅ ¯AB</text>
-        )}
-        {questionIndex === 1 && (
-          <>
-            <text x={200} y={90} {...textProps}>¯AB ≅ ¯CD</text>
-            <text x={200} y={130} {...textProps}>⇒ ¯CD ≅ ¯AB</text>
-          </>
-        )}
-        {questionIndex === 2 && (
-          <>
-            <text x={200} y={90} {...textProps}>¯AB ≅ ¯CD</text>
-            <text x={200} y={130} {...textProps}>¯CD ≅ ¯EF</text>
-            <text x={200} y={170} {...textProps} fill={color2}>⇒ ¯AB ≅ ¯EF</text>
-          </>
-        )}
+    <div 
+      className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" 
+      style={{ minHeight: svgHeight }}
+    >
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        <AnimatePresence mode="wait">
+
+          {/* === State 0: Reflexive === */}
+          {questionIndex === 0 && (
+            <motion.g
+              key="reflexive"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <motion.text x={200} y={40} textAnchor="middle" fontSize="18" fill={textColor} variants={itemVariants}>
+                Reflexive Property
+              </motion.text>
+              {/* Segment AB */}
+              <motion.line x1={100} y1={90} x2={300} y2={90} stroke={color1} strokeWidth="4" variants={itemVariants} />
+              <motion.text x={95} y={110} fill={textColor} variants={itemVariants}>A</motion.text>
+              <motion.text x={295} y={110} fill={textColor} variants={itemVariants}>B</motion.text>
+              
+              {/* Equation */}
+              <foreignObject x="50" y="140" width="300" height="50">
+                <motion.div 
+                  variants={itemVariants} 
+                  style={{ color: textColor, fontSize: '20px', textAlign: 'center' }}
+                  dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{AB} \\cong \\overline{AB}", { throwOnError: false }) }}
+                />
+              </foreignObject>
+            </motion.g>
+          )}
+
+          {/* === State 1: Symmetric === */}
+          {questionIndex === 1 && (
+             <motion.g
+              key="symmetric"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <motion.text x={200} y={40} textAnchor="middle" fontSize="18" fill={textColor} variants={itemVariants}>
+                Symmetric Property
+              </motion.text>
+              {/* Segment AB */}
+              <motion.line x1={50} y1={90} x2={180} y2={90} stroke={color1} strokeWidth="4" variants={itemVariants} />
+              <motion.text x={45} y={110} fill={textColor} variants={itemVariants}>A</motion.text>
+              <motion.text x={175} y={110} fill={textColor} variants={itemVariants}>B</motion.text>
+              
+              {/* Segment CD */}
+              <motion.line x1={220} y1={90} x2={350} y2={90} stroke={color2} strokeWidth="4" variants={itemVariants} />
+              <motion.text x={215} y={110} fill={textColor} variants={itemVariants}>C</motion.text>
+              <motion.text x={345} y={110} fill={textColor} variants={itemVariants}>D</motion.text>
+
+              {/* Equations */}
+              <foreignObject x="0" y="140" width="400" height="50">
+                <motion.div 
+                  variants={itemVariants} 
+                  style={{ color: textColor, fontSize: '18px', textAlign: 'center' }}
+                  dangerouslySetInnerHTML={{ __html: katex.renderToString(
+                    "\\text{If } \\overline{AB} \\cong \\overline{CD} \\text{, then } \\overline{CD} \\cong \\overline{AB}", 
+                    { throwOnError: false }) }}
+                />
+              </foreignObject>
+            </motion.g>
+          )}
+
+          {/* === State 2: Transitive === */}
+          {questionIndex === 2 && (
+             <motion.g
+              key="transitive"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <motion.text x={200} y={40} textAnchor="middle" fontSize="18" fill={textColor} variants={itemVariants}>
+                Transitive Property
+              </motion.text>
+              {/* Segment AB */}
+              <motion.line x1={20} y1={90} x2={120} y2={90} stroke={color1} strokeWidth="4" variants={itemVariants} />
+              <motion.text x={15} y={110} fill={textColor} variants={itemVariants}>A</motion.text>
+              <motion.text x={115} y={110} fill={textColor} variants={itemVariants}>B</motion.text>
+
+              {/* Segment CD */}
+              <motion.line x1={150} y1={90} x2={250} y2={90} stroke={color2} strokeWidth="4" variants={itemVariants} />
+              <motion.text x={145} y={110} fill={textColor} variants={itemVariants}>C</motion.text>
+              <motion.text x={245} y={110} fill={textColor} variants={itemVariants}>D</motion.text>
+
+              {/* Segment EF */}
+              <motion.line x1={280} y1={90} x2={380} y2={90} stroke={color3} strokeWidth="4" variants={itemVariants} />
+              <motion.text x={275} y={110} fill={textColor} variants={itemVariants}>E</motion.text>
+              <motion.text x={375} y={110} fill={textColor} variants={itemVariants}>F</motion.text>
+
+              {/* Equations */}
+              <foreignObject x="0" y="130" width="400" height="80">
+                <motion.div 
+                  variants={itemVariants} 
+                  style={{ color: textColor, fontSize: '16px', textAlign: 'center', lineHeight: '1.4' }}
+                  dangerouslySetInnerHTML={{ __html: katex.renderToString(
+                    "\\text{If } \\overline{AB} \\cong \\overline{CD} \\text{ and } \\overline{CD} \\cong \\overline{EF} \\\\ \\text{then } \\overline{AB} \\cong \\overline{EF}", 
+                    { throwOnError: false, displayMode: true }) }}
+                />
+              </foreignObject>
+            </motion.g>
+          )}
+        </AnimatePresence>
       </svg>
     </div>
   );
