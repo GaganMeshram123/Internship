@@ -156,29 +156,32 @@ export default function SasSlide1() {
   // --- QUIZ QUESTIONS (Unchanged) ---
   const questions: QuizQuestion[] = [
     {
-      id: 'sas-intro-q1-meaning',
-      question: 'In the "SAS" criterion, what is special about the angle "A"?',
-      options: [
-        "It's the largest angle",
-        "It's the angle *between* the two sides",
-        "It's the smallest angle (acute)",
-        "It doesn't matter which angle it is"
-      ],
-      correctAnswer: "It's the angle *between* the two sides",
-      explanation: "Correct! The 'A' in SAS stands for the *included* angle. It's the one 'locked' between the two sides. This is the most important part of SAS."
-    },
-    {
-      id: 'sas-intro-q2-requirement',
-      question: 'If you know $AB \cong DE$ and $BC \cong EF$, what *must* you also know to use SAS?',
-      options: [
-        "$\angle A \cong \angle D$",
-        "$\angle C \cong \angle F$",
-        "$\angle B \cong \angle E$",
-        "$AC \cong DF$"
-      ],
-      correctAnswer: "$\angle B \cong \angle E$",
-      explanation: "Exactly! The angle must be *included*. $\angle B$ is between sides $AB$ and $BC$. $\angle E$ is between sides $DE$ and $EF$. Therefore, you must know $\angle B \cong \angle E$."
-    }
+  id: 'sas-intro-q1-meaning',
+  question: 'In the SAS criterion, what is special about the angle A?',
+  options: [
+    "It is the largest angle",
+    "It is the angle between the two given sides",
+    "It is the smallest angle",
+    "It does not matter which angle it is"
+  ],
+  correctAnswer: "It is the angle between the two given sides",
+  explanation:
+    "Correct! In SAS, the angle must be the one that lies directly between the two known sides. This angle is called the included angle."
+},
+{
+  id: 'sas-intro-q2-requirement',
+  question: 'If AB = DE and BC = EF, which angle must also be known to use SAS?',
+  options: [
+    "Angle A is equal to Angle D",
+    "Angle C is equal to Angle F",
+    "Angle B is equal to Angle E",
+    "AC = DF"
+  ],
+  correctAnswer: "Angle B is equal to Angle E",
+  explanation:
+    "Correct! The angle must be the included angle, which is the angle between the two known sides. In this case, Angle B is between AB and BC, and Angle E is between DE and EF."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

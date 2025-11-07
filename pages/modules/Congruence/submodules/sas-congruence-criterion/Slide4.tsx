@@ -158,33 +158,36 @@ export default function SasSlide4() {
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'sas-find-length-q5',
-      question: 'Given the figure above, find the value of x.',
-      figure: <FigureQ1 />,
-      options: [
-        "7.5 cm",
-        "5 cm",
-        "7 cm",
-        "15 cm",
-        "10 cm"
-      ],
-      correctAnswer: "5 cm",
-      explanation: "Correct! The altitude $AM$ is a perpendicular bisector, creating two congruent triangles ($\triangle AMB \cong \triangle AMC$) by SAS (Side-Angle-Side). By CPCTC, $AB \cong AC$. So, $15 = 2x + 5$. This gives $2x = 10$, and $x = 5$."
-    },
-    {
-      id: 'sas-find-length-q6',
-      question: 'Find $PQ + QM$ if $AB = 4$ and $AQ = 12$.',
-      figure: <FigureQ2 />,
-      options: [
-        "14.5",
-        "13",
-        "15",
-        "12.2",
-        "10"
-      ],
-      correctAnswer: "10",
-      explanation: "Correct! The triangles are congruent by SAS. We have $AM \cong QM$ (Side) and $BM \cong PM$ (Side). The included angles $\angle AMB \cong \angle QMP$ are vertical angles (Angle). By CPCTC, $PQ \cong AB$, so $PQ = 4$. Since $AQ = 12$ and $AM \cong QM$, $QM = 12 / 2 = 6$. Therefore, $PQ + QM = 4 + 6 = 10$."
-    }
+  id: 'sas-find-length-q5',
+  question: 'Given the figure above, find the value of x.',
+  figure: <FigureQ1 />,
+  options: [
+    "7.5 cm",
+    "5 cm",
+    "7 cm",
+    "15 cm",
+    "10 cm"
+  ],
+  correctAnswer: "5 cm",
+  explanation:
+    "The line AM is a perpendicular bisector, which means BM and MC are equal. This makes triangle AMB and triangle AMC congruent by the SAS rule. Because the triangles are congruent, AB equals AC. So we set 15 = 2x + 5. Solving gives 2x = 10, so x = 5."
+},
+{
+  id: 'sas-find-length-q6',
+  question: 'Find PQ + QM if AB = 4 and AQ = 12.',
+  figure: <FigureQ2 />,
+  options: [
+    "14.5",
+    "13",
+    "15",
+    "12.2",
+    "10"
+  ],
+  correctAnswer: "10",
+  explanation:
+    "The triangles are congruent by the SAS rule. AM equals QM, and BM equals PM, and the angle at M is the included angle. Since the triangles are congruent, PQ equals AB. So PQ = 4. Also, AQ = 12, and AM equals QM, so QM = 12 ÷ 2 = 6. Therefore, PQ + QM = 4 + 6 = 10."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

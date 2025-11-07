@@ -200,7 +200,7 @@ export default function SasSlide2() {
         "P and Q only"
       ],
       correctAnswer: "P and R only",
-      explanation: "Correct! Triangle T has a Side (2 hashes), an Included Angle (green), and a Side (1 hash). Triangles P and R *also* have a Side (2 hashes), an Included Angle (green or yellow), and a Side (1 hash). Triangle Q is missing an included angle, so it is not SAS. Assuming all marked angles are congruent, P and R match T."
+      explanation: "Correct! Triangle T has a Side (2 hashes), an Included Angle (green), and a Side (1 hash). Triangles P and R also have a Side (2 hashes), an Included Angle (green or yellow), and a Side (1 hash). Triangle Q is missing an included angle, so it is not SAS. Assuming all marked angles are congruent, P and R match T."
     }
   ];
 

@@ -214,34 +214,37 @@ export default function SasSlide2() {
 
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'sas-id-q1-pentagon',
-      question: 'According to the SAS criterion only, which of the following triangles are congruent to ΔABC?',
-      figure: <FigureQ1 />,
-      options: [
-        "ΔABE only",
-        "None",
-        "ΔADE only",
-        "ΔACD only",
-        "ΔADE and ΔACD"
-      ],
-      correctAnswer: "ΔADE only",
-      explanation: "Correct! ΔABC has a side (AB, 1 hash), an included angle (∠BAC, orange), and a second side (AC, 2 hashes). ΔADE has a side (AE, 1 hash), an included angle (∠DAE, green), and a second side (AD, 2 hashes). Since the corresponding parts match, they are congruent by SAS. (Note: The image implies all three triangles are congruent, but only ΔADE is explicitly shown as SAS)."
-    },
-    {
-      id: 'sas-id-q2-triangles',
-      question: 'According to the SAS criterion only, which of the following triangles is congruent to T?',
-      figure: <FigureQ2 />,
-      options: [
-        "P, Q, and R",
-        "P and R only",
-        "R only",
-        "P only",
-        "P and Q only"
-      ],
-      correctAnswer: "P only",
-      explanation: "Correct! Triangle T has a side (2 hashes), an *included* angle (yellow), and a second side (1 hash). Triangle P is the only one that matches this S-A-S pattern (Side, Included Angle, Side). Triangle R shows an S-S-A pattern (the angle is not included), which is not valid."
-    }
+   {
+  id: 'sas-id-q1-pentagon',
+  question: 'Based on the SAS rule, which triangle is congruent to triangle ABC?',
+  figure: <FigureQ1 />,
+  options: [
+    "Triangle ABE only",
+    "None",
+    "Triangle ADE only",
+    "Triangle ACD only",
+    "Triangle ADE and Triangle ACD"
+  ],
+  correctAnswer: "Triangle ADE only",
+  explanation:
+    "Triangle ABC has two sides and the angle between them known (AB, angle at A, and AC). Triangle ADE also has two sides and the included angle matching the same pattern (AE, angle at A, and AD). Therefore, triangle ABC and triangle ADE are congruent by the SAS rule."
+},
+{
+  id: 'sas-id-q2-triangles',
+  question: 'Based on the SAS rule, which triangle is congruent to triangle T?',
+  figure: <FigureQ2 />,
+  options: [
+    "Triangles P, Q, and R",
+    "Triangles P and R only",
+    "Triangle R only",
+    "Triangle P only",
+    "Triangles P and Q only"
+  ],
+  correctAnswer: "Triangle P only",
+  explanation:
+    "Triangle T has two sides and the included angle known. Triangle P has the same pattern of side–angle–side. Triangle R does not have the angle included between the two known sides, so it does not fit the SAS rule. Therefore, only triangle P is congruent to triangle T."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

@@ -198,34 +198,37 @@ export default function SssSlide4() {
 
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'sss-find-angle-q5',
-      question: 'Given the triangles ΔABC and ΔXYZ shown above, find m∠X.',
-      figure: <FigureQ1 />,
-      options: [
-        "37°",
-        "90°",
-        "43°",
-        "47°",
-        "53°"
-      ],
-      correctAnswer: "90°",
-      explanation: "Correct! The triangles are congruent by SSS: $AB \cong XY$ (1 hash), $BC \cong XZ$ (2 hashes, length 5), and $AC \cong YZ$ (3 hashes). By CPCTC, corresponding angles are congruent. $\angle X$ corresponds to $\angle B$. Since $m\angle B = 90^\circ$, $m\angle X = 90^\circ$."
-    },
-    {
-      id: 'sss-find-angle-q6',
-      question: 'Given the triangles ΔABC and ΔPQR shown above, find m∠R.',
-      figure: <FigureQ2 />,
-      options: [
-        "43°",
-        "82°",
-        "40°",
-        "60°",
-        "58°"
-      ],
-      correctAnswer: "82°",
-      explanation: "Correct! The triangles are congruent by SSS: $AB \cong QR$ (2 hashes), $BC \cong PQ$ (3 hashes, length 5), and $AC \cong PR$ (1 hash). By CPCTC, corresponding angles are congruent. $\angle R$ corresponds to $\angle A$. Since $m\angle A = 82^\circ$, $m\angle R = 82^\circ$."
-    }
+   {
+  id: 'sss-find-angle-q5',
+  question: 'Given the triangles ABC and XYZ shown above, find the measure of angle X.',
+  figure: <FigureQ1 />,
+  options: [
+    "37°",
+    "90°",
+    "43°",
+    "47°",
+    "53°"
+  ],
+  correctAnswer: "90°",
+  explanation:
+    "The triangles ABC and XYZ are congruent by SSS because AB = XY, BC = XZ, and AC = YZ. This means corresponding angles are equal. Angle X matches with angle B. Since angle B is 90°, angle X is also 90°."
+},
+{
+  id: 'sss-find-angle-q6',
+  question: 'Given the triangles ABC and PQR shown above, find the measure of angle R.',
+  figure: <FigureQ2 />,
+  options: [
+    "43°",
+    "82°",
+    "40°",
+    "60°",
+    "58°"
+  ],
+  correctAnswer: "82°",
+  explanation:
+    "The triangles ABC and PQR are congruent by SSS because AB = QR, BC = PQ, and AC = PR. This means corresponding angles are equal. Angle R corresponds to angle A. Since angle A is 82°, angle R is also 82°."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

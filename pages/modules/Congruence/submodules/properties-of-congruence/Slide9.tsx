@@ -66,39 +66,40 @@ export default function PropertiesSlide9() {
 
   // --- UPDATED: New questions array ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'properties-omitting-q1',
-      question: 'Why is the Symmetric Property often omitted in proofs?',
-      options: [
-        "It is not a real property.",
-        "It is only for segments, not angles.",
-        "It is considered obvious and is omitted for brevity (to save time)."
-      ],
-      correctAnswer: "It is considered obvious and is omitted for brevity (to save time).",
-      explanation: "Correct! Most proofs assume that if $A = B$ is true, then $B = A$ is also true without needing a separate line item. It's a common convention."
-    },
-    {
-      id: 'properties-omitting-q2',
-      question: 'In the formal proof, how do we get $y^2 = 2$ on line 4?',
-      options: [
-        "From $x = y^2$ (line 1) and $x = 2$ (line 3)",
-        "From $y^2 = x$ (line 2) and $x = 2$ (line 3)",
-        "From $x = y^2$ (line 1) and $y^2 = x$ (line 2)"
-      ],
-      correctAnswer: "From $y^2 = x$ (line 2) and $x = 2$ (line 3)",
-      explanation: "Correct! The Transitive Property requires $A=B$ and $B=C$. In this case, $A$ is $y^2$, $B$ is $x$, and $C$ is $2$. We use lines 2 ($y^2 = x$) and 3 ($x = 2$) to get $y^2 = 2$."
-    },
-    {
-      id: 'properties-omitting-q3',
-      question: 'In the *shorter* proof, how is the Transitive Property applied?',
-      options: [
-        "It uses $x = y^2$ and $x = 2$ directly.",
-        "It *implicitly* flips $x = y^2$ to $y^2 = x$ 'under the hood' first.",
-        "The shorter proof does not use the Transitive Property."
-      ],
-      correctAnswer: "It *implicitly* flips $x = y^2$ to $y^2 = x$ 'under the hood' first.",
-      explanation: "Exactly! The proof *looks* like it's just using $x = y^2$ and $x = 2$. But to be formal, it's 'under the hood' using the Symmetric Property on line 1 first (to get $y^2 = x$) and *then* using the Transitive Property with $x = 2$."
-    }
+   {
+  id: 'properties-omitting-q1',
+  question: 'Why is the Symmetric Property often not written in proofs?',
+  options: [
+    "It is not a real property.",
+    "It only works for segments, not angles.",
+    "It is considered obvious, so we do not write it every time."
+  ],
+  correctAnswer: "It is considered obvious, so we do not write it every time.",
+  explanation: "Correct! Most proofs assume that if A = B is true, then B = A is also true without needing to show it as a separate step."
+},
+{
+  id: 'properties-omitting-q2',
+  question: 'In the formal proof, how do we get y² = 2 on line 4?',
+  options: [
+    "From x = y² (line 1) and x = 2 (line 3)",
+    "From y² = x (line 2) and x = 2 (line 3)",
+    "From x = y² (line 1) and y² = x (line 2)"
+  ],
+  correctAnswer: "From y² = x (line 2) and x = 2 (line 3)",
+  explanation: "Correct! The Transitive Property says if A = B and B = C, then A = C. Here A is y², B is x, and C is 2."
+},
+{
+  id: 'properties-omitting-q3',
+  question: 'In the shorter proof, how is the Transitive Property being used?',
+  options: [
+    "It uses x = y² and x = 2 directly.",
+    "It secretly flips x = y² into y² = x first, then uses the Transitive Property.",
+    "The shorter proof does not use the Transitive Property."
+  ],
+  correctAnswer: "It secretly flips x = y² into y² = x first, then uses the Transitive Property.",
+  explanation: "Correct! The shorter proof hides the step where x = y² is rewritten as y² = x. This is the Symmetric Property used quietly before applying the Transitive Property."
+}
+
   ];
 
   // --- Data for the tables ---

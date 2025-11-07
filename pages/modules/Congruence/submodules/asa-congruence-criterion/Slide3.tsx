@@ -280,60 +280,65 @@ export default function AsaSlide3() {
 
   // --- UPDATED QUESTIONS ARRAY (NOW 4 QUESTIONS) ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'asa-find-angle-q1',
-      question: 'The triangles are congruent by ASA. What is the value of x?',
-      figure: <FigureQ1 />,
-      options: [
-        "30°",
-        "70°",
-        "80°",
-        "Cannot be determined"
-      ],
-      correctAnswer: "70°",
-      explanation: "Correct! The triangles are congruent by ASA ($\angle B \cong \angle E$, $BC \cong EF$, $\angle C \cong \angle F$). By CPCTC, all corresponding parts are congruent. $\angle A$ corresponds to $\angle D$. Since $\angle D = 70°$, then $x$ must also be 70°."
-    },
-    {
-      id: 'asa-find-angle-q2',
-      question: 'Look carefully! The triangles are congruent by ASA. What is the value of y?',
-      figure: <FigureQ2 />,
-      options: [
-        "40°",
-        "55°",
-        "85°",
-        "Cannot be determined"
-      ],
-      correctAnswer: "85°",
-      explanation: "Correct! This tests if you are matching the parts correctly. The ASA pattern is $\angle Q \cong \angle Z$ (55°), $QR \cong ZY$ (side), and $\angle R \cong \angle Y$ (40°). This means the congruence statement is $\triangle PQR \cong \triangle XYZ$. By CPCTC, the remaining angle $\angle P$ corresponds to $\angle X$. Since $\angle X = 85°$, then $y$ must also be 85°."
-    },
-    {
-      id: 'asa-quiz-q3-pentagon',
-      question: 'According to the ASA criterion only, which of the following triangles are congruent to ΔAOB?',
-      figure: <FigureQ3 />,
-      options: [
-        'ΔDBC',
-        'ΔBCA',
-        'ΔBOC',
-        'ΔCOB',
-        'ΔCOD'
-      ],
-      correctAnswer: 'ΔCOD',
-      explanation: "This is a trap! The diagram *proves* congruence by SAS (Side-Angle-Side), NOT ASA. The question is flawed. However, the only triangle shown to be congruent to ΔAOB (by any method) is ΔCOD."
-    },
-    {
-      id: 'asa-quiz-q4-identification',
-      question: 'According to the ASA criterion only, which of the following triangles are congruent to P?',
-      figure: <FigureQ4 />,
-      options: [
-        "T₁ and T₂ only",
-        "T₃ only",
-        "T₁, T₂, and T₃",
-        "T₁ only",
-        "T₂ only"
-      ],
-      correctAnswer: "T₃ only",
-      explanation: "Correct! Triangle P has an Angle (yellow), an included Side (1 hash), and an Angle (green). Triangle T₃ has the exact same ASA pattern: an Angle (yellow), an included Side (1 hash), and an Angle (green)."
-    }
+   {
+  id: 'asa-find-angle-q1',
+  question: 'The triangles are congruent by ASA. What is the value of x?',
+  figure: <FigureQ1 />,
+  options: [
+    "30°",
+    "70°",
+    "80°",
+    "Cannot be determined"
+  ],
+  correctAnswer: "70°",
+  explanation:
+    "The triangles are congruent by the ASA rule. This means all matching angles are equal. Angle A in the first triangle corresponds to angle D in the second triangle. Since angle D is 70°, angle A must also be 70°. Therefore, x = 70°."
+},
+{
+  id: 'asa-find-angle-q2',
+  question: 'Look carefully! The triangles are congruent by ASA. What is the value of y?',
+  figure: <FigureQ2 />,
+  options: [
+    "40°",
+    "55°",
+    "85°",
+    "Cannot be determined"
+  ],
+  correctAnswer: "85°",
+  explanation:
+    "The triangles follow the ASA pattern: angle Q corresponds to angle Z, the side between them matches, and angle R corresponds to angle Y. This means triangle PQR matches triangle XYZ. So angle P corresponds to angle X. Since angle X is 85°, angle P must also be 85°. Therefore, y = 85°."
+},
+{
+  id: 'asa-quiz-q3-pentagon',
+  question: 'According to the ASA rule only, which triangle is congruent to triangle AOB?',
+  figure: <FigureQ3 />,
+  options: [
+    'Triangle DBC',
+    'Triangle BCA',
+    'Triangle BOC',
+    'Triangle COB',
+    'Triangle COD'
+  ],
+  correctAnswer: 'Triangle COD',
+  explanation:
+    "The diagram actually shows SAS, not ASA. However, using the information given, triangle AOB matches triangle COD. So triangle COD is the correct answer."
+},
+{
+  id: 'asa-quiz-q4-identification',
+  question: 'According to ASA, which triangle is congruent to triangle P?',
+  figure: <FigureQ4 />,
+  options: [
+    "T1 and T2 only",
+    "T3 only",
+    "T1, T2, and T3",
+    "T1 only",
+    "T2 only"
+  ],
+  correctAnswer: "T3 only",
+  explanation:
+    "Triangle P has Angle, Side (between the two angles), and Angle. Triangle T3 has the same pattern. T1 and T2 do not have the side between the two given angles, so only T3 matches the ASA rule."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

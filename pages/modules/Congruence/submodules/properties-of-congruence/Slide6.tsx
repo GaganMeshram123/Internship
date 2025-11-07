@@ -244,8 +244,7 @@ export default function PropertiesSlide6() {
     },
     {
       id: 'seg-q5-symmetric',
-      question:
-        'Since \\(\\overline{CD} \\cong \\overline{EF}\\), we have \\(\\overline{EF} \\cong \\overline{CD}\\). This is true by which property?',
+     question: 'If CD ≅ EF, then EF ≅ CD. Which property allows us to reverse the congruence?',
       figure: <GridSymmetryFigure />,
       options: ['Reflexive Property of Congruence', 'Symmetric Property of Congruence', 'Transitive Property of Congruence'],
       correctAnswer: 'Symmetric Property of Congruence',
@@ -254,8 +253,7 @@ export default function PropertiesSlide6() {
     },
     {
       id: 'seg-q6-transitive',
-      question:
-        'Given \\(\\overline{AB} \\cong \\overline{BC}\\) and \\(\\overline{BC} \\cong \\overline{CD}\\), conclude \\(\\overline{AB} \\cong \\overline{CD}\\). Which property is used?',
+      question: 'If AB ≅ BC and BC ≅ CD, then AB ≅ CD. Which property is used?',
       figure: <TriangleTransitiveFigure />,
       options: ['Reflexive Property of Congruence', 'Symmetric Property of Congruence', 'Transitive Property of Congruence'],
       correctAnswer: 'Transitive Property of Congruence',
@@ -323,40 +321,62 @@ export default function PropertiesSlide6() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Segment Congruence</h2>
             <ExampleSegmentFigure />
-            <p className={`mt-4 ${cardTextColor}`}>
-              Consider the true statement: <span className="font-mono">{"\\(\\overline{AB} \\cong \\overline{AC}\\)"}</span>.  
-              Then we can also say <span className="font-mono">{"\\(\\overline{AC} \\cong \\overline{AB}\\)"}</span>.
-              This uses the <strong>Symmetric property of congruence</strong>.
-            </p>
+           <p className={`mt-4 ${cardTextColor} text-lg leading-relaxed`}>
+  Here, segment <span className="font-mono">AB</span> is equal to segment <span className="font-mono">AC</span>.
+  So, we are allowed to write it the other way too:
+  <span className="font-mono"> AC ≅ AB</span>.
+  This happens because of the <strong>Symmetric Property</strong>,
+  which says we can switch the order in a congruence statement.
+</p>
+
           </div>
 
           {/* Properties explanation (like screenshot) */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">
-              Explanation: Properties of Congruence
-            </h3>
-            <ul className="list-disc list-inside space-y-4">
-              <li>
-                <strong>Reflexive:</strong> <span className="font-mono">{"\\(a \\cong a\\)"}</span>  
-                <div className={cardTextColor}>Every segment is congruent to itself.</div>
-              </li>
-              <li>
-                <strong>Symmetric:</strong> <span className="font-mono">{"\\(\\text{If } a \\cong b, \\text{ then } b \\cong a\\)"}</span>  
-                <div className={cardTextColor}>We can switch the order in a congruence statement.</div>
-              </li>
-              <li>
-                <strong>Transitive:</strong> <span className="font-mono">{"\\(\\text{If } a \\cong b \\text{ and } b \\cong c, \\text{ then } a \\cong c\\)"}</span>  
-                <div className={cardTextColor}>Pass the congruence along a chain.</div>
-              </li>
-            </ul>
+         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+  <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">
+    Explanation: Properties of Congruence (Simple)
+  </h3>
 
-            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
-              <p className="text-lg">
-                Rewriting the example: <span className="font-mono">{"\\(\\text{If } \\overline{AB} \\cong \\overline{AC}, \\text{ then } \\overline{AC} \\cong \\overline{AB}.\\)"}</span>  
-                Therefore, this is justified by the <strong>Symmetric</strong> property of congruence.
-              </p>
-            </div>
-          </div>
+  <div className="space-y-5 text-lg leading-relaxed">
+
+    {/* Reflexive */}
+    <div>
+      <strong className="text-blue-500">1. Reflexive Property</strong>
+      <p className={`${cardTextColor} mt-1`}>
+        Any segment is always congruent to itself.
+      </p>
+      <p className="font-mono mt-1">RM ≅ RM</p>
+    </div>
+
+    {/* Symmetric */}
+    <div>
+      <strong className="text-blue-500">2. Symmetric Property</strong>
+      <p className={`${cardTextColor} mt-1`}>
+        If one segment is congruent to another, we can switch the order.
+      </p>
+      <p className="font-mono mt-1">If AB ≅ AC, then AC ≅ AB</p>
+    </div>
+
+    {/* Transitive */}
+    <div>
+      <strong className="text-blue-500">3. Transitive Property</strong>
+      <p className={`${cardTextColor} mt-1`}>
+        If two segments are congruent to the same segment, then they are congruent to each other.
+      </p>
+      <p className="font-mono mt-1">If AB ≅ BC and BC ≅ CD, then AB ≅ CD</p>
+    </div>
+
+  </div>
+
+  {/* Example Conclusion Box */}
+  <div className="mt-6 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
+    <p className="text-lg leading-relaxed">
+      For example, if <span className="font-mono">AB ≅ AC</span>, then we can also say
+      <span className="font-mono"> AC ≅ AB</span>.  
+      This is using the <strong>Symmetric Property</strong>.
+    </p>
+  </div>
+</div>
         </div>
 
         {/* Right: Quiz */}

@@ -268,9 +268,9 @@ export default function RigidMotionsSlide5() {
               A "map" is a function. We can write rules for transformations using function notation that tells us what to do with the coordinates $(x, y)$.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              The input is the pre-image point $P(x, y)$.
+              The input is the pre-image point P(x, y).
               <br/>
-              The output is the image point $P'(x', y')$.
+              The output is the image point P'(x', y').
             </p>
           </div>
 

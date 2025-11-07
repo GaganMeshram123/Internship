@@ -223,18 +223,26 @@ export default function CombiningSlide5() {
               To understand why, we'll construct two triangles that are <strong>not congruent</strong> yet have two pairs of congruent sides and a pair of congruent, non-included angles.
             </p>
 
-            <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">The "Swinging Side"</h3>
-            
-            <p className="text-lg leading-relaxed">
-              Consider ΔABC. Let's create another triangle ΔKLM such that $AB \cong KL$, $BC \cong LM$, and $∠A \cong ∠K$. This is an SSA setup.
-            </p>
-            <p className="text-lg leading-relaxed mt-2">
-              We draw the congruent angle at K and the segment $KL$.
-            </p>
-             <p className="text-lg leading-relaxed mt-2">
-              Now, here's the key point. There are <strong>two possible ways</strong> to pick the third vertex: $M_1$ and $M_2$, as shown in the animation.
-            </p>
-            
+          <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">
+  The "Swinging Side"
+</h3>
+
+<ul className="list-disc list-inside text-lg leading-relaxed space-y-2">
+  <li>We start with triangle ABC.</li>
+  <li>We want to make another triangle KLM with:
+    <br />• AB = KL
+    <br />• BC = LM
+    <br />• ∠A = ∠K
+    <br />(This is the SSA setup.)
+  </li>
+  <li>First, draw the angle at point K.</li>
+  <li>Then draw the segment KL (equal to AB).</li>
+  <li>Now we place segment LM (equal to BC).</li>
+  <li>Here is the key idea: The point M can be placed in **two different positions**.</li>
+  <li>This gives us two different triangles: one with M₁ and one with M₂.</li>
+  <li>So, SSA does not guarantee that the triangles will be congruent every time.</li>
+</ul>
+  
             <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
               <p className="text-lg leading-relaxed">
                 Clearly,

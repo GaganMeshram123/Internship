@@ -287,25 +287,29 @@ export default function RigidMotionsSlide3() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying Congruent Polygons</h2>
             <p className="text-lg leading-relaxed mb-4">
-              Which of the polygons $P$, $R$, $S$ shown below can be obtained from the polygon $Q$ with rigid motions?
+              Which of the polygons P, R, S shown below can be obtained from the polygon Q with rigid motions?
             </p>
             
             <FigureExample />
 
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
             
-            <p className="text-lg leading-relaxed">
-              By transforming $Q$ using only rigid motions, we can get only polygons congruent to $Q$.
-            </p>
-            <p className="text-lg leading-relaxed mt-2">
-              Similarly, any polygon congruent to $Q$ can be obtained from $Q$ using a combination of rigid motions.
-            </p>
-             <p className="text-lg leading-relaxed mt-4">
-              Since $R$ is not congruent to $Q$, it can't be obtained from $Q$ using rigid motions.
-            </p>
-            <p className="text-lg leading-relaxed mt-2">
-              The polygons $P$ and $S$ are congruent to $Q$. Therefore, we can obtain them by applying a combination of rigid motions to $Q$.
-            </p>
+           <p className="text-lg leading-relaxed">
+  If we move or rotate polygon Q without stretching or resizing it (rigid motions), we only get shapes that are exactly the same as Q.
+</p>
+
+<p className="text-lg leading-relaxed mt-2">
+  In the same way, any shape that is exactly the same as Q can be created by moving or rotating Q.
+</p>
+
+<p className="text-lg leading-relaxed mt-4">
+  Since polygon R is not exactly the same as Q, we cannot get R from Q using rigid motions.
+</p>
+
+<p className="text-lg leading-relaxed mt-2">
+  But polygons P and S are exactly the same as Q. So, we can get them from Q by using rigid motions.
+</p>
+
           </div>
         </div>
 

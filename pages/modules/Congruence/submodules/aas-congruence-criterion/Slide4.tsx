@@ -158,34 +158,37 @@ export default function AasSlide4() {
 
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'aas-find-perimeter-q5',
-      question: 'The perimeter of a triangle ΔTUV is 27. What is the value of x + y?',
-      figure: <FigureQ1 />,
-      options: [
-        "13",
-        "15",
-        "17",
-        "19",
-        "12"
-      ],
-      correctAnswer: "17",
-      explanation: "Correct! The triangles are congruent by AAS (∠X ≅ ∠T, ∠Y ≅ ∠U, ZY ≅ VU). By CPCTC, $XY = TU = x$ and $XZ = TV = y$. The perimeter of ΔTUV is $TU + UV + VT = 27$. Substituting gives $x + 10 + y = 27$. Therefore, $x + y = 17$."
-    },
-    {
-      id: 'aas-find-length-q6',
-      question: 'In the above diagram, $CE = BD$ and $∠C ≅ ∠D$. Given that $AB = 3x + 7$ and $AE = 7x - 3$, what is the value of $x$?',
-      figure: <FigureQ2 />,
-      options: [
-        "3.5",
-        "2.5",
-        "2",
-        "4",
-        "3"
-      ],
-      correctAnswer: "2.5",
-      explanation: "Correct! We can prove $\triangle ACE \cong \triangle ABD$ by AAS. We are given $\angle C \cong \angle D$ (Angle) and $CE \cong BD$ (Side). $\angle CAE$ and $\angle DAB$ are vertical angles, so they are congruent (Angle). By CPCTC, $AE \cong AB$. So, $7x - 3 = 3x + 7$. This gives $4x = 10$, so $x = 2.5$."
-    }
+   {
+  id: 'aas-find-perimeter-q5',
+  question: 'The perimeter of triangle TUV is 27. What is the value of x + y?',
+  figure: <FigureQ1 />,
+  options: [
+    "13",
+    "15",
+    "17",
+    "19",
+    "12"
+  ],
+  correctAnswer: "17",
+  explanation:
+    "Correct! The triangles are congruent by AAS, which means all matching sides are equal. So XY = TU = x, and XZ = TV = y. The perimeter of triangle TUV is TU + UV + VT = 27. Substituting the values gives x + 10 + y = 27. Therefore, x + y = 17."
+},
+{
+  id: 'aas-find-length-q6',
+  question: 'In the diagram, CE = BD and angle C is equal to angle D. If AB = 3x + 7 and AE = 7x - 3, what is the value of x?',
+  figure: <FigureQ2 />,
+  options: [
+    "3.5",
+    "2.5",
+    "2",
+    "4",
+    "3"
+  ],
+  correctAnswer: "2.5",
+  explanation:
+    "Correct! The triangles ACE and ABD are congruent by AAS. Angle C equals angle D, CE equals BD, and angle CAE equals angle DAB (they are vertical angles). By CPCTC, AE equals AB. So set 7x - 3 = 3x + 7. This gives 4x = 10, so x = 2.5."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

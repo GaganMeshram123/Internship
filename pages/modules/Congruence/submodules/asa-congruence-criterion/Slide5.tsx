@@ -188,44 +188,47 @@ export default function AsaSlide5() {
 
   // --- QUESTIONS ARRAY FROM YOUR IMAGES (FIXED) ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'asa-statements-q1-fixed',
-      question: 'From the diagram, which of the following statements are true?',
-      figure: <FigureQ1 />,
-      statements: [
-        'I.   ΔABC ≅ ΔDEF by ASA',
-        'II.  ∠C ≅ ∠F',
-        'III. x = 4'
-      ],
-      options: [
-        "I only",
-        "III only",
-        "I and II only",
-        "II and III only",
-        "I, II, and III"
-      ],
-      correctAnswer: "I and II only",
-      explanation: "Statement (I) is true by ASA ($\angle A \cong \angle D$, $AB \cong DE$, $\angle B \cong \angle E$). Statement (II) is true by CPCTC. Statement (III) is false. By CPCTC, $BC \cong EF$, so $2x+2 = 10$, which gives $2x=8$ and $x=4$. The statement says $x=4$, so it should be true. (My explanation text for the *quiz* needs to be updated). Let's re-make the question. Original Q7: I, II, III. III: x=3. Original labels: 2x-4 and 2x-10. This is a contradiction. The question is 'which are true?'. I is true. II is true. III is false, as x has no solution. Answer: I and II only."
-    },
-    {
-      id: 'asa-statements-q2-fixed',
-      question: 'From the diagram, which of the following statements are true?',
-      figure: <FigureQ2 />,
-      statements: [
-        'I.   ΔABC ≅ ΔDEF by ASA',
-        'II.  EF = 3',
-        'III. y = 35°'
-      ],
-      options: [
-        "II and III only",
-        "III only",
-        "None",
-        "I only",
-        "I, II, and III"
-      ],
-      correctAnswer: "II and III only",
-      explanation: "This is a trick! Statement (I) is FALSE because the side is not *included* between the angles (this is AAS, not ASA). Statement (III) is TRUE: by CPCTC (from AAS), $\angle A \cong \angle D$, so $70^\circ = 2y$, which means $y = 35^\circ$. Statement (II) is TRUE: by CPCTC, $BC \cong EF$, so $2x+1 = 4x-1$. This gives $2 = 2x$, so $x=1$. Plugging $x=1$ into $EF$ gives $EF = 4(1) - 1 = 3$."
-    },
+   {
+  id: 'asa-statements-q1-fixed',
+  question: 'From the diagram, which of the following statements are true?',
+  figure: <FigureQ1 />,
+  statements: [
+    'I. Triangle ABC is congruent to Triangle DEF by ASA',
+    'II. Angle C is equal to Angle F',
+    'III. x = 4'
+  ],
+  options: [
+    "I only",
+    "III only",
+    "I and II only",
+    "II and III only",
+    "I, II, and III"
+  ],
+  correctAnswer: "I and II only",
+  explanation:
+    "Statement I is true because two angles and the included side match, so the triangles are congruent by the ASA rule. Statement II is true because once the triangles are congruent, all matching angles are equal. Statement III is false because the equation for x has no valid solution in this setup. So only statements I and II are correct."
+},
+{
+  id: 'asa-statements-q2-fixed',
+  question: 'From the diagram, which of the following statements are true?',
+  figure: <FigureQ2 />,
+  statements: [
+    'I. Triangle ABC is congruent to Triangle DEF by ASA',
+    'II. EF = 3',
+    'III. y = 35°'
+  ],
+  options: [
+    "II and III only",
+    "III only",
+    "None",
+    "I only",
+    "I, II, and III"
+  ],
+  correctAnswer: "II and III only",
+  explanation:
+    "Statement I is false because the side shown is not between the two angles. This is AAS, not ASA. Statement II is true because matching sides are equal, so setting 2x + 1 equal to 4x - 1 gives x = 1, and EF = 3. Statement III is true because matching angles are equal, so 70 = 2y, which gives y = 35."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

@@ -189,29 +189,32 @@ export default function AsaSlide1() {
 
   const questions: QuizQuestion[] = [
     {
-      id: 'asa-intro-q1-meaning',
-      question: 'In the "ASA" criterion, what is special about the side "S"?',
-      options: [
-        "It's the longest side (the hypotenuse)",
-        "It's the side *between* the two angles",
-        "It's the shortest side",
-        "It doesn't matter which side it is"
-      ],
-      correctAnswer: "It's the side *between* the two angles",
-      explanation: "Correct! The 'S' in ASA stands for the *included* side, which is the side locked between the two known angles."
-    },
-    {
-      id: 'asa-intro-q2-requirement',
-      question: 'To prove triangles are congruent using ASA, you must show that two corresponding angles and...',
-      options: [
-        "Any corresponding side are congruent",
-        "The corresponding altitude are congruent",
-        "The corresponding included side are congruent",
-        "All three sides are congruent"
-      ],
-      correctAnswer: "The corresponding included side are congruent",
-      explanation: "Exactly! ASA stands for Angle-Side-Angle, where the side is *included* (in-between) the two angles."
-    }
+  id: 'asa-intro-q1-meaning',
+  question: 'In the ASA rule, what is special about the side S?',
+  options: [
+    "It is the longest side",
+    "It is the side between the two angles",
+    "It is the shortest side",
+    "It does not matter which side it is"
+  ],
+  correctAnswer: "It is the side between the two angles",
+  explanation:
+    "Correct! In ASA, the side must be the one that lies between the two known angles. This is called the included side."
+},
+{
+  id: 'asa-intro-q2-requirement',
+  question: 'To use ASA to prove triangles are congruent, we must know two angles and...',
+  options: [
+    "Any matching side",
+    "A matching altitude",
+    "The side between those two angles",
+    "All three sides"
+  ],
+  correctAnswer: "The side between those two angles",
+  explanation:
+    "Correct! ASA stands for Angle-Side-Angle. The side must be the one that is directly between the two angles."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

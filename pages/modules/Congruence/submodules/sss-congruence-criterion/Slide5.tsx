@@ -176,33 +176,36 @@ export default function SssSlide5() {
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
-      id: 'sss-app-q7-parallelogram',
-      question: 'In the figure above, $SR \cong PQ$ and $SP \cong QR$. If $m\angle PSR = 115^\circ$ and $m\angle RQP = 3x - 5^\circ$, find the value of $x$.',
-      figure: <FigureQ1 />,
-      options: [
-        "x = 40°",
-        "x = 40.75°",
-        "x = 40.15°",
-        "x = 40.25°",
-        "x = 40.5°"
-      ],
-      correctAnswer: "x = 40°",
-      explanation: "Correct! The triangles $\triangle PSR$ and $\triangle RQP$ are congruent by SSS ($SR \cong PQ$, $SP \cong RQ$, and $PR \cong RP$). By CPCTC, $\angle PSR \cong \angle RQP$. So, $115 = 3x - 5$. This gives $3x = 120$, and $x = 40^\circ$."
-    },
-    {
-      id: 'sss-app-q8-isosceles',
-      question: 'In the triangle $\triangle ABC$ shown above, $M$ is the mid-point of $BC$. If $AB \cong AC$ and $m\angle AMC = 2x - 8^\circ$, find the value of $x$.',
-      figure: <FigureQ2 />,
-      options: [
-        "x = 53°",
-        "x = 47°",
-        "x = 50°",
-        "x = 49°",
-        "x = 56°"
-      ],
-      correctAnswer: "x = 49°",
-      explanation: "Correct! $\triangle AMB \cong \triangle AMC$ by SSS ($AB \cong AC$, $BM \cong CM$, $AM \cong AM$). By CPCTC, $\angle AMB \cong \angle AMC$. Since these two angles form a straight line, they are supplementary ($m\angle AMB + m\angle AMC = 180^\circ$). Because they are equal, they must both be $90^\circ$. Therefore, $2x - 8 = 90$. This gives $2x = 98$, and $x = 49^\circ$."
-    }
+  id: 'sss-app-q7-parallelogram',
+  question: 'In the figure above, SR = PQ and SP = QR. If angle PSR = 115° and angle RQP = 3x - 5°, find the value of x.',
+  figure: <FigureQ1 />,
+  options: [
+    "x = 40°",
+    "x = 40.75°",
+    "x = 40.15°",
+    "x = 40.25°",
+    "x = 40.5°"
+  ],
+  correctAnswer: "x = 40°",
+  explanation:
+    "The triangles PSR and RQP are congruent by SSS (SR = PQ, SP = RQ, and PR is a common side). So angle PSR = angle RQP. Therefore, 115 = 3x - 5. Solving gives 3x = 120 and x = 40°."
+},
+{
+  id: 'sss-app-q8-isosceles',
+  question: 'In triangle ABC, M is the midpoint of BC. If AB = AC and angle AMC = 2x - 8°, find the value of x.',
+  figure: <FigureQ2 />,
+  options: [
+    "x = 53°",
+    "x = 47°",
+    "x = 50°",
+    "x = 49°",
+    "x = 56°"
+  ],
+  correctAnswer: "x = 49°",
+  explanation:
+    "Triangles AMB and AMC are congruent by SSS (AB = AC, BM = CM, and AM is common). So angle AMB = angle AMC. These two angles form a straight line, so together they make 180°. Since they are equal, each is 90°. So 2x - 8 = 90, which gives 2x = 98 and x = 49°."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
@@ -266,7 +269,7 @@ export default function SssSlide5() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Applying SSS in Polygons</h2>
             <p className="text-lg leading-relaxed mb-4">
-              In the figure below, $SR \cong QP$ and $SP \cong QR$. If $m\angle RSP = 67^\circ$ and $m\angle PQR = 2x + 12^\circ$, find the value of $x$.
+              In the figure below, SR \cong QP and SP \cong QR. If m\angle RSP = 67^\circ and m\angle PQR = 2x + 12^\circ, find the value of x.
             </p>
             
             <FigureExample />
@@ -274,7 +277,7 @@ export default function SssSlide5() {
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
             
             <p className="text-lg leading-relaxed">
-              From the diagram, ΔRSP and ΔPQR are congruent by SSS (side-side-side) since $PR$ is their common side and we have two more pairs of congruent sides:
+              From the diagram, ΔRSP and ΔPQR are congruent by SSS (side-side-side) since PR is their common side and we have two more pairs of congruent sides:
             </p>
             <ul className="list-none my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono text-center">
                 <li>SR ≅ PQ</li>

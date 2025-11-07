@@ -175,34 +175,37 @@ export default function SssSlide3() {
 
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'sss-polygon-q3-kite',
-      question: 'According to the SSS criterion only, which of the following triangles is congruent to ΔACD?',
-      figure: <FigureQ1 />,
-      options: [
-        "ΔAMB",
-        "ΔABD", // Corrected option based on SSS
-        "None of the listed",
-        "ΔAMB and ΔAMC",
-        "ΔAMC"
-      ],
-      correctAnswer: "ΔABD",
-      explanation: "Correct! We are given $AC \cong AB$ (S) and $CD \cong BD$ (S). The side $AD$ is *shared* by both triangles (Reflexive Property), so $AD \cong AD$ (S). This gives us $\triangle ACD \cong \triangle ABD$ by SSS."
-    },
-    {
-      id: 'sss-polygon-q4-complex',
-      question: 'According to the SSS criterion only, which of the following triangles is congruent to ΔOBC?',
-      figure: <FigureQ2 />, // This figure has been corrected to be solvable
-      options: [
-        "ΔOAD",
-        "ΔOBD",
-        "ΔOAC",
-        "ΔODC",
-        "ΔOBA"
-      ],
-      correctAnswer: "ΔOBA",
-      explanation: "Correct! Let's check the sides for $\triangle OBC$: $OC$ (2 hashes), $OB$ (S-curve), and $BC$ (unmarked). Now check $\triangle OBA$: $OA$ (unmarked), $OB$ (S-curve), and $AB$ (1 hash). These do not match. Let's re-check the figure... Ah, the example must be `ΔOBA ≅ ΔODC`. Let's assume $OA \cong OC$ (2 hashes), $OB \cong OD$ (S-curve), and $AB \cong CD$ (1 hash). Then $\triangle OBA \cong \triangle ODC$ by SSS."
-    }
+   {
+  id: 'sss-polygon-q3-kite',
+  question: 'According to the SSS criterion only, which triangle is congruent to triangle ACD?',
+  figure: <FigureQ1 />,
+  options: [
+    "Triangle AMB",
+    "Triangle ABD",
+    "None of the listed",
+    "Triangle AMB and Triangle AMC",
+    "Triangle AMC"
+  ],
+  correctAnswer: "Triangle ABD",
+  explanation:
+    "AC = AB and CD = BD are given as matching sides. The side AD is shared between triangle ACD and triangle ABD. So all three pairs of sides match. Therefore, triangle ACD is congruent to triangle ABD by the SSS (Side-Side-Side) criterion."
+},
+{
+  id: 'sss-polygon-q4-complex',
+  question: 'According to the SSS criterion only, which triangle is congruent to triangle OBC?',
+  figure: <FigureQ2 />,
+  options: [
+    "Triangle OAD",
+    "Triangle OBD",
+    "Triangle OAC",
+    "Triangle ODC",
+    "Triangle OBA"
+  ],
+  correctAnswer: "Triangle ODC",
+  explanation:
+    "To apply SSS, we compare side lengths. OC matches OA, OB matches OD, and BC matches DC. So the set of three matching sides is between triangle OBC and triangle ODC. Therefore, triangle OBC is congruent to triangle ODC by SSS."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

@@ -135,34 +135,37 @@ export default function AsaSlide4() {
 
   // --- QUESTIONS ARRAY FROM YOUR IMAGES ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'asa-calc-q1',
-      question: 'In the figure above, $AD=4m, AB=3m, BD=3m, BC=1m$, and $CE=2x-5$. What is the value of $x$?',
-      figure: <FigureQ1 />,
-      options: [
-        "6m",
-        "3.5m",
-        "4m",
-        "8m",
-        "5m"
-      ],
-      correctAnswer: "4m",
-      explanation: "Correct! We can prove $\triangle CAE \cong \triangle DAB$ by ASA. First, find $AC = AB + BC = 3 + 1 = 4m$. We are given $AD = 4m$, so $AC \cong AD$ (Side). $\angle A$ is a common angle (Angle). The orange angles $\angle ACE \cong \angle ADB$ are given (Angle). By CPCTC, $CE \cong BD$. So, $2x - 5 = 3$. This gives $2x = 8$, and $x = 4$."
-    },
-    {
-      id: 'asa-calc-q2',
-      question: 'Given the diagram above, calculate the value of $3x - y$.',
-      figure: <FigureQ2 />,
-      options: [
-        "18",
-        "9",
-        "6",
-        "13",
-        "15"
-      ],
-      correctAnswer: "9",
-      explanation: "Correct! The triangles are congruent by ASA. The pattern is $\angle B \cong \angle E$ (green), $AB \cong DE$ (included side, 2 hashes), and $\angle A \cong \angle D$ (blue). By CPCTC: $AC$ corresponds to $DF$, so $y = 6$. $BC$ corresponds to $EF$, so $x = 5$. The value of $3x - y$ is $3(5) - 6 = 15 - 6 = 9$."
-    }
+   {
+  id: 'asa-calc-q1',
+  question: 'In the figure above, AD = 4m, AB = 3m, BD = 3m, BC = 1m, and CE = 2x - 5. What is the value of x?',
+  figure: <FigureQ1 />,
+  options: [
+    "6m",
+    "3.5m",
+    "4m",
+    "8m",
+    "5m"
+  ],
+  correctAnswer: "4m",
+  explanation:
+    "First, find AC by adding AB and BC: AC = 3 + 1 = 4m. We are given AD = 4m, so AC and AD are equal. Angle A is shared, so it matches in both triangles. The orange angles at C and D are also equal. This matches the ASA rule, so triangle CAE and triangle DAB are congruent. Because the triangles are congruent, CE equals BD. So we set 2x - 5 = 3. Solving gives 2x = 8, so x = 4."
+},
+{
+  id: 'asa-calc-q2',
+  question: 'In the figure above, find the value of 3x - y.',
+  figure: <FigureQ2 />,
+  options: [
+    "18",
+    "9",
+    "6",
+    "13",
+    "15"
+  ],
+  correctAnswer: "9",
+  explanation:
+    "The triangles are congruent by ASA. The green angles match, the side marked with two hash lines is the included side, and the blue angles match. So the triangles are congruent. This means matching sides are equal. AC corresponds to DF, so y = 6. BC corresponds to EF, so x = 5. Now calculate 3x - y: 3(5) - 6 = 15 - 6 = 9."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

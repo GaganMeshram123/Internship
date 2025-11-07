@@ -158,7 +158,7 @@ export default function HlSlide1() {
         "All triangles"
       ],
       correctAnswer: "Right-angled triangles",
-      explanation: "Correct! HL *only* applies to right-angled triangles. You must know there is a 90° angle."
+      explanation: "Correct! HL only applies to right-angled triangles. You must know there is a 90° angle."
     },
     {
       id: 'hl-intro-q2-meaning',
@@ -170,7 +170,7 @@ export default function HlSlide1() {
         "Hypotenuse and Length"
       ],
       correctAnswer: "Hypotenuse and Leg",
-      explanation: "Exactly! You must prove congruence of the **Hypotenuse** (the side opposite the right angle) and one corresponding **Leg**."
+      explanation: "Exactly! You must prove congruence of the Hypotenuse (the side opposite the right angle) and one corresponding Leg."
     }
   ];
 

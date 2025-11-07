@@ -216,34 +216,37 @@ export default function AasSlide2() {
 
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'aas-id-q1-pentagon',
-      question: 'According to the AAS criterion only, which of the following triangles is congruent to ΔABC?',
-      figure: <FigureQ1 />,
-      options: [
-        "ΔAEB",
-        "ΔACD",
-        "ΔADE",
-        "ΔAFE",
-        "ΔABD"
-      ],
-      correctAnswer: "ΔAFE",
-      explanation: "Correct! ΔABC and ΔAFE match the Angle-Angle-Side (AAS) pattern. We are given $\angle B \cong \angle F$ (Angle) and $BC \cong FE$ (Side). The central $\angle A$ marking implies $\angle BAC \cong \angle FAE$ (Angle). The side is *not* included, so this is AAS."
-    },
-    {
-      id: 'aas-id-q2-triangles',
-      question: 'According to the AAS criterion only, which of the following triangles is congruent to T?',
-      figure: <FigureQ2 />,
-      options: [
-        "P₁ only",
-        "P₂ and P₃ only",
-        "P₃ only",
-        "P₁ and P₂ only",
-        "P₂ only"
-      ],
-      correctAnswer: "P₁ only",
-      explanation: "Correct! Triangle T has a yellow angle (A), a green right angle (A), and a non-included side (S) opposite the yellow angle. Triangle P₁ has an orange angle (A), a green right angle (A), and a non-included side (S) opposite the orange angle. This is a match. P₂'s side is opposite the *green* angle."
-    }
+   {
+  id: 'aas-id-q1-pentagon',
+  question: 'According to the AAS criterion only, which of the following triangles is congruent to triangle ABC?',
+  figure: <FigureQ1 />,
+  options: [
+    "Triangle AEB",
+    "Triangle ACD",
+    "Triangle ADE",
+    "Triangle AFE",
+    "Triangle ABD"
+  ],
+  correctAnswer: "Triangle AFE",
+  explanation:
+    "Correct! Triangle ABC and Triangle AFE match the Angle-Angle-Side (AAS) pattern. Angle B matches angle F, and BC matches FE. Also, angle A in triangle ABC matches angle A in triangle AFE. The side is not between the two angles, so this is AAS."
+},
+{
+  id: 'aas-id-q2-triangles',
+  question: 'According to the AAS criterion only, which of the following triangles is congruent to triangle T?',
+  figure: <FigureQ2 />,
+  options: [
+    "Triangle P1 only",
+    "Triangle P2 and P3 only",
+    "Triangle P3 only",
+    "Triangle P1 and P2 only",
+    "Triangle P2 only"
+  ],
+  correctAnswer: "Triangle P1 only",
+  explanation:
+    "Correct! Triangle T has two angles marked (one yellow and one right angle) and a side that is not between these angles. Triangle P1 also has two matching angles and a non-included side. So Triangle T and Triangle P1 match by AAS."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

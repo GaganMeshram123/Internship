@@ -177,7 +177,7 @@ export default function SssSlide5() {
   const questions: QuizQuestion[] = [
     {
       id: 'sss-app-q7-parallelogram',
-      question: 'In the figure above, $SR \cong PQ$ and $SP \cong QR$. If $m\angle PSR = 115^\circ$ and $m\angle RQP = 3x - 5^\circ$, find the value of $x$.',
+      question: 'In the figure above, SR \cong PQ and SP \cong QR. If m\angle PSR = 115^\circ and m\angle RQP = 3x - 5^\circ, find the value of x.',
       figure: <FigureQ1 />,
       options: [
         "x = 40°",
@@ -266,16 +266,20 @@ export default function SssSlide5() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Applying SSS in Polygons</h2>
             <p className="text-lg leading-relaxed mb-4">
-              In the figure below, $SR \cong QP$ and $SP \cong QR$. If $m\angle RSP = 67^\circ$ and $m\angle PQR = 2x + 12^\circ$, find the value of $x$.
+              In the figure below, SR \cong QP and SP \cong QR. If m\angle RSP = 67^\circ and m\angle PQR = 2x + 12^\circ, find the value of x.
             </p>
             
             <FigureExample />
 
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
             
-            <p className="text-lg leading-relaxed">
-              From the diagram, ΔRSP and ΔPQR are congruent by SSS (side-side-side) since $PR$ is their common side and we have two more pairs of congruent sides:
-            </p>
+         <p className="text-lg leading-relaxed">
+  Correct! The triangles PSR and RQP are congruent by SSS (because SR = PQ, SP = RQ, and PR = RP). 
+  By CPCTC, angle PSR = angle RQP. So, 115 = 3x - 5. This gives 3x = 120, and x = 40°.
+  <br /><br />
+  From the diagram, triangles RSP and PQR are congruent by the Side-Side-Side method since PR is a common side and we have two more pairs of equal sides.
+</p>
+
             <ul className="list-none my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono text-center">
                 <li>SR ≅ PQ</li>
                 <li>SP ≅ QR</li>

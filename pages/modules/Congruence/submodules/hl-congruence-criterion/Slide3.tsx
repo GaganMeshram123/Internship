@@ -146,7 +146,7 @@ export default function HlSlide3() {
   const questions: QuizQuestion[] = [
     {
       id: 'hl-find-angle-q3',
-      question: 'The point A is on the base PR of an isosceles triangle ΔPQR, where ∠QAR is a right angle. If $m\angle AQR = 32^\circ$ and $m\angle AQP = 2x + 12^\circ$, what is the value of $x$?',
+      question: 'The point A is on the base PR of an isosceles triangle ΔPQR, where ∠QAR is a right angle. If m\angle AQR = 32^\circ and m\angle AQP = 2x + 12^\circ, what is the value of x?',
       figure: <FigureQ1 isExample={false} />,
       options: [
         "20°",
@@ -235,7 +235,7 @@ export default function HlSlide3() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Calculating an Angle Using HL</h2>
             <p className="text-lg leading-relaxed mb-4">
-              The point A is located on the base $PR$ of an isosceles triangle ΔPQR such that ∠QAR is a right angle. If $m\angle RQA = 70^\circ$ and $m\angle PQA = 3x + 13^\circ$, what is the value of $x$?
+              The point A is located on the base PR of an isosceles triangle ΔPQR such that ∠QAR is a right angle. If m\angle RQA = 70^\circ$ and m\angle PQA = 3x + 13^\circ, what is the value of x?
             </p>
             
             <FigureQ1 isExample={true} />
@@ -259,8 +259,8 @@ export default function HlSlide3() {
             </p>
             <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
                 <li>m∠QAR = m∠QAP = 90°</li>
-                <li>A common leg $QA$</li>
-                <li>$QR \cong QP$ (legs of isosceles triangle are hypotenuses of the right triangles)</li>
+                <li>A common leg QA</li>
+                <li>QR \cong QP (legs of isosceles triangle are hypotenuses of the right triangles)</li>
             </ul>
 
             <p className="text-lg leading-relaxed mt-4">

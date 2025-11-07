@@ -282,7 +282,7 @@ export default function RigidMotionsSlide4() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying Rigid Motions</h2>
             <p className="text-lg leading-relaxed mb-4">
-              In terms of rigid motions, why are the polygons $P$ and $Q$ congruent?
+              In terms of rigid motions, why are the polygons P and Q congruent?
             </p>
             
             <FigureExample />
@@ -290,7 +290,7 @@ export default function RigidMotionsSlide4() {
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
             
             <p className="text-lg leading-relaxed">
-              The polygons $P$ and $Q$ are congruent because <strong>$Q$ is the image of $P$ under the action of rotation by 90° counterclockwise around the origin.</strong>
+              The polygons P and Q are congruent because <strong>Q is the image of $P$ under the action of rotation by 90° counterclockwise around the origin.</strong>
             </p>
             <p className="text-lg leading-relaxed mt-2">
               Since a rotation is a rigid motion, it preserves the size and shape, and therefore the two figures are congruent.

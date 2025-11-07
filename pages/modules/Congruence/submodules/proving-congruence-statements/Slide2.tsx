@@ -334,10 +334,10 @@ export default function ProvingSlide2() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4"
-                           dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].explanation, { throwOnError: false }) }}
-                      >
-                      </div>
+                      <p className="text-lg text-slate-600 dark:text-slate-400 mb-4 leading-normal break-words whitespace-normal">
+  {questions[currentQuestionIndex].explanation}
+</p>
+
                       <motion.button
                         onClick={handleNextQuestion}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"

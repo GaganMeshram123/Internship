@@ -183,34 +183,37 @@ export default function SasSlide3() {
 
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'sas-find-angle-q3',
-      question: 'Find the value of x.',
-      figure: <FigureQ1 />,
-      options: [
-        "13°",
-        "15°",
-        "14°",
-        "50°",
-        "65°"
-      ],
-      correctAnswer: "14°",
-      explanation: "Correct! The altitude $AM$ is perpendicular to $BC$, and $BM \cong MC$. This means $AM$ is a perpendicular bisector, creating two congruent right triangles ($\triangle AMB \cong \triangle AMC$). By CPCTC, $\angle B \cong \angle C$. So, $65 = 5x - 5$. This gives $5x = 70$, and $x = 14$."
-    },
-    {
-      id: 'sas-find-angle-q4',
-      question: 'Find the value of x.',
-      figure: <FigureQ2 />,
-      options: [
-        "40°",
-        "85°",
-        "80°",
-        "70°",
-        "35°"
-      ],
-      correctAnswer: "35°",
-      explanation: "Correct! The triangles are congruent by SAS. We are given $AM \cong QM$ (S) and $BM \cong PM$ (S). The angles $\angle AMB$ and $\angle QMP$ are vertical angles, so they are the included congruent angles (A). By CPCTC, $\angle A \cong \angle Q$. So, $80 = 2x + 10$. This gives $2x = 70$, and $x = 35$."
-    }
+  {
+  id: 'sas-find-angle-q3',
+  question: 'Find the value of x.',
+  figure: <FigureQ1 />,
+  options: [
+    "13°",
+    "15°",
+    "14°",
+    "50°",
+    "65°"
+  ],
+  correctAnswer: "14°",
+  explanation:
+    "The line AM is perpendicular to BC, and BM is equal to MC. So AM is the perpendicular bisector of BC. This creates two congruent right triangles: triangle AMB and triangle AMC. Because they are congruent, angle B is equal to angle C. So we set 65 = 5x - 5. Solving gives 5x = 70, so x = 14."
+},
+{
+  id: 'sas-find-angle-q4',
+  question: 'Find the value of x.',
+  figure: <FigureQ2 />,
+  options: [
+    "40°",
+    "85°",
+    "80°",
+    "70°",
+    "35°"
+  ],
+  correctAnswer: "35°",
+  explanation:
+    "The triangles are congruent by the SAS rule. We know AM = QM (side), BM = PM (side), and the angles at M are vertical angles, so they are equal (included angle). Because the triangles are congruent, angle A equals angle Q. So we set 80 = 2x + 10. Solving gives 2x = 70, so x = 35."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

@@ -12,25 +12,11 @@ const TriangleCongruenceAnimation: React.FC = () => {
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={300} height={200}>
-        {/* Original Triangle */}
-        <motion.polygon
-          points="50,150 120,50 190,150"
-          fill={color1}
-          opacity="0.7"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        />
+        <motion.polygon points="50,150 120,50 190,150" fill={color1} opacity="0.7"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} />
 
-        {/* Image Triangle */}
-        <motion.polygon
-          points="120,150 190,50 260,150"
-          fill={color2}
-          opacity="0.7"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-        />
+        <motion.polygon points="120,150 190,50 260,150" fill={color2} opacity="0.7"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }} />
 
         <text x="50" y="160" fontSize="12" fill={color1}>A</text>
         <text x="120" y="45" fontSize="12" fill={color1}>B</text>
@@ -58,25 +44,7 @@ export default function RigidMotionsSlide7() {
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
 
-  const slideInteractions: Interaction[] = [
-    {
-      id: 'rigid-motions-congruence-quiz',
-      conceptId: 'rigid-motions-congruence',
-      conceptName: 'Congruence from Rigid Motions',
-      type: 'judging',
-      description: 'Testing congruence properties'
-    }
-  ];
-
-  interface QuizQuestion {
-    id: string;
-    question: string;
-    options: string[];
-    correctAnswer: string;
-    explanation: string;
-  }
-
-  const questions: QuizQuestion[] = [
+  const questions = [
     {
       id: 'rigid-motions-cong-q1',
       question: 'Rigid motions preserve which of the following?',
@@ -93,54 +61,20 @@ export default function RigidMotionsSlide7() {
     }
   ];
 
-  const handleInteractionComplete = (response: InteractionResponse) => {
-    setLocalInteractions(prev => ({
-      ...prev,
-      [response.interactionId]: response
-    }));
-  };
-
   const handleQuizAnswer = (answerText: string) => {
     if (showFeedback || isQuizComplete) return;
-
     setSelectedAnswer(answerText);
     setShowFeedback(true);
-
-    const current = questions[currentQuestionIndex];
-    const isCorrect = answerText === current.correctAnswer;
-    if (isCorrect) {
-      setScore(prev => prev + 1);
-    }
-
-    handleInteractionComplete({
-      interactionId: `rigid-motions-cong-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
-      value: answerText,
-      isCorrect,
-      timestamp: Date.now(),
-      conceptId: 'rigid-motions-congruence',
-      conceptName: 'Congruence from Rigid Motions',
-      conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
-      question: {
-        type: 'mcq',
-        question: current.question,
-        options: current.options
-      }
-    });
   };
 
   const handleNextQuestion = () => {
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
-
     setSelectedAnswer('');
     setShowFeedback(false);
-
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      setIsQuizComplete(true);
-    }
+    if (currentQuestionIndex < questions.length - 1) setCurrentQuestionIndex(prev => prev + 1);
+    else setIsQuizComplete(true);
   };
 
   const slideContent = (
@@ -150,35 +84,57 @@ export default function RigidMotionsSlide7() {
         {/* LEFT CONTENT */}
         <div className="space-y-6">
 
+          {/* MAIN CARD */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">
               Further Properties of Rigid Motions
             </h2>
 
             <p className="text-lg leading-relaxed">
-              Rigid motions are <strong>distance-preserving</strong>. If △ABC maps to △A′B′C′, then:
+              Rigid motions keep the distances the same.
             </p>
             <p className="mt-2 text-lg">AB = A′B′, AC = A′C′, BC = B′C′</p>
 
             <p className="text-lg leading-relaxed mt-4">
-              Rigid motions are also <strong>angle-preserving</strong>. So:
+              Rigid motions also keep the angles the same.
             </p>
-            <p className="mt-2 text-lg">m∠A = m∠A′, m∠B = m∠B′, m∠C = m∠C′</p>
+            <p className="mt-2 text-lg">∠A = ∠A′, ∠B = ∠B′, ∠C = ∠C′</p>
 
             <p className="text-lg mt-4">
-              Therefore, the triangles are <strong>congruent</strong>.
+              So, the triangles are **congruent** (same shape and same size).
             </p>
 
             <p className="font-semibold text-lg mt-2 text-center">
               △ABC ≅ △A′B′C′
             </p>
           </div>
+
+          {/* EXTRA CONTENT CARD */}
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">
+              Why Do Rigid Motions Prove Congruence?
+            </h3>
+
+            <ul className="list-disc list-inside text-lg leading-relaxed space-y-3">
+              <li>Rigid motions do **not** stretch or shrink shapes.</li>
+              <li>The side lengths stay the same.</li>
+              <li>The angles stay the same.</li>
+              <li>The shape just moves, rotates, or flips.</li>
+              <li>So, the shape remains exactly the same.</li>
+            </ul>
+
+            <div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700">
+              <p className="leading-relaxed text-lg">
+                Therefore, if one shape can be moved to match another, they are **congruent**.
+              </p>
+            </div>
+          </div>
+
         </div>
 
-        {/* RIGHT COLUMN (FIGURE + QUIZ) */}
+        {/* RIGHT COLUMN */}
         <div className="space-y-6">
 
-          {/* FIGURE */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">
               Congruent Triangle Animation
@@ -198,43 +154,29 @@ export default function RigidMotionsSlide7() {
             <div className="space-y-3">
               <div className="text-lg mb-4">{questions[currentQuestionIndex].question}</div>
 
-              {questions[currentQuestionIndex].options.map((option, idx) => {
-                const disabled = showFeedback;
-                const selected = selectedAnswer === option;
-                const correct = option === questions[currentQuestionIndex].correctAnswer;
-                const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                  selected
-                    ? showFeedback
-                      ? correct
+              {questions[currentQuestionIndex].options.map((option, idx) => (
+                <motion.button
+                  key={idx}
+                  onClick={() => handleQuizAnswer(option)}
+                  disabled={showFeedback}
+                  className={`w-full p-3 rounded-lg border-2 ${
+                    selectedAnswer === option
+                      ? showFeedback && option === questions[currentQuestionIndex].correctAnswer
                         ? 'border-green-500 bg-green-100 dark:bg-green-900/30'
                         : 'border-red-500 bg-red-100 dark:bg-red-900/30'
-                      : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                    : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
-                } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
-
-                return (
-                  <motion.button
-                    key={idx}
-                    onClick={() => handleQuizAnswer(option)}
-                    disabled={disabled}
-                    className={className}
-                    whileHover={!disabled ? { scale: 1.02 } : {}}
-                    whileTap={!disabled ? { scale: 0.98 } : {}}
-                  >
-                    {option}
-                  </motion.button>
-                );
-              })}
+                      : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                  }`}
+                  whileHover={!showFeedback ? { scale: 1.02 } : {}}
+                >
+                  {option}
+                </motion.button>
+              ))}
             </div>
 
             <AnimatePresence>
               {showFeedback && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/40"
-                >
+                <motion.div className="mt-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/40"
+                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                   <div className="text-lg mb-4">
                     {questions[currentQuestionIndex].explanation}
                   </div>
@@ -242,8 +184,6 @@ export default function RigidMotionsSlide7() {
                   <motion.button
                     onClick={handleNextQuestion}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                   >
                     {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish'}
                   </motion.button>

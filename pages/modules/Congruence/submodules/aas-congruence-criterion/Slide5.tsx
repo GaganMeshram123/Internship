@@ -170,45 +170,47 @@ export default function AasSlide5() {
 
   // --- UPDATED QUESTIONS ARRAY (from images) ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'aas-statements-q7',
-      question: 'From the diagram, which of the following statements are true?',
-      figure: <FigureQ1 />,
-      statements: [
-        'I.   ΔABC ≅ ΔDEF by AAS',
-        'II.  x = 5',
-        'III. ∠C ≅ ∠F'
-      ],
-      options: [
-        "I only",
-        "III only",
-        "I and III only",
-        "II only",
-        "I and II only"
-      ],
-      correctAnswer: "I and III only",
-      explanation: "Correct! (I) is true: We have ∠B ≅ ∠E (90°), ∠A ≅ ∠D (yellow), and non-included side $AC \cong DF$. This is AAS. (III) is true by CPCTC. (II) is false: By CPCTC, $BC \cong EF$, so $2x+1 = 3x-6$, which gives $x=7$."
-    },
-    {
-      id: 'aas-statements-q8',
-      question: 'From the diagram, which of the following statements are true?',
-      figure: <FigureQ2 />,
-      statements: [
-        'I.   ΔABC ≅ ΔDEF by AAS',
-        'II.  AB ≅ DE',
-        'III. x = 27.5°'
-      ],
-      options: [
-        "I only",
-        "I and III only",
-        "II only",
-        "III only",
-        "I and II only"
-      ],
-      correctAnswer: "I and II only",
-      explanation: "Correct! (I) is true: We have ∠A ≅ ∠D (green), ∠B ≅ ∠E (yellow), and non-included side $AC \cong DF$. This is AAS. (II) is true by CPCTC. (III) is false: By CPCTC, $\angle B \cong \angle E$, so $2x+5 = 55$. This gives $2x=50$, so $x=25$."
-    }
-  ];
+  {
+  id: 'aas-statements-q7',
+  question: 'From the diagram, which of the following statements are true?',
+  figure: <FigureQ1 />,
+  statements: [
+    'I.   Triangle ABC is congruent to Triangle DEF by AAS',
+    'II.  x = 5',
+    'III. Angle C is equal to Angle F'
+  ],
+  options: [
+    "I only",
+    "III only",
+    "I and III only",
+    "II only",
+    "I and II only"
+  ],
+  correctAnswer: "I and III only",
+  explanation:
+    "Correct! Statement I is true because we have two pairs of equal angles and one non-included side equal, which fits the AAS rule. Statement III is also true by CPCTC, meaning matching angles are equal after proving congruence. Statement II is false. Using the matching sides, BC equals EF, so set 2x + 1 = 3x - 6. Solving gives x = 7, not 5."
+},
+{
+  id: 'aas-statements-q8',
+  question: 'From the diagram, which of the following statements are true?',
+  figure: <FigureQ2 />,
+  statements: [
+    'I.   Triangle ABC is congruent to Triangle DEF by AAS',
+    'II.  AB = DE',
+    'III. x = 27.5°'
+  ],
+  options: [
+    "I only",
+    "I and III only",
+    "II only",
+    "III only",
+    "I and II only"
+  ],
+  correctAnswer: "I and II only",
+  explanation:
+    "Correct! Statement I is true because we have two pairs of matching angles and a matching non-included side, so AAS applies. Statement II is true by CPCTC, meaning corresponding sides are equal. Statement III is false. Since angle B equals angle E, set 2x + 5 = 55. Solving gives x = 25, not 27.5."
+}
+];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
     setLocalInteractions(prev => ({

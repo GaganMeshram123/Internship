@@ -185,33 +185,36 @@ export default function AasSlide3() {
   // --- UPDATED QUESTIONS ARRAY (REMOVED $) ---
   const questions: QuizQuestion[] = [
     {
-      id: 'aas-find-angle-q3',
-      question: 'In the figure above, \u2220DBA \u2245 \u2220BAC. What is the value of x?',
-      figure: <FigureQ1 />,
-      options: [
-        "68°",
-        "18°",
-        "21°",
-        "32°",
-        "72°"
-      ],
-      correctAnswer: "21°",
-      explanation: "Correct! We can prove \u0394ABC \u2245 \u0394BAD by AAS. We are given \u2220C \u2245 \u2220D (Angle) and \u2220BAC \u2245 \u2220DBA (Angle). They also share the side AB (Side). Since \u2220BAC \u2245 \u2220DBA, we set their values equal: 72 = 3x + 9. Solving gives 3x = 63, so x = 21."
-    },
-    {
-      id: 'aas-find-angle-q4',
-      question: 'In the figure above, BD \u2245 CE. What is the value of x?',
-      figure: <FigureQ2 />,
-      options: [
-        "13°",
-        "90°",
-        "30°",
-        "45°",
-        "26°"
-      ],
-      correctAnswer: "26°",
-      explanation: "This is tricky! First, prove \u0394ABD \u2245 \u0394ACE by AAS: \u2220A is common (Angle), \u2220BDA \u2245 \u2220CEA (both 90\u00B0) (Angle), and BD \u2245 CE (Side). By CPCTC, \u2220ABD \u2245 \u2220ACE. The diagram labels \u2220ACD as 3x+12 and the angle \u2220ACE as 90\u00B0. We must assume the blue square applies to \u2220ACD. Thus, 3x + 12 = 90, which gives 3x = 78, and x = 26."
-    }
+  id: 'aas-find-angle-q3',
+  question: 'In the figure above, angle DBA is equal to angle BAC. What is the value of x?',
+  figure: <FigureQ1 />,
+  options: [
+    "68°",
+    "18°",
+    "21°",
+    "32°",
+    "72°"
+  ],
+  correctAnswer: "21°",
+  explanation:
+    "Correct! We can prove triangle ABC is congruent to triangle BAD by AAS. Angle C equals angle D. Angle BAC equals angle DBA. They also share side AB. Since angle BAC equals angle DBA, set their expressions equal: 72 = 3x + 9. Solving gives 3x = 63, so x = 21."
+},
+{
+  id: 'aas-find-angle-q4',
+  question: 'In the figure above, BD is equal to CE. What is the value of x?',
+  figure: <FigureQ2 />,
+  options: [
+    "13°",
+    "90°",
+    "30°",
+    "45°",
+    "26°"
+  ],
+  correctAnswer: "26°",
+  explanation:
+    "We can prove triangle ABD is congruent to triangle ACE using AAS: angle A is common, angle BDA equals angle CEA (both are right angles), and BD equals CE. By CPCTC, angle ABD equals angle ACE. The diagram shows angle ACD as 3x + 12, and angle ACE as 90°. So set 3x + 12 = 90. Solving gives 3x = 78, so x = 26."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

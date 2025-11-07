@@ -166,44 +166,46 @@ export default function SasSlide5() {
 
   // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'sas-statements-q7',
-      question: 'From the diagram, which of the following statements are true?',
-      figure: <FigureQ1 />,
-      statements: [
-        'I.   ΔABC ≅ ΔDEF by SAS',
-        'II.  AC ≅ DF',
-        'III. x = 7°'
-      ],
-      options: [
-        "III only",
-        "I and III only",
-        "II only",
-        "I, II, and III",
-        "I and II only"
-      ],
-      correctAnswer: "II only",
-      explanation: "This is a trick! (I) is false. The pattern shown is Side-Side-Angle (SSA), as the angle is *not* included between the sides. (II) is true, as it is given by the double hash mark. (III) is false, because congruence cannot be proven, so we cannot set 5x equal to 7x - 12."
-    },
-    {
-      id: 'sas-statements-q8',
-      question: 'Given the diagram above, which of the following statements are true?',
-      figure: <FigureQ2 />,
-      statements: [
-        'I.   ΔABC ≅ ΔDEF by SAS',
-        'II.  ∠A ≅ ∠D',
-        'III. x = 4'
-      ],
-      options: [
-        "II and III only",
-        "II only",
-        "I, II, and III",
-        "I and III only",
-        "III only"
-      ],
-      correctAnswer: "I, II, and III",
-      explanation: "Correct! (I) is true by SAS: $AB \cong DE$ (Side, length 6), $\angle B \cong \angle E$ (Included Angle, purple), and $BC \cong EF$ (Side, 1 hash). (II) is true by CPCTC. (III) is true because by CPCTC, $AC \cong DF$. This gives $x+2 = 3x-6$, so $2x = 8$, and $x = 4$."
-    }
+   {
+  id: 'sas-statements-q7',
+  question: 'From the diagram, which of the following statements are true?',
+  figure: <FigureQ1 />,
+  statements: [
+    'I. Triangle ABC is congruent to Triangle DEF by SAS',
+    'II. AC equals DF',
+    'III. x = 7°'
+  ],
+  options: [
+    "III only",
+    "I and III only",
+    "II only",
+    "I, II, and III",
+    "I and II only"
+  ],
+  correctAnswer: "II only",
+  explanation:
+    "Statement I is false because the angle shown is not between the two sides. This is Side-Side-Angle (SSA), which is not a valid congruence rule. Statement II is true because the side markings show AC and DF are equal. Statement III is false because we cannot set up an equation without proving the triangles are congruent first."
+},
+{
+  id: 'sas-statements-q8',
+  question: 'From the diagram, which of the following statements are true?',
+  figure: <FigureQ2 />,
+  statements: [
+    'I. Triangle ABC is congruent to Triangle DEF by SAS',
+    'II. Angle A equals Angle D',
+    'III. x = 4'
+  ],
+  options: [
+    "II and III only",
+    "II only",
+    "I, II, and III",
+    "I and III only",
+    "III only"
+  ],
+  correctAnswer: "I, II, and III",
+  explanation:
+    "Statement I is true because we have side AB equal to DE, the included angles at B and E are equal, and side BC equals EF. This matches the SAS rule. Statement II is true because once the triangles are congruent, all matching angles are equal (CPCTC). Statement III is true because matching sides AC and DF are equal, giving the equation x + 2 = 3x - 6, which solves to x = 4."
+}
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {

@@ -125,7 +125,7 @@ export default function HlSlide4() {
   const questions: QuizQuestion[] = [
     {
       id: 'hl-find-side-q5',
-      question: 'The point A is located on the base PR of an isosceles triangle ΔPQR, where ∠QAR is a right angle. If $AP = 14$ and $AR = 3x - 19$, what is the value of $x$?',
+      question: 'The point A is located on the base PR of an isosceles triangle ΔPQR, where ∠QAR is a right angle. If AP = 14 and AR = 3x - 19, what is the value of x?',
       figure: <FigureExample />,
       options: [
         "11",
@@ -214,7 +214,7 @@ export default function HlSlide4() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Calculating Length Using HL</h2>
             <p className="text-lg leading-relaxed mb-4">
-              The point A is located on the base $PR$ of an isosceles triangle ΔPQR, where ∠QAR is a right angle. If $AP = 24$ and $AR = 2x + 6$, what is the value of $x$?
+              The point A is located on the base $PR$ of an isosceles triangle ΔPQR, where ∠QAR is a right angle. If AP = 24 and AR = 2x + 6, what is the value of x?
             </p>
             
             <FigureExample />
@@ -235,8 +235,8 @@ export default function HlSlide4() {
             </p>
             <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
                 <li>m∠QAR = m∠QAP = 90°</li>
-                <li>A common leg $QA$</li>
-                <li>$QR \cong QP$ (Hypotenuses of the right triangles)</li>
+                <li>A common leg QA</li>
+                <li>QR \cong QP (Hypotenuses of the right triangles)</li>
             </ul>
 
             <p className="text-lg leading-relaxed mt-4">

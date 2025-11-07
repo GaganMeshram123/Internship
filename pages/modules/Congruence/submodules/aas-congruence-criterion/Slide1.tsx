@@ -173,30 +173,33 @@ export default function AasSlide1() {
 
   // --- QUIZ QUESTIONS (Unchanged from your file) ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'aas-intro-q1-meaning',
-      question: 'What is the main difference between ASA and AAS?',
-      options: [
-        "AAS has two sides, ASA has one",
-        "In AAS, the side is *not* included between the angles",
-        "In ASA, the side is *not* included between the angles",
-        "They are the same criterion"
-      ],
-      correctAnswer: "In AAS, the side is *not* included between the angles",
-      explanation: "Correct! That's the key difference. ASA is Angle-Side-Angle (side is included). AAS is Angle-Angle-Side (side is non-included)."
-    },
-    {
-      id: 'aas-intro-q2-why',
-      question: 'Why does the AAS criterion work?',
-      options: [
-        "Because of the Pythagorean Theorem",
-        "Because if you know two angles, you can find the third angle (Third Angle Theorem)",
-        "It only works for right triangles",
-        "It is just a rule we have to memorize"
-      ],
-      correctAnswer: "Because if you know two angles, you can find the third angle (Third Angle Theorem)",
-      explanation: "Exactly! If you know two angles in $\triangle ABC$, you know the third (since they sum to 180°). This allows you to find the third angle and then use ASA."
-    }
+   {
+  id: 'aas-intro-q1-meaning',
+  question: 'What is the main difference between ASA and AAS?',
+  options: [
+    "AAS has two sides, ASA has one",
+    "In AAS, the side is not included between the angles",
+    "In ASA, the side is not included between the angles",
+    "They are the same criterion"
+  ],
+  correctAnswer: "In AAS, the side is not included between the angles",
+  explanation:
+    "Correct! The difference is about the position of the side. In ASA, the known side is between the two angles. In AAS, the known side is outside the two angles (not between them)."
+},
+{
+  id: 'aas-intro-q2-why',
+  question: 'Why does the AAS criterion work?',
+  options: [
+    "Because of the Pythagorean Theorem",
+    "Because if you know two angles, you can find the third angle",
+    "It only works for right triangles",
+    "It is just a rule we memorize"
+  ],
+  correctAnswer: "Because if you know two angles, you can find the third angle",
+  explanation:
+    "Exactly! The sum of angles in a triangle is always 180°. So if you know any two angles, the third angle is automatically determined. This lets us use ASA to prove the triangles are congruent."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
