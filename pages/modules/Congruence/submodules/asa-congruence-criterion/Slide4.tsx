@@ -229,7 +229,7 @@ export default function AsaSlide4() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Calculating Length Using ASA</h2>
             <p className="text-lg leading-relaxed mb-4">
-              In the figure below, $AC = 12, AE = 5, ED = 7, BD = 10$, and $CE = 3x - 2$. What is the value of $x$?
+              In the figure below, AC = 12, AE = 5, ED = 7, BD = 10, and CE = 3x - 2. What is the value of x?
             </p>
             
             <div className="w-full flex justify-center items-center p-4 my-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
@@ -240,29 +240,32 @@ export default function AsaSlide4() {
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
             
             <p className="text-lg leading-relaxed">
-              First, notice that $AC \cong AD$ since:
-            </p>
-            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
-              AD = AE + ED = 5 + 7 = 12
-            </div>
-            <p className="text-lg leading-relaxed">
-              And $AC$ is given as 12.
-            </p>
+  First, notice that AC is equal to AD because:
+</p>
 
-            <p className="text-lg leading-relaxed mt-4">
-              Now, we can prove $\triangle CAE \cong \triangle DAB$ by ASA:
-            </p>
-            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
-                <li>
-                  <strong>Angle (A):</strong> $\angle A$ is their common angle.
-                </li>
-                <li>
-                  <strong>Side (S):</strong> $AC \cong AD$ (as shown above).
-                </li>
-                <li>
-                  <strong>Angle (A):</strong> $\angle ACE \cong \angle ADB$ (given by the orange angle markers in the diagram).
-                </li>
-            </ul>
+<div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
+  AD = AE + ED = 5 + 7 = 12
+</div>
+
+<p className="text-lg leading-relaxed">
+  And AC is also given as 12.
+</p>
+
+<p className="text-lg leading-relaxed mt-4">
+  Now, we can prove that triangle CAE is congruent to triangle DAB by ASA:
+</p>
+
+<ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+  <li>
+    <strong>Angle:</strong> Angle A is shared by both triangles.
+  </li>
+  <li>
+    <strong>Side:</strong> AC and AD are equal (as shown above).
+  </li>
+  <li>
+    <strong>Angle:</strong> Angle ACE is equal to Angle ADB (shown by the matching colored angle marks in the diagram).
+  </li>
+</ul>
 
             <p className="text-lg leading-relaxed mt-4">
               Therefore, all corresponding sides must be congruent (CPCTC). In particular, $CE \cong BD$.

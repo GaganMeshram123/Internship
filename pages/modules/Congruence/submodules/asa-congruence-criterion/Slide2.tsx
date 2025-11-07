@@ -218,16 +218,17 @@ export default function AsaSlide2() {
 
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Let's examine each triangle:</h3>
             <ul className="list-disc list-inside mt-2 text-lg space-y-3 text-slate-700 dark:text-slate-300">
-                <li>
-                  <strong>P vs. T₁:</strong> $P$ is <strong>not congruent</strong> to $T_1$ by ASA since $T_1$ doesn't have congruent angles marked.
-                </li>
-                <li>
-                  <strong>P vs. T₂:</strong> $P$ is <strong>not congruent</strong> to $T_2$ by ASA. $T_2$ has two congruent angles, but the congruent side is <strong>not included</strong> between them. This is the "AAS trap."
-                </li>
-                <li>
-                  <strong>P vs. T₃:</strong> $P \cong T_3$ by ASA since two angles and the <strong>included side</strong> of one are congruent to the corresponding parts of the other triangle.
-                </li>
-              </ul>
+  <li>
+    <strong>P vs. T₁:</strong> P is <strong>not congruent</strong> to T₁ by ASA because T₁ does not have both angles marked as congruent.
+  </li>
+  <li>
+    <strong>P vs. T₂:</strong> P is <strong>not congruent</strong> to T₂ by ASA. T₂ does have two matching angles, but the matching side is <strong>not the side between those two angles</strong>. This makes it AAS, not ASA (this is a common trick).
+  </li>
+  <li>
+    <strong>P vs. T₃:</strong> P is <strong>congruent</strong> to T₃ by ASA because it has two matching angles and the <strong>included side</strong> between them matching as well.
+  </li>
+</ul>
+
               <p className="text-lg leading-relaxed mt-4">
                 Now, use this information to answer the question on the right.
               </p>

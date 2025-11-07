@@ -308,7 +308,7 @@ export default function SasSlide2() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying Congruent Triangles</h2>
             <p className="text-lg leading-relaxed mb-4">
-              According to the SAS criterion only, which of the following triangles are congruent to $T$?
+              According to the SAS criterion only, which of the following triangles are congruent to T?
             </p>
             
             <FigureExample />
@@ -327,18 +327,18 @@ export default function SasSlide2() {
             <p className="text-lg leading-relaxed mt-4">
               With that in mind, let's examine each of the given triangles:
             </p>
-            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
-                <li>
-                  <strong>$P \cong T$</strong> by SAS since two sides (1 hash, 2 hashes) and the <strong>included angle</strong> (yellow) are congruent.
-                </li>
-                <li>
-                  <strong>$Q$ is not congruent to $T$</strong> by SAS since we don't have a pair of congruent angles.
-                </li>
-                <li>
-                  <strong>$R \cong T$</strong> by SAS too, since two sides (1 hash, 2 hashes) and the <strong>included angle</strong> (yellow) are congruent.
-                </li>
-            </ul>
-            <p className="text-lg leading-relaxed mt-4 font-semibold">
+           <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+  <li>
+    <strong>P is congruent to T</strong> by SAS because it has two matching sides (1 hash and 2 hashes) and the matching included angle (shown in yellow).
+  </li>
+  <li>
+    <strong>Q is not congruent to T</strong> by SAS because we do not have a matching included angle for the two marked sides.
+  </li>
+  <li>
+    <strong>R is congruent to T</strong> by SAS because it also has two matching sides (1 hash and 2 hashes) and the included angle (yellow) that matches T.
+  </li>
+</ul>
+ <p className="text-lg leading-relaxed mt-4 font-semibold">
               Therefore, the correct answer is "P and R only."
             </p>
           </div>

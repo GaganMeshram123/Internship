@@ -310,7 +310,7 @@ export default function AasSlide2() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Identifying AAS Congruence</h2>
             <p className="text-lg leading-relaxed mb-4">
-              According to the AAS criterion only, which of the following triangles are congruent to $T$?
+              According to the AAS criterion only, which of the following triangles are congruent to T?
             </p>
             
             <FigureExample />
@@ -329,21 +329,22 @@ export default function AasSlide2() {
             <p className="text-lg leading-relaxed mt-4">
               Let's examine each triangle:
             </p>
-            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
-                <li>
-                  <strong>$P_1 \cong T$</strong> by AAS, since it has two angles (yellow, green) and a non-included side (2 hashes) congruent to the corresponding parts of $T$.
-                </li>
-                <li>
-                  <strong>$P_2 \cong T$</strong> by AAS. It also has two angles (yellow, orange) and a non-included side (2 hashes) congruent to the corresponding parts of $T$. (This implies green $\cong$ orange).
-                </li>
-                <li>
-                  <strong>$P_3$ is not congruent to $T$</strong> by AAS, since we don't have two pairs of congruent angles.
-                </li>
-            </ul>
-            <p className="text-lg leading-relaxed mt-4 font-semibold">
-              Therefore, the correct answer is $P_1$ and $P_2$ only.
-            </p>
-          </div>
+           <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+  <li>
+    <strong>P₁ is congruent to T</strong> by AAS, because it has two matching angles (yellow and green) and a non-included side (2 hash marks) that match triangle T.
+  </li>
+  <li>
+    <strong>P₂ is congruent to T</strong> by AAS. It also has two matching angles (yellow and orange) and the same non-included side match (2 hash marks). This means the green angle in T matches the orange angle in P₂.
+  </li>
+  <li>
+    <strong>P₃ is not congruent to T</strong> because we do not have two matching angles to apply AAS.
+  </li>
+</ul>
+
+<p className="text-lg leading-relaxed mt-4 font-semibold">
+  Therefore, the correct answer is P₁ and P₂ only.
+</p>
+         </div>
         </div>
 
         {/* Right Column - Animation and Quiz (UPDATED) */}

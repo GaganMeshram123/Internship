@@ -275,7 +275,7 @@ export default function AasSlide4() {
             </ul>
 
             <p className="text-lg leading-relaxed mt-4">
-              Therefore, all the corresponding sides of the triangles must be congruent. In particular, $UT = AB = x$ and $VT = AC = y$.
+              Therefore, all the corresponding sides of the triangles must be congruent. In particular, UT = AB = x and VT = AC = y.
             </p>
             <p className="text-lg leading-relaxed mt-4">
               Since the perimeter of ΔTUV is 22, we obtain

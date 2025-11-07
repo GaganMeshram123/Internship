@@ -308,38 +308,43 @@ export default function AsaSlide5() {
               Let's examine each of the given statements in turn.
             </p>
 
-            <ul className="list-disc list-inside mt-4 text-lg space-y-3 text-slate-700 dark:text-slate-300">
-              <li>
-                <strong>Statement I is true.</strong> $\Delta ABC$ and $\Delta DEF$ are congruent by ASA since we have:
-                <ul className="list-decimal list-inside ml-6 mt-2">
-                  <li>$\angle A \cong \angle D$ (green, 2 arcs)</li>
-                  <li>$AB \cong DE$ (1 hash)</li>
-                  <li>$\angle B \cong \angle E$ (yellow, 1 arc)</li>
-                </ul>
-              </li>
-              <li>
-                <strong>Statement II is false.</strong> Since the triangles are congruent, all corresponding sides (CPCTC) must be congruent. In particular, $BC \cong EF$.
-                <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono">
-                  BC = EF<br/>
-                  2x - 5 = 5<br/>
-                  2x = 10<br/>
-                  x = 5 (which is not 1)
-                </div>
-              </li>
-              <li>
-                <strong>Statement III is true.</strong> By CPCTC, $AC \cong DF$.
-                <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono">
-                  AC = DF<br/>
-                  3 = 4y - 1<br/>
-                  4 = 4y<br/>
-                  y = 1
-                </div>
-              </li>
-            </ul>
-            <p className="text-lg leading-relaxed mt-4 font-semibold">
-              Therefore, only statements I and III are true.
-            </p>
-          </div>
+          <ul className="list-disc list-inside mt-4 text-lg space-y-3 text-slate-700 dark:text-slate-300">
+
+  <li>
+    <strong>Statement I is true.</strong> Triangle ABC and Triangle DEF are congruent by ASA because we have:
+    <ul className="list-decimal list-inside ml-6 mt-2">
+      <li>Angle A is equal to Angle D (green markings)</li>
+      <li>Side AB is equal to side DE (single hash marking)</li>
+      <li>Angle B is equal to Angle E (yellow markings)</li>
+    </ul>
+  </li>
+
+  <li>
+    <strong>Statement II is false.</strong> Since the triangles are congruent, all matching sides are equal (CPCTC). In particular, BC matches EF.
+    <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono">
+      BC = EF<br/>
+      2x - 5 = 5<br/>
+      2x = 10<br/>
+      x = 5 (not 1)
+    </div>
+  </li>
+
+  <li>
+    <strong>Statement III is true.</strong> By CPCTC, side AC matches side DF.
+    <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono">
+      AC = DF<br/>
+      3 = 4y - 1<br/>
+      4 = 4y<br/>
+      y = 1
+    </div>
+  </li>
+
+</ul>
+
+<p className="text-lg leading-relaxed mt-4 font-semibold">
+  Therefore, only statements I and III are true.
+</p>
+         </div>
         </div>
 
         {/* Right Column - Quiz (from other 2 images) */}

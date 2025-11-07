@@ -259,7 +259,7 @@ export default function SasSlide4() {
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
             
             <p className="text-lg leading-relaxed">
-              Notice that ΔPSQ and ΔPSR are congruent by SAS (side-angle-side) since $PS$ is their common side and we have the following pairs of congruent sides and included angles:
+              Notice that ΔPSQ and ΔPSR are congruent by SAS (side-angle-side) since PS is their common side and we have the following pairs of congruent sides and included angles:
             </p>
             <ul className="list-none my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono text-center">
                 <li>SQ ≅ SR</li>
