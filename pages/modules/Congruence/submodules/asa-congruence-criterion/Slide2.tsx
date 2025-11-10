@@ -3,103 +3,116 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+// Helper: Draw Clean Angle Arc
+// Helper: Draw Clean Angle Arc
+function angleArcPath(center: {x:number, y:number}, p1: {x:number, y:number}, p2:{x:number,y:number}, radius:number, sweep: 0 | 1) {
+  const v1 = { x: p1.x - center.x, y: p1.y - center.y };
+  const v2 = { x: p2.x - center.x, y: p2.y - center.y };
 
-// --- FIGURE COMPONENT FROM YOUR IMAGE ---
-// This component draws P, T1, T2, and T3
+  const len1 = Math.hypot(v1.x, v1.y);
+  const len2 = Math.hypot(v2.x, v2.y);
+
+  const p1n = { x: center.x + (v1.x / len1) * radius, y: center.y + (v1.y / len1) * radius };
+  const p2n = { x: center.x + (v2.x / len2) * radius, y: center.y + (v2.y / len2) * radius };
+
+  return `M ${p1n.x} ${p1n.y} A ${radius} ${radius} 0 0 ${sweep} ${p2n.x} ${p2n.y}`;
+}
+
+
+// --- ASA IDENTIFICATION FIGURE ---
 const AsaIdentificationFigure: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 280; // Increased height for 4 triangles
+  const svgHeight = 280;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
-  
-  // Colors from image
+  const labelColor = isDarkMode ? '#CBD5E1' : '#475569';
+
   const angle1Color = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
   const angle2Color = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
   const angle3Color = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-  const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const sideColor = strokeColor;
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
-
-  // --- Triangle Definitions ---
-  // P (Top-Left)
-  const P = { A: { x: 50, y: 120 }, B: { x: 150, y: 120 }, C: { x: 130, y: 30 } };
-  // T1 (Top-Right)
-  const T1 = { A: { x: 250, y: 30 }, B: { x: 300, y: 120 }, C: { x: 370, y: 80 } };
-  // T2 (Bottom-Left)
-  const T2 = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
-  // T3 (Bottom-Right)
-  const T3 = { A: { x: 230, y: 250 }, B: { x: 370, y: 250 }, C: { x: 320, y: 160 } };
+  // Coordinates
+  const P  = { A:{x:50,y:120}, B:{x:150,y:120}, C:{x:130,y:30} };
+  const T1 = { A:{x:250,y:30}, B:{x:300,y:120}, C:{x:370,y:80} };
+  const T2 = { A:{x:30,y:250}, B:{x:170,y:250}, C:{x:80,y:160} };
+  const T3 = { A:{x:230,y:250}, B:{x:370,y:250}, C:{x:320,y:160} };
 
   return (
-    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        
-        {/* --- Triangle P --- */}
+    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60">
+      <svg width={svgWidth} height={svgHeight}>
+
+
+        {/* --- P TRIANGLE --- */}
         <g>
-          <path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={P.A.x - 15} y={P.A.y + 5} fill={labelColor} fontSize="14">P</text>
-          {/* Angle A (Yellow) */}
-          <path d={`M ${P.A.x + 15} ${P.A.y} A 15 15 0 0 1 ${P.A.x + 12.1} ${P.A.y - 8.8}`} stroke={angle1Color} {...commonProps} />
-          {/* Side AB (2 hashes) */}
-          <line x1={P.A.x + 45} y1={P.A.y - 3} x2={P.A.x + 55} y2={P.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
-          <line x1={P.A.x + 50} y1={P.A.y - 3} x2={P.A.x + 60} y2={P.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
-          {/* Angle C (Green) */}
-          <path d={`M ${P.C.x - 13.6} ${P.C.y + 6.5} A 15 15 0 0 1 ${P.C.x} ${P.C.y + 15}`} stroke={angle2Color} {...commonProps} />
-          <path d={`M ${P.C.x - 10.2} ${P.C.y + 4.9} A 11 11 0 0 1 ${P.C.x} ${P.C.y + 11}`} stroke={angle2Color} {...commonProps} />
-          <line x1={P.C.x - 5} y1={P.C.y + 12} x2={P.C.x - 10} y2={P.C.y + 8} stroke={angle2Color} strokeWidth="1.5" />
+          <path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps}/>
+          <text x={P.A.x - 8} y={P.A.y + 15} fill={labelColor} fontSize="14">A</text>
+          <text x={P.B.x + 5} y={P.B.y + 15} fill={labelColor} fontSize="14">B</text>
+          <text x={P.C.x} y={P.C.y - 10} fill={labelColor} fontSize="14" textAnchor="middle">C</text>
+
+          <text x={P.A.x - 25} y={P.A.y + 5} fill={labelColor} fontSize="14">P</text>
+
+          {/* Angle A */}
+          <path d={angleArcPath(P.A, P.B, P.C, 14, 0)} stroke={angle1Color} {...commonProps} />
+
+          {/* Side AB hash */}
+          <line x1={90} y1={118} x2={95} y2={122} stroke={sideColor} strokeWidth="1.5" />
+          <line x1={100} y1={118} x2={105} y2={122} stroke={sideColor} strokeWidth="1.5" />
+
+          {/* Angle C */}
+          <path d={angleArcPath(P.C, P.A, P.B, 14, 1)} stroke={angle2Color} {...commonProps} />
         </g>
 
-        {/* --- Triangle T1 --- */}
+
+
+        {/* --- T1 TRIANGLE --- */}
         <g>
-          <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={T1.A.x + 20} y={T1.A.y} fill={labelColor} fontSize="14">T₁</text>
-          {/* Side AC (1 hash) */}
-          <line x1={300} y1={50} x2={310} y2={45} stroke={sideColor} strokeWidth="1.5" />
-          {/* Side AB (2 hashes) */}
-          <line x1={270} y1={80} x2={280} y2={75} stroke={sideColor} strokeWidth="1.5" />
-          <line x1={273} y1={83} x2={283} y2={78} stroke={sideColor} strokeWidth="1.5" />
+          <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps}/>
+          <text x={T1.A.x - 8} y={T1.A.y - 8} fill={labelColor} fontSize="14">A</text>
+          <text x={T1.B.x + 8} y={T1.B.y + 10} fill={labelColor} fontSize="14">B</text>
+          <text x={T1.C.x + 5} y={T1.C.y - 5} fill={labelColor} fontSize="14">C</text>
+
+          <text x={T1.A.x + 15} y={T1.A.y - 12} fill={labelColor} fontSize="14">T₁</text>
+
+          {/* Angle A */}
+          <path d={angleArcPath(T1.A, T1.B, T1.C, 14, 1)} stroke={angle2Color} {...commonProps} />
         </g>
 
-        {/* --- Triangle T2 --- */}
+
+
+        {/* --- T2 TRIANGLE --- */}
         <g>
-          <path d={`M ${T2.A.x} ${T2.A.y} L ${T2.B.x} ${T2.B.y} L ${T2.C.x} ${T2.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={T2.C.x} y={T2.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">T₂</text>
-          {/* Angle A (Yellow) */}
-          <path d={`M ${T2.A.x + 15} ${T2.A.y} A 15 15 0 0 1 ${T2.A.x + 13.6} ${T2.A.y - 6.5}`} stroke={angle1Color} {...commonProps} />
-          {/* Side BC (2 hashes) - NOT INCLUDED */}
-          <line x1={130} y1={205} x2={140} y2={208} stroke={sideColor} strokeWidth="1.5" />
-          <line x1={133} y1={202} x2={143} y2={205} stroke={sideColor} strokeWidth="1.5" />
-          {/* Angle C (Green) */}
-          <path d={`M ${T2.C.x + 12.1} ${T2.C.y + 8.8} A 15 15 0 0 1 ${T2.C.x} ${T2.C.y + 15}`} stroke={angle2Color} {...commonProps} />
-          <path d={`M ${T2.C.x + 9} ${T2.C.y + 6.5} A 11 11 0 0 1 ${T2.C.x} ${T2.C.y + 11}`} stroke={angle2Color} {...commonProps} />
-          <line x1={T2.C.x + 5} y1={T2.C.y + 12} x2={T2.C.x + 10} y2={T2.C.y + 8} stroke={angle2Color} strokeWidth="1.5" />
+          <path d={`M ${T2.A.x} ${T2.A.y} L ${T2.B.x} ${T2.B.y} L ${T2.C.x} ${T2.C.y} Z`} stroke={strokeColor} {...commonProps}/>
+          <text x={T2.A.x - 8} y={T2.A.y + 15} fill={labelColor} fontSize="14">A</text>
+          <text x={T2.B.x + 8} y={T2.B.y + 15} fill={labelColor} fontSize="14">B</text>
+          <text x={T2.C.x} y={T2.C.y - 10} fill={labelColor} fontSize="14" textAnchor="middle">C</text>
+
+          <text x={T2.C.x} y={T2.C.y - 25} fill={labelColor} fontSize="14" textAnchor="middle">T₂</text>
+
+          <path d={angleArcPath(T2.A, T2.B, T2.C, 14, 1)} stroke={angle1Color} {...commonProps} />
+          <path d={angleArcPath(T2.C, T2.A, T2.B, 14, 0)} stroke={angle2Color} {...commonProps} />
         </g>
-        
-        {/* --- Triangle T3 --- */}
+
+
+
+        {/* --- T3 TRIANGLE --- */}
         <g>
-          <path d={`M ${T3.A.x} ${T3.A.y} L ${T3.B.x} ${T3.B.y} L ${T3.C.x} ${T3.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={T3.C.x} y={T3.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">T₃</text>
-          {/* Angle A (Blue) */}
-          <path d={`M ${T3.A.x + 15} ${T3.A.y} A 15 15 0 0 1 ${T3.A.x + 13.6} ${T3.A.y - 6.5}`} stroke={angle3Color} {...commonProps} />
-          {/* Side AB (2 hashes) - INCLUDED */}
-          <line x1={T3.A.x + 65} y1={T3.A.y - 3} x2={T3.A.x + 75} y2={T3.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
-          <line x1={T3.A.x + 70} y1={T3.A.y - 3} x2={T3.A.x + 80} y2={T3.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
-          {/* Angle C (Green) */}
-          <path d={`M ${T3.C.x - 12.1} ${T3.C.y + 8.8} A 15 15 0 0 1 ${T3.C.x} ${T3.C.y + 15}`} stroke={angle2Color} {...commonProps} />
-          <path d={`M ${T3.C.x - 9} ${T3.C.y + 6.5} A 11 11 0 0 1 ${T3.C.x} ${T3.C.y + 11}`} stroke={angle2Color} {...commonProps} />
-          <line x1={T3.C.x - 5} y1={T3.C.y + 12} x2={T3.C.x - 10} y2={T3.C.y + 8} stroke={angle2Color} strokeWidth="1.5" />
+          <path d={`M ${T3.A.x} ${T3.A.y} L ${T3.B.x} ${T3.B.y} L ${T3.C.x} ${T3.C.y} Z`} stroke={strokeColor} {...commonProps}/>
+          <text x={T3.A.x - 8} y={T3.A.y + 15} fill={labelColor} fontSize="14">A</text>
+          <text x={T3.B.x + 8} y={T3.B.y + 15} fill={labelColor} fontSize="14">B</text>
+          <text x={T3.C.x} y={T3.C.y - 10} fill={labelColor} fontSize="14" textAnchor="middle">C</text>
+
+          <text x={T3.C.x} y={T3.C.y - 25} fill={labelColor} fontSize="14" textAnchor="middle">T₃</text>
+
+          <path d={angleArcPath(T3.A, T3.B, T3.C, 14, 1)} stroke={angle3Color} {...commonProps} />
+          <path d={angleArcPath(T3.C, T3.A, T3.B, 14, 0)} stroke={angle2Color} {...commonProps} />
         </g>
 
       </svg>
     </div>
   );
 };
-// --- END OF FIGURE COMPONENT DEFINITION ---
-
 
 export default function AsaSlide2() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});

@@ -3,157 +3,118 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+// Helper: Draws clean arc between sides of an angle
+function angleArcPath(center: {x:number, y:number}, p1: {x:number, y:number}, p2:{x:number,y:number}, radius:number, sweep: 0 | 1) {
+  const v1 = { x: p1.x - center.x, y: p1.y - center.y };
+  const v2 = { x: p2.x - center.x, y: p2.y - center.y };
+
+  const len1 = Math.hypot(v1.x, v1.y);
+  const len2 = Math.hypot(v2.x, v2.y);
+
+  const p1n = { x: center.x + (v1.x / len1) * radius, y: center.y + (v1.y / len1) * radius };
+  const p2n = { x: center.x + (v2.x / len2) * radius, y: center.y + (v2.y / len2) * radius };
+
+  return `M ${p1n.x} ${p1n.y} A ${radius} ${radius} 0 0 ${sweep} ${p2n.x} ${p2n.y}`;
+}
 
 // --- ASA ANIMATION COMPONENT DEFINED INSIDE ---
 const AsaAnimation: React.FC = () => {
-  // --- CHANGED: Increased height from 220 to 240 ---
   const svgWidth = 400;
   const svgHeight = 240; 
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   
-  // Highlight colors for A-S-A
-  const angle1Color = isDarkMode ? '#2DD4BF' : '#0D9488'; // Teal (Angle A/K)
-  const sideColor = isDarkMode ? '#60A5FA' : '#2563EB';   // Blue (Side AB/KL)
-  const angle2Color = isDarkMode ? '#F472B6' : '#DB2777'; // Pink (Angle B/L)
+  const angle1Color = isDarkMode ? '#2DD4BF' : '#0D9488'; 
+  const sideColor = isDarkMode ? '#60A5FA' : '#2563EB';
+  const angle2Color = isDarkMode ? '#F472B6' : '#DB2777';
 
-  // Triangle 1 (ABC) from your image
   const T1 = { A: { x: 30, y: 180 }, B: { x: 150, y: 180 }, C: { x: 105, y: 50 } };
-  // Triangle 2 (KLM) from your image
   const T2 = { K: { x: 250, y: 180 }, L: { x: 370, y: 180 }, M: { x: 325, y: 50 } };
 
-  const commonProps = {
-    fill: 'none',
-    strokeWidth: 2,
-  };
+  const commonProps = { fill: 'none', strokeWidth: 2 };
 
   const anim = {
     hidden: { opacity: 0, pathLength: 0 },
     visible: (delay: number) => ({
       opacity: 1,
       pathLength: 1,
-      transition: { delay: delay, duration: 0.5, ease: 'easeInOut' }
+      transition: { delay, duration: 0.5, ease: 'easeInOut' }
     }),
   };
-  
+
   const lineAnim = {
     hidden: { opacity: 0 },
     visible: (delay: number) => ({
       opacity: 1,
-      transition: { delay: delay, duration: 0.5 }
+      transition: { delay, duration: 0.5 }
     }),
-  }
+  };
 
   const textAnim = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: (delay: number) => ({
-      opacity: 1,
-      scale: 1,
-      transition: { delay: delay, duration: 0.5 }
+      opacity: 1, scale: 1,
+      transition: { delay, duration: 0.5 }
     }),
   };
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* --- Triangle 1 (ABC) --- */}
-        <path
-          d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`}
-          stroke={strokeColor}
-          {...commonProps}
-        />
+      <svg width={svgWidth} height={svgHeight}>
+
+        {/* Triangles */}
+        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
         <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor} fontSize="14">A</text>
         <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor} fontSize="14">B</text>
         <text x={T1.C.x} y={T1.C.y - 10} fill={strokeColor} fontSize="14" textAnchor="middle">C</text>
 
-        {/* --- Triangle 2 (KLM) --- */}
-        <path
-          d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`}
-          stroke={strokeColor}
-          {...commonProps}
-        />
+        <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} />
         <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor} fontSize="14">K</text>
         <text x={T2.L.x + 5} y={T2.L.y + 5} fill={strokeColor} fontSize="14">L</text>
         <text x={T2.M.x} y={T2.M.y - 10} fill={strokeColor} fontSize="14" textAnchor="middle">M</text>
 
+        {/* ANGLE 1 */}
+        <motion.path d={angleArcPath(T1.A, T1.B, T1.C, 20, 1)} stroke={angle1Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={0.5}/>
+        <motion.text x={T1.A.x + 18} y={T1.A.y - 10} fill={angle1Color} fontSize="12" variants={textAnim} initial="hidden" animate="visible" custom={0.7}>45°</motion.text>
 
-        {/* --- ASA Highlights --- */}
+        <motion.path d={angleArcPath(T2.K, T2.L, T2.M, 20, 1)} stroke={angle1Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={0.5}/>
+        <motion.text x={T2.K.x + 18} y={T2.K.y - 10} fill={angle1Color} fontSize="12" variants={textAnim} initial="hidden" animate="visible" custom={0.7}>45°</motion.text>
 
-        {/* ANGLE 1 (A and K) - 45° */}
-        <motion.path
-          d={`M ${T1.A.x + 20} ${T1.A.y} A 20 20 0 0 1 ${T1.A.x + 14.14} ${T1.A.y - 14.14}`}
-          stroke={angle1Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={0.5}
-        />
-        <motion.text x={T1.A.x + 12} y={T1.A.y - 5} fill={angle1Color} fontSize="12"
-          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>45°</motion.text>
-          
-        <motion.path
-          d={`M ${T2.K.x + 20} ${T2.K.y} A 20 20 0 0 1 ${T2.K.x + 14.14} ${T2.K.y - 14.14}`}
-          stroke={angle1Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={0.5}
-        />
-        <motion.text x={T2.K.x + 12} y={T2.K.y - 5} fill={angle1Color} fontSize="12"
-          variants={textAnim} initial="hidden" animate="visible" custom={0.7}>45°</motion.text>
-        {/* A Label */}
-        <motion.text x={(T1.A.x + T2.K.x) / 2 + 10} y={T1.A.y + 20} fill={angle1Color} fontSize="16" fontWeight="bold" textAnchor="middle"
-          variants={textAnim} initial="hidden" animate="visible" custom={0.9}>A</motion.text>
+        {/* SIDE */}
+        <motion.line x1={30} y1={180} x2={150} y2={180} stroke={sideColor} strokeWidth="6" variants={lineAnim} initial="hidden" animate="visible" custom={1.5}/>
+        <motion.text x={90} y={175} fill={sideColor} fontSize="12" textAnchor="middle" variants={textAnim} initial="hidden" animate="visible" custom={1.7}>5</motion.text>
 
+        <motion.line x1={250} y1={180} x2={370} y2={180} stroke={sideColor} strokeWidth="6" variants={lineAnim} initial="hidden" animate="visible" custom={1.5}/>
+        <motion.text x={310} y={175} fill={sideColor} fontSize="12" textAnchor="middle" variants={textAnim} initial="hidden" animate="visible" custom={1.7}>5</motion.text>
 
-        {/* SIDE (AB and KL) - 5 */}
-        <motion.line
-          x1={T1.A.x} y1={T1.A.y} x2={T1.B.x} y2={T1.B.y}
-          stroke={sideColor} strokeWidth="6" variants={lineAnim} initial="hidden" animate="visible" custom={1.5}
-        />
-        <motion.text x={(T1.A.x + T1.B.x) / 2} y={T1.A.y - 5} fill={sideColor} fontSize="12" textAnchor="middle"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>5</motion.text>
-          
-        <motion.line
-          x1={T2.K.x} y1={T2.K.y} x2={T2.L.x} y2={T2.L.y}
-          stroke={sideColor} strokeWidth="6" variants={lineAnim} initial="hidden" animate="visible" custom={1.5}
-        />
-        <motion.text x={(T2.K.x + T2.L.x) / 2} y={T2.K.y - 5} fill={sideColor} fontSize="12" textAnchor="middle"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>5</motion.text>
-        {/* S Label */}
-        <motion.text x={(T1.B.x + T2.L.x) / 2 - 10} y={T1.A.y + 20} fill={sideColor} fontSize="16" fontWeight="bold" textAnchor="middle"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.9}>S</motion.text>
+        {/* ANGLE 2 */}
+        <motion.path d={angleArcPath(T1.B, T1.A, T1.C, 20, 0)} stroke={angle2Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={2.5}/>
+        <motion.text x={T1.B.x - 28} y={T1.B.y - 12} fill={angle2Color} fontSize="12" variants={textAnim} initial="hidden" animate="visible" custom={2.7}>79°</motion.text>
 
+        <motion.path d={angleArcPath(T2.L, T2.K, T2.M, 20, 0)} stroke={angle2Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={2.5}/>
+        <motion.text x={T2.L.x - 28} y={T2.L.y - 12} fill={angle2Color} fontSize="12" variants={textAnim} initial="hidden" animate="visible" custom={2.7}>79°</motion.text>
 
-        {/* ANGLE 2 (B and L) - 79° */}
-        <motion.path
-          d={`M ${T1.B.x - 20} ${T1.B.y} A 20 20 0 0 0 ${T1.B.x - 19.6} ${T1.B.y - 3.8}`}
-          stroke={angle2Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={2.5}
-        />
-        <motion.path
-          d={`M ${T1.B.x - 23} ${T1.B.y} A 23 23 0 0 0 ${T1.B.x - 22.5} ${T1.B.y - 4.4}`}
-          stroke={angle2Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={2.5}
-        />
-        <motion.text x={T1.B.x - 28} y={T1.B.y - 5} fill={angle2Color} fontSize="12"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>79°</motion.text>
+        {/* >>> CLEAN CENTERED A S A LABEL <<< */}
+        <motion.text x={svgWidth / 2 - 40} y={svgHeight - 65} fill={angle1Color} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.0}>A</motion.text>
 
-        <motion.path
-          d={`M ${T2.L.x - 20} ${T2.L.y} A 20 20 0 0 0 ${T2.L.x - 19.6} ${T2.L.y - 3.8}`}
-          stroke={angle2Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={2.5}
-        />
-        <motion.path
-          d={`M ${T2.L.x - 23} ${T2.L.y} A 23 23 0 0 0 ${T2.L.x - 22.5} ${T2.L.y - 4.4}`}
-          stroke={angle2Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={2.5}
-        />
-        <motion.text x={T2.L.x - 28} y={T2.L.y - 5} fill={angle2Color} fontSize="12"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.7}>79°</motion.text>
-        {/* A Label */}  
-        <motion.text x={(T1.C.x + T2.M.x) / 2} y={T1.A.y + 20} fill={angle2Color} fontSize="16" fontWeight="bold" textAnchor="middle"
-          variants={textAnim} initial="hidden" animate="visible" custom={2.9}>A</motion.text>
+        <motion.text x={svgWidth / 2} y={svgHeight - 65} fill={sideColor} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.2}>S</motion.text>
 
-        {/* Congruence Statement - MOVED TO y={svgHeight - 15} */}
+        <motion.text x={svgWidth / 2 + 40} y={svgHeight - 65} fill={angle2Color} fontSize="16" fontWeight="bold" textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={2.4}>A</motion.text>
+
+        {/* FINAL STATEMENT */}
         <motion.text x={svgWidth / 2} y={svgHeight - 15} fill={strokeColor} fontSize="18" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={3.5}>
-          ∴ &triangle;ABC &cong; &triangle;KLM
+          ∴ △ABC ≅ △KLM
         </motion.text>
+
       </svg>
     </div>
   );
 };
-// --- END OF ANIMATION COMPONENT DEFINITION ---
-
+// --- END ---
 
 // ... The rest of your file (export default function AsaSlide1()...)
 // remains exactly the same. Just replace the AsaAnimation component
