@@ -3,19 +3,108 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
-// Helper: Draws clean arc between sides of an angle
-function angleArcPath(center: {x:number, y:number}, p1: {x:number, y:number}, p2:{x:number,y:number}, radius:number, sweep: 0 | 1) {
-  const v1 = { x: p1.x - center.x, y: p1.y - center.y };
-  const v2 = { x: p2.x - center.x, y: p2.y - center.y };
 
-  const len1 = Math.hypot(v1.x, v1.y);
-  const len2 = Math.hypot(v2.x, v2.y);
+// --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
 
-  const p1n = { x: center.x + (v1.x / len1) * radius, y: center.y + (v1.y / len1) * radius };
-  const p2n = { x: center.x + (v2.x / len2) * radius, y: center.y + (v2.y / len2) * radius };
+type Point = { x: number; y: number };
 
-  return `M ${p1n.x} ${p1n.y} A ${radius} ${radius} 0 0 ${sweep} ${p2n.x} ${p2n.y}`;
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => {
+  const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+  return mag === 0 ? 1e-6 : mag; // Avoid division by zero
+};
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const v1Mag = magnitude(v1);
+  const v2Mag = magnitude(v2);
+  const angle = Math.acos(dotProduct(v1, v2) / (v1Mag * v2Mag));
+  return isNaN(angle) ? 0 : angle;
+};
+
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+const getAngleLabelPosition = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  offset: number = 25,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const bisectorV = { x: nv1.x + nv2.x, y: nv1.y + nv2.y };
+  const magBisector = magnitude(bisectorV);
+  const nBisectorV = magBisector < 1e-6 
+    ? { x: -nv1.y, y: nv1.x }
+    : { x: bisectorV.x / magBisector, y: bisectorV.y / magBisector };
+
+  return {
+    x: vertex.x + nBisectorV.x * offset,
+    y: vertex.y + nBisectorV.y * offset,
+  };
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+  // Animation props to fix TS error
+  variants?: any;
+  custom?: any;
+  initial?: string;
+  animate?: string;
 }
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ 
+  p1, vertex, p2, color, radius, commonProps, 
+  variants, custom, initial, animate 
+}) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return (
+    <motion.path
+      d={pathD}
+      stroke={color}
+      {...commonProps}
+      // Pass all animation props
+      variants={variants}
+      custom={custom}
+      initial={initial}
+      animate={animate}
+    />
+  );
+};
+
 
 // --- ASA ANIMATION COMPONENT DEFINED INSIDE ---
 const AsaAnimation: React.FC = () => {
@@ -23,6 +112,7 @@ const AsaAnimation: React.FC = () => {
   const svgHeight = 240; 
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   
   const angle1Color = isDarkMode ? '#2DD4BF' : '#0D9488'; 
   const sideColor = isDarkMode ? '#60A5FA' : '#2563EB';
@@ -57,30 +147,70 @@ const AsaAnimation: React.FC = () => {
       transition: { delay, duration: 0.5 }
     }),
   };
+  
+  // Calculate label positions
+  const labelA1Pos = getAngleLabelPosition(T1.B, T1.A, T1.C, 30);
+  const labelKPos = getAngleLabelPosition(T2.L, T2.K, T2.M, 30);
+  const labelBPos = getAngleLabelPosition(T1.A, T1.B, T1.C, 30);
+  const labelLPos = getAngleLabelPosition(T2.K, T2.L, T2.M, 30);
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight}>
+      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
 
         {/* Triangles */}
         <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-        <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor} fontSize="14">A</text>
-        <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor} fontSize="14">B</text>
-        <text x={T1.C.x} y={T1.C.y - 10} fill={strokeColor} fontSize="14" textAnchor="middle">C</text>
+        <text x={T1.A.x - 15} y={T1.A.y + 5} fill={labelColor} fontSize="14">A</text>
+        <text x={T1.B.x + 5} y={T1.B.y + 5} fill={labelColor} fontSize="14">B</text>
+        <text x={T1.C.x} y={T1.C.y - 10} fill={labelColor} fontSize="14" textAnchor="middle">C</text>
 
         <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} />
-        <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor} fontSize="14">K</text>
-        <text x={T2.L.x + 5} y={T2.L.y + 5} fill={strokeColor} fontSize="14">L</text>
-        <text x={T2.M.x} y={T2.M.y - 10} fill={strokeColor} fontSize="14" textAnchor="middle">M</text>
+        <text x={T2.K.x - 15} y={T2.K.y + 5} fill={labelColor} fontSize="14">K</text>
+        <text x={T2.L.x + 5} y={T2.L.y + 5} fill={labelColor} fontSize="14">L</text>
+        <text x={T2.M.x} y={T2.M.y - 10} fill={labelColor} fontSize="14" textAnchor="middle">M</text>
 
         {/* ANGLE 1 */}
-        <motion.path d={angleArcPath(T1.A, T1.B, T1.C, 20, 1)} stroke={angle1Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={0.5}/>
-        <motion.text x={T1.A.x + 18} y={T1.A.y - 10} fill={angle1Color} fontSize="12" variants={textAnim} initial="hidden" animate="visible" custom={0.7}>45°</motion.text>
+        <AnimatedAngleArc 
+          p1={T1.B} vertex={T1.A} p2={T1.C} 
+          color={angle1Color} 
+          commonProps={commonProps} 
+          radius={20} 
+          variants={anim} 
+          initial="hidden" 
+          animate="visible" 
+          custom={0.5}
+        />
+        <motion.text 
+          {...labelA1Pos} 
+          fill={angle1Color} 
+          fontSize="12" 
+          variants={textAnim} initial="hidden" animate="visible" custom={0.7}
+          textAnchor="middle" dominantBaseline="middle"
+        >
+          45°
+        </motion.text>
 
-        <motion.path d={angleArcPath(T2.K, T2.L, T2.M, 20, 1)} stroke={angle1Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={0.5}/>
-        <motion.text x={T2.K.x + 18} y={T2.K.y - 10} fill={angle1Color} fontSize="12" variants={textAnim} initial="hidden" animate="visible" custom={0.7}>45°</motion.text>
+        <AnimatedAngleArc 
+          p1={T2.L} vertex={T2.K} p2={T2.M} 
+          color={angle1Color} 
+          commonProps={commonProps} 
+          radius={20} 
+          variants={anim} 
+          initial="hidden" 
+          animate="visible" 
+          custom={0.5}
+        />
+        <motion.text 
+          {...labelKPos}
+          fill={angle1Color} 
+          fontSize="12" 
+          variants={textAnim} initial="hidden" animate="visible" custom={0.7}
+          textAnchor="middle" dominantBaseline="middle"
+        >
+          45°
+        </motion.text>
 
-        {/* SIDE */}
+        {/* SIDE (Unchanged, as it's a line highlight, not a hash mark) */}
         <motion.line x1={30} y1={180} x2={150} y2={180} stroke={sideColor} strokeWidth="6" variants={lineAnim} initial="hidden" animate="visible" custom={1.5}/>
         <motion.text x={90} y={175} fill={sideColor} fontSize="12" textAnchor="middle" variants={textAnim} initial="hidden" animate="visible" custom={1.7}>5</motion.text>
 
@@ -88,11 +218,45 @@ const AsaAnimation: React.FC = () => {
         <motion.text x={310} y={175} fill={sideColor} fontSize="12" textAnchor="middle" variants={textAnim} initial="hidden" animate="visible" custom={1.7}>5</motion.text>
 
         {/* ANGLE 2 */}
-        <motion.path d={angleArcPath(T1.B, T1.A, T1.C, 20, 0)} stroke={angle2Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={2.5}/>
-        <motion.text x={T1.B.x - 28} y={T1.B.y - 12} fill={angle2Color} fontSize="12" variants={textAnim} initial="hidden" animate="visible" custom={2.7}>79°</motion.text>
+        <AnimatedAngleArc 
+          p1={T1.A} vertex={T1.B} p2={T1.C} 
+          color={angle2Color} 
+          commonProps={commonProps} 
+          radius={20} 
+          variants={anim} 
+          initial="hidden" 
+          animate="visible" 
+          custom={2.5}
+        />
+        <motion.text 
+          {...labelBPos} 
+          fill={angle2Color} 
+          fontSize="12" 
+          variants={textAnim} initial="hidden" animate="visible" custom={2.7}
+          textAnchor="middle" dominantBaseline="middle"
+        >
+          79°
+        </motion.text>
 
-        <motion.path d={angleArcPath(T2.L, T2.K, T2.M, 20, 0)} stroke={angle2Color} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={2.5}/>
-        <motion.text x={T2.L.x - 28} y={T2.L.y - 12} fill={angle2Color} fontSize="12" variants={textAnim} initial="hidden" animate="visible" custom={2.7}>79°</motion.text>
+        <AnimatedAngleArc 
+          p1={T2.K} vertex={T2.L} p2={T2.M} 
+          color={angle2Color} 
+          commonProps={commonProps} 
+          radius={20} 
+          variants={anim} 
+          initial="hidden" 
+          animate="visible" 
+          custom={2.5}
+        />
+        <motion.text 
+          {...labelLPos} 
+          fill={angle2Color} 
+          fontSize="12" 
+          variants={textAnim} initial="hidden" animate="visible" custom={2.7}
+          textAnchor="middle" dominantBaseline="middle"
+        >
+          79°
+        </motion.text>
 
         {/* >>> CLEAN CENTERED A S A LABEL <<< */}
         <motion.text x={svgWidth / 2 - 40} y={svgHeight - 65} fill={angle1Color} fontSize="16" fontWeight="bold" textAnchor="middle"
@@ -104,7 +268,7 @@ const AsaAnimation: React.FC = () => {
         <motion.text x={svgWidth / 2 + 40} y={svgHeight - 65} fill={angle2Color} fontSize="16" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={2.4}>A</motion.text>
 
-        {/* FINAL STATEMENT */}
+        {/* FINAL STATEMENT (Replaced HTML entities) */}
         <motion.text x={svgWidth / 2} y={svgHeight - 15} fill={strokeColor} fontSize="18" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={3.5}>
           ∴ △ABC ≅ △KLM
@@ -116,9 +280,6 @@ const AsaAnimation: React.FC = () => {
 };
 // --- END ---
 
-// ... The rest of your file (export default function AsaSlide1()...)
-// remains exactly the same. Just replace the AsaAnimation component
-// with the one above.
 
 export default function AsaSlide1() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -150,32 +311,31 @@ export default function AsaSlide1() {
 
   const questions: QuizQuestion[] = [
     {
-  id: 'asa-intro-q1-meaning',
-  question: 'In the ASA rule, what is special about the side S?',
-  options: [
-    "It is the longest side",
-    "It is the side between the two angles",
-    "It is the shortest side",
-    "It does not matter which side it is"
-  ],
-  correctAnswer: "It is the side between the two angles",
-  explanation:
-    "Correct! In ASA, the side must be the one that lies between the two known angles. This is called the included side."
-},
-{
-  id: 'asa-intro-q2-requirement',
-  question: 'To use ASA to prove triangles are congruent, we must know two angles and...',
-  options: [
-    "Any matching side",
-    "A matching altitude",
-    "The side between those two angles",
-    "All three sides"
-  ],
-  correctAnswer: "The side between those two angles",
-  explanation:
-    "Correct! ASA stands for Angle-Side-Angle. The side must be the one that is directly between the two angles."
-}
-
+      id: 'asa-intro-q1-meaning',
+      question: 'In the ASA rule, what is special about the side S?',
+      options: [
+        "It is the longest side",
+        "It is the side between the two angles",
+        "It is the shortest side",
+        "It does not matter which side it is"
+      ],
+      correctAnswer: "It is the side between the two angles",
+      explanation:
+        "Correct! In ASA, the side must be the one that lies between the two known angles. This is called the included side."
+    },
+    {
+      id: 'asa-intro-q2-requirement',
+      question: 'To use ASA to prove triangles are congruent, we must know two angles and...',
+      options: [
+        "Any matching side",
+        "A matching altitude",
+        "The side between those two angles",
+        "All three sides"
+      ],
+      correctAnswer: "The side between those two angles",
+      explanation:
+        "Correct! ASA stands for Angle-Side-Angle. The side must be the one that is directly between the two angles."
+    }
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
@@ -233,7 +393,7 @@ export default function AsaSlide1() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content (UPDATED FROM YOUR IMAGE) */}
+        {/* Left Column - Content (UPDATED) */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             
@@ -242,7 +402,6 @@ export default function AsaSlide1() {
               The <strong>angle-side-angle (ASA)</strong> congruence criterion can be used as a shortcut to prove that two triangles are congruent. It states the following:
             </p>
 
-            {/* This is the blockquote from your image */}
             <blockquote className="my-4 p-4 bg-slate-100 dark:bg-slate-700/60 border-l-4 border-blue-500 rounded-r-lg">
               <p className="text-lg italic font-medium leading-relaxed">
                 Two triangles are congruent if and only if two angles and <strong>the included side</strong> of one triangle are congruent to two angles and the included side of the other triangle.
@@ -251,19 +410,18 @@ export default function AsaSlide1() {
 
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">To demonstrate, consider the triangles below.</h3>
             
-            {/* This section contains the logic from your image */}
             <div className="space-y-2 text-lg">
               <p>We can see that two pairs of angles are congruent:</p>
               <div className="pl-4 font-mono">
-                <p>&ang;A &cong; &ang;K</p>
-                <p>&ang;B &cong; &ang;L</p>
+                <p>∠A ≅ ∠K</p>
+                <p>∠B ≅ ∠L</p>
               </div>
             </div>
 
             <div className="space-y-2 text-lg mt-4">
               <p>Also, we see that the included sides are congruent:</p>
               <div className="pl-4 font-mono">
-                <p>AB &cong; KL</p>
+                <p>AB ≅ KL</p>
               </div>
             </div>
             
@@ -272,7 +430,7 @@ export default function AsaSlide1() {
                 Therefore, the ASA congruence criterion guarantees that these two triangles are congruent, and we can write:
               </p>
               <p className="text-xl font-bold text-center my-4 font-mono text-blue-600 dark:text-blue-400">
-                &triangle;ABC &cong; &triangle;KLM
+                △ABC ≅ △KLM
               </p>
             </div>
           </div>
@@ -282,9 +440,8 @@ export default function AsaSlide1() {
         <div className="space-y-6">
           {/* --- ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing the Example</h3>
+            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-4empty">Visualizing the Example</h3>
             
-            {/* --- USE THE UPDATED ANIMATION COMPONENT --- */}
             <AsaAnimation />
             
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">

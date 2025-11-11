@@ -4,7 +4,148 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
+// --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
+
+type Point = { x: number; y: number };
+
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => {
+  const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+  return mag === 0 ? 1e-6 : mag; // Avoid division by zero
+};
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const v1Mag = magnitude(v1);
+  const v2Mag = magnitude(v2);
+  const angle = Math.acos(dotProduct(v1, v2) / (v1Mag * v2Mag));
+  return isNaN(angle) ? 0 : angle;
+};
+
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+const getSideMarksPath = (
+  p1: Point,
+  p2: Point,
+  numMarks: number,
+  markLength: number = 8,
+  spacing: number = 3,
+) => {
+  const midX = (p1.x + p2.x) / 2;
+  const midY = (p1.y + p2.y) / 2;
+  const v = getVector(p1, p2);
+  const len = magnitude(v);
+
+  const perpV = { x: -v.y / len, y: v.x / len };
+  const totalWidth = (numMarks - 1) * spacing;
+  let paths = '';
+  
+  for (let i = 0; i < numMarks; i++) {
+    const offset = (-totalWidth / 2) + i * spacing;
+    const start = {
+      x: midX + perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY + perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    const end = {
+      x: midX - perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY - perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    paths += `M ${start.x} ${start.y} L ${end.x} ${end.y} `;
+  }
+  return paths.trim();
+};
+
+// --- ANIMATION VARIANTS ---
+const groupVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const drawVariant = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { type: 'spring', duration: 1.5, bounce: 0 },
+      opacity: { duration: 0.01, delay: 0.1 },
+    },
+  },
+};
+
+const fadeVariant = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+      delay: 0.2,
+    },
+  },
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+}
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ p1, vertex, p2, color, radius, commonProps }) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+interface AnimatedSideMarksProps {
+  p1: Point;
+  p2: Point;
+  numMarks: number;
+  color: string;
+  commonProps: any;
+}
+
+const AnimatedSideMarks: React.FC<AnimatedSideMarksProps> = ({ p1, p2, numMarks, color, commonProps }) => {
+  const pathD = getSideMarksPath(p1, p2, numMarks);
+  return <motion.path d={pathD} stroke={color} strokeLinecap="round" {...commonProps} variants={drawVariant} strokeWidth="1.5" />;
+};
+
+
 // --- FIGURE FOR EXAMPLE (Left Side) & QUIZ Q2 (Right Side) ---
+// THIS FIGURE IS REBUILT BASED ON THE IMAGE 'image_bdab80.png'
 const FigureT_PQR: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 280;
@@ -12,10 +153,8 @@ const FigureT_PQR: React.FC = () => {
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   
-  // Colors from image
   const angle1 = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
   const angle2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const angle3 = isDarkMode ? '#F87171' : '#EF4444'; // Red/Orange
   const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
@@ -25,117 +164,121 @@ const FigureT_PQR: React.FC = () => {
   const Q = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
   const R = { A: { x: 230, y: 250 }, B: { x: 370, y: 250 }, C: { x: 320, y: 160 } };
 
-  // Hash marks
-  const hash1 = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
-    const midX = (p1.x + p2.x) / 2;
-    const midY = (p1.y + p2.y) / 2;
-    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
-    const x1 = midX - 4 * Math.cos(angle);
-    const y1 = midY - 4 * Math.sin(angle);
-    const x2 = midX + 4 * Math.cos(angle);
-    const y2 = midY + 4 * Math.sin(angle);
-    return <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={sideColor} strokeWidth="1.5" />
-  };
-  const hash2 = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
-    const midX = (p1.x + p2.x) / 2;
-    const midY = (p1.y + p2.y) / 2;
-    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
-    const x1 = midX - 2 * Math.cos(angle) - 4 * Math.cos(angle);
-    const y1 = midY - 2 * Math.sin(angle) - 4 * Math.sin(angle);
-    const x2 = midX - 2 * Math.cos(angle) + 4 * Math.cos(angle);
-    const y2 = midY - 2 * Math.sin(angle) + 4 * Math.sin(angle);
-    const x3 = midX + 2 * Math.cos(angle) - 4 * Math.cos(angle);
-    const y3 = midY + 2 * Math.sin(angle) - 4 * Math.sin(angle);
-    const x4 = midX + 2 * Math.cos(angle) + 4 * Math.cos(angle);
-    const y4 = midY + 2 * Math.sin(angle) + 4 * Math.sin(angle);
-    return <><line x1={x1} y1={y1} x2={x2} y2={y2} stroke={sideColor} strokeWidth="1.5" /><line x1={x3} y1={y3} x2={x4} y2={y4} stroke={sideColor} strokeWidth="1.5" /></>
-  };
-
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* --- Triangle T --- */}
-        <g>
-          <path d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={T.A.x} y={T.A.y - 10} fill={labelColor} fontSize="14">T</text>
-          <path d={`M ${T.A.x + 15} ${T.A.y} A 15 15 0 0 1 ${T.A.x + 12.1} ${T.A.y - 8.8}`} stroke={angle1} {...commonProps} />
-          <path d={`M ${T.C.x - 13.6} ${T.C.y + 6.5} A 15 15 0 0 1 ${T.C.x} ${T.C.y + 15}`} stroke={angle2} {...commonProps} />
-          <path d={`M ${T.B.x - 15} ${T.B.y} A 15 15 0 0 0 ${T.B.x - 12.1} ${T.B.y - 8.8}`} stroke={angle3} {...commonProps} />
-          {hash1(T.C, T.B)}
-          {hash2(T.A, T.B)}
-        </g>
+        <motion.g variants={groupVariants}>
+          <motion.path d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          <motion.text x={T.A.x} y={T.A.y - 10} fill={labelColor} fontSize="14" variants={fadeVariant}>T</motion.text>
+          <AnimatedAngleArc p1={T.B} vertex={T.A} p2={T.C} color={angle2} commonProps={commonProps} radius={15} />
+          <AnimatedSideMarks p1={T.A} p2={T.C} numMarks={1} color={sideColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={T.A} p2={T.B} numMarks={2} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+        
         {/* --- Triangle P --- */}
-        <g>
-          <path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={P.A.x + 20} y={P.A.y + 30} fill={labelColor} fontSize="14">P</text>
-          <path d={`M ${P.A.x + 13.6} ${P.A.y + 6.5} A 15 15 0 0 1 ${P.A.x} ${P.A.y + 15}`} stroke={angle2} {...commonProps} />
-          {hash1(P.B, P.C)}
-          {hash2(P.A, P.B)}
-        </g>
+        <motion.g variants={groupVariants}>
+          <motion.path d={`M ${P.A.x} ${P.A.y} L ${P.B.x} ${P.B.y} L ${P.C.x} ${P.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          <motion.text x={P.A.x + 20} y={P.A.y + 30} fill={labelColor} fontSize="14" variants={fadeVariant}>P</motion.text>
+          <AnimatedSideMarks p1={P.A} p2={P.C} numMarks={1} color={sideColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={P.A} p2={P.B} numMarks={2} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+        
         {/* --- Triangle Q --- */}
-        <g>
-          <path d={`M ${Q.A.x} ${Q.A.y} L ${Q.B.x} ${Q.B.y} L ${Q.C.x} ${Q.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={Q.C.x} y={Q.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">Q</text>
-          {hash1(Q.C, Q.B)}
-          {hash2(Q.A, Q.B)}
-        </g>
+        <motion.g variants={groupVariants}>
+          <motion.path d={`M ${Q.A.x} ${Q.A.y} L ${Q.B.x} ${Q.B.y} L ${Q.C.x} ${Q.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          <motion.text x={Q.C.x} y={Q.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle" variants={fadeVariant}>Q</motion.text>
+          <AnimatedSideMarks p1={Q.A} p2={Q.C} numMarks={1} color={sideColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={Q.A} p2={Q.B} numMarks={2} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+        
         {/* --- Triangle R --- */}
-        <g>
-          <path d={`M ${R.A.x} ${R.A.y} L ${R.B.x} ${R.B.y} L ${R.C.x} ${R.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={R.C.x} y={R.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">R</text>
-          <path d={`M ${R.A.x + 15} ${R.A.y} A 15 15 0 0 1 ${R.A.x + 13.6} ${R.A.y - 6.5}`} stroke={angle1} {...commonProps} />
-          {hash1(R.C, R.B)}
-          {hash2(R.A, R.B)}
-        </g>
-      </svg>
+        <motion.g variants={groupVariants}>
+          <motion.path d={`M ${R.A.x} ${R.A.y} L ${R.B.x} ${R.B.y} L ${R.C.x} ${R.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          <motion.text x={R.C.x} y={R.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle" variants={fadeVariant}>R</motion.text>
+          <AnimatedAngleArc p1={R.B} vertex={R.A} p2={R.C} color={angle1} commonProps={commonProps} radius={15} />
+          <AnimatedSideMarks p1={R.A} p2={R.C} numMarks={1} color={sideColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={R.A} p2={R.B} numMarks={2} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+      </motion.svg>
     </div>
   );
 };
 
 // --- FIGURE FOR QUIZ QUESTION 1 (Pentagon) ---
+// THIS FIGURE IS REBUILT BASED ON THE IMAGE 'image_bdab80.png'
 const FigureQ1: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   
   const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
   const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
   const commonProps = { fill: 'none', strokeWidth: 2 };
-
+  
   const A = { x: 200, y: 30 };
   const B = { x: 80, y: 100 };
   const C = { x: 120, y: 180 };
   const D = { x: 280, y: 180 };
   const E = { x: 320, y: 100 };
 
+  // Props for filled angles
+  const orangeAngleProps = { ...commonProps, fill: angleOrange, fillOpacity: 0.4, strokeWidth: 3, stroke: angleOrange };
+  const greenAngleProps = { ...commonProps, fill: angleGreen, fillOpacity: 0.4, strokeWidth: 3, stroke: angleGreen };
+
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Draw all lines */}
-        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${E.x} ${E.y} Z`} stroke={strokeColor} fill={isDarkMode ? 'rgb(30 41 59 / 0.5)' : 'rgb(241 245 249 / 0.5)'} />
-        <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
+        <motion.path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${E.x} ${E.y} Z`} 
+          stroke={strokeColor} 
+          fill={isDarkMode ? 'rgb(30 41 59 / 0.5)' : 'rgb(241 245 249 / 0.5)'} 
+          variants={drawVariant} 
+        />
+        <motion.path d={`M ${A.x} ${A.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
 
         {/* Labels */}
-        <text x={A.x} y={A.y - 10} fill={strokeColor} textAnchor="middle">A</text>
-        <text x={B.x - 15} y={B.y} fill={strokeColor}>B</text>
-        <text x={C.x - 15} y={C.y + 5} fill={strokeColor}>C</text>
-        <text x={D.x + 5} y={D.y + 5} fill={strokeColor}>D</text>
-        <text x={E.x + 5} y={E.y} fill={strokeColor}>E</text>
+        <motion.text x={A.x} y={A.y - 10} fill={labelColor} textAnchor="middle" variants={fadeVariant}>A</motion.text>
+        <motion.text x={B.x - 15} y={B.y} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={C.x - 15} y={C.y + 5} fill={labelColor} variants={fadeVariant}>C</motion.text>
+        <motion.text x={D.x + 5} y={D.y + 5} fill={labelColor} variants={fadeVariant}>D</motion.text>
+        <motion.text x={E.x + 5} y={E.y} fill={labelColor} variants={fadeVariant}>E</motion.text>
 
-        {/* Markings */}
-        <path d={`M ${A.x - 12} ${A.y + 15} A 20 20 0 0 1 ${A.x} ${A.y + 20}`} stroke={angleOrange} strokeWidth="3" fill={angleOrange} fillOpacity="0.4" />
-        <path d={`M ${A.x} ${A.y + 20} A 20 20 0 0 1 ${A.x + 12} ${A.y + 15}`} stroke={angleGreen} strokeWidth="3" fill={angleGreen} fillOpacity="0.4" />
+        {/* --- IMPROVED Markings (from image_bdab80.png) --- */}
+        {/* Angle BAC */}
+        <AnimatedAngleArc p1={B} vertex={A} p2={C} color={angleOrange} commonProps={orangeAngleProps} radius={20} />
+        {/* Angle EAD */}
+        <AnimatedAngleArc p1={E} vertex={A} p2={D} color={angleGreen} commonProps={greenAngleProps} radius={20} />
         
-        <line x1={140} y1={60} x2={150} y2={65} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
-        <line x1={250} y1={65} x2={260} y2={60} stroke={strokeColor} strokeWidth="2" /> {/* AE */}
+        {/* Side AB and AE */}
+        <AnimatedSideMarks p1={A} p2={B} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={A} p2={E} numMarks={1} color={strokeColor} commonProps={commonProps} />
 
-        <line x1={160} y1={100} x2={170} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* AC */}
-        <line x1={162} y1={97} x2={172} y2={102} stroke={strokeColor} strokeWidth="2" />
-        <line x1={230} y1={105} x2={240} y2={100} stroke={strokeColor} strokeWidth="2" /> {/* AD */}
-        <line x1={228} y1={102} x2={238} y2={97} stroke={strokeColor} strokeWidth="2" />
-      </svg>
+        {/* Side AC and AD */}
+        <AnimatedSideMarks p1={A} p2={C} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={A} p2={D} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        
+        {/* Side BC and ED (from image) */}
+        <AnimatedSideMarks p1={B} p2={C} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={E} p2={D} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      </motion.svg>
     </div>
   );
 };
@@ -171,7 +314,7 @@ export default function SasSlide2() {
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY ---
+  // --- QUIZ QUESTIONS (Corrected based on new figures) ---
   const questions: QuizQuestion[] = [
     {
       id: 'sas-id-q1-pentagon',
@@ -185,10 +328,9 @@ export default function SasSlide2() {
         "ΔADE and ΔACD"
       ],
       correctAnswer: "ΔADE only",
-      explanation: "Correct! ΔABC and ΔADE share the same SAS pattern: Side (1 hash), a marked Included Angle, and Side (2 hashes). Assuming the marked angles (orange and green) are congruent, they are congruent by SAS."
+      explanation: "Correct! ΔABC and ΔADE share the same SAS pattern: Side (AB ≅ AE), a marked Included Angle (∠BAC ≅ ∠EAD), and Side (AC ≅ AD)."
     },
     {
-      // This question uses the figure from the "Example" image, as it matches the logic of the options
       id: 'sas-id-q2-triangles',
       question: 'According to the SAS criterion only, which of the following triangles is congruent to T?',
       figure: <FigureT_PQR />, 
@@ -199,8 +341,8 @@ export default function SasSlide2() {
         "P only",
         "P and Q only"
       ],
-      correctAnswer: "P and R only",
-      explanation: "Correct! Triangle T has a Side (2 hashes), an Included Angle (green), and a Side (1 hash). Triangles P and R also have a Side (2 hashes), an Included Angle (green or yellow), and a Side (1 hash). Triangle Q is missing an included angle, so it is not SAS. Assuming all marked angles are congruent, P and R match T."
+      correctAnswer: "R only", // CORRECTED
+      explanation: "Correct! Triangle T has a Side (2 hashes), an Included Angle (green), and a Side (1 hash). Triangle R also has a Side (2 hashes), an Included Angle (yellow), and a Side (1 hash). Triangles P and Q are not congruent by SAS because they are missing the *included* angle."
     }
   ];
 
@@ -259,7 +401,7 @@ export default function SasSlide2() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content (UPDATED) */}
+        {/* Left Column - Content (Corrected) */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             
@@ -286,22 +428,25 @@ export default function SasSlide2() {
             </p>
             <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
                 <li>
-                  <strong>P ≅ T</strong> by SAS since two sides and the included angle of one triangle are congruent to two sides and the included angle of the other triangle.
+                  <strong>T</strong> shows a Side (2 hashes), an <strong>Included Angle</strong> (green), and a Side (1 hash).
                 </li>
                 <li>
-                  <strong>Q is not congruent to T</strong> by SAS since we don't have a pair of congruent angles.
+                  <strong>P</strong> shows two sides, but <strong>no included angle</strong>. It does not fit SAS.
                 </li>
                 <li>
-                  <strong>R ≅ T</strong> by SAS too, since two sides and the included angle of one triangle are congruent to two sides and the included angle of the other triangle.
+                  <strong>Q</strong> shows two sides, but <strong>no included angle</strong>. It does not fit SAS.
+                </li>
+                <li>
+                  <strong>R</strong> shows a Side (2 hashes), an <strong>Included Angle</strong> (yellow), and a Side (1 hash). This fits SAS.
                 </li>
             </ul>
             <p className="text-lg leading-relaxed mt-4 font-semibold">
-              Therefore, the correct answer is "P and R only."
+              Assuming the marked angles (green and yellow) are congruent, the correct answer is "R only."
             </p>
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz (UPDATED) */}
+        {/* Right Column - Animation and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
@@ -354,7 +499,7 @@ export default function SasSlide2() {
                         ? showFeedback
                           ? correct
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT
+                            : 'border-red-500 bg-red-50 dark:bg-red-900/30' // INCORRECT
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
                         : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;

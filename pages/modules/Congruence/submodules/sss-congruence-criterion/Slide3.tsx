@@ -4,12 +4,192 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
+// --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
+
+type Point = { x: number; y: number };
+
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => {
+  const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+  return mag === 0 ? 1e-6 : mag; // Avoid division by zero
+};
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const v1Mag = magnitude(v1);
+  const v2Mag = magnitude(v2);
+  const angle = Math.acos(dotProduct(v1, v2) / (v1Mag * v2Mag));
+  return isNaN(angle) ? 0 : angle;
+};
+
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+const getSideMarksPath = (
+  p1: Point,
+  p2: Point,
+  numMarks: number,
+  markLength: number = 8,
+  spacing: number = 3,
+) => {
+  const midX = (p1.x + p2.x) / 2;
+  const midY = (p1.y + p2.y) / 2;
+  const v = getVector(p1, p2);
+  const len = magnitude(v);
+
+  const perpV = { x: -v.y / len, y: v.x / len };
+  const totalWidth = (numMarks - 1) * spacing;
+  let paths = '';
+  
+  for (let i = 0; i < numMarks; i++) {
+    const offset = (-totalWidth / 2) + i * spacing;
+    const start = {
+      x: midX + perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY + perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    const end = {
+      x: midX - perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY - perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    paths += `M ${start.x} ${start.y} L ${end.x} ${end.y} `;
+  }
+  return paths.trim();
+};
+
+const getAngleLabelPosition = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  offset: number = 25,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const bisectorV = { x: nv1.x + nv2.x, y: nv1.y + nv2.y };
+  const magBisector = magnitude(bisectorV);
+  const nBisectorV = magBisector < 1e-6 
+    ? { x: -nv1.y, y: nv1.x }
+    : { x: bisectorV.x / magBisector, y: bisectorV.y / magBisector };
+
+  return {
+    x: vertex.x + nBisectorV.x * offset,
+    y: vertex.y + nBisectorV.y * offset,
+  };
+};
+
+// --- ANIMATION VARIANTS ---
+const groupVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const drawVariant = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { type: 'spring', duration: 1.5, bounce: 0 },
+      opacity: { duration: 0.01, delay: 0.1 },
+    },
+  },
+};
+
+const fadeVariant = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+      delay: 0.2,
+    },
+  },
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+}
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ p1, vertex, p2, color, radius, commonProps }) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+interface AnimatedSideMarksProps {
+  p1: Point;
+  p2: Point;
+  numMarks: number;
+  color: string;
+  commonProps: any;
+}
+
+const AnimatedSideMarks: React.FC<AnimatedSideMarksProps> = ({ p1, p2, numMarks, color, commonProps }) => {
+  const pathD = getSideMarksPath(p1, p2, numMarks);
+  return <motion.path d={pathD} stroke={color} strokeLinecap="round" {...commonProps} variants={drawVariant} strokeWidth="1.5" />;
+};
+
+const RightAngleBox: React.FC<{ vertex: Point, p1: Point, p2: Point, color: string, size?: number, commonProps: any }> = 
+  ({ vertex, p1, p2, color, size = 10, commonProps }) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const p1_on_line = { x: vertex.x + nv1.x * size, y: vertex.y + nv1.y * size };
+  const p2_on_line = { x: vertex.x + nv2.x * size, y: vertex.y + nv2.y * size };
+  const corner_point = { x: p1_on_line.x + nv2.x * size, y: p1_on_line.y + nv2.y * size };
+
+  const pathD = `M ${p1_on_line.x} ${p1_on_line.y} L ${corner_point.x} ${corner_point.y} L ${p2_on_line.x} ${p2_on_line.y}`;
+  
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+
 // --- FIGURE FOR EXAMPLE (Left Side) ---
 const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
   const O = { x: 200, y: 30 };
@@ -20,41 +200,46 @@ const FigureExample: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y} L ${O.x} ${O.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${O.x} ${O.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${O.x} ${O.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.path d={`M ${A.x} ${A.y} L ${D.x} ${D.y} L ${O.x} ${O.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${O.x} ${O.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${O.x} ${O.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
         
         {/* Labels */}
-        <text x={O.x} y={O.y - 10} fill={strokeColor} textAnchor="middle">O</text>
-        <text x={A.x - 15} y={A.y + 5} fill={strokeColor}>A</text>
-        <text x={B.x} y={B.y + 15} fill={strokeColor} textAnchor="middle">B</text>
-        <text x={C.x} y={C.y + 15} fill={strokeColor} textAnchor="middle">C</text>
-        <text x={D.x + 5} y={D.y + 5} fill={strokeColor}>D</text>
+        <motion.text x={O.x} y={O.y - 10} fill={labelColor} textAnchor="middle" variants={fadeVariant}>O</motion.text>
+        <motion.text x={A.x - 15} y={A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={B.x} y={B.y + 15} fill={labelColor} textAnchor="middle" variants={fadeVariant}>B</motion.text>
+        <motion.text x={C.x} y={C.y + 15} fill={labelColor} textAnchor="middle" variants={fadeVariant}>C</motion.text>
+        <motion.text x={D.x + 5} y={D.y + 5} fill={labelColor} variants={fadeVariant}>D</motion.text>
 
-        {/* Markings */}
-        <line x1={100} y1={180} x2={110} y2={180} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
-        <line x1={200} y1={180} x2={210} y2={180} stroke={strokeColor} strokeWidth="2" /> {/* BC */}
+        {/* --- IMPROVED Markings --- */}
+        <AnimatedSideMarks p1={A} p2={B} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={B} p2={C} numMarks={1} color={strokeColor} commonProps={commonProps} />
         
-        <line x1={125} y1={105} x2={135} y2={110} stroke={strokeColor} strokeWidth="2" /> {/* OA */}
-        <line x1={128} y1={102} x2={138} y2={107} stroke={strokeColor} strokeWidth="2" />
-        <line x1={265} y1={110} x2={275} y2={105} stroke={strokeColor} strokeWidth="2" /> {/* OC */}
-        <line x1={262} y1={107} x2={272} y2={102} stroke={strokeColor} strokeWidth="2" />
+        <AnimatedSideMarks p1={O} p2={A} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={O} p2={C} numMarks={2} color={strokeColor} commonProps={commonProps} />
 
-        <line x1={175} y1={105} x2={185} y2={110} stroke={strokeColor} strokeWidth="2" /> {/* OB */}
-        <path d="M 178 102 A 15 15 0 0 1 188 107" stroke={strokeColor} fill="none" strokeWidth="1.5" />
-      </svg>
+        {/* Mark on OB (common side) */}
+        <AnimatedSideMarks p1={O} p2={B} numMarks={3} color={strokeColor} commonProps={commonProps} />
+      </motion.svg>
     </div>
   );
 };
 
 // --- FIGURE FOR QUIZ QUESTION 1 (Q3 from image) ---
-// Note: This figure is interpreted as a kite ACBD with diagonals AD and CB.
 const FigureQ1: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
   const A = { x: 200, y: 30 };
@@ -65,45 +250,46 @@ const FigureQ1: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${C.x} ${C.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${A.x} ${A.y} L ${M.x - 40} ${M.y}`} stroke={strokeColor} {...commonProps} />
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${C.x} ${C.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
         
         {/* Labels */}
-        <text x={A.x} y={A.y - 10} fill={strokeColor} textAnchor="middle">A</text>
-        <text x={C.x - 15} y={C.y} fill={strokeColor}>C</text>
-        <text x={B.x + 5} y={B.y} fill={strokeColor}>B</text>
-        <text x={D.x} y={D.y + 15} fill={strokeColor} textAnchor="middle">D</text>
-        <text x={M.x + 5} y={M.y + 15} fill={strokeColor}>M</text>
+        <motion.text x={A.x} y={A.y - 10} fill={labelColor} textAnchor="middle" variants={fadeVariant}>A</motion.text>
+        <motion.text x={C.x - 15} y={C.y} fill={labelColor} variants={fadeVariant}>C</motion.text>
+        <motion.text x={B.x + 5} y={B.y} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={D.x} y={D.y + 15} fill={labelColor} textAnchor="middle" variants={fadeVariant}>D</motion.text>
+        <motion.text x={M.x + 5} y={M.y + 15} fill={labelColor} variants={fadeVariant}>M</motion.text>
         
-        {/* Markings from image */}
-        <line x1={120} y1={65} x2={130} y2={70} stroke={strokeColor} strokeWidth="2" /> {/* AC */}
-        <line x1={123} y1={62} x2={133} y2={67} stroke={strokeColor} strokeWidth="2" />
-        <line x1={270} y1={70} x2={280} y2={65} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
-        <line x1={267} y1={67} x2={277} y2={62} stroke={strokeColor} strokeWidth="2" />
+        {/* --- IMPROVED Markings from image --- */}
+        <AnimatedSideMarks p1={A} p2={C} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={A} p2={B} numMarks={2} color={strokeColor} commonProps={commonProps} />
 
-        <line x1={120} y1={155} x2={130} y2={150} stroke={strokeColor} strokeWidth="2" /> {/* CD */}
-        <line x1={123} y1={158} x2={133} y2={153} stroke={strokeColor} strokeWidth="2" />
-        <line x1={126} y1={161} x2={136} y2={156} stroke={strokeColor} strokeWidth="2" />
-        <line x1={270} y1={150} x2={280} y2={155} stroke={strokeColor} strokeWidth="2" /> {/* BD */}
-        <line x1={267} y1={153} x2={277} y2={158} stroke={strokeColor} strokeWidth="2" />
-        <line x1={264} y1={156} x2={274} y2={161} stroke={strokeColor} strokeWidth="2" />
+        <AnimatedSideMarks p1={C} p2={D} numMarks={3} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={B} p2={D} numMarks={3} color={strokeColor} commonProps={commonProps} />
         
-        <line x1={195} y1={70} x2={205} y2={70} stroke={strokeColor} strokeWidth="2" /> {/* AM */}
-      </svg>
+        {/* Common side AD */}
+        <AnimatedSideMarks p1={A} p2={D} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      </motion.svg>
     </div>
   );
 };
 
 // --- FIGURE FOR QUIZ QUESTION 2 (Q4 from image) ---
-// Figure is corrected to be solvable by SSS
 const FigureQ2: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
   const O = { x: 80, y: 110 };
@@ -114,30 +300,35 @@ const FigureQ2: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <path d={`M ${O.x} ${O.y} L ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${O.x} ${O.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${O.x} ${O.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.path d={`M ${O.x} ${O.y} L ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${O.x} ${O.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${O.x} ${O.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
         
         {/* Labels */}
-        <text x={O.x - 15} y={O.y} fill={strokeColor}>O</text>
-        <text x={A.x + 5} y={A.y + 5} fill={strokeColor}>A</text>
-        <text x={B.x + 5} y={B.y + 5} fill={strokeColor}>B</text>
-        <text x={C.x + 5} y={C.y} fill={strokeColor}>C</text>
-        <text x={D.x} y={D.y - 5} fill={strokeColor}>D</text>
+        <motion.text x={O.x - 15} y={O.y} fill={labelColor} variants={fadeVariant}>O</motion.text>
+        <motion.text x={A.x + 5} y={A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={B.x + 5} y={B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={C.x + 5} y={C.y} fill={labelColor} variants={fadeVariant}>C</motion.text>
+        <motion.text x={D.x} y={D.y - 5} fill={labelColor} variants={fadeVariant}>D</motion.text>
 
-        {/* Corrected Markings for SSS */}
-        <line x1={140} y1={145} x2={150} y2={150} stroke={strokeColor} strokeWidth="2" /> {/* OA */}
-        <line x1={143} y1={142} x2={153} y2={147} stroke={strokeColor} strokeWidth="2" />
-        <line x1={155} y1={95} x2={165} y2={90} stroke={strokeColor} strokeWidth="2" /> {/* OC */}
-        <line x1={158} y1={98} x2={168} y2={93} stroke={strokeColor} strokeWidth="2" />
+        {/* --- IMPROVED Markings for SSS --- */}
+        <AnimatedSideMarks p1={O} p2={A} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={O} p2={C} numMarks={2} color={strokeColor} commonProps={commonProps} />
         
-        <path d="M 170 125 A 15 15 0 0 1 180 120" stroke={strokeColor} fill="none" strokeWidth="1.5" /> {/* OB */}
-        <path d="M 120 75 A 15 15 0 0 1 130 70" stroke={strokeColor} fill="none" strokeWidth="1.5" /> {/* OD */}
+        <AnimatedSideMarks p1={O} p2={B} numMarks={3} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={O} p2={D} numMarks={3} color={strokeColor} commonProps={commonProps} />
 
-        <line x1={235} y1={160} x2={245} y2={160} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
-        <line x1={190} y1={60} x2={200} y2={60} stroke={strokeColor} strokeWidth="2" /> {/* CD */}
-      </svg>
+        <AnimatedSideMarks p1={A} p2={B} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={C} p2={D} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      </motion.svg>
     </div>
   );
 };
@@ -173,39 +364,37 @@ export default function SssSlide3() {
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-   {
-  id: 'sss-polygon-q3-kite',
-  question: 'According to the SSS criterion only, which triangle is congruent to triangle ACD?',
-  figure: <FigureQ1 />,
-  options: [
-    "Triangle AMB",
-    "Triangle ABD",
-    "None of the listed",
-    "Triangle AMB and Triangle AMC",
-    "Triangle AMC"
-  ],
-  correctAnswer: "Triangle ABD",
-  explanation:
-    "AC = AB and CD = BD are given as matching sides. The side AD is shared between triangle ACD and triangle ABD. So all three pairs of sides match. Therefore, triangle ACD is congruent to triangle ABD by the SSS (Side-Side-Side) criterion."
-},
-{
-  id: 'sss-polygon-q4-complex',
-  question: 'According to the SSS criterion only, which triangle is congruent to triangle OBC?',
-  figure: <FigureQ2 />,
-  options: [
-    "Triangle OAD",
-    "Triangle OBD",
-    "Triangle OAC",
-    "Triangle ODC",
-    "Triangle OBA"
-  ],
-  correctAnswer: "Triangle ODC",
-  explanation:
-    "To apply SSS, we compare side lengths. OC matches OA, OB matches OD, and BC matches DC. So the set of three matching sides is between triangle OBC and triangle ODC. Therefore, triangle OBC is congruent to triangle ODC by SSS."
-}
-
+    {
+      id: 'sss-polygon-q3-kite',
+      question: 'According to the SSS criterion only, which triangle is congruent to triangle ACD?',
+      figure: <FigureQ1 />,
+      options: [
+        "Triangle AMB",
+        "Triangle ABD",
+        "None of the listed",
+        "Triangle AMB and Triangle AMC",
+        "Triangle AMC"
+      ],
+      correctAnswer: "Triangle ABD",
+      explanation:
+        "AC = AB and CD = BD are given as matching sides. The side AD is shared between triangle ACD and triangle ABD. So all three pairs of sides match. Therefore, triangle ACD is congruent to triangle ABD by the SSS (Side-Side-Side) criterion."
+    },
+    {
+      id: 'sss-polygon-q4-complex',
+      question: 'According to the SSS criterion only, which triangle is congruent to triangle OBC?',
+      figure: <FigureQ2 />,
+      options: [
+        "Triangle OAD",
+        "Triangle OBD",
+        "Triangle OAC",
+        "Triangle ODC", // Corrected, was OAD in image but ODC in explanation
+        "Triangle OBA"
+      ],
+      correctAnswer: "Triangle ODC",
+      explanation:
+        "To apply SSS, we compare side lengths. OC matches OA (2 hashes), OB matches OD (3 hashes), and BC matches DC (1 hash). So the set of three matching sides is between triangle OBC and triangle ODC. Therefore, triangle OBC is congruent to triangle ODC by SS."
+    }
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
@@ -227,7 +416,6 @@ export default function SssSlide3() {
       setScore(prev => prev + 1);
     }
 
-    // FIX: Corrected the interactionId to match the new question IDs
     handleInteractionComplete({
       interactionId: `sss-polygon-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
@@ -264,7 +452,7 @@ export default function SssSlide3() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content (UPDATED) */}
+        {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             
@@ -281,7 +469,7 @@ export default function SssSlide3() {
               From the diagram, ΔOBC and ΔOBA are congruent by SSS (side-side-side).
             </p>
             <p className="text-lg leading-relaxed mt-2">
-              Indeed, $OB$ is the common side of the triangles, and we have the following additional congruent pairs of sides:
+              Indeed, OB is the common side of the triangles, and we have the following additional congruent pairs of sides:
             </p>
             <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg font-mono text-center">
               AB ≅ BC<br/>
@@ -290,7 +478,7 @@ export default function SssSlide3() {
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz (UPDATED) */}
+        {/* Right Column - Animation and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
@@ -343,7 +531,7 @@ export default function SssSlide3() {
                         ? showFeedback
                           ? correct
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT
+                            : 'border-red-500 bg-red-50 dark:bg-red-900/30' // INCORRECT
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
                         : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
