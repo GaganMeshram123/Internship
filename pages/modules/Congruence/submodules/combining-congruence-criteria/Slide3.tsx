@@ -4,12 +4,194 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
+// --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
+
+type Point = { x: number; y: number };
+
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => {
+  const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+  return mag === 0 ? 1e-6 : mag; // Avoid division by zero
+};
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const v1Mag = magnitude(v1);
+  const v2Mag = magnitude(v2);
+  const angle = Math.acos(dotProduct(v1, v2) / (v1Mag * v2Mag));
+  return isNaN(angle) ? 0 : angle;
+};
+
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+const getSideMarksPath = (
+  p1: Point,
+  p2: Point,
+  numMarks: number,
+  markLength: number = 8,
+  spacing: number = 3,
+) => {
+  const midX = (p1.x + p2.x) / 2;
+  const midY = (p1.y + p2.y) / 2;
+  const v = getVector(p1, p2);
+  const len = magnitude(v);
+  if (len === 0) return '';
+
+  const perpV = { x: -v.y / len, y: v.x / len };
+  const totalWidth = (numMarks - 1) * spacing;
+  let paths = '';
+  
+  for (let i = 0; i < numMarks; i++) {
+    const offset = (-totalWidth / 2) + i * spacing;
+    const start = {
+      x: midX + perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY + perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    const end = {
+      x: midX - perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY - perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    paths += `M ${start.x} ${start.y} L ${end.x} ${end.y} `;
+  }
+  return paths.trim();
+};
+
+const getAngleLabelPosition = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  offset: number = 25,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const bisectorV = { x: nv1.x + nv2.x, y: nv1.y + nv2.y };
+  const magBisector = magnitude(bisectorV);
+  const nBisectorV = magBisector < 1e-6 
+    ? { x: -nv1.y, y: nv1.x }
+    : { x: bisectorV.x / magBisector, y: bisectorV.y / magBisector };
+
+  return {
+    x: vertex.x + nBisectorV.x * offset,
+    y: vertex.y + nBisectorV.y * offset,
+  };
+};
+
+// --- ANIMATION VARIANTS ---
+const groupVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const drawVariant = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { type: 'spring', duration: 1.5, bounce: 0 },
+      opacity: { duration: 0.01, delay: 0.1 },
+    },
+  },
+};
+
+const fadeVariant = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+      delay: 0.2,
+    },
+  },
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+}
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ p1, vertex, p2, color, radius, commonProps }) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+interface AnimatedSideMarksProps {
+  p1: Point;
+  p2: Point;
+  numMarks: number;
+  color: string;
+  commonProps: any;
+}
+
+const AnimatedSideMarks: React.FC<AnimatedSideMarksProps> = ({ p1, p2, numMarks, color, commonProps }) => {
+  const pathD = getSideMarksPath(p1, p2, numMarks);
+  return <motion.path d={pathD} stroke={color} strokeLinecap="round" {...commonProps} variants={drawVariant} strokeWidth="1.5" />;
+};
+
+// --- ADDED MISSING COMPONENT ---
+const RightAngleBox: React.FC<{ vertex: Point, p1: Point, p2: Point, color: string, size?: number, commonProps: any }> = 
+  ({ vertex, p1, p2, color, size = 10, commonProps }) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const p1_on_line = { x: vertex.x + nv1.x * size, y: vertex.y + nv1.y * size };
+  const p2_on_line = { x: vertex.x + nv2.x * size, y: vertex.y + nv2.y * size };
+  const corner_point = { x: p1_on_line.x + nv2.x * size, y: p1_on_line.y + nv2.y * size };
+
+  const pathD = `M ${p1_on_line.x} ${p1_on_line.y} L ${corner_point.x} ${corner_point.y} L ${p2_on_line.x} ${p2_on_line.y}`;
+  
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+
 // --- FIGURE FOR EXAMPLE (Left Side) ---
 const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
   const commonProps = { fill: 'none', strokeWidth: 2 };
   
@@ -21,30 +203,37 @@ const FigureExample: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <path d={`M ${Q.x} ${Q.y} L ${P.x} ${P.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${M.x} ${M.y} L ${P.x} ${P.y} L ${N.x} ${N.y} Z`} stroke={strokeColor} {...commonProps} />
-        
-        {/* Labels */}
-        <text x={Q.x - 15} y={Q.y} fill={strokeColor}>Q</text>
-        <text x={R.x - 15} y={R.y + 5} fill={strokeColor}>R</text>
-        <text x={P.x} y={P.y + 20} fill={strokeColor} textAnchor="middle">P</text>
-        <text x={N.x + 5} y={N.y} fill={strokeColor}>N</text>
-        <text x={M.x + 5} y={M.y + 5} fill={strokeColor}>M</text>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.g variants={groupVariants}>
+          <motion.path d={`M ${Q.x} ${Q.y} L ${P.x} ${P.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          <motion.path d={`M ${M.x} ${M.y} L ${P.x} ${P.y} L ${N.x} ${N.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          
+          {/* Labels */}
+          <motion.text x={Q.x - 15} y={Q.y} fill={labelColor} variants={fadeVariant}>Q</motion.text>
+          <motion.text x={R.x - 15} y={R.y + 5} fill={labelColor} variants={fadeVariant}>R</motion.text>
+          <motion.text x={P.x} y={P.y + 20} fill={labelColor} textAnchor="middle" variants={fadeVariant}>P</motion.text>
+          <motion.text x={N.x + 5} y={N.y} fill={labelColor} variants={fadeVariant}>N</motion.text>
+          <motion.text x={M.x + 5} y={M.y + 5} fill={labelColor} variants={fadeVariant}>M</motion.text>
 
-        {/* Markings */}
-        <line x1={95} y1={75} x2={105} y2={80} stroke={strokeColor} strokeWidth="2" /> {/* QP */}
-        <line x1={98} y1={72} x2={108} y2={77} stroke={strokeColor} strokeWidth="2" />
-        <line x1={265} y1={77} x2={275} y2={72} stroke={strokeColor} strokeWidth="2" /> {/* PM */}
-        <line x1={262} y1={80} x2={272} y2={75} stroke={strokeColor} strokeWidth="2" />
+          {/* Markings */}
+          <AnimatedSideMarks p1={Q} p2={P} numMarks={2} color={strokeColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={P} p2={M} numMarks={2} color={strokeColor} commonProps={commonProps} />
 
-        <line x1={125} y1={143} x2={135} y2={138} stroke={strokeColor} strokeWidth="2" /> {/* PR */}
-        <line x1={225} y1={138} x2={235} y2={143} stroke={strokeColor} strokeWidth="2" /> {/* PN */}
+          <AnimatedSideMarks p1={P} p2={R} numMarks={1} color={strokeColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={P} p2={N} numMarks={1} color={strokeColor} commonProps={commonProps} />
 
-        {/* Vertical Angles */}
-        <path d={`M ${P.x - 15} ${P.y - 8} A 15 15 0 0 0 ${P.x + 5} ${P.y - 14}`} stroke={angleBlue} {...commonProps} />
-        <path d={`M ${P.x + 15} ${P.y + 8} A 15 15 0 0 0 ${P.x - 5} ${P.y + 14}`} stroke={angleBlue} {...commonProps} />
-      </svg>
+          {/* Vertical Angles */}
+          <AnimatedAngleArc p1={Q} vertex={P} p2={R} color={angleBlue} commonProps={commonProps} radius={15} />
+          <AnimatedAngleArc p1={N} vertex={P} p2={M} color={angleBlue} commonProps={commonProps} radius={15} />
+        </motion.g>
+      </motion.svg>
     </div>
   );
 };
@@ -55,6 +244,7 @@ const FigureQ1: React.FC = () => {
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
   const commonProps = { fill: 'none', strokeWidth: 2 };
   
@@ -66,26 +256,33 @@ const FigureQ1: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <path d={`M ${C.x} ${C.y} L ${A.x} ${A.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${E.x} ${E.y} L ${A.x} ${A.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} />
-        
-        {/* Labels */}
-        <text x={A.x} y={A.y + 20} fill={strokeColor} textAnchor="middle">A</text>
-        <text x={B.x + 5} y={B.y + 5} fill={strokeColor}>B</text>
-        <text x={C.x - 15} y={C.y + 5} fill={strokeColor}>C</text>
-        <text x={D.x - 15} y={D.y} fill={strokeColor}>D</text>
-        <text x={E.x + 5} y={E.y} fill={strokeColor}>E</text>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.g variants={groupVariants}>
+          <motion.path d={`M ${C.x} ${C.y} L ${A.x} ${A.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          <motion.path d={`M ${E.x} ${E.y} L ${A.x} ${A.y} L ${D.x} ${D.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          
+          {/* Labels */}
+          <motion.text x={A.x} y={A.y + 20} fill={labelColor} textAnchor="middle" variants={fadeVariant}>A</motion.text>
+          <motion.text x={B.x + 5} y={B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+          <motion.text x={C.x - 15} y={C.y + 5} fill={labelColor} variants={fadeVariant}>C</motion.text>
+          <motion.text x={D.x - 15} y={D.y} fill={labelColor} variants={fadeVariant}>D</motion.text>
+          <motion.text x={E.x + 5} y={E.y} fill={labelColor} variants={fadeVariant}>E</motion.text>
 
-        {/* Markings */}
-        <line x1={245} y1={133} x2={255} y2={130} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
-        <line x1={248} y1={136} x2={258} y2={133} stroke={strokeColor} strokeWidth="2" />
-        <line x1={155} y1={87} x2={165} y2={90} stroke={strokeColor} strokeWidth="2" /> {/* AD */}
-        <line x1={152} y1={84} x2={162} y2={87} stroke={strokeColor} strokeWidth="2" />
-        
-        <path d={`M ${B.x - 15} ${B.y} A 15 15 0 0 0 ${B.x - 10} ${B.y - 11}`} stroke={angleOrange} {...commonProps} />
-        <path d={`M ${D.x + 15} ${D.y} A 15 15 0 0 1 ${D.x + 10} ${D.y + 11}`} stroke={angleOrange} {...commonProps} />
-      </svg>
+          {/* Markings */}
+          <AnimatedSideMarks p1={A} p2={B} numMarks={2} color={strokeColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={A} p2={D} numMarks={2} color={strokeColor} commonProps={commonProps} />
+          
+          <AnimatedAngleArc p1={A} vertex={B} p2={C} color={angleOrange} commonProps={commonProps} radius={15} />
+          <AnimatedAngleArc p1={A} vertex={D} p2={E} color={angleOrange} commonProps={commonProps} radius={15} />
+        </motion.g>
+      </motion.svg>
     </div>
   );
 };
@@ -96,6 +293,7 @@ const FigureQ2: React.FC = () => {
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
   const commonProps = { fill: 'none', strokeWidth: 2 };
   
@@ -107,28 +305,37 @@ const FigureQ2: React.FC = () => {
   
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <path d={`M ${Y.x} ${Y.y} L ${Z.x} ${Z.y} L ${S.x} ${S.y} L ${T.x} ${T.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${Y.x} ${Y.y} L ${S.x} ${S.y}`} stroke={strokeColor} {...commonProps} />
-        
-        {/* Labels */}
-        <text x={Y.x - 15} y={Y.y + 5} fill={strokeColor}>Y</text>
-        <text x={X.x} y={X.y + 20} fill={strokeColor} textAnchor="middle">X</text>
-        <text x={Z.x + 5} y={Z.y} fill={strokeColor}>Z</text>
-        <text x={S.x + 5} y={S.y + 5} fill={strokeColor}>S</text>
-        <text x={T.x + 5} y={T.y + 5} fill={strokeColor}>T</text>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.g variants={groupVariants}>
+          <motion.path d={`M ${Y.x} ${Y.y} L ${Z.x} ${Z.y} L ${S.x} ${S.y} L ${T.x} ${T.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          <motion.path d={`M ${Y.x} ${Y.y} L ${S.x} ${S.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          
+          {/* Labels */}
+          <motion.text x={Y.x - 15} y={Y.y + 5} fill={labelColor} variants={fadeVariant}>Y</motion.text>
+          <motion.text x={X.x} y={X.y + 20} fill={labelColor} textAnchor="middle" variants={fadeVariant}>X</motion.text>
+          <motion.text x={Z.x + 5} y={Z.y} fill={labelColor} variants={fadeVariant}>Z</motion.text>
+          <motion.text x={S.x + 5} y={S.y + 5} fill={labelColor} variants={fadeVariant}>S</motion.text>
+          <motion.text x={T.x + 5} y={T.y + 5} fill={labelColor} variants={fadeVariant}>T</motion.text>
 
-        {/* Markings */}
-        <line x1={125} y1={107} x2={135} y2={113} stroke={strokeColor} strokeWidth="2" /> {/* YX */}
-        <line x1={128} y1={104} x2={138} y2={110} stroke={strokeColor} strokeWidth="2" />
-        <line x1={225} y1={107} x2={235} y2={113} stroke={strokeColor} strokeWidth="2" /> {/* XS */}
-        <line x1={228} y1={104} x2={238} y2={110} stroke={strokeColor} strokeWidth="2" />
+          {/* Markings */}
+          <AnimatedSideMarks p1={Y} p2={X} numMarks={2} color={strokeColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={X} p2={S} numMarks={2} color={strokeColor} commonProps={commonProps} />
 
-        <line x1={180} y1={70} x2={175} y2={80} stroke={strokeColor} strokeWidth="2" /> {/* ZX */}
-        <line x1={180} y1={150} x2={175} y2={160} stroke={strokeColor} strokeWidth="2" /> {/* TX */}
-        
-        <path d={`M ${X.x - 10} ${X.y - 10} L ${X.x - 10} ${X.y} L ${X.x} ${X.y}`} fill="none" stroke={angleBlue} strokeWidth="2" />
-      </svg>
+          <AnimatedSideMarks p1={Z} p2={X} numMarks={1} color={strokeColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={T} p2={X} numMarks={1} color={strokeColor} commonProps={commonProps} />
+          
+          <RightAngleBox vertex={X} p1={Y} p2={Z} color={angleBlue} commonProps={commonProps} />
+          {/* Added vertical angle, which is also a right angle */}
+          <RightAngleBox vertex={X} p1={S} p2={T} color={angleBlue} commonProps={commonProps} />
+        </motion.g>
+      </motion.svg>
     </div>
   );
 };
@@ -139,6 +346,7 @@ const FigureQ3: React.FC = () => {
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
   const anglePink = isDarkMode ? '#F472B6' : '#DB2777';
   const commonProps = { fill: 'none', strokeWidth: 2 };
@@ -152,30 +360,37 @@ const FigureQ3: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${X.x} ${X.y} L ${Y.x} ${Y.y} L ${Z.x} ${Z.y} Z`} stroke={strokeColor} {...commonProps} />
-        
-        {/* Labels */}
-        <text x={A.x} y={A.y + 20} fill={strokeColor} textAnchor="middle">A</text>
-        <text x={B.x + 5} y={B.y} fill={strokeColor}>B</text>
-        <text x={C.x - 15} y={C.y} fill={strokeColor}>C</text>
-        <text x={X.x} y={X.y + 20} fill={strokeColor} textAnchor="middle">X</text>
-        <text x={Y.x - 5} y={Y.y} fill={strokeColor}>Y</text>
-        <text x={Z.x + 5} y={Z.y + 5} fill={strokeColor}>Z</text>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.g variants={groupVariants}>
+          <motion.path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          <motion.path d={`M ${X.x} ${X.y} L ${Y.x} ${Y.y} L ${Z.x} ${Z.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+          
+          {/* Labels */}
+          <motion.text x={A.x} y={A.y + 20} fill={labelColor} textAnchor="middle" variants={fadeVariant}>A</motion.text>
+          <motion.text x={B.x + 5} y={B.y} fill={labelColor} variants={fadeVariant}>B</motion.text>
+          <motion.text x={C.x - 15} y={C.y} fill={labelColor} variants={fadeVariant}>C</motion.text>
+          <motion.text x={X.x} y={X.y + 20} fill={labelColor} textAnchor="middle" variants={fadeVariant}>X</motion.text>
+          <motion.text x={Y.x - 5} y={Y.y} fill={labelColor} variants={fadeVariant}>Y</motion.text>
+          <motion.text x={Z.x + 5} y={Z.y + 5} fill={labelColor} variants={fadeVariant}>Z</motion.text>
 
-        {/* Markings */}
-        <line x1={175} y1={80} x2={185} y2={85} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
-        <line x1={178} y1={77} x2={188} y2={82} stroke={strokeColor} strokeWidth="2" />
-        <line x1={275} y1={80} x2={265} y2={85} stroke={strokeColor} strokeWidth="2" /> {/* YX */}
-        <line x1={272} y1={77} x2={262} y2={82} stroke={strokeColor} strokeWidth="2" />
-        
-        <path d={`M ${A.x - 15} ${A.y} A 15 15 0 0 0 ${A.x - 10} ${A.y - 11}`} stroke={anglePink} {...commonProps} />
-        <path d={`M ${X.x + 15} ${X.y} A 15 15 0 0 0 ${X.x + 10} ${X.y - 11}`} stroke={anglePink} {...commonProps} />
-        
-        <path d={`M ${C.x + 15} ${C.y} A 15 15 0 0 1 ${C.x + 10} ${C.y + 11}`} stroke={angleBlue} {...commonProps} />
-        <path d={`M ${Z.x - 15} ${Z.y} A 15 15 0 0 1 ${Z.x - 10} ${Z.y - 11}`} stroke={angleBlue} {...commonProps} />
-      </svg>
+          {/* Markings */}
+          <AnimatedSideMarks p1={A} p2={B} numMarks={2} color={strokeColor} commonProps={commonProps} />
+          <AnimatedSideMarks p1={Y} p2={X} numMarks={2} color={strokeColor} commonProps={commonProps} />
+          
+          <AnimatedAngleArc p1={B} vertex={A} p2={C} color={anglePink} commonProps={commonProps} radius={15} />
+          <AnimatedAngleArc p1={Y} vertex={X} p2={Z} color={anglePink} commonProps={commonProps} radius={15} />
+          
+          <AnimatedAngleArc p1={A} vertex={C} p2={B} color={angleBlue} commonProps={commonProps} radius={15} />
+          <AnimatedAngleArc p1={X} vertex={Z} p2={Y} color={angleBlue} commonProps={commonProps} radius={15} />
+        </motion.g>
+      </motion.svg>
     </div>
   );
 };
@@ -187,7 +402,6 @@ export default function CombiningSlide3() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  // --- UPDATED FOR 3 QUESTIONS ---
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
@@ -214,7 +428,6 @@ export default function CombiningSlide3() {
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
     {
       id: 'combining-vertical-q1',
@@ -222,7 +435,7 @@ export default function CombiningSlide3() {
       figure: <FigureQ3 />,
       options: allOptions,
       correctAnswer: "AAS",
-      explanation: "Correct! We have ∠C ≅ ∠Z (Angle), ∠A ≅ ∠X (Angle, marked pink), and a non-included side $AB \cong XY$ (Side). This is an Angle-Angle-Side (AAS) pattern."
+      explanation: "Correct! We have ∠C ≅ ∠Z (Angle, blue), ∠A ≅ ∠X (Angle, pink), and a non-included side $AB \cong XY$ (Side, 2 hashes). This is an Angle-Angle-Side (AAS) pattern."
     },
     {
       id: 'combining-vertical-q2',
@@ -230,7 +443,7 @@ export default function CombiningSlide3() {
       figure: <FigureQ1 />,
       options: allOptions,
       correctAnswer: "ASA",
-      explanation: "Correct! We are given $\angle C \cong \angle D$ (Angle) and $AC \cong AD$ (Side). The *hidden* clue is that $\angle BAC \cong \angle EAD$ are vertical angles (Angle). The side $AC$ is *included* between $\angle C$ and $\angle BAC$. This is an Angle-Side-Angle (ASA) pattern."
+      explanation: "Correct! We are given $\angle C \cong \angle D$ (Angle, orange) and $AC \cong AD$ (Side, 2 hashes). The *hidden* clue is that $\angle BAC \cong \angle EAD$ are vertical angles (Angle). The side $AC$ is *included* between $\angle C$ and $\angle BAC$. This is an Angle-Side-Angle (ASA) pattern."
     },
     {
       id: 'combining-vertical-q3',
@@ -238,7 +451,7 @@ export default function CombiningSlide3() {
       figure: <FigureQ2 />,
       options: allOptions,
       correctAnswer: "SAS",
-      explanation: "Correct! We are given $YX \cong XS$ (Side) and $ZX \cong TX$ (Side). The *hidden* clue is that $\angle YXZ \cong \angle SXT$ are vertical angles (Angle). The angle $\angle YXZ$ is *included* between sides $YX$ and $ZX$. This is a Side-Angle-Side (SAS) pattern."
+      explanation: "Correct! We are given $YX \cong XS$ (Side, 2 hashes) and $ZX \cong TX$ (Side, 1 hash). The *hidden* clue is that $\angle YXZ \cong \angle SXT$ are vertical angles (Angle). The angle $\angle YXZ$ is *included* between sides $YX$ and $ZX$. This is a Side-Angle-Side (SAS) pattern."
     }
   ];
 
@@ -297,7 +510,7 @@ export default function CombiningSlide3() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content (UPDATED) */}
+        {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             
@@ -347,7 +560,7 @@ export default function CombiningSlide3() {
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz (UPDATED) */}
+        {/* Right Column - Animation and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">

@@ -4,215 +4,368 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
+// --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
+
+type Point = { x: number; y: number };
+
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => {
+  const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+  return mag === 0 ? 1e-6 : mag; // Avoid division by zero
+};
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const v1Mag = magnitude(v1);
+  const v2Mag = magnitude(v2);
+  const angle = Math.acos(dotProduct(v1, v2) / (v1Mag * v2Mag));
+  return isNaN(angle) ? 0 : angle;
+};
+
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+const getSideMarksPath = (
+  p1: Point,
+  p2: Point,
+  numMarks: number,
+  markLength: number = 8,
+  spacing: number = 3,
+) => {
+  const midX = (p1.x + p2.x) / 2;
+  const midY = (p1.y + p2.y) / 2;
+  const v = getVector(p1, p2);
+  const len = magnitude(v);
+  if (len === 0) return '';
+
+  const perpV = { x: -v.y / len, y: v.x / len };
+  const totalWidth = (numMarks - 1) * spacing;
+  let paths = '';
+  
+  for (let i = 0; i < numMarks; i++) {
+    const offset = (-totalWidth / 2) + i * spacing;
+    const start = {
+      x: midX + perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY + perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    const end = {
+      x: midX - perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY - perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    paths += `M ${start.x} ${start.y} L ${end.x} ${end.y} `;
+  }
+  return paths.trim();
+};
+
+// --- ANIMATION VARIANTS ---
+const groupVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const drawVariant = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { type: 'spring', duration: 1.5, bounce: 0 },
+      opacity: { duration: 0.01, delay: 0.1 },
+    },
+  },
+};
+
+const fadeVariant = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+    },
+  },
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+}
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ p1, vertex, p2, color, radius, commonProps }) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+interface AnimatedSideMarksProps {
+  p1: Point;
+  p2: Point;
+  numMarks: number;
+  color: string;
+  commonProps: any;
+}
+
+const AnimatedSideMarks: React.FC<AnimatedSideMarksProps> = ({ p1, p2, numMarks, color, commonProps }) => {
+  const pathD = getSideMarksPath(p1, p2, numMarks);
+  return <motion.path d={pathD} stroke={color} strokeLinecap="round" {...commonProps} variants={drawVariant} strokeWidth="1.5" />;
+};
+
+const RightAngleBox: React.FC<{ vertex: Point, p1: Point, p2: Point, color: string, size?: number, commonProps: any }> = 
+  ({ vertex, p1, p2, color, size = 10, commonProps }) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const p1_on_line = { x: vertex.x + nv1.x * size, y: vertex.y + nv1.y * size };
+  const p2_on_line = { x: vertex.x + nv2.x * size, y: vertex.y + nv2.y * size };
+  const corner_point = { x: p1_on_line.x + nv2.x * size, y: p1_on_line.y + nv2.y * size };
+
+  const pathD = `M ${p1_on_line.x} ${p1_on_line.y} L ${corner_point.x} ${corner_point.y} L ${p2_on_line.x} ${p2_on_line.y}`;
+  
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+
 // --- FIGURE COMPONENTS FOR THE 5 CRITERIA ---
 
 const SssFigure: React.FC = () => {
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
   const T1 = { A: { x: 30, y: 120 }, B: { x: 130, y: 120 }, C: { x: 80, y: 30 } };
   const T2 = { K: { x: 180, y: 120 }, L: { x: 280, y: 30 }, M: { x: 330, y: 120 } };
-  const hash = (p1: {x: number, y: number}, p2: {x: number, y: number}, num: number) => {
-    const midX = (p1.x + p2.x) / 2;
-    const midY = (p1.y + p2.y) / 2;
-    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
-    const lines = [];
-    for (let i = 0; i < num; i++) {
-      const offset = (i - (num - 1) / 2) * 4;
-      const x1 = midX + offset * Math.cos(angle) - 4 * Math.cos(angle + Math.PI / 2);
-      const y1 = midY + offset * Math.sin(angle) - 4 * Math.sin(angle + Math.PI / 2);
-      const x2 = midX + offset * Math.cos(angle) + 4 * Math.cos(angle + Math.PI / 2);
-      const y2 = midY + offset * Math.sin(angle) + 4 * Math.sin(angle + Math.PI / 2);
-      lines.push(<line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={strokeColor} strokeWidth="1.5" />);
-    }
-    return <>{lines}</>;
-  };
+
   return (
-    <svg width="100%" height="130" viewBox="0 0 360 150">
-      <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor}>A</text>
-      <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor}>B</text>
-      <text x={T1.C.x} y={T1.C.y - 5} fill={strokeColor} textAnchor="middle">C</text>
-      {hash(T1.A, T1.C, 1)}
-      {hash(T1.C, T1.B, 2)}
-      {hash(T1.A, T1.B, 3)}
-      <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor}>K</text>
-      <text x={T2.L.x} y={T2.L.y - 5} fill={strokeColor} textAnchor="middle">L</text>
-      <text x={T2.M.x + 5} y={T2.M.y + 5} fill={strokeColor}>M</text>
-      {hash(T2.K, T2.L, 1)}
-      {hash(T2.L, T2.M, 2)}
-      {hash(T2.K, T2.M, 3)}
-    </svg>
+    <motion.svg
+      width="100%"
+      height="130"
+      viewBox="0 0 360 150"
+      variants={groupVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T1.A.x - 15} y={T1.A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={T1.B.x + 5} y={T1.B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={T1.C.x} y={T1.C.y - 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>C</motion.text>
+        <AnimatedSideMarks p1={T1.A} p2={T1.C} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={T1.C} p2={T1.B} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={T1.A} p2={T1.B} numMarks={3} color={strokeColor} commonProps={commonProps} />
+      </motion.g>
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T2.K.x - 15} y={T2.K.y + 5} fill={labelColor} variants={fadeVariant}>K</motion.text>
+        <motion.text x={T2.L.x} y={T2.L.y - 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>L</motion.text>
+        <motion.text x={T2.M.x + 5} y={T2.M.y + 5} fill={labelColor} variants={fadeVariant}>M</motion.text>
+        <AnimatedSideMarks p1={T2.K} p2={T2.L} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={T2.L} p2={T2.M} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={T2.K} p2={T2.M} numMarks={3} color={strokeColor} commonProps={commonProps} />
+      </motion.g>
+    </motion.svg>
   );
 };
 
 const SasFigure: React.FC = () => {
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+
   const T1 = { A: { x: 30, y: 120 }, B: { x: 130, y: 120 }, C: { x: 80, y: 30 } };
   const T2 = { K: { x: 180, y: 120 }, L: { x: 280, y: 30 }, M: { x: 330, y: 120 } };
-  const hash = (p1: {x: number, y: number}, p2: {x: number, y: number}, num: number) => {
-    const midX = (p1.x + p2.x) / 2;
-    const midY = (p1.y + p2.y) / 2;
-    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
-    const lines = [];
-    for (let i = 0; i < num; i++) {
-      const offset = (i - (num - 1) / 2) * 4;
-      const x1 = midX + offset * Math.cos(angle) - 4 * Math.cos(angle + Math.PI / 2);
-      const y1 = midY + offset * Math.sin(angle) - 4 * Math.sin(angle + Math.PI / 2);
-      const x2 = midX + offset * Math.cos(angle) + 4 * Math.cos(angle + Math.PI / 2);
-      const y2 = midY + offset * Math.sin(angle) + 4 * Math.sin(angle + Math.PI / 2);
-      lines.push(<line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={strokeColor} strokeWidth="1.5" />);
-    }
-    return <>{lines}</>;
-  };
+
   return (
-    <svg width="100%" height="130" viewBox="0 0 360 150">
-      <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor}>A</text>
-      <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor}>B</text>
-      <text x={T1.C.x} y={T1.C.y - 5} fill={strokeColor} textAnchor="middle">C</text>
-      {hash(T1.A, T1.B, 1)}
-      {hash(T1.C, T1.B, 2)}
-      <path d={`M ${T1.B.x - 15} ${T1.B.y} A 15 15 0 0 0 ${T1.B.x - 13.6} ${T1.B.y - 6.5}`} stroke={angleGreen} fill="none" strokeWidth="2" />
-      
-      <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor}>K</text>
-      <text x={T2.L.x} y={T2.L.y - 5} fill={strokeColor} textAnchor="middle">L</text>
-      <text x={T2.M.x + 5} y={T2.M.y + 5} fill={strokeColor}>M</text>
-      {hash(T2.K, T2.M, 1)}
-      {hash(T2.L, T2.M, 2)}
-      <path d={`M ${T2.M.x - 15} ${T2.M.y} A 15 15 0 0 0 ${T2.M.x - 13.6} ${T2.M.y - 6.5}`} stroke={angleGreen} fill="none" strokeWidth="2" />
-    </svg>
+    <motion.svg
+      width="100%"
+      height="130"
+      viewBox="0 0 360 150"
+      variants={groupVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T1.A.x - 15} y={T1.A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={T1.B.x + 5} y={T1.B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={T1.C.x} y={T1.C.y - 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>C</motion.text>
+        <AnimatedSideMarks p1={T1.A} p2={T1.B} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={T1.C} p2={T1.B} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedAngleArc p1={T1.A} vertex={T1.B} p2={T1.C} color={angleGreen} commonProps={commonProps} radius={15} />
+      </motion.g>
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T2.K.x - 15} y={T2.K.y + 5} fill={labelColor} variants={fadeVariant}>K</motion.text>
+        <motion.text x={T2.L.x} y={T2.L.y - 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>L</motion.text>
+        <motion.text x={T2.M.x + 5} y={T2.M.y + 5} fill={labelColor} variants={fadeVariant}>M</motion.text>
+        <AnimatedSideMarks p1={T2.K} p2={T2.M} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={T2.L} p2={T2.M} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedAngleArc p1={T2.K} vertex={T2.M} p2={T2.L} color={angleGreen} commonProps={commonProps} radius={15} />
+      </motion.g>
+    </motion.svg>
   );
 };
 
 const AsaFigure: React.FC = () => {
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
   const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
   const T1 = { A: { x: 30, y: 120 }, B: { x: 130, y: 120 }, C: { x: 80, y: 30 } };
   const T2 = { K: { x: 180, y: 120 }, L: { x: 280, y: 30 }, M: { x: 330, y: 120 } };
-  const hash = (p1: {x: number, y: number}, p2: {x: number, y: number}, num: number) => {
-    const midX = (p1.x + p2.x) / 2;
-    const midY = (p1.y + p2.y) / 2;
-    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
-    const lines = [];
-    for (let i = 0; i < num; i++) {
-      const offset = (i - (num - 1) / 2) * 4;
-      const x1 = midX + offset * Math.cos(angle) - 4 * Math.cos(angle + Math.PI / 2);
-      const y1 = midY + offset * Math.sin(angle) - 4 * Math.sin(angle + Math.PI / 2);
-      const x2 = midX + offset * Math.cos(angle) + 4 * Math.cos(angle + Math.PI / 2);
-      const y2 = midY + offset * Math.sin(angle) + 4 * Math.sin(angle + Math.PI / 2);
-      lines.push(<line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={strokeColor} strokeWidth="1.5" />);
-    }
-    return <>{lines}</>;
-  };
+
   return (
-    <svg width="100%" height="130" viewBox="0 0 360 150">
-      <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor}>A</text>
-      <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor}>B</text>
-      <text x={T1.C.x} y={T1.C.y - 5} fill={strokeColor} textAnchor="middle">C</text>
-      {hash(T1.A, T1.B, 1)}
-      <path d={`M ${T1.A.x + 15} ${T1.A.y} A 15 15 0 0 1 ${T1.A.x + 13.6} ${T1.A.y - 6.5}`} stroke={angleOrange} fill="none" strokeWidth="2" />
-      <path d={`M ${T1.B.x - 15} ${T1.B.y} A 15 15 0 0 0 ${T1.B.x - 13.6} ${T1.B.y - 6.5}`} stroke={angleGreen} fill="none" strokeWidth="2" />
-      
-      <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor}>K</text>
-      <text x={T2.L.x} y={T2.L.y - 5} fill={strokeColor} textAnchor="middle">L</text>
-      <text x={T2.M.x + 5} y={T2.M.y + 5} fill={strokeColor}>M</text>
-      {hash(T2.K, T2.M, 1)}
-      <path d={`M ${T2.K.x + 15} ${T2.K.y} A 15 15 0 0 1 ${T2.K.x + 13.6} ${T2.K.y - 6.5}`} stroke={angleOrange} fill="none" strokeWidth="2" />
-      <path d={`M ${T2.M.x - 15} ${T2.M.y} A 15 15 0 0 0 ${T2.M.x - 13.6} ${T2.M.y - 6.5}`} stroke={angleGreen} fill="none" strokeWidth="2" />
-    </svg>
+    <motion.svg
+      width="100%"
+      height="130"
+      viewBox="0 0 360 150"
+      variants={groupVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T1.A.x - 15} y={T1.A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={T1.B.x + 5} y={T1.B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={T1.C.x} y={T1.C.y - 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>C</motion.text>
+        <AnimatedSideMarks p1={T1.A} p2={T1.B} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedAngleArc p1={T1.B} vertex={T1.A} p2={T1.C} color={angleOrange} commonProps={commonProps} radius={15} />
+        <AnimatedAngleArc p1={T1.A} vertex={T1.B} p2={T1.C} color={angleGreen} commonProps={commonProps} radius={15} />
+      </motion.g>
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T2.K.x - 15} y={T2.K.y + 5} fill={labelColor} variants={fadeVariant}>K</motion.text>
+        <motion.text x={T2.L.x} y={T2.L.y - 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>L</motion.text>
+        <motion.text x={T2.M.x + 5} y={T2.M.y + 5} fill={labelColor} variants={fadeVariant}>M</motion.text>
+        <AnimatedSideMarks p1={T2.K} p2={T2.M} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedAngleArc p1={T2.M} vertex={T2.K} p2={T2.L} color={angleOrange} commonProps={commonProps} radius={15} />
+        <AnimatedAngleArc p1={T2.K} vertex={T2.M} p2={T2.L} color={angleGreen} commonProps={commonProps} radius={15} />
+      </motion.g>
+    </motion.svg>
   );
 };
 
 const AasFigure: React.FC = () => {
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
   const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
   const T1 = { A: { x: 30, y: 120 }, B: { x: 130, y: 120 }, C: { x: 80, y: 30 } };
   const T2 = { K: { x: 180, y: 120 }, L: { x: 280, y: 30 }, M: { x: 330, y: 120 } };
-  const hash = (p1: {x: number, y: number}, p2: {x: number, y: number}, num: number) => {
-    const midX = (p1.x + p2.x) / 2;
-    const midY = (p1.y + p2.y) / 2;
-    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
-    const lines = [];
-    for (let i = 0; i < num; i++) {
-      const offset = (i - (num - 1) / 2) * 4;
-      const x1 = midX + offset * Math.cos(angle) - 4 * Math.cos(angle + Math.PI / 2);
-      const y1 = midY + offset * Math.sin(angle) - 4 * Math.sin(angle + Math.PI / 2);
-      const x2 = midX + offset * Math.cos(angle) + 4 * Math.cos(angle + Math.PI / 2);
-      const y2 = midY + offset * Math.sin(angle) + 4 * Math.sin(angle + Math.PI / 2);
-      lines.push(<line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={strokeColor} strokeWidth="1.5" />);
-    }
-    return <>{lines}</>;
-  };
+
   return (
-    <svg width="100%" height="130" viewBox="0 0 360 150">
-      <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor}>A</text>
-      <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor}>B</text>
-      <text x={T1.C.x} y={T1.C.y - 5} fill={strokeColor} textAnchor="middle">C</text>
-      {hash(T1.C, T1.B, 2)}
-      <path d={`M ${T1.A.x + 15} ${T1.A.y} A 15 15 0 0 1 ${T1.A.x + 13.6} ${T1.A.y - 6.5}`} stroke={angleOrange} fill="none" strokeWidth="2" />
-      <path d={`M ${T1.B.x - 15} ${T1.B.y} A 15 15 0 0 0 ${T1.B.x - 13.6} ${T1.B.y - 6.5}`} stroke={angleGreen} fill="none" strokeWidth="2" />
-      
-      <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor}>K</text>
-      <text x={T2.L.x} y={T2.L.y - 5} fill={strokeColor} textAnchor="middle">L</text>
-      <text x={T2.M.x + 5} y={T2.M.y + 5} fill={strokeColor}>M</text>
-      {hash(T2.L, T2.M, 2)}
-      <path d={`M ${T2.K.x + 15} ${T2.K.y} A 15 15 0 0 1 ${T2.K.x + 13.6} ${T2.K.y - 6.5}`} stroke={angleOrange} fill="none" strokeWidth="2" />
-      <path d={`M ${T2.M.x - 15} ${T2.M.y} A 15 15 0 0 0 ${T2.M.x - 13.6} ${T2.M.y - 6.5}`} stroke={angleGreen} fill="none" strokeWidth="2" />
-    </svg>
+    <motion.svg
+      width="100%"
+      height="130"
+      viewBox="0 0 360 150"
+      variants={groupVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T1.A.x - 15} y={T1.A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={T1.B.x + 5} y={T1.B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={T1.C.x} y={T1.C.y - 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>C</motion.text>
+        <AnimatedSideMarks p1={T1.C} p2={T1.B} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedAngleArc p1={T1.B} vertex={T1.A} p2={T1.C} color={angleOrange} commonProps={commonProps} radius={15} />
+        <AnimatedAngleArc p1={T1.A} vertex={T1.B} p2={T1.C} color={angleGreen} commonProps={commonProps} radius={15} />
+      </motion.g>
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T2.K.x - 15} y={T2.K.y + 5} fill={labelColor} variants={fadeVariant}>K</motion.text>
+        <motion.text x={T2.L.x} y={T2.L.y - 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>L</motion.text>
+        <motion.text x={T2.M.x + 5} y={T2.M.y + 5} fill={labelColor} variants={fadeVariant}>M</motion.text>
+        <AnimatedSideMarks p1={T2.L} p2={T2.M} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedAngleArc p1={T2.M} vertex={T2.K} p2={T2.L} color={angleOrange} commonProps={commonProps} radius={15} />
+        <AnimatedAngleArc p1={T2.K} vertex={T2.M} p2={T2.L} color={angleGreen} commonProps={commonProps} radius={15} />
+      </motion.g>
+    </motion.svg>
   );
 };
 
 const HlFigure: React.FC = () => {
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const commonProps = { fill: 'none', strokeWidth: 2 };
+  
   const T1 = { A: { x: 30, y: 120 }, B: { x: 130, y: 120 }, C: { x: 130, y: 30 } };
   const T2 = { K: { x: 180, y: 120 }, L: { x: 280, y: 120 }, M: { x: 280, y: 30 } };
-  const hash = (p1: {x: number, y: number}, p2: {x: number, y: number}, num: number) => {
-    const midX = (p1.x + p2.x) / 2;
-    const midY = (p1.y + p2.y) / 2;
-    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
-    const lines = [];
-    for (let i = 0; i < num; i++) {
-      const offset = (i - (num - 1) / 2) * 4;
-      const x1 = midX + offset * Math.cos(angle) - 4 * Math.cos(angle + Math.PI / 2);
-      const y1 = midY + offset * Math.sin(angle) - 4 * Math.sin(angle + Math.PI / 2);
-      const x2 = midX + offset * Math.cos(angle) + 4 * Math.cos(angle + Math.PI / 2);
-      const y2 = midY + offset * Math.sin(angle) + 4 * Math.sin(angle + Math.PI / 2);
-      lines.push(<line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={strokeColor} strokeWidth="1.5" />);
-    }
-    return <>{lines}</>;
-  };
+
   return (
-    <svg width="100%" height="130" viewBox="0 0 310 150">
-      <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T1.A.x - 15} y={T1.A.y + 5} fill={strokeColor}>A</text>
-      <text x={T1.B.x + 5} y={T1.B.y + 5} fill={strokeColor}>B</text>
-      <text x={T1.C.x + 5} y={T1.C.y} fill={strokeColor}>C</text>
-      {hash(T1.A, T1.B, 1)}
-      {hash(T1.A, T1.C, 2)}
-      <path d={`M ${T1.B.x - 12} ${T1.B.y} L ${T1.B.x - 12} ${T1.B.y - 12} L ${T1.B.x} ${T1.B.y - 12}`} fill="none" stroke={angleBlue} strokeWidth="2" />
-      
-      <path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <text x={T2.K.x - 15} y={T2.K.y + 5} fill={strokeColor}>K</text>
-      <text x={T2.L.x + 5} y={T2.L.y + 5} fill={strokeColor}>L</text>
-      <text x={T2.M.x + 5} y={T2.M.y} fill={strokeColor}>M</text>
-      {hash(T2.K, T2.L, 1)}
-      {hash(T2.K, T2.M, 2)}
-      <path d={`M ${T2.L.x - 12} ${T2.L.y} L ${T2.L.x - 12} ${T2.L.y - 12} L ${T2.L.x} ${T2.L.y - 12}`} fill="none" stroke={angleBlue} strokeWidth="2" />
-    </svg>
+    <motion.svg
+      width="100%"
+      height="130"
+      viewBox="0 0 310 150"
+      variants={groupVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T1.A.x - 15} y={T1.A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={T1.B.x + 5} y={T1.B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={T1.C.x + 5} y={T1.C.y} fill={labelColor} variants={fadeVariant}>C</motion.text>
+        <AnimatedSideMarks p1={T1.A} p2={T1.B} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={T1.A} p2={T1.C} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <RightAngleBox vertex={T1.B} p1={T1.A} p2={T1.C} color={angleBlue} commonProps={commonProps} />
+      </motion.g>
+      <motion.g variants={groupVariants}>
+        <motion.path d={`M ${T2.K.x} ${T2.K.y} L ${T2.L.x} ${T2.L.y} L ${T2.M.x} ${T2.M.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T2.K.x - 15} y={T2.K.y + 5} fill={labelColor} variants={fadeVariant}>K</motion.text>
+        <motion.text x={T2.L.x + 5} y={T2.L.y + 5} fill={labelColor} variants={fadeVariant}>L</motion.text>
+        <motion.text x={T2.M.x + 5} y={T2.M.y} fill={labelColor} variants={fadeVariant}>M</motion.text>
+        <AnimatedSideMarks p1={T2.K} p2={T2.L} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={T2.K} p2={T2.M} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <RightAngleBox vertex={T2.L} p1={T2.K} p2={T2.M} color={angleBlue} commonProps={commonProps} />
+      </motion.g>
+    </motion.svg>
   );
 };
 
@@ -354,7 +507,7 @@ export default function CombiningSlide1() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content (UPDATED) */}
+        {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             
@@ -453,7 +606,7 @@ export default function CombiningSlide1() {
                         ? showFeedback
                           ? correct
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT
+                            : 'border-red-500 bg-red-50 dark:bg-red-900/30' // INCORRECT
                           : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
                         : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
                     } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
