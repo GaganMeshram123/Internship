@@ -4,12 +4,192 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
+// --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
+
+type Point = { x: number; y: number };
+
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => {
+  const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+  return mag === 0 ? 1e-6 : mag; // Avoid division by zero
+};
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const v1Mag = magnitude(v1);
+  const v2Mag = magnitude(v2);
+  const angle = Math.acos(dotProduct(v1, v2) / (v1Mag * v2Mag));
+  return isNaN(angle) ? 0 : angle;
+};
+
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+const getSideMarksPath = (
+  p1: Point,
+  p2: Point,
+  numMarks: number,
+  markLength: number = 8,
+  spacing: number = 3,
+) => {
+  const midX = (p1.x + p2.x) / 2;
+  const midY = (p1.y + p2.y) / 2;
+  const v = getVector(p1, p2);
+  const len = magnitude(v);
+
+  const perpV = { x: -v.y / len, y: v.x / len };
+  const totalWidth = (numMarks - 1) * spacing;
+  let paths = '';
+  
+  for (let i = 0; i < numMarks; i++) {
+    const offset = (-totalWidth / 2) + i * spacing;
+    const start = {
+      x: midX + perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY + perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    const end = {
+      x: midX - perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY - perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    paths += `M ${start.x} ${start.y} L ${end.x} ${end.y} `;
+  }
+  return paths.trim();
+};
+
+const getAngleLabelPosition = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  offset: number = 25,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const bisectorV = { x: nv1.x + nv2.x, y: nv1.y + nv2.y };
+  const magBisector = magnitude(bisectorV);
+  const nBisectorV = magBisector < 1e-6 
+    ? { x: -nv1.y, y: nv1.x }
+    : { x: bisectorV.x / magBisector, y: bisectorV.y / magBisector };
+
+  return {
+    x: vertex.x + nBisectorV.x * offset,
+    y: vertex.y + nBisectorV.y * offset,
+  };
+};
+
+// --- ANIMATION VARIANTS ---
+const groupVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const drawVariant = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { type: 'spring', duration: 1.5, bounce: 0 },
+      opacity: { duration: 0.01, delay: 0.1 },
+    },
+  },
+};
+
+const fadeVariant = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+      delay: 0.2,
+    },
+  },
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+}
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ p1, vertex, p2, color, radius, commonProps }) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+interface AnimatedSideMarksProps {
+  p1: Point;
+  p2: Point;
+  numMarks: number;
+  color: string;
+  commonProps: any;
+}
+
+const AnimatedSideMarks: React.FC<AnimatedSideMarksProps> = ({ p1, p2, numMarks, color, commonProps }) => {
+  const pathD = getSideMarksPath(p1, p2, numMarks);
+  return <motion.path d={pathD} stroke={color} strokeLinecap="round" {...commonProps} variants={drawVariant} strokeWidth="1.5" />;
+};
+
+const RightAngleBox: React.FC<{ vertex: Point, p1: Point, p2: Point, color: string, size?: number, commonProps: any }> = 
+  ({ vertex, p1, p2, color, size = 10, commonProps }) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const p1_on_line = { x: vertex.x + nv1.x * size, y: vertex.y + nv1.y * size };
+  const p2_on_line = { x: vertex.x + nv2.x * size, y: vertex.y + nv2.y * size };
+  const corner_point = { x: p1_on_line.x + nv2.x * size, y: p1_on_line.y + nv2.y * size };
+
+  const pathD = `M ${p1_on_line.x} ${p1_on_line.y} L ${corner_point.x} ${corner_point.y} L ${p2_on_line.x} ${p2_on_line.y}`;
+  
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+
 // --- FIGURE FOR EXAMPLE (Left Side) ---
 const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 160;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   
   const angleTeal = isDarkMode ? '#2DD4BF' : '#0D9488';
   const commonProps = { fill: 'none', strokeWidth: 2 };
@@ -20,33 +200,68 @@ const FigureExample: React.FC = () => {
   const T = { x: 280, y: 50 };
   const O = { x: 200, y: 95 };
 
+  // Calculate label positions
+  const labelTQS_pos = getAngleLabelPosition(T, Q, S, 30);
+  const labelRSQ_pos = getAngleLabelPosition(R, S, Q, 30);
+
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Triangles */}
-        <path d={`M ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${T.x} ${T.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${Q.x} ${Q.y} L ${S.x} ${S.y}`} stroke={strokeColor} strokeWidth="3" />
-        <path d={`M ${R.x} ${R.y} L ${S.x} ${S.y}`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${T.x} ${T.y} L ${Q.x} ${Q.y}`} stroke={strokeColor} {...commonProps} />
+        <motion.path d={`M ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${T.x} ${T.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${R.x} ${R.y} L ${S.x} ${S.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${T.x} ${T.y} L ${Q.x} ${Q.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
         
         {/* Labels */}
-        <text x={Q.x - 15} y={Q.y + 5} fill={strokeColor}>Q</text>
-        <text x={S.x + 5} y={S.y + 5} fill={strokeColor}>S</text>
-        <text x={R.x} y={R.y - 10} fill={strokeColor}>R</text>
-        <text x={T.x} y={T.y - 10} fill={strokeColor}>T</text>
-        <text x={O.x} y={O.y + 5} fill={strokeColor} textAnchor="middle">O</text>
+        <motion.text x={Q.x - 15} y={Q.y + 5} fill={labelColor} variants={fadeVariant}>Q</motion.text>
+        <motion.text x={S.x + 5} y={S.y + 5} fill={labelColor} variants={fadeVariant}>S</motion.text>
+        <motion.text x={R.x} y={R.y - 10} fill={labelColor} variants={fadeVariant}>R</motion.text>
+        <motion.text x={T.x} y={T.y - 10} fill={labelColor} variants={fadeVariant}>T</motion.text>
+        <motion.text x={O.x} y={O.y + 5} fill={labelColor} textAnchor="middle" variants={fadeVariant}>O</motion.text>
 
-        {/* Angles & Markings */}
-        <path d={`M ${R.x + 15} ${R.y + 5} A 15 15 0 0 1 ${R.x} ${R.y + 15}`} stroke={angleTeal} {...commonProps} />
-        <path d={`M ${T.x - 15} ${T.y + 5} A 15 15 0 0 0 ${T.x} ${T.y + 15}`} stroke={angleTeal} {...commonProps} />
+        {/* --- IMPROVED Angles & Markings --- */}
+        {/* Angle R (∠SRQ) */}
+        <AnimatedAngleArc p1={S} vertex={R} p2={Q} color={angleTeal} commonProps={commonProps} radius={15} />
+        {/* Angle T (∠QTS) */}
+        <AnimatedAngleArc p1={Q} vertex={T} p2={S} color={angleTeal} commonProps={commonProps} radius={15} />
 
-        <path d={`M ${Q.x + 20} ${Q.y} A 20 20 0 0 1 ${Q.x + 18} ${Q.y - 8}`} stroke={strokeColor} {...commonProps} />
-        <text x={Q.x + 30} y={Q.y - 10} fill={strokeColor} fontSize="12">35°</text>
+        {/* Angle TQS */}
+        <AnimatedAngleArc p1={T} vertex={Q} p2={S} color={strokeColor} commonProps={commonProps} radius={20} />
+        <motion.text
+          {...labelTQS_pos}
+          fill={labelColor}
+          fontSize="12"
+          variants={fadeVariant}
+          textAnchor="middle"
+          dominantBaseline="middle"
+        >
+          35°
+        </motion.text>
 
-        <path d={`M ${S.x - 20} ${S.y} A 20 20 0 0 0 ${S.x - 18} ${S.y - 8}`} stroke={strokeColor} {...commonProps} />
-        <text x={S.x - 50} y={S.y - 10} fill={strokeColor} fontSize="12">6x - 7°</text>
-      </svg>
+        {/* Angle RSQ */}
+        <AnimatedAngleArc p1={R} vertex={S} p2={Q} color={strokeColor} commonProps={commonProps} radius={20} />
+        <motion.text
+          {...labelRSQ_pos}
+          fill={labelColor}
+          fontSize="12"
+          variants={fadeVariant}
+          textAnchor="middle"
+          dominantBaseline="middle"
+        >
+          6x - 7°
+        </motion.text>
+        
+        {/* Common Side QS */}
+        <AnimatedSideMarks p1={Q} p2={S} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      </motion.svg>
     </div>
   );
 };
@@ -57,6 +272,7 @@ const FigureQ1: React.FC = () => {
   const svgHeight = 160;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   
   const angleYellow = isDarkMode ? '#FDE047' : '#EAB308';
   const anglePurple = isDarkMode ? '#C084FC' : '#9333EA';
@@ -65,29 +281,55 @@ const FigureQ1: React.FC = () => {
   const T1 = { A: { x: 170, y: 140 }, B: { x: 50, y: 140 }, C: { x: 50, y: 30 } };
   const T2 = { D: { x: 370, y: 140 }, E: { x: 250, y: 140 }, F: { x: 250, y: 30 } };
 
+  // Calculate side label positions
+  const labelAC_pos = { x: (T1.A.x + T1.C.x) / 2 + 10, y: (T1.A.y + T1.C.y) / 2 };
+  const labelDF_pos = { x: (T2.D.x + T2.F.x) / 2 + 10, y: (T2.D.y + T2.F.y) / 2 };
+
+
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* T1 (ABC) */}
-        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-        <text x={T1.A.x + 5} y={T1.A.y + 5} fill={strokeColor}>A</text>
-        <text x={T1.B.x - 15} y={T1.B.y + 5} fill={strokeColor}>B</text>
-        <text x={T1.C.x - 15} y={T1.C.y} fill={strokeColor}>C</text>
-        <text x={T1.B.x - 10} y={T1.B.y - 40} fill={strokeColor}>2x + 1</text>
-        <path d={`M ${T1.B.x} ${T1.B.y - 12} L ${T1.B.x + 12} ${T1.B.y - 12} L ${T1.B.x + 12} ${T1.B.y}`} fill="none" stroke={anglePurple} strokeWidth="2" />
-        <path d={`M ${T1.A.x - 15} ${T1.A.y} A 15 15 0 0 0 ${T1.A.x - 13.6} ${T1.A.y - 6.5}`} stroke={angleYellow} {...commonProps} />
-        <line x1={T1.A.x - 50} y1={T1.A.y - 45} x2={T1.A.x - 40} y2={T1.A.y - 50} stroke={strokeColor} strokeWidth="1.5" />
+        <motion.path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T1.A.x + 5} y={T1.A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={T1.B.x - 15} y={T1.B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={T1.C.x - 15} y={T1.C.y} fill={labelColor} variants={fadeVariant}>C</motion.text>
+        <motion.text
+          {...labelAC_pos}
+          fill={labelColor}
+          variants={fadeVariant}
+          dominantBaseline="middle"
+        >
+          2x + 1
+        </motion.text>
+        <RightAngleBox vertex={T1.B} p1={T1.A} p2={T1.C} color={anglePurple} commonProps={commonProps} />
+        <AnimatedAngleArc p1={T1.B} vertex={T1.A} p2={T1.C} color={angleYellow} commonProps={commonProps} radius={15} />
+        <AnimatedSideMarks p1={T1.A} p2={T1.C} numMarks={1} color={strokeColor} commonProps={commonProps} />
 
         {/* T2 (DEF) */}
-        <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-        <text x={T2.D.x + 5} y={T2.D.y + 5} fill={strokeColor}>D</text>
-        <text x={T2.E.x - 15} y={T2.E.y + 5} fill={strokeColor}>E</text>
-        <text x={T2.F.x - 15} y={T2.F.y} fill={strokeColor}>F</text>
-        <text x={T2.F.x + 10} y={T2.F.y + 40} fill={strokeColor}>3x - 6</text>
-        <path d={`M ${T2.E.x} ${T2.E.y - 12} L ${T2.E.x + 12} ${T2.E.y - 12} L ${T2.E.x + 12} ${T2.E.y}`} fill="none" stroke={anglePurple} strokeWidth="2" />
-        <path d={`M ${T2.D.x - 15} ${T2.D.y} A 15 15 0 0 0 ${T2.D.x - 13.6} ${T2.D.y - 6.5}`} stroke={angleYellow} {...commonProps} />
-        <line x1={T2.D.x - 50} y1={T2.D.y - 45} x2={T2.D.x - 40} y2={T2.D.y - 50} stroke={strokeColor} strokeWidth="1.5" />
-      </svg>
+        <motion.path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T2.D.x + 5} y={T2.D.y + 5} fill={labelColor} variants={fadeVariant}>D</motion.text>
+        <motion.text x={T2.E.x - 15} y={T2.E.y + 5} fill={labelColor} variants={fadeVariant}>E</motion.text>
+        <motion.text x={T2.F.x - 15} y={T2.F.y} fill={labelColor} variants={fadeVariant}>F</motion.text>
+        <motion.text
+          {...labelDF_pos}
+          fill={labelColor}
+          variants={fadeVariant}
+          dominantBaseline="middle"
+        >
+          3x - 6
+        </motion.text>
+        <RightAngleBox vertex={T2.E} p1={T2.D} p2={T2.F} color={anglePurple} commonProps={commonProps} />
+        <AnimatedAngleArc p1={T2.E} vertex={T2.D} p2={T2.F} color={angleYellow} commonProps={commonProps} radius={15} />
+        <AnimatedSideMarks p1={T2.D} p2={T2.F} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      </motion.svg>
     </div>
   );
 };
@@ -99,6 +341,7 @@ const FigureQ2: React.FC = () => {
   const svgHeight = 160;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   
   const angleYellow = isDarkMode ? '#FDE047' : '#EAB308';
   const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
@@ -107,31 +350,62 @@ const FigureQ2: React.FC = () => {
   const T1 = { A: { x: 170, y: 140 }, B: { x: 30, y: 140 }, C: { x: 130, y: 30 } };
   const T2 = { D: { x: 370, y: 140 }, E: { x: 230, y: 140 }, F: { x: 270, y: 30 } };
 
+  // Calculate label positions
+  const labelB_pos = getAngleLabelPosition(T1.A, T1.B, T1.C, 25);
+  const labelE_pos = getAngleLabelPosition(T2.D, T2.E, T2.F, 25);
+
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* T1 (ABC) */}
-        <path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-        <text x={T1.A.x + 5} y={T1.A.y + 5} fill={strokeColor}>A</text>
-        <text x={T1.B.x - 15} y={T1.B.y + 5} fill={strokeColor}>B</text>
-        <text x={T1.C.x} y={T1.C.y - 5} fill={strokeColor}>C</text>
-        <text x={(T1.A.x + T1.B.x)/2 - 30} y={T1.A.y - 15} fill={angleYellow} fontSize="12">2x + 5°</text>
-        <path d={`M ${T1.A.x - 15} ${T1.A.y} A 15 15 0 0 0 ${T1.A.x - 13.6} ${T1.A.y - 6.5}`} stroke={angleGreen} {...commonProps} />
-        <path d={`M ${T1.B.x + 15} ${T1.B.y} A 15 15 0 0 1 ${T1.B.x + 13.6} ${T1.B.y - 6.5}`} stroke={angleYellow} {...commonProps} />
-        <line x1={T1.A.x - 30} y1={T1.A.y - 45} x2={T1.A.x - 20} y2={T1.A.y - 50} stroke={strokeColor} strokeWidth="1.5" />
+        <motion.path d={`M ${T1.A.x} ${T1.A.y} L ${T1.B.x} ${T1.B.y} L ${T1.C.x} ${T1.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T1.A.x + 5} y={T1.A.y + 5} fill={labelColor} variants={fadeVariant}>A</motion.text>
+        <motion.text x={T1.B.x - 15} y={T1.B.y + 5} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={T1.C.x} y={T1.C.y - 5} fill={labelColor} variants={fadeVariant}>C</motion.text>
+        
+        <motion.text
+          {...labelB_pos}
+          fill={angleYellow}
+          fontSize="12"
+          variants={fadeVariant}
+          textAnchor="middle"
+          dominantBaseline="middle"
+        >
+          2x + 5°
+        </motion.text>
+        <AnimatedAngleArc p1={T1.A} vertex={T1.B} p2={T1.C} color={angleYellow} commonProps={commonProps} radius={15} />
+        <AnimatedAngleArc p1={T1.B} vertex={T1.A} p2={T1.C} color={angleGreen} commonProps={commonProps} radius={15} />
+        <AnimatedSideMarks p1={T1.A} p2={T1.C} numMarks={1} color={strokeColor} commonProps={commonProps} />
 
         {/* T2 (DEF) */}
-        <path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} />
-        <text x={T2.D.x + 5} y={T2.D.y + 5} fill={strokeColor}>D</text>
-        <text x={T2.E.x - 15} y={T2.E.y + 5} fill={strokeColor}>E</text>
-        <text x={T2.F.x + 5} y={T2.F.y - 5} fill={strokeColor}>F</text>
-        <text x={(T2.D.x + T2.E.x)/2 - 30} y={T2.D.y - 15} fill={angleYellow} fontSize="12">55°</text>
-        <path d={`M ${T2.D.x - 15} ${T2.D.y} A 15 15 0 0 0 ${T2.D.x - 13.6} ${T2.D.y - 6.5}`} stroke={angleGreen} {...commonProps} />
-        <path d={`M ${T2.E.x + 15} ${T2.E.y} A 15 15 0 0 1 ${T2.E.x + 13.6} ${T2.E.y - 6.5}`} stroke={angleYellow} {...commonProps} />
-        <line x1={T2.D.x - 30} y1={T2.D.y - 45} x2={T2.D.x - 20} y2={T2.D.y - 50} stroke={strokeColor} strokeWidth="1.5" />
-        <line x1={T2.D.x - 60} y1={T2.D.y - 3} x2={T2.D.x - 70} y2={T2.D.y + 3} stroke={strokeColor} strokeWidth="1.5" />
-        <line x1={T2.D.x - 63} y1={T2.D.y} x2={T2.D.x - 73} y2={T2.D.y + 6} stroke={strokeColor} strokeWidth="1.5" />
-      </svg>
+        <motion.path d={`M ${T2.D.x} ${T2.D.y} L ${T2.E.x} ${T2.E.y} L ${T2.F.x} ${T2.F.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.text x={T2.D.x + 5} y={T2.D.y + 5} fill={labelColor} variants={fadeVariant}>D</motion.text>
+        <motion.text x={T2.E.x - 15} y={T2.E.y + 5} fill={labelColor} variants={fadeVariant}>E</motion.text>
+        <motion.text x={T2.F.x + 5} y={T2.F.y - 5} fill={labelColor} variants={fadeVariant}>F</motion.text>
+        
+        <motion.text
+          {...labelE_pos}
+          fill={angleYellow}
+          fontSize="12"
+          variants={fadeVariant}
+          textAnchor="middle"
+          dominantBaseline="middle"
+        >
+          55°
+        </motion.text>
+        <AnimatedAngleArc p1={T2.D} vertex={T2.E} p2={T2.F} color={angleYellow} commonProps={commonProps} radius={15} />
+        <AnimatedAngleArc p1={T2.E} vertex={T2.D} p2={T2.F} color={angleGreen} commonProps={commonProps} radius={15} />
+        <AnimatedSideMarks p1={T2.D} p2={T2.F} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        {/* Double mark on DE from original code */}
+        <AnimatedSideMarks p1={T2.D} p2={T2.E} numMarks={2} color={strokeColor} commonProps={commonProps} />
+      </motion.svg>
     </div>
   );
 };
@@ -168,49 +442,48 @@ export default function AasSlide5() {
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY (from images) ---
   const questions: QuizQuestion[] = [
-  {
-  id: 'aas-statements-q7',
-  question: 'From the diagram, which of the following statements are true?',
-  figure: <FigureQ1 />,
-  statements: [
-    'I.   Triangle ABC is congruent to Triangle DEF by AAS',
-    'II.  x = 5',
-    'III. Angle C is equal to Angle F'
-  ],
-  options: [
-    "I only",
-    "III only",
-    "I and III only",
-    "II only",
-    "I and II only"
-  ],
-  correctAnswer: "I and III only",
-  explanation:
-    "Correct! Statement I is true because we have two pairs of equal angles and one non-included side equal, which fits the AAS rule. Statement III is also true by CPCTC, meaning matching angles are equal after proving congruence. Statement II is false. Using the matching sides, BC equals EF, so set 2x + 1 = 3x - 6. Solving gives x = 7, not 5."
-},
-{
-  id: 'aas-statements-q8',
-  question: 'From the diagram, which of the following statements are true?',
-  figure: <FigureQ2 />,
-  statements: [
-    'I.   Triangle ABC is congruent to Triangle DEF by AAS',
-    'II.  AB = DE',
-    'III. x = 27.5°'
-  ],
-  options: [
-    "I only",
-    "I and III only",
-    "II only",
-    "III only",
-    "I and II only"
-  ],
-  correctAnswer: "I and II only",
-  explanation:
-    "Correct! Statement I is true because we have two pairs of matching angles and a matching non-included side, so AAS applies. Statement II is true by CPCTC, meaning corresponding sides are equal. Statement III is false. Since angle B equals angle E, set 2x + 5 = 55. Solving gives x = 25, not 27.5."
-}
-];
+    {
+      id: 'aas-statements-q7',
+      question: 'From the diagram, which of the following statements are true?',
+      figure: <FigureQ1 />,
+      statements: [
+        'I.   Triangle ABC is congruent to Triangle DEF by AAS',
+        'II.  x = 5',
+        'III. Angle C is equal to Angle F'
+      ],
+      options: [
+        "I only",
+        "III only",
+        "I and III only",
+        "II only",
+        "I and II only"
+      ],
+      correctAnswer: "I and III only",
+      explanation:
+        "Correct! Statement I is true because we have two pairs of equal angles and one non-included side equal, which fits the AAS rule. Statement III is also true by CPCTC, meaning matching angles are equal after proving congruence. Statement II is false. Using the matching sides, BC equals EF, so set 2x + 1 = 3x - 6. Solving gives x = 7, not 5."
+    },
+    {
+      id: 'aas-statements-q8',
+      question: 'From the diagram, which of the following statements are true?',
+      figure: <FigureQ2 />,
+      statements: [
+        'I.   Triangle ABC is congruent to Triangle DEF by AAS',
+        'II.  AB = DE',
+        'III. x = 27.5°'
+      ],
+      options: [
+        "I only",
+        "I and III only",
+        "II only",
+        "III only",
+        "I and II only"
+      ],
+      correctAnswer: "I and II only",
+      explanation:
+        "Correct! Statement I is true because we have two pairs of matching angles and a matching non-included side, so AAS applies. Statement II is true by CPCTC, meaning corresponding sides are equal. Statement III is false. Since angle B equals angle E, set 2x + 5 = 55. Solving gives x = 25, not 27.5."
+    }
+  ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
     setLocalInteractions(prev => ({
@@ -267,7 +540,7 @@ export default function AasSlide5() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content (UPDATED) */}
+        {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             
@@ -317,7 +590,7 @@ export default function AasSlide5() {
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz (UPDATED) */}
+        {/* Right Column - Animation and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
@@ -359,12 +632,12 @@ export default function AasSlide5() {
             {!isQuizComplete ? (
               <>
                 <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
-                 {/* Statements */}
-                 <ul className="list-none p-4 mb-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono">
-                  {questions[currentQuestionIndex].statements.map((stmt, i) => (
-                    <li key={i}>{stmt}</li>
-                  ))}
-                </ul>
+                  {/* Statements */}
+                  <ul className="list-none p-4 mb-4 bg-slate-100 dark:bg-slate-700/60 rounded-lg font-mono">
+                   {questions[currentQuestionIndex].statements.map((stmt, i) => (
+                      <li key={i}>{stmt}</li>
+                    ))}
+                  </ul>
                 
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">

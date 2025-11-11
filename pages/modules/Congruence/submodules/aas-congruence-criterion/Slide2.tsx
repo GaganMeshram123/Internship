@@ -2,7 +2,171 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
-import { useThemeContext } from '@/lib/ThemeContext';
+/* import { useThemeContext } from '@/lib/ThemeContext';
+ */
+
+// --- MOCK HOOK FOR SNIPPET TO RUN ---
+const useThemeContext = () => ({ isDarkMode: false });
+// -------------------------------------
+
+type Point = { x: number; y: number };
+
+// --- HELPER FUNCTIONS FOR GEOMETRIC CALCULATIONS ---
+
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => Math.sqrt(v.x * v.x + v.y * v.y);
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const angle = Math.acos(dotProduct(v1, v2) / (magnitude(v1) * magnitude(v2)));
+  return isNaN(angle) ? 0 : angle;
+};
+
+/**
+ * Generates an SVG path for an angle arc.
+ */
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  if (magV1 === 0 || magV2 === 0) return ''; // Avoid division by zero
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+/**
+ * Generates SVG paths for hash marks on a side.
+ */
+const getSideMarksPath = (
+  p1: Point,
+  p2: Point,
+  numMarks: number,
+  markLength: number = 8,
+  spacing: number = 3,
+) => {
+  const midX = (p1.x + p2.x) / 2;
+  const midY = (p1.y + p2.y) / 2;
+  const v = getVector(p1, p2);
+  const len = magnitude(v);
+  if (len === 0) return '';
+
+  const perpV = { x: -v.y / len, y: v.x / len }; // Perpendicular vector normalized
+  const totalWidth = (numMarks - 1) * spacing;
+  let paths = '';
+  
+  for (let i = 0; i < numMarks; i++) {
+    const offset = (-totalWidth / 2) + i * spacing;
+    const start = {
+      x: midX + perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY + perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    const end = {
+      x: midX - perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY - perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    paths += `M ${start.x} ${start.y} L ${end.x} ${end.y} `;
+  }
+  return paths.trim();
+};
+
+/**
+ * Calculates a good position for a triangle label.
+ */
+const getTriangleLabelPosition = (
+  vertices: { A: Point; B: Point; C: Point },
+  anchor: keyof typeof vertices = 'A',
+  offsetX: number = 0,
+  offsetY: number = -10,
+) => {
+  // Simple strategy: offset from a specific vertex
+  const anchorPoint = vertices[anchor];
+  return { x: anchorPoint.x + offsetX, y: anchorPoint.y + offsetY };
+};
+
+
+// --- FRAMER MOTION VARIANTS ---
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.3,
+    },
+  },
+};
+
+const drawVariant = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { type: 'spring', duration: 1.5, bounce: 0 },
+      opacity: { duration: 0.01, delay: 0.1 },
+    },
+  },
+};
+
+const fadeVariant = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+      delay: 0.2,
+    },
+  },
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+}
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ p1, vertex, p2, color, radius, commonProps }) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+interface AnimatedSideMarksProps {
+  p1: Point;
+  p2: Point;
+  numMarks: number;
+  color: string;
+  commonProps: any;
+}
+
+const AnimatedSideMarks: React.FC<AnimatedSideMarksProps> = ({ p1, p2, numMarks, color, commonProps }) => {
+  const pathD = getSideMarksPath(p1, p2, numMarks);
+  return <motion.path d={pathD} stroke={color} strokeLinecap="round" {...commonProps} variants={drawVariant} strokeWidth="1.5" />;
+};
+
 
 // --- FIGURE FOR EXAMPLE (Left Side) ---
 const FigureExample: React.FC = () => {
@@ -11,14 +175,14 @@ const FigureExample: React.FC = () => {
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
-  
+
   const angle1 = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
   const angle2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
   const angle3 = isDarkMode ? '#F87171' : '#EF4444'; // Red/Orange
   const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  // Triangle Defs
+  // Triangle Defs (Unchanged)
   const T = { A: { x: 80, y: 120 }, B: { x: 180, y: 120 }, C: { x: 160, y: 30 } };
   const P1 = { A: { x: 250, y: 30 }, B: { x: 300, y: 120 }, C: { x: 370, y: 80 } };
   const P2 = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
@@ -26,42 +190,100 @@ const FigureExample: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* --- Triangle T --- */}
-        <g>
-          <path d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={T.A.x} y={T.A.y - 10} fill={labelColor} fontSize="14">T</text>
-          <path d={`M ${T.A.x + 15} ${T.A.y} A 15 15 0 0 1 ${T.A.x + 12.1} ${T.A.y - 8.8}`} stroke={angle1} {...commonProps} />
-          <path d={`M ${T.C.x - 13.6} ${T.C.y + 6.5} A 15 15 0 0 1 ${T.C.x} ${T.C.y + 15}`} stroke={angle2} {...commonProps} />
-          <line x1={130} y1={70} x2={140} y2={65} stroke={sideColor} strokeWidth="1.5" />
-          <line x1={133} y1={73} x2={143} y2={68} stroke={sideColor} strokeWidth="1.5" />
-        </g>
+        <motion.g variants={containerVariants}>
+          <motion.path
+            d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`}
+            stroke={strokeColor}
+            {...commonProps}
+            variants={drawVariant}
+          />
+          <motion.text
+            {...getTriangleLabelPosition(T, 'A', -10, -5)}
+            fill={labelColor}
+            fontSize="14"
+            variants={fadeVariant}
+          >
+            T
+          </motion.text>
+          <AnimatedAngleArc p1={T.B} vertex={T.A} p2={T.C} color={angle1} commonProps={commonProps} />
+          <AnimatedAngleArc p1={T.A} vertex={T.C} p2={T.B} color={angle2} commonProps={commonProps} />
+          <AnimatedSideMarks p1={T.B} p2={T.C} numMarks={2} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+
         {/* --- Triangle P1 --- */}
-        <g>
-          <path d={`M ${P1.A.x} ${P1.A.y} L ${P1.B.x} ${P1.B.y} L ${P1.C.x} ${P1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={P1.A.x + 20} y={P1.A.y + 30} fill={labelColor} fontSize="14">P₁</text>
-          <path d={`M ${P1.B.x - 15} ${P1.B.y} A 15 15 0 0 0 ${P1.B.x - 12.1} ${P1.B.y - 8.8}`} stroke={angle1} {...commonProps} />
-          <path d={`M ${P1.A.x + 13.6} ${P1.A.y + 6.5} A 15 15 0 0 1 ${P1.A.x} ${P1.A.y + 15}`} stroke={angle2} {...commonProps} />
-          <line x1={325} y1={50} x2={335} y2={45} stroke={sideColor} strokeWidth="1.5" />
-          <line x1={328} y1={53} x2={338} y2={48} stroke={sideColor} strokeWidth="1.5" />
-        </g>
+        <motion.g variants={containerVariants}>
+          <motion.path
+            d={`M ${P1.A.x} ${P1.A.y} L ${P1.B.x} ${P1.B.y} L ${P1.C.x} ${P1.C.y} Z`}
+            stroke={strokeColor}
+            {...commonProps}
+            variants={drawVariant}
+          />
+          <motion.text
+            {...getTriangleLabelPosition(P1, 'A', 0, -5)}
+            fill={labelColor}
+            fontSize="14"
+            textAnchor="middle"
+            variants={fadeVariant}
+          >
+            P₁
+          </motion.text>
+          <AnimatedAngleArc p1={P1.C} vertex={P1.B} p2={P1.A} color={angle1} commonProps={commonProps} />
+          <AnimatedAngleArc p1={P1.B} vertex={P1.A} p2={P1.C} color={angle2} commonProps={commonProps} />
+          <AnimatedSideMarks p1={P1.B} p2={P1.C} numMarks={2} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+
         {/* --- Triangle P2 --- */}
-        <g>
-          <path d={`M ${P2.A.x} ${P2.A.y} L ${P2.B.x} ${P2.B.y} L ${P2.C.x} ${P2.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={P2.C.x} y={P2.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">P₂</text>
-          <path d={`M ${P2.A.x + 15} ${P2.A.y} A 15 15 0 0 1 ${P2.A.x + 13.6} ${P2.A.y - 6.5}`} stroke={angle1} {...commonProps} />
-          <path d={`M ${P2.C.x + 12.1} ${P2.C.y + 8.8} A 15 15 0 0 1 ${P2.C.x} ${P2.C.y + 15}`} stroke={angle3} {...commonProps} />
-          <line x1={130} y1={205} x2={140} y2={208} stroke={sideColor} strokeWidth="1.5" />
-          <line x1={133} y1={202} x2={143} y2={205} stroke={sideColor} strokeWidth="1.5" />
-        </g>
+        <motion.g variants={containerVariants}>
+          <motion.path
+            d={`M ${P2.A.x} ${P2.A.y} L ${P2.B.x} ${P2.B.y} L ${P2.C.x} ${P2.C.y} Z`}
+            stroke={strokeColor}
+            {...commonProps}
+            variants={drawVariant}
+          />
+          <motion.text
+            {...getTriangleLabelPosition(P2, 'C', 0, -5)}
+            fill={labelColor}
+            fontSize="14"
+            textAnchor="middle"
+            variants={fadeVariant}
+          >
+            P₂
+          </motion.text>
+          <AnimatedAngleArc p1={P2.B} vertex={P2.A} p2={P2.C} color={angle1} commonProps={commonProps} />
+          <AnimatedAngleArc p1={P2.A} vertex={P2.C} p2={P2.B} color={angle3} commonProps={commonProps} />
+          <AnimatedSideMarks p1={P2.B} p2={P2.C} numMarks={2} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+
         {/* --- Triangle P3 --- */}
-        <g>
-          <path d={`M ${P3.A.x} ${P3.A.y} L ${P3.B.x} ${P3.B.y} L ${P3.C.x} ${P3.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={P3.C.x} y={P3.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">P₃</text>
-          <line x1={P3.A.x + 65} y1={P3.A.y - 3} x2={P3.A.x + 75} y2={P3.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
-          <line x1={P3.A.x + 70} y1={P3.A.y - 3} x2={P3.A.x + 80} y2={P3.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
-        </g>
-      </svg>
+        <motion.g variants={containerVariants}>
+          <motion.path
+            d={`M ${P3.A.x} ${P3.A.y} L ${P3.B.x} ${P3.B.y} L ${P3.C.x} ${P3.C.y} Z`}
+            stroke={strokeColor}
+            {...commonProps}
+            variants={drawVariant}
+          />
+          <motion.text
+             {...getTriangleLabelPosition(P3, 'C', 0, -5)}
+            fill={labelColor}
+            fontSize="14"
+            textAnchor="middle"
+            variants={fadeVariant}
+          >
+            P₃
+          </motion.text>
+          <AnimatedSideMarks p1={P3.A} p2={P3.B} numMarks={2} color={sideColor} commonProps={commonProps} />
+          {/* Note: Original code had 2 marks on P3's AB side. Replicated here. */}
+        </motion.g>
+      </motion.svg>
     </div>
   );
 };
@@ -72,7 +294,8 @@ const FigureQ1: React.FC = () => {
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
+
   const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
   const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
   const anglePurple = isDarkMode ? '#C084FC' : '#9333EA';
@@ -87,38 +310,49 @@ const FigureQ1: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Draw all lines */}
-        <path d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${E.x} ${E.y} L ${F.x} ${F.y} Z`} stroke={strokeColor} fill={isDarkMode ? 'rgb(30 41 59 / 0.5)' : 'rgb(241 245 249 / 0.5)'} />
-        <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${A.x} ${A.y} L ${E.x} ${E.y}`} stroke={strokeColor} {...commonProps} />
+        <motion.path
+          d={`M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${E.x} ${E.y} L ${F.x} ${F.y} Z`}
+          stroke={strokeColor}
+          fill={isDarkMode ? 'rgb(30 41 59 / 0.5)' : 'rgb(241 245 249 / 0.5)'}
+          variants={drawVariant}
+        />
+        <motion.path d={`M ${A.x} ${A.y} L ${C.x} ${C.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+        <motion.path d={`M ${A.x} ${A.y} L ${E.x} ${E.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
 
         {/* Labels */}
-        <text x={A.x} y={A.y - 10} fill={strokeColor} textAnchor="middle">A</text>
-        <text x={B.x - 15} y={B.y} fill={strokeColor}>B</text>
-        <text x={C.x - 15} y={C.y + 5} fill={strokeColor}>C</text>
-        <text x={D.x} y={D.y + 15} fill={strokeColor} textAnchor="middle">D</text>
-        <text x={E.x + 5} y={E.y + 5} fill={strokeColor}>E</text>
-        <text x={F.x + 5} y={F.y} fill={strokeColor}>F</text>
+        <motion.text x={A.x} y={A.y - 10} fill={labelColor} textAnchor="middle" variants={fadeVariant}>A</motion.text>
+        <motion.text x={B.x - 15} y={B.y} fill={labelColor} variants={fadeVariant}>B</motion.text>
+        <motion.text x={C.x - 15} y={C.y + 5} fill={labelColor} variants={fadeVariant}>C</motion.text>
+        <motion.text x={D.x} y={D.y + 15} fill={labelColor} textAnchor="middle" variants={fadeVariant}>D</motion.text>
+        <motion.text x={E.x + 5} y={E.y + 5} fill={labelColor} variants={fadeVariant}>E</motion.text>
+        <motion.text x={F.x + 5} y={F.y} fill={labelColor} variants={fadeVariant}>F</motion.text>
 
-        {/* Markings */}
-        <path d={`M ${A.x - 12} ${A.y + 15} A 20 20 0 0 1 ${A.x + 12} ${A.y + 15}`} stroke={angleBlue} strokeWidth="3" fill={angleBlue} fillOpacity="0.4" />
-        <path d={`M ${D.x - 15} ${D.y - 10} A 20 20 0 0 1 ${D.x + 15} ${D.y - 10}`} stroke={anglePurple} strokeWidth="3" fill={anglePurple} fillOpacity="0.4" />
-        <path d={`M ${B.x + 10} ${B.y - 5} A 15 15 0 0 1 ${B.x + 15} ${B.y + 10}`} stroke={angleOrange} strokeWidth="3" fill={angleOrange} fillOpacity="0.4" />
-        <path d={`M ${F.x - 10} ${F.y - 5} A 15 15 0 0 0 ${F.x - 15} ${F.y + 10}`} stroke={angleOrange} strokeWidth="3" fill={angleOrange} fillOpacity="0.4" />
+        {/* Markings - Now using robust helpers */}
+        <AnimatedAngleArc p1={B} vertex={A} p2={F} color={angleBlue} commonProps={{...commonProps, strokeWidth: 3}} radius={20} />
+        <AnimatedAngleArc p1={C} vertex={D} p2={E} color={anglePurple} commonProps={{...commonProps, strokeWidth: 3}} radius={20} />
+        <AnimatedAngleArc p1={A} vertex={B} p2={C} color={angleOrange} commonProps={{...commonProps, strokeWidth: 3}} radius={15} />
+        <AnimatedAngleArc p1={A} vertex={F} p2={E} color={angleOrange} commonProps={{...commonProps, strokeWidth: 3}} radius={15} />
+
+        <AnimatedSideMarks p1={B} p2={C} numMarks={1} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={F} p2={E} numMarks={1} color={strokeColor} commonProps={commonProps} />
         
-        <line x1={98} y1={128} x2={108} y2={132} stroke={strokeColor} strokeWidth="2" /> {/* BC */}
-        <line x1={292} y1={132} x2={302} y2={128} stroke={strokeColor} strokeWidth="2" /> {/* FE */}
-        
-        <line x1={132} y1={52} x2={142} y2={58} stroke={strokeColor} strokeWidth="2" /> {/* AB */}
-        <line x1={135} y1={49} x2={145} y2={55} stroke={strokeColor} strokeWidth="2" />
-        <line x1={258} y1={58} x2={268} y2={52} stroke={strokeColor} strokeWidth="2" /> {/* AF */}
-        <line x1={255} y1={55} x2={265} y2={49} stroke={strokeColor} strokeWidth="2" />
-      </svg>
+        <AnimatedSideMarks p1={A} p2={B} numMarks={2} color={strokeColor} commonProps={commonProps} />
+        <AnimatedSideMarks p1={A} p2={F} numMarks={2} color={strokeColor} commonProps={commonProps} />
+      </motion.svg>
     </div>
   );
 };
+
 
 // --- FIGURE FOR QUIZ QUESTION 2 (T, P1, P2, P3) ---
 const FigureQ2: React.FC = () => {
@@ -127,62 +361,126 @@ const FigureQ2: React.FC = () => {
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
-  
+
   const angle1 = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
   const angle2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
   const angle3 = isDarkMode ? '#F87171' : '#EF4444'; // Red/Orange
-  
-  // --- THIS IS THE MISSING LINE ---
-  const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568'; // For side hash marks
-  
+  const sideColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
   const T = { A: { x: 30, y: 120 }, B: { x: 170, y: 120 }, C: { x: 80, y: 30 } };
   const P1 = { A: { x: 250, y: 30 }, B: { x: 300, y: 120 }, C: { x: 370, y: 80 } };
   const P2 = { A: { x: 30, y: 250 }, B: { x: 170, y: 250 }, C: { x: 80, y: 160 } };
   const P3 = { A: { x: 230, y: 250 }, B: { x: 370, y: 250 }, C: { x: 320, y: 160 } };
-  
-  const greenSquare = (p: {x: number, y: number}) => 
-    <path d={`M ${p.x} ${p.y} l 12 0 l 0 12 l -12 0 Z`} fill={angle2} stroke="none" />;
+
+  const greenSquare = (p: Point, variants: any) => (
+    <motion.path
+      d={`M ${p.x} ${p.y} l 12 0 l 0 12 l -12 0 Z`}
+      fill={angle2}
+      stroke="none"
+      variants={variants}
+    />
+  );
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* --- Triangle T --- */}
-        <g>
-          <path d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={T.C.x + 10} y={T.C.y - 5} fill={labelColor} fontSize="14">T</text>
-          <path d={`M ${T.A.x + 15} ${T.A.y} A 15 15 0 0 1 ${T.A.x + 13.6} ${T.A.y - 6.5}`} stroke={angle1} {...commonProps} />
-          {greenSquare({x: T.C.x, y: T.C.y})}
-          <line x1={130} y1={70} x2={140} y2={65} stroke={sideColor} strokeWidth="1.5" />
-        </g>
+        <motion.g variants={containerVariants}>
+          <motion.path
+            d={`M ${T.A.x} ${T.A.y} L ${T.B.x} ${T.B.y} L ${T.C.x} ${T.C.y} Z`}
+            stroke={strokeColor}
+            {...commonProps}
+            variants={drawVariant}
+          />
+          <motion.text
+            {...getTriangleLabelPosition(T, 'C', 10, -5)}
+            fill={labelColor}
+            fontSize="14"
+            variants={fadeVariant}
+          >
+            T
+          </motion.text>
+          <AnimatedAngleArc p1={T.B} vertex={T.A} p2={T.C} color={angle1} commonProps={commonProps} />
+          {greenSquare({ x: T.C.x, y: T.C.y }, fadeVariant)}
+          <AnimatedSideMarks p1={T.B} p2={T.C} numMarks={1} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+
         {/* --- Triangle P1 --- */}
-        <g>
-          <path d={`M ${P1.A.x} ${P1.A.y} L ${P1.B.x} ${P1.B.y} L ${P1.C.x} ${P1.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={P1.A.x + 20} y={P1.A.y + 30} fill={labelColor} fontSize="14">P₁</text>
-          <path d={`M ${P1.C.x - 15} ${P1.C.y} A 15 15 0 0 1 ${P1.C.x - 13.6} ${P1.C.y - 6.5}`} stroke={angle3} {...commonProps} />
-          {greenSquare({x: P1.A.x, y: P1.A.y})}
-          <line x1={325} y1={50} x2={335} y2={45} stroke={sideColor} strokeWidth="1.5" />
-        </g>
+        <motion.g variants={containerVariants}>
+          <motion.path
+            d={`M ${P1.A.x} ${P1.A.y} L ${P1.B.x} ${P1.B.y} L ${P1.C.x} ${P1.C.y} Z`}
+            stroke={strokeColor}
+            {...commonProps}
+            variants={drawVariant}
+          />
+          <motion.text
+            {...getTriangleLabelPosition(P1, 'B', -10, 10)}
+            fill={labelColor}
+            fontSize="14"
+            variants={fadeVariant}
+          >
+            P₁
+          </motion.text>
+          <AnimatedAngleArc p1={P1.B} vertex={P1.C} p2={P1.A} color={angle3} commonProps={commonProps} />
+          {greenSquare({ x: P1.A.x, y: P1.A.y }, fadeVariant)}
+          <AnimatedSideMarks p1={P1.B} p2={P1.C} numMarks={1} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+
         {/* --- Triangle P2 --- */}
-        <g>
-          <path d={`M ${P2.A.x} ${P2.A.y} L ${P2.B.x} ${P2.B.y} L ${P2.C.x} ${P2.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={P2.C.x} y={P2.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">P₂</text>
-          <path d={`M ${P2.B.x - 15} ${P2.B.y} A 15 15 0 0 0 ${P2.B.x - 13.6} ${P2.B.y - 6.5}`} stroke={angle3} {...commonProps} />
-          {greenSquare({x: P2.C.x, y: P2.C.y})}
-          <line x1={130} y1={205} x2={140} y2={208} stroke={sideColor} strokeWidth="1.5" />
-        </g>
+        <motion.g variants={containerVariants}>
+          <motion.path
+            d={`M ${P2.A.x} ${P2.A.y} L ${P2.B.x} ${P2.B.y} L ${P2.C.x} ${P2.C.y} Z`}
+            stroke={strokeColor}
+            {...commonProps}
+            variants={drawVariant}
+          />
+          <motion.text
+            {...getTriangleLabelPosition(P2, 'C', 0, -5)}
+            fill={labelColor}
+            fontSize="14"
+            textAnchor="middle"
+            variants={fadeVariant}
+          >
+            P₂
+          </motion.text>
+          <AnimatedAngleArc p1={P2.A} vertex={P2.B} p2={P2.C} color={angle3} commonProps={commonProps} />
+          {greenSquare({ x: P2.C.x, y: P2.C.y }, fadeVariant)}
+          <AnimatedSideMarks p1={P2.B} p2={P2.C} numMarks={1} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+
         {/* --- Triangle P3 --- */}
-        <g>
-          <path d={`M ${P3.A.x} ${P3.A.y} L ${P3.B.x} ${P3.B.y} L ${P3.C.x} ${P3.C.y} Z`} stroke={strokeColor} {...commonProps} />
-          <text x={P3.C.x} y={P3.C.y - 5} fill={labelColor} fontSize="14" textAnchor="middle">P₃</text>
-          {greenSquare({x: P3.C.x, y: P3.C.y})}
-          <line x1={P3.A.x + 65} y1={P3.A.y - 3} x2={P3.A.x + 75} y2={P3.A.y + 3} stroke={sideColor} strokeWidth="1.5" />
-        </g>
-      </svg>
+        <motion.g variants={containerVariants}>
+          <motion.path
+            d={`M ${P3.A.x} ${P3.A.y} L ${P3.B.x} ${P3.B.y} L ${P3.C.x} ${P3.C.y} Z`}
+            stroke={strokeColor}
+            {...commonProps}
+            variants={drawVariant}
+          />
+          <motion.text
+            {...getTriangleLabelPosition(P3, 'C', 0, -5)}
+            fill={labelColor}
+            fontSize="14"
+            textAnchor="middle"
+            variants={fadeVariant}
+          >
+            P₃
+          </motion.text>
+          {greenSquare({ x: P3.C.x, y: P3.C.y }, fadeVariant)}
+          <AnimatedSideMarks p1={P3.A} p2={P3.B} numMarks={1} color={sideColor} commonProps={commonProps} />
+        </motion.g>
+      </motion.svg>
     </div>
   );
 };
+
 
 export default function AasSlide2() {
   const [localInteractions, setLocalInteractions] = useState<Record<string, InteractionResponse>>({});
@@ -196,57 +494,54 @@ export default function AasSlide2() {
 
   const slideInteractions: Interaction[] = [
     {
-      id: 'aas-identification-quiz', // Updated ID
-      conceptId: 'aas-identification', // Updated ID
-      conceptName: 'AAS Identification', // Updated Name
+      id: 'aas-identification-quiz',
+      conceptId: 'aas-identification',
+      conceptName: 'AAS Identification',
       type: 'judging',
       description: 'Testing ability to identify AAS congruence'
     }
   ];
 
-  // --- UPDATED INTERFACE ---
   interface QuizQuestion {
     id: string;
     question: string;
-    figure: React.ReactNode; // Added figure
+    figure: React.ReactNode;
     options: string[];
     correctAnswer: string;
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY ---
   const questions: QuizQuestion[] = [
-   {
-  id: 'aas-id-q1-pentagon',
-  question: 'According to the AAS criterion only, which of the following triangles is congruent to triangle ABC?',
-  figure: <FigureQ1 />,
-  options: [
-    "Triangle AEB",
-    "Triangle ACD",
-    "Triangle ADE",
-    "Triangle AFE",
-    "Triangle ABD"
-  ],
-  correctAnswer: "Triangle AFE",
-  explanation:
-    "Correct! Triangle ABC and Triangle AFE match the Angle-Angle-Side (AAS) pattern. Angle B matches angle F, and BC matches FE. Also, angle A in triangle ABC matches angle A in triangle AFE. The side is not between the two angles, so this is AAS."
-},
-{
-  id: 'aas-id-q2-triangles',
-  question: 'According to the AAS criterion only, which of the following triangles is congruent to triangle T?',
-  figure: <FigureQ2 />,
-  options: [
-    "Triangle P1 only",
-    "Triangle P2 and P3 only",
-    "Triangle P3 only",
-    "Triangle P1 and P2 only",
-    "Triangle P2 only"
-  ],
-  correctAnswer: "Triangle P1 only",
-  explanation:
-    "Correct! Triangle T has two angles marked (one yellow and one right angle) and a side that is not between these angles. Triangle P1 also has two matching angles and a non-included side. So Triangle T and Triangle P1 match by AAS."
-}
-
+    {
+      id: 'aas-id-q1-pentagon',
+      question: 'According to the AAS criterion only, which of the following triangles is congruent to triangle ABC?',
+      figure: <FigureQ1 />,
+      options: [
+        "Triangle AEB",
+        "Triangle ACD",
+        "Triangle ADE",
+        "Triangle AFE",
+        "Triangle ABD"
+      ],
+      correctAnswer: "Triangle AFE",
+      explanation:
+        "Correct! Triangle ABC and Triangle AFE match the Angle-Angle-Side (AAS) pattern. Angle B matches angle F, and BC matches FE. Also, angle A in triangle ABC matches angle A in triangle AFE. The side is not between the two angles, so this is AAS."
+    },
+    {
+      id: 'aas-id-q2-triangles',
+      question: 'According to the AAS criterion only, which of the following triangles is congruent to triangle T?',
+      figure: <FigureQ2 />,
+      options: [
+        "Triangle P1 only",
+        "Triangle P2 and P3 only",
+        "Triangle P3 only",
+        "Triangle P1 and P2 only",
+        "Triangle P2 only"
+      ],
+      correctAnswer: "Triangle P1 only",
+      explanation:
+        "Correct! Triangle T has two angles marked (one yellow and one right angle) and a side that is not between these angles. Triangle P1 also has two matching angles and a non-included side. So Triangle T and Triangle P1 match by AAS."
+    }
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
@@ -269,12 +564,12 @@ export default function AasSlide2() {
     }
 
     handleInteractionComplete({
-      interactionId: `aas-id-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`, // Updated ID
+      interactionId: `aas-id-q${currentQuestionIndex + 1}-${current.id}-${Date.now()}`,
       value: answerText,
       isCorrect,
       timestamp: Date.now(),
-      conceptId: 'aas-identification', // Updated ID
-      conceptName: 'AAS Identification', // Updated Name
+      conceptId: 'aas-identification',
+      conceptName: 'AAS Identification',
       conceptDescription: `Answer to question ${currentQuestionIndex + 1}`,
       question: {
         type: 'mcq',
@@ -304,7 +599,7 @@ export default function AasSlide2() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content (UPDATED) */}
+        {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             
@@ -329,25 +624,25 @@ export default function AasSlide2() {
             <p className="text-lg leading-relaxed mt-4">
               Let's examine each triangle:
             </p>
-           <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
-  <li>
-    <strong>P₁ is congruent to T</strong> by AAS, because it has two matching angles (yellow and green) and a non-included side (2 hash marks) that match triangle T.
-  </li>
-  <li>
-    <strong>P₂ is congruent to T</strong> by AAS. It also has two matching angles (yellow and orange) and the same non-included side match (2 hash marks). This means the green angle in T matches the orange angle in P₂.
-  </li>
-  <li>
-    <strong>P₃ is not congruent to T</strong> because we do not have two matching angles to apply AAS.
-  </li>
-</ul>
+            <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
+              <li>
+                <strong>P₁ is congruent to T</strong> by AAS, because it has two matching angles (yellow and green) and a non-included side (2 hash marks) that match triangle T.
+              </li>
+              <li>
+                <strong>P₂ is congruent to T</strong> by AAS. It also has two matching angles (yellow and orange) and the same non-included side match (2 hash marks). This means the green angle in T matches the orange angle in P₂.
+              </li>
+              <li>
+                <strong>P₃ is not congruent to T</strong> because we do not have two matching angles to apply AAS.
+              </li>
+            </ul>
 
-<p className="text-lg leading-relaxed mt-4 font-semibold">
-  Therefore, the correct answer is P₁ and P₂ only.
-</p>
-         </div>
+            <p className="text-lg leading-relaxed mt-4 font-semibold">
+              Therefore, the correct answer is P₁ and P₂ only.
+            </p>
+          </div>
         </div>
 
-        {/* Right Column - Animation and Quiz (UPDATED) */}
+        {/* Right Column - Animation and Quiz */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
@@ -466,8 +761,8 @@ export default function AasSlide2() {
 
   return (
     <SlideComponentWrapper
-      slideId="aas-identification" // Updated ID
-      slideTitle="Identifying Congruence Using AAS" // Updated Title
+      slideId="aas-identification"
+      slideTitle="Identifying Congruence Using AAS"
       moduleId="congruence"
       submoduleId="aas-congruence-criterion"
       interactions={localInteractions}

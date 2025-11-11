@@ -4,14 +4,108 @@ import { Interaction, InteractionResponse } from '../../../common-components/con
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
 
+// --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
+
+type Point = { x: number; y: number };
+
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => {
+  const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+  return mag === 0 ? 1e-6 : mag; // Avoid division by zero
+};
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const v1Mag = magnitude(v1);
+  const v2Mag = magnitude(v2);
+  const angle = Math.acos(dotProduct(v1, v2) / (v1Mag * v2Mag));
+  return isNaN(angle) ? 0 : angle;
+};
+
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+const getAngleLabelPosition = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  offset: number = 25,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const bisectorV = { x: nv1.x + nv2.x, y: nv1.y + nv2.y };
+  const magBisector = magnitude(bisectorV);
+  const nBisectorV = magBisector < 1e-6 
+    ? { x: -nv1.y, y: nv1.x }
+    : { x: bisectorV.x / magBisector, y: bisectorV.y / magBisector };
+
+  return {
+    x: vertex.x + nBisectorV.x * offset,
+    y: vertex.y + nBisectorV.y * offset,
+  };
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+  variants: any;
+  custom: number;
+}
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ p1, vertex, p2, color, radius, commonProps, variants, custom }) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return (
+    <motion.path
+      d={pathD}
+      stroke={color}
+      {...commonProps}
+      variants={variants}
+      initial="hidden"
+      animate="visible"
+      custom={custom}
+    />
+  );
+};
+
+
 // --- SAS ANIMATION COMPONENT DEFINED INSIDE (UPDATED) ---
 const SasAnimation: React.FC = () => {
   const svgWidth = 400;
-  const svgHeight = 250; // Increased height to accommodate the congruence statement below
+  const svgHeight = 250;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
 
-  // Colors from your image
   const side1Color = isDarkMode ? '#F472B6' : '#DB2777'; // Pink
   const side2Color = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
   const angleColor = isDarkMode ? '#FDE047' : '#EAB308'; // Yellow
@@ -42,6 +136,9 @@ const SasAnimation: React.FC = () => {
       transition: { delay: delay, duration: 0.5 }
     }),
   };
+  
+  const labelBPos = getAngleLabelPosition(T1.A, T1.B, T1.C, 30);
+  const labelLPos = getAngleLabelPosition(T2.K, T2.L, T2.M, 30);
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
@@ -77,20 +174,43 @@ const SasAnimation: React.FC = () => {
         <motion.text x={svgWidth / 2 - 50} y={svgHeight - 60} fill={side1Color} fontSize="16" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={0.9}>S</motion.text>
 
-        {/* ANGLE (B and L) - 75° */}
-        <motion.path
-          d={`M ${T1.B.x - 20} ${T1.B.y} A 20 20 0 0 0 ${T1.B.x - 14.7} ${T1.B.y - 13.5}`}
-          stroke={angleColor} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={1.5}
+        {/* --- IMPROVED ANGLE (B and L) - 75° --- */}
+        <AnimatedAngleArc
+          p1={T1.A} vertex={T1.B} p2={T1.C}
+          color={angleColor}
+          commonProps={commonProps}
+          radius={20}
+          variants={anim}
+          custom={1.5}
         />
-        <motion.text x={T1.B.x - 25} y={T1.B.y - 20} fill={angleColor} fontSize="12"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>75°</motion.text>
+        <motion.text
+          {...labelBPos}
+          fill={angleColor}
+          fontSize="12"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.7}
+          textAnchor="middle" dominantBaseline="middle"
+        >
+          75°
+        </motion.text>
           
-        <motion.path
-          d={`M ${T2.L.x - 10} ${T2.L.y + 15} A 20 20 0 0 1 ${T2.L.x + 10} ${T2.L.y + 15}`}
-          stroke={angleColor} {...commonProps} variants={anim} initial="hidden" animate="visible" custom={1.5}
+        <AnimatedAngleArc
+          p1={T2.K} vertex={T2.L} p2={T2.M}
+          color={angleColor}
+          commonProps={commonProps}
+          radius={20}
+          variants={anim}
+          custom={1.5}
         />
-        <motion.text x={T2.L.x} y={T2.L.y + 35} fill={angleColor} fontSize="12" textAnchor="middle"
-          variants={textAnim} initial="hidden" animate="visible" custom={1.7}>75°</motion.text>
+        <motion.text
+          {...labelLPos}
+          fill={angleColor}
+          fontSize="12"
+          textAnchor="middle"
+          variants={textAnim} initial="hidden" animate="visible" custom={1.7}
+          dominantBaseline="middle"
+        >
+          75°
+        </motion.text>
 
         <motion.text x={svgWidth / 2} y={svgHeight - 60} fill={angleColor} fontSize="16" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={1.9}>A</motion.text>
@@ -113,10 +233,10 @@ const SasAnimation: React.FC = () => {
         <motion.text x={svgWidth / 2 + 50} y={svgHeight - 60} fill={side2Color} fontSize="16" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={2.9}>S</motion.text>
 
-        {/* Congruence Statement (Moved lower) */}
+        {/* --- CONGRUENCE STATEMENT UPDATED --- */}
         <motion.text x={svgWidth / 2} y={svgHeight - 20} fill={strokeColor} fontSize="18" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={3.5}>
-          ∴ &triangle;ABC &cong; &triangle;KLM
+          ∴ △ABC ≅ △KLM
         </motion.text>
       </svg>
     </div>
@@ -153,35 +273,33 @@ export default function SasSlide1() {
     explanation: string;
   }
 
-  // --- QUIZ QUESTIONS (Unchanged) ---
   const questions: QuizQuestion[] = [
     {
-  id: 'sas-intro-q1-meaning',
-  question: 'In the SAS criterion, what is special about the angle A?',
-  options: [
-    "It is the largest angle",
-    "It is the angle between the two given sides",
-    "It is the smallest angle",
-    "It does not matter which angle it is"
-  ],
-  correctAnswer: "It is the angle between the two given sides",
-  explanation:
-    "Correct! In SAS, the angle must be the one that lies directly between the two known sides. This angle is called the included angle."
-},
-{
-  id: 'sas-intro-q2-requirement',
-  question: 'If AB = DE and BC = EF, which angle must also be known to use SAS?',
-  options: [
-    "Angle A is equal to Angle D",
-    "Angle C is equal to Angle F",
-    "Angle B is equal to Angle E",
-    "AC = DF"
-  ],
-  correctAnswer: "Angle B is equal to Angle E",
-  explanation:
-    "Correct! The angle must be the included angle, which is the angle between the two known sides. In this case, Angle B is between AB and BC, and Angle E is between DE and EF."
-}
-
+      id: 'sas-intro-q1-meaning',
+      question: 'In the SAS criterion, what is special about the angle A?',
+      options: [
+        "It is the largest angle",
+        "It is the angle between the two given sides",
+        "It is the smallest angle",
+        "It does not matter which angle it is"
+      ],
+      correctAnswer: "It is the angle between the two given sides",
+      explanation:
+        "Correct! In SAS, the angle must be the one that lies directly between the two known sides. This angle is called the included angle."
+    },
+    {
+      id: 'sas-intro-q2-requirement',
+      question: 'If AB = DE and BC = EF, which angle must also be known to use SAS?',
+      options: [
+        "Angle A is equal to Angle D",
+        "Angle C is equal to Angle F",
+        "Angle B is equal to Angle E",
+        "AC = DF"
+      ],
+      correctAnswer: "Angle B is equal to Angle E",
+      explanation:
+        "Correct! The angle must be the included angle, which is the angle between the two known sides. In this case, Angle B is between AB and BC, and Angle E is between DE and EF."
+    }
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
@@ -239,7 +357,7 @@ export default function SasSlide1() {
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
 
-        {/* Left Column - Content (UPDATED) */}
+        {/* Left Column - Content */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             
@@ -257,17 +375,17 @@ export default function SasSlide1() {
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">To demonstrate, consider the triangles below.</h3>
             
             <div className="space-y-2 text-lg">
-              <p>We can see that two sides of &triangle;ABC are congruent to two sides of &triangle;KLM:</p>
+              <p>We can see that two sides of △ABC are congruent to two sides of △KLM:</p>
               <div className="pl-4 font-mono">
-                <p>AB &cong; KL</p>
-                <p>BC &cong; LM</p>
+                <p>AB ≅ KL</p>
+                <p>BC ≅ LM</p>
               </div>
             </div>
 
             <div className="space-y-2 text-lg mt-4">
               <p>Also, we see that the included angles are congruent:</p>
               <div className="pl-4 font-mono">
-                <p>&ang;B &cong; &ang;L</p>
+                <p>∠B ≅ ∠L</p>
               </div>
             </div>
             
@@ -276,7 +394,7 @@ export default function SasSlide1() {
                 Therefore, the SAS congruence criterion guarantees that these two triangles are congruent, and we can write:
               </p>
               <p className="text-xl font-bold text-center my-4 font-mono text-blue-600 dark:text-blue-400">
-                &triangle;ABC &cong; &triangle;KLM
+                △ABC ≅ △KLM
               </p>
             </div>
 
@@ -289,13 +407,12 @@ export default function SasSlide1() {
           </div>
         </div>
 
-        {/* Right Column - Animation and Quiz (Quiz is Unchanged) */}
+        {/* Right Column - Animation and Quiz */}
         <div className="space-y-6">
           {/* --- ANIMATION CARD --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400 text-center">Visualizing SAS</h3>
             
-            {/* --- USE THE UPDATED ANIMATION COMPONENT --- */}
             <SasAnimation />
             
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-4 text-center">

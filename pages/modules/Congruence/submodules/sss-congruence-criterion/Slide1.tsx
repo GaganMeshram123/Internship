@@ -113,10 +113,10 @@ const SssAnimation: React.FC = () => {
         <motion.text x={svgWidth / 2 + 70} y={svgHeight - 40} fill={side3Color} fontSize="16" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={2.9}>S</motion.text>
 
-        {/* Congruence Statement */}
+        {/* --- Congruence Statement (UPDATED) --- */}
         <motion.text x={svgWidth / 2} y={svgHeight - 15} fill={strokeColor} fontSize="18" fontWeight="bold" textAnchor="middle"
           variants={textAnim} initial="hidden" animate="visible" custom={3.5}>
-          ∴ &triangle;ABC &cong; &triangle;KLM
+          ∴ △ABC ≅ △KLM
         </motion.text>
       </svg>
     </div>
@@ -261,7 +261,7 @@ export default function SssSlide1() {
             <div className="space-y-2 text-lg">
               <p>We can see that we have three pairs of congruent sides:</p>
               <div className="pl-4 font-mono">
-                <p>AB &cong; KL, AC &cong; KM, BC &cong; LM</p>
+                <p>AB ≅ KL, AC ≅ KM, BC ≅ LM</p>
               </div>
             </div>
             
@@ -270,7 +270,7 @@ export default function SssSlide1() {
                 Therefore, the SSS congruence criterion guarantees that these two triangles are congruent, and we can write:
               </p>
               <p className="text-xl font-bold text-center my-4 font-mono text-blue-600 dark:text-blue-400">
-                &triangle;ABC &cong; &triangle;KLM
+                △ABC ≅ △KLM
               </p>
             </div>
              <p className="text-lg leading-relaxed mt-4">
