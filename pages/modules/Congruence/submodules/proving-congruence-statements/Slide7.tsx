@@ -5,6 +5,163 @@ import SlideComponentWrapper from '../../../common-components/SlideComponentWrap
 import { useThemeContext } from '@/lib/ThemeContext';
 import katex from 'katex';
 
+// --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
+
+type Point = { x: number; y: number };
+
+const getVector = (p1: Point, p2: Point) => ({ x: p2.x - p1.x, y: p2.y - p1.y });
+const dotProduct = (v1: Point, v2: Point) => v1.x * v2.x + v1.y * v2.y;
+const magnitude = (v: Point) => {
+  const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+  return mag === 0 ? 1e-6 : mag; // Avoid division by zero
+};
+
+const getAngleBetweenVectors = (v1: Point, v2: Point) => {
+  const v1Mag = magnitude(v1);
+  const v2Mag = magnitude(v2);
+  const angle = Math.acos(dotProduct(v1, v2) / (v1Mag * v2Mag));
+  return isNaN(angle) ? 0 : angle;
+};
+
+const getAngleArcPath = (
+  p1: Point,
+  vertex: Point,
+  p2: Point,
+  radius: number = 15,
+) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const magV1 = magnitude(v1);
+  const magV2 = magnitude(v2);
+
+  const nv1 = { x: v1.x / magV1, y: v1.y / magV1 };
+  const nv2 = { x: v2.x / magV2, y: v2.y / magV2 };
+
+  const start = { x: vertex.x + nv1.x * radius, y: vertex.y + nv1.y * radius };
+  const end = { x: vertex.x + nv2.x * radius, y: vertex.y + nv2.y * radius };
+
+  const angle = getAngleBetweenVectors(v1, v2);
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const crossProduct = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = crossProduct > 0 ? 1 : 0;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+};
+
+const getSideMarksPath = (
+  p1: Point,
+  p2: Point,
+  numMarks: number,
+  markLength: number = 8,
+  spacing: number = 3,
+) => {
+  const midX = (p1.x + p2.x) / 2;
+  const midY = (p1.y + p2.y) / 2;
+  const v = getVector(p1, p2);
+  const len = magnitude(v);
+  if (len === 0) return '';
+
+  const perpV = { x: -v.y / len, y: v.x / len };
+  const totalWidth = (numMarks - 1) * spacing;
+  let paths = '';
+  
+  for (let i = 0; i < numMarks; i++) {
+    const offset = (-totalWidth / 2) + i * spacing;
+    const start = {
+      x: midX + perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY + perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    const end = {
+      x: midX - perpV.x * (markLength / 2) + (v.x / len) * offset,
+      y: midY - perpV.y * (markLength / 2) + (v.y / len) * offset,
+    };
+    paths += `M ${start.x} ${start.y} L ${end.x} ${end.y} `;
+  }
+  return paths.trim();
+};
+
+// --- ANIMATION VARIANTS ---
+const groupVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const drawVariant = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { type: 'spring', duration: 1.5, bounce: 0 },
+      opacity: { duration: 0.01, delay: 0.1 },
+    },
+  },
+};
+
+const fadeVariant = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+      delay: 0.2,
+    },
+  },
+};
+
+// --- ANIMATED GEOMETRY COMPONENTS ---
+
+interface AnimatedAngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  color: string;
+  radius?: number;
+  commonProps: any;
+}
+
+const AnimatedAngleArc: React.FC<AnimatedAngleArcProps> = ({ p1, vertex, p2, color, radius, commonProps }) => {
+  const pathD = getAngleArcPath(p1, vertex, p2, radius);
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+interface AnimatedSideMarksProps {
+  p1: Point;
+  p2: Point;
+  numMarks: number;
+  color: string;
+  commonProps: any;
+}
+
+const AnimatedSideMarks: React.FC<AnimatedSideMarksProps> = ({ p1, p2, numMarks, color, commonProps }) => {
+  const pathD = getSideMarksPath(p1, p2, numMarks);
+  return <motion.path d={pathD} stroke={color} strokeLinecap="round" {...commonProps} variants={drawVariant} strokeWidth="1.5" />;
+};
+
+const RightAngleBox: React.FC<{ vertex: Point, p1: Point, p2: Point, color: string, size?: number, commonProps: any }> = 
+  ({ vertex, p1, p2, color, size = 10, commonProps }) => {
+  const v1 = getVector(vertex, p1);
+  const v2 = getVector(vertex, p2);
+  const nv1 = { x: v1.x / magnitude(v1), y: v1.y / magnitude(v1) };
+  const nv2 = { x: v2.x / magnitude(v2), y: v2.y / magnitude(v2) };
+
+  const p1_on_line = { x: vertex.x + nv1.x * size, y: vertex.y + nv1.y * size };
+  const p2_on_line = { x: vertex.x + nv2.x * size, y: vertex.y + nv2.y * size };
+  const corner_point = { x: p1_on_line.x + nv2.x * size, y: p1_on_line.y + nv2.y * size };
+
+  const pathD = `M ${p1_on_line.x} ${p1_on_line.y} L ${corner_point.x} ${corner_point.y} L ${p2_on_line.x} ${p2_on_line.y}`;
+  
+  return <motion.path d={pathD} stroke={color} {...commonProps} variants={drawVariant} />;
+};
+
+
 // --- TABLE COMPONENT DEFINED INSIDE ---
 type ProofRow = { num: string; statement: string; reason: string };
 
@@ -40,35 +197,44 @@ const AasExampleFigure: React.FC = () => {
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleColor1 = isDarkMode ? '#F472B6' : '#EC4899'; // Pink
   const angleColor2 = isDarkMode ? '#C084FC' : '#A855F7'; // Purple
+  const commonProps = { fill: 'none', strokeWidth: 2 };
   
   const P={x: 100, y: 180}, Q={x: 280, y: 180}, R={x: 50, y: 50}, S={x: 200, y: 180};
-  const T_on_PR = { x: 75, y: 115 };
+  const T = { x: 75, y: 115 };
   
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Triangle PQT */}
-        <path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${T_on_PR.x} ${T_on_PR.y} Z`} stroke={strokeColor} strokeWidth="2" fill="none" />
+        <motion.path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${T.x} ${T.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
         {/* Triangle PRS */}
-        <path d={`M ${P.x} ${P.y} L ${R.x} ${R.y} L ${S.x} ${S.y} Z`} stroke={strokeColor} strokeWidth="2" fill="none" />
+        <motion.path d={`M ${P.x} ${P.y} L ${R.x} ${R.y} L ${S.x} ${S.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
         
         {/* Angle Q (Pink) */}
-        <path d={`M ${Q.x - 20} ${Q.y} A 20 20 0 0 0 ${Q.x - 15} ${Q.y - 14}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+        <AnimatedAngleArc p1={P} vertex={Q} p2={T} color={angleColor1} commonProps={commonProps} radius={20} />
         {/* Angle R (Pink) */}
-        <path d={`M ${R.x + 20} ${R.y} A 20 20 0 0 1 ${R.x + 15} ${R.y + 14}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+        <AnimatedAngleArc p1={P} vertex={R} p2={S} color={angleColor1} commonProps={commonProps} radius={20} />
 
         {/* Side QT, RS (Purple) */}
-        <path d="M 183 145 L 175 152" stroke={angleColor2} strokeWidth="3" />
-        <path d="M 120 180 L 130 180" stroke={angleColor2} strokeWidth="3" />
+        <AnimatedSideMarks p1={Q} p2={T} numMarks={1} color={angleColor2} commonProps={{...commonProps, strokeWidth: 3}} />
+        <AnimatedSideMarks p1={R} p2={S} numMarks={1} color={angleColor2} commonProps={{...commonProps, strokeWidth: 3}} />
         
-        <text x={P.x - 15} y={P.y + 15} fill={strokeColor}>P</text>
-        <text x={Q.x + 10} y={Q.y + 15} fill={strokeColor}>Q</text>
-        <text x={R.x - 20} y={R.y + 10} fill={strokeColor}>R</text>
-        <text x={S.x - 5} y={S.y + 15} fill={strokeColor}>S</text>
-        <text x={T_on_PR.x - 20} y={T_on_PR.y} fill={strokeColor}>T</text>
-      </svg>
+        <motion.text x={P.x - 15} y={P.y + 15} fill={labelColor} variants={fadeVariant}>P</motion.text>
+        <motion.text x={Q.x + 10} y={Q.y + 15} fill={labelColor} variants={fadeVariant}>Q</motion.text>
+        <motion.text x={R.x - 20} y={R.y + 10} fill={labelColor} variants={fadeVariant}>R</motion.text>
+        <motion.text x={S.x - 5} y={S.y + 15} fill={labelColor} variants={fadeVariant}>S</motion.text>
+        <motion.text x={T.x - 20} y={T.y} fill={labelColor} variants={fadeVariant}>T</motion.text>
+      </motion.svg>
     </div>
   );
 }
@@ -79,101 +245,109 @@ const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex })
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
   const angleColor1 = isDarkMode ? '#F472B6' : '#EC4899'; // Pink
   const angleColor2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
 
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden" style={{ minHeight: svgHeight }}>
-      <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+      <motion.svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        variants={groupVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <AnimatePresence>
           {questionIndex === 0 && (
-            <motion.g key="q6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* SSS Figure (Question 6) */}
-              <SssQuizFigure strokeColor={strokeColor} />
+            <motion.g key="q6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} variants={groupVariants}>
+              <SssQuizFigure strokeColor={strokeColor} labelColor={labelColor} />
             </motion.g>
           )}
 
           {questionIndex === 1 && (
-            <motion.g key="q7" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* ASA Figure (Question 7) */}
-              <AsaQuizFigure strokeColor={strokeColor} angleColor1={angleColor1} angleColor2={angleColor2} />
+            <motion.g key="q7" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} variants={groupVariants}>
+              <AsaQuizFigure strokeColor={strokeColor} labelColor={labelColor} angleColor1={angleColor1} angleColor2={angleColor2} />
             </motion.g>
           )}
           
           {questionIndex === 2 && (
-            <motion.g key="q8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* HL Figure (Question 8) */}
-              <HlQuizFigure strokeColor={strokeColor} />
+            <motion.g key="q8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} variants={groupVariants}>
+              <HlQuizFigure strokeColor={strokeColor} labelColor={labelColor} angleBlue={angleBlue} />
             </motion.g>
           )}
         </AnimatePresence>
-      </svg>
+      </motion.svg>
     </div>
   );
 };
 
 // --- Helper figures for the quiz ---
-const SssQuizFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+const SssQuizFigure: React.FC<{ strokeColor: string, labelColor: string }> = ({ strokeColor, labelColor }) => {
   const P={x: 250, y: 180}, Q={x: 300, y: 50}, R={x: 50, y: 100}, S={x: 100, y: 50};
+  const commonProps = { fill: 'none', strokeWidth: 2 };
   return (
-    <g>
-      <path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} fill="none" />
-      <path d={`M ${P.x} ${P.y} L ${S.x} ${S.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      {/* Ticks PQ cong PR */}
-      <path d="M 278 110 L 270 117" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 140 146 L 150 142" stroke={strokeColor} strokeWidth="2" />
-      {/* Ticks SQ cong SR */}
-      <path d="M 195 50 L 200 50" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 195 53 L 200 53" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 72 78 L 78 72" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 75 81 L 81 75" stroke={strokeColor} strokeWidth="2" />
+    <motion.g variants={groupVariants}>
+      <motion.path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${S.x} ${S.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} fill="none" variants={drawVariant} />
+      <motion.path d={`M ${P.x} ${P.y} L ${S.x} ${S.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
       
-      <text x={P.x + 10} y={P.y + 15} fill={strokeColor}>P</text>
-      <text x={Q.x + 10} y={Q.y + 5} fill={strokeColor}>Q</text>
-      <text x={R.x - 20} y={R.y + 5} fill={strokeColor}>R</text>
-      <text x={S.x - 10} y={S.y - 10} fill={strokeColor}>S</text>
-    </g>
+      <AnimatedSideMarks p1={P} p2={Q} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      <AnimatedSideMarks p1={P} p2={R} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      
+      <AnimatedSideMarks p1={S} p2={Q} numMarks={2} color={strokeColor} commonProps={commonProps} />
+      <AnimatedSideMarks p1={S} p2={R} numMarks={2} color={strokeColor} commonProps={commonProps} />
+      
+      <motion.text x={P.x + 10} y={P.y + 15} fill={labelColor} variants={fadeVariant}>P</motion.text>
+      <motion.text x={Q.x + 10} y={Q.y + 5} fill={labelColor} variants={fadeVariant}>Q</motion.text>
+      <motion.text x={R.x - 20} y={R.y + 5} fill={labelColor} variants={fadeVariant}>R</motion.text>
+      <motion.text x={S.x - 10} y={S.y - 10} fill={labelColor} variants={fadeVariant}>S</motion.text>
+    </motion.g>
   );
 };
 
-const AsaQuizFigure: React.FC<{ strokeColor: string, angleColor1: string, angleColor2: string }> = ({ strokeColor, angleColor1, angleColor2 }) => {
+const AsaQuizFigure: React.FC<{ strokeColor: string, labelColor: string, angleColor1: string, angleColor2: string }> = ({ strokeColor, labelColor, angleColor1, angleColor2 }) => {
   const P={x: 50, y: 110}, Q={x: 300, y: 110}, R={x: 200, y: 180}, S={x: 200, y: 40};
+  const commonProps = { fill: 'none', strokeWidth: 2 };
   return (
-    <g>
-      <path d={`M ${P.x} ${P.y} L ${S.x} ${S.y} L ${Q.x} ${Q.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      {/* Angle RPS (Pink) */}
-      <path d={`M ${P.x + 20} ${P.y - 5} A 20 20 0 0 1 ${P.x + 18} ${P.y + 18}`} stroke={angleColor1} fill="none" strokeWidth="2" />
-      {/* Angle RQS (Green) */}
-      <path d={`M ${Q.x - 20} ${Q.y - 5} A 20 20 0 0 0 ${Q.x - 18} ${Q.y + 18}`} stroke={angleColor2} fill="none" strokeWidth="2" />
-      <path d={`M ${Q.x - 23} ${Q.y - 7} A 23 23 0 0 0 ${Q.x - 20} ${Q.y + 21}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+    <motion.g variants={groupVariants}>
+      <motion.path d={`M ${P.x} ${P.y} L ${S.x} ${S.y} L ${Q.x} ${Q.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+      <motion.path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+      
+      <AnimatedAngleArc p1={R} vertex={P} p2={Q} color={angleColor1} commonProps={commonProps} radius={20} />
+      <AnimatedAngleArc p1={S} vertex={P} p2={Q} color={angleColor1} commonProps={commonProps} radius={20} />
+      
+      <AnimatedAngleArc p1={R} vertex={Q} p2={P} color={angleColor2} commonProps={commonProps} radius={20} />
+      <AnimatedAngleArc p1={S} vertex={Q} p2={P} color={angleColor2} commonProps={commonProps} radius={20} />
+      <AnimatedAngleArc p1={S} vertex={Q} p2={P} color={angleColor2} commonProps={commonProps} radius={23} />
 
-      <text x={P.x - 20} y={P.y + 5} fill={strokeColor}>P</text>
-      <text x={Q.x + 10} y={Q.y + 5} fill={strokeColor}>Q</text>
-      <text x={R.x - 10} y={R.y + 20} fill={strokeColor}>R</text>
-      <text x={S.x - 10} y={S.y - 10} fill={strokeColor}>S</text>
-    </g>
+      <motion.text x={P.x - 20} y={P.y + 5} fill={labelColor} variants={fadeVariant}>P</motion.text>
+      <motion.text x={Q.x + 10} y={Q.y + 5} fill={labelColor} variants={fadeVariant}>Q</motion.text>
+      <motion.text x={R.x - 10} y={R.y + 20} fill={labelColor} variants={fadeVariant}>R</motion.text>
+      <motion.text x={S.x - 10} y={S.y - 10} fill={labelColor} variants={fadeVariant}>S</motion.text>
+    </motion.g>
   );
 };
 
-const HlQuizFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+const HlQuizFigure: React.FC<{ strokeColor: string, labelColor: string, angleBlue: string }> = ({ strokeColor, labelColor, angleBlue }) => {
   const P={x: 280, y: 180}, Q={x: 175, y: 50}, R={x: 70, y: 180}, A={x: 175, y: 180};
+  const commonProps = { fill: 'none', strokeWidth: 2 };
   return (
-    <g>
-      <path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      <path d={`M ${Q.x} ${Q.y} L ${A.x} ${A.y}`} stroke={strokeColor} fill="none" strokeWidth="2" />
-      {/* Right angle A (blue square) */}
-      <path d={`M ${A.x} ${A.y - 12} L ${A.x - 12} ${A.y - 12} L ${A.x - 12} ${A.y}`} stroke="#3B82F6" fill="none" strokeWidth="2" />
+    <motion.g variants={groupVariants}>
+      <motion.path d={`M ${P.x} ${P.y} L ${Q.x} ${Q.y} L ${R.x} ${R.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
+      <motion.path d={`M ${Q.x} ${Q.y} L ${A.x} ${A.y}`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
       
-      {/* Ticks QP cong QR */}
-      <path d="M 233 110 L 225 117" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 118 110 L 126 117" stroke={strokeColor} strokeWidth="2" />
+      <RightAngleBox vertex={A} p1={Q} p2={R} color={angleBlue} commonProps={commonProps} />
       
-      <text x={P.x + 10} y={P.y + 15} fill={strokeColor}>P</text>
-      <text x={Q.x - 10} y={Q.y - 10} fill={strokeColor}>Q</text>
-      <text x={R.x - 20} y={R.y + 15} fill={strokeColor}>R</text>
-      <text x={A.x - 5} y={A.y + 20} fill={strokeColor}>A</text>
-    </g>
+      <AnimatedSideMarks p1={Q} p2={P} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      <AnimatedSideMarks p1={Q} p2={R} numMarks={1} color={strokeColor} commonProps={commonProps} />
+      
+      <motion.text x={P.x + 10} y={P.y + 15} fill={labelColor} variants={fadeVariant}>P</motion.text>
+      <motion.text x={Q.x - 10} y={Q.y - 10} fill={labelColor} variants={fadeVariant}>Q</motion.text>
+      <motion.text x={R.x - 20} y={R.y + 15} fill={labelColor} variants={fadeVariant}>R</motion.text>
+      <motion.text x={A.x - 5} y={A.y + 20} fill={labelColor} variants={fadeVariant}>A</motion.text>
+    </motion.g>
   );
 };
 // --- END OF QUIZ FIGURE COMPONENT ---
@@ -209,7 +383,6 @@ export default function ProvingSlide7() {
   
   const allReasons = ["SSS", "SAS", "ASA", "AAS", "HL", "CPCTC", "Given", "Reflexive property", "Def. of angle bisector"];
 
-  // --- UPDATED: New questions based on Q6, Q7, Q8 ---
   const questions: QuizQuestion[] = [
     {
       id: 'proving-q6-sss',
@@ -234,7 +407,6 @@ export default function ProvingSlide7() {
     }
   ];
   
-  // --- Data for the table in the left column ---
   const proofRows: ProofRow[] = [
     { num: "1", statement: "\\angle P \\cong \\angle P", reason: "Reflexive property of congruence" },
     { num: "2", statement: "m\\angle Q = m\\angle R", reason: "Given" },
@@ -245,7 +417,6 @@ export default function ProvingSlide7() {
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
-    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -253,7 +424,6 @@ export default function ProvingSlide7() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
-    // ... (This function remains unchanged)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -282,7 +452,6 @@ export default function ProvingSlide7() {
   };
 
   const handleNextQuestion = () => {
-    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -298,7 +467,6 @@ export default function ProvingSlide7() {
   };
 
 
-  // --- UPDATED: New slide content ---
   const slideContent = (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 mx-auto">
