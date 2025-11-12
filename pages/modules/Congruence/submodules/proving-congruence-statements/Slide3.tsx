@@ -112,41 +112,42 @@ export default function ProvingSlide3() {
   // --- UPDATED: New questions based on SSS proof ---
   const questions: QuizQuestion[] = [
     {
-      id: 'proving-two-column-sss-q1',
-      question: 'In the two-column proof, what is the "Reason" for Statement 3 ($AD \\cong AD$)?',
-      options: [
-        "Given",
-        "Reflexive property of congruence",
-        "Symmetric property of congruence",
-        "SSS congruence criterion"
-      ],
-      correctAnswer: "Reflexive property of congruence",
-      explanation: "Correct! When a part is shared by two triangles, the reason it is congruent to itself is the Reflexive Property."
-    },
-    {
-      id: 'proving-two-column-sss-q2',
-      question: 'What is the "Reason" for the final statement, $\\triangle ABD \\cong \\triangle ACD$?',
-      options: [
-        "Given",
-        "Reflexive property of congruence",
-        "SSS congruence criterion",
-        "SAS congruence criterion"
-      ],
-      correctAnswer: "SSS congruence criterion",
-      explanation: "Correct! The final step is the conclusion. We use SSS because the previous steps (1, 2, and 3) proved three pairs of sides were congruent."
-    },
-    {
-      id: 'proving-two-column-sss-q3',
-      question: 'The final reason "SSS" is a conclusion based on which previous statements?',
-      options: [
-        "Statements 1 and 2",
-        "Statements 1, 2, and 3",
-        "Statement 3 only",
-        "Statement 4 only"
-      ],
-      correctAnswer: "Statements 1, 2, and 3",
-      explanation: "Exactly! The final conclusion is built upon all the evidence. Statements 1, 2, and 3 provide the three 'S's needed for the SSS criterion."
-    }
+  id: 'proving-two-column-sss-q1',
+  question: 'In the two-column proof, what is the "Reason" for Statement 3 (AD ≅ AD)?',
+  options: [
+    "Given",
+    "Reflexive property of congruence",
+    "Symmetric property of congruence",
+    "SSS congruence criterion"
+  ],
+  correctAnswer: "Reflexive property of congruence",
+  explanation: "Correct! When a part is shared by two triangles, the reason it is congruent to itself is the Reflexive Property."
+},
+{
+  id: 'proving-two-column-sss-q2',
+  question: 'What is the "Reason" for the final statement, △ABD ≅ △ACD?',
+  options: [
+    "Given",
+    "Reflexive property of congruence",
+    "SSS congruence criterion",
+    "SAS congruence criterion"
+  ],
+  correctAnswer: "SSS congruence criterion",
+  explanation: "Correct! The final step is the conclusion. We use SSS because the previous steps (1, 2, and 3) proved three pairs of sides were congruent."
+},
+{
+  id: 'proving-two-column-sss-q3',
+  question: 'The final reason "SSS" is a conclusion based on which previous statements?',
+  options: [
+    "Statements 1 and 2",
+    "Statements 1, 2, and 3",
+    "Statement 3 only",
+    "Statement 4 only"
+  ],
+  correctAnswer: "Statements 1, 2, and 3",
+  explanation: "Exactly! The final conclusion is built upon all the evidence. Statements 1, 2, and 3 provide the three 'S's needed for the SSS criterion."
+}
+
   ];
 
   // --- Data for the table ---

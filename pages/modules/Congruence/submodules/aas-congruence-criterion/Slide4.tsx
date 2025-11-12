@@ -3,8 +3,92 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import katex from 'katex'; // Import katex
 
-// --- FIGURE FOR EXAMPLE (Left Side) ---
+// --- HELPER COMPONENTS FOR GEOMETRY ---
+
+// Define a simple Point type
+type Point = { x: number; y: number };
+
+// --- COMPONENT 1: AngleArc ---
+interface AngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  radius: number;
+  stroke: string;
+  strokeWidth?: number;
+}
+
+const AngleArc: React.FC<AngleArcProps> = ({
+  p1,
+  vertex,
+  p2,
+  radius,
+  stroke,
+  strokeWidth = 2,
+}) => {
+  const v1 = { x: p1.x - vertex.x, y: p1.y - vertex.y };
+  const v2 = { x: p2.x - vertex.x, y: p2.y - vertex.y };
+  const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+  const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+  if (mag1 === 0 || mag2 === 0) return null;
+  const normV1 = { x: v1.x / mag1, y: v1.y / mag1 };
+  const normV2 = { x: v2.x / mag2, y: v2.y / mag2 };
+  const start = { x: vertex.x + radius * normV1.x, y: vertex.y + radius * normV1.y };
+  const end = { x: vertex.x + radius * normV2.x, y: vertex.y + radius * normV2.y };
+  const dot = normV1.x * normV2.x + normV1.y * normV2.y;
+  const angle = Math.acos(Math.max(-1, Math.min(1, dot)));
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const cross = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = cross > 0 ? 1 : 0;
+  const d = `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+  return <path d={d} stroke={stroke} strokeWidth={strokeWidth} fill="none" />;
+};
+
+// --- COMPONENT 2: LineTick ---
+interface LineTickProps {
+  p1: Point;
+  p2: Point;
+  position?: number; // 0.0 to 1.0 (default 0.5)
+  size?: number;     // length of the tick (default 10)
+  stroke: string;
+  strokeWidth?: number;
+}
+
+const LineTick: React.FC<LineTickProps> = ({
+  p1,
+  p2,
+  position = 0.5,
+  size = 10,
+  stroke,
+  strokeWidth = 2,
+}) => {
+  const P = {
+    x: p1.x + (p2.x - p1.x) * position,
+    y: p1.y + (p2.y - p1.y) * position,
+  };
+  const V = { x: p2.x - p1.x, y: p2.y - p1.y };
+  const N = { x: -V.y, y: V.x };
+  const magN = Math.sqrt(N.x * N.x + N.y * N.y);
+  if (magN === 0) return null;
+  const normN = { x: N.x / magN, y: N.y / magN };
+  const T1 = {
+    x: P.x - normN.x * (size / 2),
+    y: P.y - normN.y * (size / 2),
+  };
+  const T2 = {
+    x: P.x + normN.x * (size / 2),
+    y: P.y + normN.y * (size / 2),
+  };
+  const d = `M ${T1.x} ${T1.y} L ${T2.x} ${T2.y}`;
+  return <path d={d} stroke={stroke} strokeWidth={strokeWidth} />;
+};
+
+// --- END OF HELPER COMPONENTS ---
+
+
+// --- FIGURE FOR EXAMPLE (Left Side) (UPDATED) ---
 const FigureExample: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 160;
@@ -13,6 +97,7 @@ const FigureExample: React.FC = () => {
   
   const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
   const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const sideColor = isDarkMode ? '#F472B6' : '#EC4899'; // Pink for given side
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
   const T1 = { A: { x: 30, y: 140 }, B: { x: 170, y: 140 }, C: { x: 100, y: 30 } };
@@ -29,8 +114,10 @@ const FigureExample: React.FC = () => {
         <text x={(T1.A.x + T1.B.x)/2} y={T1.A.y + 15} fill={strokeColor}>x</text>
         <text x={(T1.A.x + T1.C.x)/2 - 10} y={(T1.A.y + T1.C.y)/2} fill={strokeColor}>y</text>
         <text x={(T1.B.x + T1.C.x)/2 + 10} y={(T1.B.y + T1.C.y)/2} fill={strokeColor}>7</text>
-        <path d={`M ${T1.A.x + 15} ${T1.A.y} A 15 15 0 0 1 ${T1.A.x + 13.6} ${T1.A.y - 6.5}`} stroke={angleBlue} {...commonProps} />
-        <path d={`M ${T1.B.x - 15} ${T1.B.y} A 15 15 0 0 0 ${T1.B.x - 13.6} ${T1.B.y - 6.5}`} stroke={angleGreen} {...commonProps} />
+        {/* Markings */}
+        <AngleArc p1={T1.C} vertex={T1.A} p2={T1.B} radius={15} stroke={angleBlue} {...commonProps} />
+        <AngleArc p1={T1.A} vertex={T1.B} p2={T1.C} radius={15} stroke={angleGreen} {...commonProps} />
+        <LineTick p1={T1.B} p2={T1.C} stroke={sideColor} {...commonProps} />
 
         {/* T2 (TUV) */}
         <path d={`M ${T2.T.x} ${T2.T.y} L ${T2.U.x} ${T2.U.y} L ${T2.V.x} ${T2.V.y} Z`} stroke={strokeColor} {...commonProps} />
@@ -38,14 +125,16 @@ const FigureExample: React.FC = () => {
         <text x={T2.U.x - 15} y={T2.U.y + 5} fill={strokeColor}>U</text>
         <text x={T2.V.x} y={T2.V.y - 5} fill={strokeColor} textAnchor="middle">V</text>
         <text x={(T2.U.x + T2.V.x)/2 - 10} y={(T2.U.y + T2.V.y)/2} fill={strokeColor}>7</text>
-        <path d={`M ${T2.T.x - 15} ${T2.T.y} A 15 15 0 0 0 ${T2.T.x - 13.6} ${T2.T.y - 6.5}`} stroke={angleBlue} {...commonProps} />
-        <path d={`M ${T2.U.x + 15} ${T2.U.y} A 15 15 0 0 1 ${T2.U.x + 13.6} ${T2.U.y - 6.5}`} stroke={angleGreen} {...commonProps} />
+        {/* Markings */}
+        <AngleArc p1={T2.V} vertex={T2.T} p2={T2.U} radius={15} stroke={angleBlue} {...commonProps} />
+        <AngleArc p1={T2.T} vertex={T2.U} p2={T2.V} radius={15} stroke={angleGreen} {...commonProps} />
+        <LineTick p1={T2.U} p2={T2.V} stroke={sideColor} {...commonProps} />
       </svg>
     </div>
   );
 };
 
-// --- FIGURE FOR QUIZ QUESTION 1 (Q5 from image) ---
+// --- FIGURE FOR QUIZ QUESTION 1 (Q5 from image) (UPDATED) ---
 const FigureQ1: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 160;
@@ -54,6 +143,7 @@ const FigureQ1: React.FC = () => {
   
   const angleGreen = isDarkMode ? '#4ADE80' : '#22C55E';
   const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB';
+  const sideColor = isDarkMode ? '#F472B6' : '#EC4899'; // Pink for given side
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
   const T1 = { A: { x: 30, y: 140 }, B: { x: 170, y: 140 }, C: { x: 100, y: 30 } }; // XYZ
@@ -70,8 +160,10 @@ const FigureQ1: React.FC = () => {
         <text x={(T1.A.x + T1.B.x)/2} y={T1.A.y + 15} fill={strokeColor}>x</text>
         <text x={(T1.A.x + T1.C.x)/2 - 10} y={(T1.A.y + T1.C.y)/2} fill={strokeColor}>y</text>
         <text x={(T1.B.x + T1.C.x)/2 + 10} y={(T1.B.y + T1.C.y)/2} fill={strokeColor}>10</text>
-        <path d={`M ${T1.A.x + 15} ${T1.A.y} A 15 15 0 0 1 ${T1.A.x + 13.6} ${T1.A.y - 6.5}`} stroke={angleBlue} {...commonProps} />
-        <path d={`M ${T1.B.x - 15} ${T1.B.y} A 15 15 0 0 0 ${T1.B.x - 13.6} ${T1.B.y - 6.5}`} stroke={angleGreen} {...commonProps} />
+        {/* Markings */}
+        <AngleArc p1={T1.C} vertex={T1.A} p2={T1.B} radius={15} stroke={angleBlue} {...commonProps} />
+        <AngleArc p1={T1.A} vertex={T1.B} p2={T1.C} radius={15} stroke={angleGreen} {...commonProps} />
+        <LineTick p1={T1.B} p2={T1.C} stroke={sideColor} {...commonProps} />
 
         {/* T2 (TUV) */}
         <path d={`M ${T2.T.x} ${T2.T.y} L ${T2.U.x} ${T2.U.y} L ${T2.V.x} ${T2.V.y} Z`} stroke={strokeColor} {...commonProps} />
@@ -79,14 +171,16 @@ const FigureQ1: React.FC = () => {
         <text x={T2.U.x - 15} y={T2.U.y + 5} fill={strokeColor}>U</text>
         <text x={T2.V.x} y={T2.V.y - 5} fill={strokeColor} textAnchor="middle">V</text>
         <text x={(T2.U.x + T2.T.x)/2} y={T2.U.y + 15} fill={strokeColor}>10</text>
-        <path d={`M ${T2.T.x - 15} ${T2.T.y} A 15 15 0 0 0 ${T2.T.x - 13.6} ${T2.T.y - 6.5}`} stroke={angleBlue} {...commonProps} />
-        <path d={`M ${T2.U.x + 15} ${T2.U.y} A 15 15 0 0 1 ${T2.U.x + 13.6} ${T2.U.y - 6.5}`} stroke={angleGreen} {...commonProps} />
+         {/* Markings */}
+        <AngleArc p1={T2.V} vertex={T2.T} p2={T2.U} radius={15} stroke={angleBlue} {...commonProps} />
+        <AngleArc p1={T2.T} vertex={T2.U} p2={T2.V} radius={15} stroke={angleGreen} {...commonProps} />
+        <LineTick p1={T2.T} p2={T2.V} stroke={sideColor} {...commonProps} />
       </svg>
     </div>
   );
 };
 
-// --- FIGURE FOR QUIZ QUESTION 2 (Q6 from image) ---
+// --- FIGURE FOR QUIZ QUESTION 2 (Q6 from image) (UPDATED) ---
 const FigureQ2: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 220;
@@ -94,9 +188,11 @@ const FigureQ2: React.FC = () => {
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   
   const angleOrange = isDarkMode ? '#F9B572' : '#F59E0B';
+  const angleBlue = isDarkMode ? '#60A5FA' : '#2563EB'; // For vertical angles
+  const sideGreen = isDarkMode ? '#4ADE80' : '#22C55E'; // For given sides
   const commonProps = { fill: 'none', strokeWidth: 2 };
 
-  const A = { x: 200, y: 180 };
+  const A = { x: 200, y: 120 }; // Intersection
   const B = { x: 130, y: 100 };
   const C = { x: 100, y: 30 };
   const D = { x: 300, y: 30 };
@@ -105,21 +201,31 @@ const FigureQ2: React.FC = () => {
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <svg width={svgWidth} height={svgHeight} viewBox={`50 0 ${svgWidth} ${svgHeight}`}>
-        <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${E.x} ${E.y} Z`} stroke={strokeColor} {...commonProps} />
-        <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} {...commonProps} />
+        {/* Lines */}
+        <path d={`M ${C.x} ${C.y} L ${A.x} ${A.y} L ${E.x} ${E.y}`} stroke={strokeColor} {...commonProps} />
+        <path d={`M ${D.x} ${D.y} L ${A.x} ${A.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
         <path d={`M ${C.x} ${C.y} L ${E.x} ${E.y}`} stroke={strokeColor} {...commonProps} />
         <path d={`M ${D.x} ${D.y} L ${B.x} ${B.y}`} stroke={strokeColor} {...commonProps} />
         
         {/* Labels */}
-        <text x={A.x} y={A.y + 15} fill={strokeColor} textAnchor="middle">A</text>
+        <text x={A.x} y={A.y + 20} fill={strokeColor} textAnchor="middle">A</text>
         <text x={B.x - 15} y={B.y} fill={strokeColor}>B</text>
         <text x={C.x - 15} y={C.y} fill={strokeColor}>C</text>
         <text x={D.x + 5} y={D.y} fill={strokeColor}>D</text>
         <text x={E.x + 5} y={E.y} fill={strokeColor}>E</text>
 
-        {/* Angles & Given */}
-        <path d={`M ${C.x + 15} ${C.y + 5} A 15 15 0 0 1 ${C.x} ${C.y + 15}`} stroke={angleOrange} {...commonProps} />
-        <path d={`M ${D.x - 15} ${D.y + 5} A 15 15 0 0 0 ${D.x} ${D.y + 15}`} stroke={angleOrange} {...commonProps} />
+        {/* --- AAS Markings from Explanation --- */}
+        {/* A: Angle C & D (Orange) */}
+        <AngleArc p1={A} vertex={C} p2={E} radius={15} stroke={angleOrange} {...commonProps} />
+        <AngleArc p1={A} vertex={D} p2={B} radius={15} stroke={angleOrange} {...commonProps} />
+        
+        {/* A: Vertical Angles at A (Blue) */}
+        <AngleArc p1={C} vertex={A} p2={E} radius={18} stroke={angleBlue} {...commonProps} />
+        <AngleArc p1={D} vertex={A} p2={B} radius={18} stroke={angleBlue} {...commonProps} />
+        
+        {/* S: Side CE & BD (Green) */}
+        <LineTick p1={C} p2={E} stroke={sideGreen} {...commonProps} />
+        <LineTick p1={B} p2={D} stroke={sideGreen} {...commonProps} />
       </svg>
     </div>
   );
@@ -156,41 +262,58 @@ export default function AasSlide4() {
     explanation: string;
   }
 
-  // --- UPDATED QUESTIONS ARRAY ---
-  const questions: QuizQuestion[] = [
-   {
-  id: 'aas-find-perimeter-q5',
-  question: 'The perimeter of triangle TUV is 27. What is the value of x + y?',
-  figure: <FigureQ1 />,
-  options: [
-    "13",
-    "15",
-    "17",
-    "19",
-    "12"
-  ],
-  correctAnswer: "17",
-  explanation:
-    "Correct! The triangles are congruent by AAS, which means all matching sides are equal. So XY = TU = x, and XZ = TV = y. The perimeter of triangle TUV is TU + UV + VT = 27. Substituting the values gives x + 10 + y = 27. Therefore, x + y = 17."
-},
-{
-  id: 'aas-find-length-q6',
-  question: 'In the diagram, CE = BD and angle C is equal to angle D. If AB = 3x + 7 and AE = 7x - 3, what is the value of x?',
-  figure: <FigureQ2 />,
-  options: [
-    "3.5",
-    "2.5",
-    "2",
-    "4",
-    "3"
-  ],
-  correctAnswer: "2.5",
-  explanation:
-    "Correct! The triangles ACE and ABD are congruent by AAS. Angle C equals angle D, CE equals BD, and angle CAE equals angle DAB (they are vertical angles). By CPCTC, AE equals AB. So set 7x - 3 = 3x + 7. This gives 4x = 10, so x = 2.5."
-}
+  // --- *** UPDATED QUESTIONS ARRAY *** ---
+ // Make sure you have: import katex from 'katex'; at the top of your file.
 
-  ];
-
+const questions: QuizQuestion[] = [
+  {
+    id: 'aas-find-perimeter-q5',
+question: "The perimeter of triangle \\triangle TUV is 27. What is the value of x + y?",
+    figure: <FigureQ1 />,
+    options: [
+      "13",
+      "15",
+      "17",
+      "19",
+      "12"
+    ],
+    correctAnswer: "17",
+    explanation:
+      "<strong class='text-slate-800 dark:text-slate-100'>Correct!</strong>" +
+      "<p class='mt-2'>The triangles are congruent by $AAS$. By $CPCTC$, the corresponding sides are equal:</p>" +
+      "<ul class='list-disc list-outside ml-5 mt-2 space-y-1'>" +
+        "<li>" + katex.renderToString("\\overline{XY} \\cong \\overline{TU}", { throwOnError: false }) + ", so " + katex.renderToString("TU = x", { throwOnError: false }) + ".</li>" +
+        "<li>" + katex.renderToString("\\overline{XZ} \\cong \\overline{TV}", { throwOnError: false }) + ", so " + katex.renderToString("TV = y", { throwOnError: false }) + ".</li>" +
+      "</ul>" +
+      "<p class='mt-2'>The perimeter of $\\triangle TUV$ is " + katex.renderToString("TU + UV + VT = 27", { throwOnError: false }) + ".</p>" +
+      "<p class='mt-1'>Substituting the values gives: " + katex.renderToString("x + 10 + y = 27", { throwOnError: false }) + ".</p>" +
+      "<p class='mt-1'>Therefore, <strong>" + katex.renderToString("x + y = 17", { throwOnError: false }) + "</strong>.</p>"
+  },
+  {
+    id: 'aas-find-length-q6',
+question: "In the diagram, \\overline{CE} \\cong \\overline{BD} and \\angle C \\cong \\angle D. If AB = 3x + 7 and AE = 7x - 3, what is the value of x?",
+    figure: <FigureQ2 />,
+    options: [
+      "3.5",
+      "2.5",
+      "2",
+      "4",
+      "3"
+    ],
+    correctAnswer: "2.5",
+    explanation:
+      "<strong class='text-slate-800 dark:text-slate-100'>Correct!</strong>" +
+      "<p class='mt-2'>The triangles " + katex.renderToString("\\triangle ACE", { throwOnError: false }) + " and " + katex.renderToString("\\triangle ABD", { throwOnError: false }) + " are congruent by $AAS$. Here's the proof:</p>" +
+      "<ul class='list-disc list-outside ml-5 mt-2 space-y-1'>" +
+        "<li><strong>A:</strong> " + katex.renderToString("\\angle C \\cong \\angle D", { throwOnError: false }) + " (Given)</li>" +
+        "<li><strong>A:</strong> " + katex.renderToString("\\angle CAE \\cong \\angle DAB", { throwOnError: false }) + " (Vertical Angles)</li>" +
+        "<li><strong>S:</strong> " + katex.renderToString("\\overline{CE} \\cong \\overline{BD}", { throwOnError: false }) + " (Given)</li>" +
+      "</ul>" +
+      "<p class='mt-2'>By $CPCTC$, the corresponding sides " + katex.renderToString("\\overline{AE}", { throwOnError: false }) + " and " + katex.renderToString("\\overline{AB}", { throwOnError: false }) + " are congruent.</p>" +
+      "<p class='mt-1'>Set their lengths equal: " + katex.renderToString("7x - 3 = 3x + 7", { throwOnError: false }) + ".</p>" +
+      "<p class='mt-1'>Solving for $x$: " + katex.renderToString("4x = 10", { throwOnError: false }) + ", so <strong>" + katex.renderToString("x = 2.5", { throwOnError: false }) + "</strong>.</p>"
+  }
+];
   const handleInteractionComplete = (response: InteractionResponse) => {
     setLocalInteractions(prev => ({
       ...prev,
@@ -252,7 +375,7 @@ export default function AasSlide4() {
             
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: Calculating Length Using AAS</h2>
             <p className="text-lg leading-relaxed mb-4">
-              The perimeter of a triangle ΔTUV is 22. What is the value of x + y?
+              The perimeter of a triangle $\triangle TUV$ is 22. What is the value of $x + y$?
             </p>
             
             <FigureExample />
@@ -260,32 +383,26 @@ export default function AasSlide4() {
             <h3 className="text-xl font-semibold mt-6 mb-4 text-blue-600 dark:text-blue-400">Explanation</h3>
             
             <p className="text-lg leading-relaxed">
-              Notice that ΔTUV and ΔABC are congruent by AAS since we have the following pairs of congruent angles and corresponding non-included sides:
+              Notice that $\triangle TUV$ and $\triangle ABC$ are congruent by AAS since we have the following pairs of congruent angles and corresponding non-included sides:
             </p>
             <ul className="list-disc list-inside mt-2 text-lg space-y-2 text-slate-700 dark:text-slate-300">
-                <li>
-                  <strong>BC ≅ UV</strong> (Given Side)
-                </li>
-                <li>
-                  <strong>∠A ≅ ∠T</strong> (Given Angle)
-                </li>
-                <li>
-                  <strong>∠B ≅ ∠U</strong> (Given Angle)
-                </li>
+                <li dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{BC} \\cong \\overline{UV} \\text{ (Given Side)}", { throwOnError: false }) }} />
+                <li dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle A \\cong \\angle T \\text{ (Given Angle)}", { throwOnError: false }) }} />
+                <li dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle B \\cong \\angle U \\text{ (Given Angle)}", { throwOnError: false }) }} />
             </ul>
 
             <p className="text-lg leading-relaxed mt-4">
-              Therefore, all the corresponding sides of the triangles must be congruent. In particular, UT = AB = x and VT = AC = y.
+              Therefore, all the corresponding sides of the triangles must be congruent. In particular, $UT = AB = x$ and $VT = AC = y$.
             </p>
             <p className="text-lg leading-relaxed mt-4">
-              Since the perimeter of ΔTUV is 22, we obtain
+              Since the perimeter of $\triangle TUV$ is 22, we obtain
             </p>
-            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono">
-              UT + UV + VT = 22<br/>
-              UT + 7 + VT = 22<br/>
-              UT + VT = 15<br/>
-              x + y = 15
-            </div>
+            <div className="my-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-center font-mono text-lg"
+                 dangerouslySetInnerHTML={{ __html: katex.renderToString("UT + UV + VT = 22", { throwOnError: false, displayMode: true }) +
+                                              katex.renderToString("x + 7 + y = 22", { throwOnError: false, displayMode: true }) +
+                                              katex.renderToString("x + y = 15", { throwOnError: false, displayMode: true })
+                                      }}
+            />
           </div>
         </div>
 
@@ -330,22 +447,38 @@ export default function AasSlide4() {
 
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
+                <div 
+                  className="text-lg mb-4 mt-6 break-words"
+                  dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}
+                ></div>
+                
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
+                    
+                    // --- *** UPDATED Button Logic *** ---
                     const disabled = showFeedback;
-                    const selected = selectedAnswer === option;
-                    const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
-                    } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    const isCorrect = option === questions[currentQuestionIndex].correctAnswer;
+                    const isSelected = selectedAnswer === option;
+                    let style = '';
+                    if (showFeedback) {
+                      if (isCorrect) {
+                        style = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // CORRECT
+                      } else if (isSelected && !isCorrect) {
+                        style = 'border-red-500 bg-red-100 dark:bg-red-800 opacity-70'; // INCORRECT
+                      } else {
+                        style = 'border-slate-300 dark:border-slate-600 opacity-50'; // Faded/Disabled
+                      }
+                    } else {
+                      if (isSelected) {
+                        style = 'border-blue-500 bg-blue-50 dark:bg-blue-900/3D'; // Selected
+                      } else {
+                        style = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                      }
+                    }
+                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${style} ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    // --- *** END Button Logic *** ---
+
                     return (
                       <motion.button
                         key={idx}
@@ -370,11 +503,13 @@ export default function AasSlide4() {
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
                           ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct
-                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
+                      <div 
+                        className="text-lg text-slate-600 dark:text-slate-400 mb-4"
+                        dangerouslySetInnerHTML={{ __html: questions[currentQuestionIndex].explanation }}
+                      >
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}

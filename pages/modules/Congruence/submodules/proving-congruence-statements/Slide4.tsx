@@ -5,7 +5,120 @@ import SlideComponentWrapper from '../../../common-components/SlideComponentWrap
 import { useThemeContext } from '@/lib/ThemeContext';
 import katex from 'katex';
 
-// --- ANIMATION COMPONENT DEFINED INSIDE ---
+// --- TABLE COMPONENT DEFINED INSIDE ---
+// (This component is not used in this slide, but kept in case)
+type ProofRow = { num: string; statement: string; reason: string };
+
+const ProofTable: React.FC<{ rows: ProofRow[] }> = ({ rows }) => {
+  return (
+    <div className="w-full my-4">
+      <table className="w-full text-left border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-slate-800">
+        <thead>
+          <tr className="bg-slate-200 dark:bg-slate-700">
+            <th className="p-3 w-12 text-center text-sm font-semibold text-slate-700 dark:text-slate-300"></th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Statement</th>
+            <th className="p-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.num} className="border-t border-slate-300 dark:border-slate-600">
+              <td className="p-3 text-center font-mono text-slate-500">{row.num}</td>
+              <td className="p-3 font-mono" dangerouslySetInnerHTML={{ __html: katex.renderToString(row.statement, { throwOnError: false }) }}></td>
+              <td className="p-3 text-slate-600 dark:text-slate-400">{row.reason}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+// --- END OF TABLE COMPONENT ---
+
+// --- NEW HELPER COMPONENTS FOR GEOMETRY ---
+
+// Define a simple Point type
+type Point = { x: number; y: number };
+
+// --- NEW COMPONENT 1: AngleArc ---
+interface AngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  radius: number;
+  stroke: string;
+  strokeWidth?: number;
+}
+
+const AngleArc: React.FC<AngleArcProps> = ({
+  p1,
+  vertex,
+  p2,
+  radius,
+  stroke,
+  strokeWidth = 2,
+}) => {
+  const v1 = { x: p1.x - vertex.x, y: p1.y - vertex.y };
+  const v2 = { x: p2.x - vertex.x, y: p2.y - vertex.y };
+  const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+  const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+  if (mag1 === 0 || mag2 === 0) return null;
+  const normV1 = { x: v1.x / mag1, y: v1.y / mag1 };
+  const normV2 = { x: v2.x / mag2, y: v2.y / mag2 };
+  const start = { x: vertex.x + radius * normV1.x, y: vertex.y + radius * normV1.y };
+  const end = { x: vertex.x + radius * normV2.x, y: vertex.y + radius * normV2.y };
+  const dot = normV1.x * normV2.x + normV1.y * normV2.y;
+  const angle = Math.acos(Math.max(-1, Math.min(1, dot)));
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const cross = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = cross > 0 ? 1 : 0;
+  const d = `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+  return <path d={d} stroke={stroke} strokeWidth={strokeWidth} fill="none" />;
+};
+
+// --- NEW COMPONENT 2: LineTick ---
+interface LineTickProps {
+  p1: Point;
+  p2: Point;
+  position?: number; // 0.0 to 1.0 (default 0.5)
+  size?: number;     // length of the tick (default 10)
+  stroke: string;
+  strokeWidth?: number;
+}
+
+const LineTick: React.FC<LineTickProps> = ({
+  p1,
+  p2,
+  position = 0.5,
+  size = 10,
+  stroke,
+  strokeWidth = 2,
+}) => {
+  const P = {
+    x: p1.x + (p2.x - p1.x) * position,
+    y: p1.y + (p2.y - p1.y) * position,
+  };
+  const V = { x: p2.x - p1.x, y: p2.y - p1.y };
+  const N = { x: -V.y, y: V.x };
+  const magN = Math.sqrt(N.x * N.x + N.y * N.y);
+  if (magN === 0) return null;
+  const normN = { x: N.x / magN, y: N.y / magN };
+  const T1 = {
+    x: P.x - normN.x * (size / 2),
+    y: P.y - normN.y * (size / 2),
+  };
+  const T2 = {
+    x: P.x + normN.x * (size / 2),
+    y: P.y + normN.y * (size / 2),
+  };
+  const d = `M ${T1.x} ${T1.y} L ${T2.x} ${T2.y}`;
+  return <path d={d} stroke={stroke} strokeWidth={strokeWidth} />;
+};
+
+// --- END OF NEW HELPER COMPONENTS ---
+
+
+// --- ANIMATION COMPONENT (UPDATED) ---
 const CpctcAsaFigure: React.FC = () => {
   const svgWidth = 400;
   const svgHeight = 200;
@@ -13,7 +126,7 @@ const CpctcAsaFigure: React.FC = () => {
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const angleColor1 = isDarkMode ? '#F59E0B' : '#D97706'; // Orange
   const angleColor2 = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const sideColor = isDarkMode ? '#60A5FA' : '#2563EB';   // Blue
+  const sideColor = isDarkMode ? '#60A5FA' : '#2563EB';   // Blue
   
   // Triangle 1 (ABC)
   const A = { x: 50, y: 150 };
@@ -40,21 +153,21 @@ const CpctcAsaFigure: React.FC = () => {
         <text x={L.x + 5} y={L.y + 15} fill={strokeColor}>L</text>
         <text x={M.x - 5} y={M.y - 10} fill={strokeColor}>M</text>
 
-        {/* ASA Markings */}
+        {/* --- UPDATED ASA Markings --- */}
+        
         {/* Angle A & K (Orange) */}
-        <path d={`M ${A.x + 20} ${A.y} A 20 20 0 0 1 ${A.x + 15} ${A.y - 14}`} stroke={angleColor1} fill="none" strokeWidth="2" />
-        <path d={`M ${K.x + 20} ${K.y} A 20 20 0 0 1 ${K.x + 15} ${K.y - 14}`} stroke={angleColor1} fill="none" strokeWidth="2" />
+        <AngleArc p1={C} vertex={A} p2={B} radius={20} stroke={angleColor1} />
+        <AngleArc p1={M} vertex={K} p2={L} radius={20} stroke={angleColor1} />
         
         {/* Side AB & KL (Blue) */}
-        <line x1={A.x + 65} y1={A.y} x2={A.x + 75} y2={A.y} stroke={sideColor} strokeWidth="3" />
-        <line x1={K.x + 65} y1={K.y} x2={K.x + 75} y2={K.y} stroke={sideColor} strokeWidth="3" />
+        <LineTick p1={A} p2={B} position={0.5} stroke={sideColor} size={12} />
+        <LineTick p1={K} p2={L} position={0.5} stroke={sideColor} size={12} />
         
-        {/* Angle B & L (Green) */}
-        <path d={`M ${B.x - 20} ${B.y} A 20 20 0 0 0 ${B.x - 15} ${B.y - 14}`} stroke={angleColor2} fill="none" strokeWidth="2" />
-        <path d={`M ${B.x - 23} ${B.y - 3} A 20 20 0 0 0 ${B.x - 18} ${B.y - 17}`} stroke={angleColor2} fill="none" strokeWidth="2" />
-        
-        <path d={`M ${L.x - 20} ${L.y} A 20 20 0 0 0 ${L.x - 15} ${L.y - 14}`} stroke={angleColor2} fill="none" strokeWidth="2" />
-        <path d={`M ${L.x - 23} ${L.y - 3} A 20 20 0 0 0 ${L.x - 18} ${L.y - 17}`} stroke={angleColor2} fill="none" strokeWidth="2" />
+        {/* Angle B & L (Green) - Double Arc */}
+        <AngleArc p1={A} vertex={B} p2={C} radius={20} stroke={angleColor2} />
+        <AngleArc p1={A} vertex={B} p2={C} radius={23} stroke={angleColor2} />
+        <AngleArc p1={K} vertex={L} p2={M} radius={20} stroke={angleColor2} />
+        <AngleArc p1={K} vertex={L} p2={M} radius={23} stroke={angleColor2} />
       </svg>
     </div>
   );
@@ -67,7 +180,6 @@ export default function ProvingSlide4() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  // --- UPDATED: Now 3 questions ---
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
@@ -91,47 +203,46 @@ export default function ProvingSlide4() {
     explanation: string;
   }
 
-  // --- UPDATED: New questions based on ASA example ---
+  // --- *** UPDATED Questions Array *** ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'proving-cpctc-q1',
-      question: 'Based on the markings, $\\triangle ABC \\cong \\triangle KLM$ by which criterion?',
-      options: [
-        "SSS (Side-Side-Side)",
-        "SAS (Side-Angle-Side)",
-        "ASA (Angle-Side-Angle)",
-        "CPCTC"
-      ],
-      correctAnswer: "ASA (Angle-Side-Angle)",
-      explanation: "Correct! We are given two angles and the *included* side (the side between them), which is the ASA criterion."
-    },
-    {
-      id: 'proving-cpctc-q2',
-      question: 'The statement $AB \\cong KL$ is true because...',
-      options: [
-        "It is Given.",
-        "It is proven by CPCTC.",
-        "It is proven by the Reflexive Property."
-      ],
-      correctAnswer: "It is Given.",
-      explanation: "Correct! The single tick mark on side $AB$ and $KL$ shows this was given. We don't need to use CPCTC to prove it."
-    },
-    {
-      id: 'proving-cpctc-q3',
-      question: 'Which of these statements is a conclusion from CPCTC (and *not* a "Given")?',
-      options: [
-        "$AB \\cong KL$",
-        "$\\angle A \\cong \\angle K$",
-        "$AC \\cong KM$",
-        "$\\angle B \\cong \\angle L$"
-      ],
-      correctAnswer: "$AC \\cong KM$",
-      explanation: "Correct! Once we prove the triangles are congruent by ASA, we can use CPCTC to state that the *other* corresponding parts, like $AC$ and $KM$, are also congruent."
-    }
-  ];
+  {
+  id: 'proving-cpctc-q1',
+  question: 'Based on the markings, △ABC ≅ △KLM by which criterion?',
+  options: [
+    "SSS (Side-Side-Side)",
+    "SAS (Side-Angle-Side)",
+    "ASA (Angle-Side-Angle)",
+    "CPCTC"
+  ],
+  correctAnswer: "ASA (Angle-Side-Angle)",
+  explanation: "Correct! We are given two angles and the included side (the side between them), which is the ASA criterion."
+},
+{
+  id: 'proving-cpctc-q2',
+  question: 'The statement AB ≅ KL is true because...',
+  options: [
+    "It is Given.",
+    "It is proven by CPCTC.",
+    "It is proven by the Reflexive Property."
+  ],
+  correctAnswer: "It is Given.",
+  explanation: "Correct! The single tick mark on side AB and KL shows this was given. We don't need to use CPCTC to prove it."
+},
+{
+  id: 'proving-cpctc-q3',
+  question: 'Which of these statements is a conclusion from CPCTC (and not a \"Given\")?',
+  options: [
+    "AB ≅ KL",
+    "∠A ≅ ∠K",
+    "AC ≅ KM",
+    "∠B ≅ ∠L"
+  ],
+  correctAnswer: "AC ≅ KM",
+  explanation: "Correct! Once we prove the triangles are congruent by ASA, we can use CPCTC to state that the other corresponding parts, like AC and KM, are also congruent."
+}
+];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
-    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -139,7 +250,6 @@ export default function ProvingSlide4() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
-    // ... (This function remains unchanged, but I'll fix the template literal)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -168,7 +278,6 @@ export default function ProvingSlide4() {
   };
 
   const handleNextQuestion = () => {
-    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -221,31 +330,74 @@ export default function ProvingSlide4() {
         {/* Right Column - Logic and Quiz */}
         <div className="space-y-6">
           {/* --- LOGIC CARD --- */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Using CPCTC</h3>
-            <p className="text-lg leading-relaxed">
-              We won't prove this formally, but it's easy to see that since:
-            </p>
-            <div className="my-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 font-mono text-center text-lg"
-                 dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle A \\cong \\angle K, \\quad AB \\cong KL, \\quad \\angle B \\cong \\angle L", { throwOnError: false }) }}
-            />
-            <p className="text-lg leading-relaxed">
-              ...then <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\triangle ABC \\cong \\triangle KLM", { throwOnError: false }) }} /> by the <strong>ASA criterion</strong>.
-            </p>
-            <p className="text-lg leading-relaxed mt-4">
-              Now that triangle congruence has been established, we can use <strong>CPCTC</strong> to list *all other* congruent sides and angles:
-            </p>
-            <ul className="list-disc list-outside mt-4 ml-5 text-lg space-y-2">
-              <li>
-                According to CPCTC, the following statements about segment congruence must be true:
-                <div className="my-2" dangerouslySetInnerHTML={{ __html: katex.renderToString("AC \\cong KM, \\quad BC \\cong LM", { throwOnError: false, displayMode: true }) }} />
-              </li>
-              <li>
-                Also, according to CPCTC, we have:
-                <div className="my-2" dangerouslySetInnerHTML={{ __html: katex.renderToString("\\angle C \\cong \\angle M", { throwOnError: false, displayMode: true }) }} />
-              </li>
-            </ul>
-          </div>
+         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
+  <h3 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">
+    Using CPCTC
+  </h3>
+
+  <p className="text-lg leading-relaxed">
+    We won't prove this formally, but it's easy to see that since:
+  </p>
+
+  {/* --- Updated Equation Block (Wrapped + Responsive) --- */}
+  <div
+    className="my-4 p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 font-mono text-center text-lg leading-normal break-words whitespace-pre-wrap overflow-hidden max-w-full"
+    style={{ wordWrap: "break-word", whiteSpace: "normal" }}
+    dangerouslySetInnerHTML={{
+      __html: katex.renderToString(
+        "\\angle A \\cong \\angle K, \\; \\overline{AB} \\cong \\overline{KL}, \\; \\angle B \\cong \\angle L",
+        { throwOnError: false }
+      ),
+    }}
+  />
+
+  <p className="text-lg leading-relaxed break-words whitespace-pre-wrap overflow-hidden max-w-full">
+    ...then{" "}
+    <span
+      dangerouslySetInnerHTML={{
+        __html: katex.renderToString("\\triangle ABC \\cong \\triangle KLM", {
+          throwOnError: false,
+        }),
+      }}
+    />{" "}
+    by the <strong>ASA criterion</strong>.
+  </p>
+
+  <p className="text-lg leading-relaxed mt-4 break-words whitespace-pre-wrap overflow-hidden max-w-full">
+    Now that triangle congruence has been established, we can use{" "}
+    <strong>CPCTC</strong> to list <em>all other</em> congruent sides and angles:
+  </p>
+
+  {/* --- Updated List with Wrapped Equations --- */}
+  <ul className="list-disc list-outside mt-4 ml-5 text-lg space-y-2">
+    <li className="break-words whitespace-pre-wrap overflow-hidden max-w-full">
+      According to CPCTC, the following statements about segment congruence must be true:
+      <div
+        className="my-2 text-center font-mono leading-normal break-words whitespace-pre-wrap overflow-hidden max-w-full"
+        style={{ wordWrap: "break-word" }}
+        dangerouslySetInnerHTML={{
+          __html: katex.renderToString(
+            "\\overline{AC} \\cong \\overline{KM}, \\quad \\overline{BC} \\cong \\overline{LM}",
+            { throwOnError: false, displayMode: true }
+          ),
+        }}
+      />
+    </li>
+    <li className="break-words whitespace-pre-wrap overflow-hidden max-w-full">
+      Also, according to CPCTC, we have:
+      <div
+        className="my-2 text-center font-mono leading-normal break-words whitespace-pre-wrap overflow-hidden max-w-full"
+        style={{ wordWrap: "break-word" }}
+        dangerouslySetInnerHTML={{
+          __html: katex.renderToString("\\angle C \\cong \\angle M", {
+            throwOnError: false,
+            displayMode: true,
+          }),
+        }}
+      />
+    </li>
+  </ul>
+</div>
 
           {/* --- KNOWLEDGE CHECK CARD (Now 3 questions) --- */}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
@@ -272,22 +424,39 @@ export default function ProvingSlide4() {
             </div>
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4" dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}></div>
+               <div
+                  className="text-lg mb-4 whitespace-normal break-words leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }),
+                  }}
+                ></div>
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
+                    
+                    // --- Corrected Button Logic ---
                     const disabled = showFeedback;
-                    const selected = selectedAnswer === option;
-                    const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-red-500 bg-red-100 dark:bg-red-800 opacity-70' // INCORRECT
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
-                    } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    const isCorrect = option === questions[currentQuestionIndex].correctAnswer;
+                    const isSelected = selectedAnswer === option;
+                    let style = '';
+                    if (showFeedback) {
+                      if (isCorrect) {
+                        style = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // CORRECT
+                      } else if (isSelected && !isCorrect) {
+                        style = 'border-red-500 bg-red-100 dark:bg-red-800 opacity-70'; // INCORRECT
+                      } else {
+                        style = 'border-slate-300 dark:border-slate-600 opacity-50'; // Faded/Disabled
+                      }
+                    } else {
+                      if (isSelected) {
+                        style = 'border-blue-500 bg-blue-50 dark:bg-blue-900/3D'; // Selected
+                      } else {
+                        style = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                      }
+                    }
+                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${style} ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    // --- End Corrected Logic ---
+                    
                     return (
                       <motion.button
                         key={idx}
@@ -315,8 +484,9 @@ export default function ProvingSlide4() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
+                      {/* --- UPDATED Explanation Rendering --- */}
                       <div className="text-lg text-slate-600 dark:text-slate-400 mb-4"
-                           dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].explanation, { throwOnError: false }) }}
+                           dangerouslySetInnerHTML={{ __html: questions[currentQuestionIndex].explanation }}
                       >
                       </div>
                       <motion.button

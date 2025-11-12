@@ -112,41 +112,42 @@ export default function ProvingSlide2() {
   // --- UPDATED: New questions based on the SSS proof ---
   const questions: QuizQuestion[] = [
     {
-      id: 'proving-sss-q1',
-      question: 'In this proof, what is the reason for $AB \\cong AC$ and $BD \\cong CD$?',
-      options: [
-        "Reflexive Property",
-        "Given",
-        "SSS Criterion",
-        "Definition of a Midpoint"
-      ],
-      correctAnswer: "Given",
-      explanation: "Correct! The tick marks on the diagram indicate that this information is 'Given' to us at the start of the problem."
-    },
-    {
-      id: 'proving-sss-q2',
-      question: 'What is the reason for stating $AD \\cong AD$?',
-      options: [
-        "Given",
-        "Transitive Property",
-        "Symmetric Property",
-        "Reflexive Property"
-      ],
-      correctAnswer: "Reflexive Property",
-      explanation: "Correct! The segment $AD$ is a *common side* to both triangles. The Reflexive Property states that any segment is congruent to itself."
-    },
-    {
-      id: 'proving-sss-q3',
-      question: 'With these 3 steps, which criterion lets us conclude that $\\triangle ABD \\cong \\triangle ACD$?',
-      options: [
-        "SAS (Side-Angle-Side)",
-        "ASA (Angle-Side-Angle)",
-        "SSS (Side-Side-Side)",
-        "HL (Hypotenuse-Leg)"
-      ],
-      correctAnswer: "SSS (Side-Side-Side)",
-      explanation: "Correct! We proved three pairs of sides are congruent: (S) $AB \\cong AC$, (S) $BD \\cong CD$, and (S) $AD \\cong AD$. This is the SSS criterion."
-    }
+  id: 'proving-sss-q1',
+  question: 'In this proof, what is the reason for AB ≅ AC and BD ≅ CD?',
+  options: [
+    "Reflexive Property",
+    "Given",
+    "SSS Criterion",
+    "Definition of a Midpoint"
+  ],
+  correctAnswer: "Given",
+  explanation: "Correct! The tick marks on the diagram indicate that this information is 'Given' to us at the start of the problem."
+},
+{
+  id: 'proving-sss-q2',
+  question: 'What is the reason for stating AD ≅ AD?',
+  options: [
+    "Given",
+    "Transitive Property",
+    "Symmetric Property",
+    "Reflexive Property"
+  ],
+  correctAnswer: "Reflexive Property",
+  explanation: "Correct! The segment AD is a common side to both triangles. The Reflexive Property states that any segment is congruent to itself."
+},
+{
+  id: 'proving-sss-q3',
+  question: 'With these 3 steps, which criterion lets us conclude that △ABD ≅ △ACD?',
+  options: [
+    "SAS (Side-Angle-Side)",
+    "ASA (Angle-Side-Angle)",
+    "SSS (Side-Side-Side)",
+    "HL (Hypotenuse-Leg)"
+  ],
+  correctAnswer: "SSS (Side-Side-Side)",
+  explanation: "Correct! We proved three pairs of sides are congruent: (S) AB ≅ AC, (S) BD ≅ CD, and (S) AD ≅ AD. This is the SSS criterion."
+}
+
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
@@ -245,9 +246,17 @@ export default function ProvingSlide2() {
               </li>
             </ul>
             <div className="mt-6 p-4 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
-              <p className="text-lg font-semibold">
-                Therefore, by the SSS criterion, we conclude that $\triangle ABD \cong \triangle ACD$.
-              </p>
+              <p
+  className="text-lg font-semibold leading-relaxed break-words whitespace-pre-wrap overflow-hidden max-w-full text-slate-800 dark:text-slate-100"
+  style={{ wordWrap: "break-word", whiteSpace: "normal" }}
+  dangerouslySetInnerHTML={{
+    __html: katex.renderToString(
+      "Therefore,\\;by\\;the\\;SSS\\;criterion,\\;we\\;conclude\\;that\\;\\triangle\\;ABD\\;\\cong\\;\\triangle\\;ACD.",
+      { throwOnError: false }
+    ),
+  }}
+></p>
+
             </div>
           </div>
         </div>

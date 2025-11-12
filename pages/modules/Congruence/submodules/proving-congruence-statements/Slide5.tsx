@@ -34,12 +34,102 @@ const ProofTable: React.FC<{ rows: ProofRow[] }> = ({ rows }) => {
 };
 // --- END OF TABLE COMPONENT ---
 
-// --- FIGURE FOR LEFT COLUMN ---
+// --- NEW HELPER COMPONENTS FOR GEOMETRY ---
+
+// Define a simple Point type
+type Point = { x: number; y: number };
+
+// --- NEW COMPONENT 1: AngleArc ---
+interface AngleArcProps {
+  p1: Point;
+  vertex: Point;
+  p2: Point;
+  radius: number;
+  stroke: string;
+  strokeWidth?: number;
+}
+
+const AngleArc: React.FC<AngleArcProps> = ({
+  p1,
+  vertex,
+  p2,
+  radius,
+  stroke,
+  strokeWidth = 2,
+}) => {
+  const v1 = { x: p1.x - vertex.x, y: p1.y - vertex.y };
+  const v2 = { x: p2.x - vertex.x, y: p2.y - vertex.y };
+  const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+  const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+  if (mag1 === 0 || mag2 === 0) return null;
+  const normV1 = { x: v1.x / mag1, y: v1.y / mag1 };
+  const normV2 = { x: v2.x / mag2, y: v2.y / mag2 };
+  const start = { x: vertex.x + radius * normV1.x, y: vertex.y + radius * normV1.y };
+  const end = { x: vertex.x + radius * normV2.x, y: vertex.y + radius * normV2.y };
+  const dot = normV1.x * normV2.x + normV1.y * normV2.y;
+  const angle = Math.acos(Math.max(-1, Math.min(1, dot)));
+  const largeArcFlag = angle > Math.PI ? 1 : 0;
+  const cross = v1.x * v2.y - v1.y * v2.x;
+  const sweepFlag = cross > 0 ? 1 : 0;
+  const d = `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${end.x} ${end.y}`;
+  return <path d={d} stroke={stroke} strokeWidth={strokeWidth} fill="none" />;
+};
+
+// --- NEW COMPONENT 2: LineTick ---
+interface LineTickProps {
+  p1: Point;
+  p2: Point;
+  position?: number; // 0.0 to 1.0 (default 0.5)
+  size?: number;     // length of the tick (default 10)
+  stroke: string;
+  strokeWidth?: number;
+}
+
+const LineTick: React.FC<LineTickProps> = ({
+  p1,
+  p2,
+  position = 0.5,
+  size = 10,
+  stroke,
+  strokeWidth = 2,
+}) => {
+  // 1. Find point P on the line
+  const P = {
+    x: p1.x + (p2.x - p1.x) * position,
+    y: p1.y + (p2.y - p1.y) * position,
+  };
+  // 2. Find line vector V
+  const V = { x: p2.x - p1.x, y: p2.y - p1.y };
+  // 3. Find normal vector N
+  const N = { x: -V.y, y: V.x };
+  // 4. Normalize N
+  const magN = Math.sqrt(N.x * N.x + N.y * N.y);
+  if (magN === 0) return null;
+  const normN = { x: N.x / magN, y: N.y / magN };
+  // 5. Find tick start T1 and end T2
+  const T1 = {
+    x: P.x - normN.x * (size / 2),
+    y: P.y - normN.y * (size / 2),
+  };
+  const T2 = {
+    x: P.x + normN.x * (size / 2),
+    y: P.y + normN.y * (size / 2),
+  };
+  const d = `M ${T1.x} ${T1.y} L ${T2.x} ${T2.y}`;
+  return <path d={d} stroke={stroke} strokeWidth={strokeWidth} />;
+};
+
+// --- END OF NEW HELPER COMPONENTS ---
+
+
+// --- FIGURE FOR LEFT COLUMN (UPDATED) ---
 const SasCpctcFigure: React.FC = () => {
   const svgWidth = 300;
   const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+  const angleColor = isDarkMode ? '#93C5FD' : '#3B82F6'; // Blue
+  
   const N={x: 50, y: 50}, M={x: 100, y: 180}, O={x: 150, y: 115}, K={x: 250, y: 180}, L={x: 200, y: 50};
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
@@ -48,6 +138,20 @@ const SasCpctcFigure: React.FC = () => {
         <path d={`M ${M.x} ${M.y} L ${L.x} ${L.y}`} stroke={strokeColor} strokeWidth="2" />
         <path d={`M ${N.x} ${N.y} L ${M.x} ${M.y}`} stroke={strokeColor} strokeWidth="2" />
         <path d={`M ${K.x} ${K.y} L ${L.x} ${L.y}`} stroke={strokeColor} strokeWidth="2" />
+
+        {/* --- ADDED Markings for SAS Proof --- */}
+        {/* S: NO ≅ OK */}
+        <LineTick p1={N} p2={O} position={0.5} stroke={strokeColor} />
+        <LineTick p1={O} p2={K} position={0.5} stroke={strokeColor} />
+        
+        {/* S: MO ≅ OL */}
+        <LineTick p1={M} p2={O} position={0.5} stroke={strokeColor} />
+        <LineTick p1={O} p2={L} position={0.5} stroke={strokeColor} />
+        
+        {/* A: Vertical Angles ∠NOM ≅ ∠KOL */}
+        <AngleArc p1={N} vertex={O} p2={M} radius={20} stroke={angleColor} />
+        <AngleArc p1={K} vertex={O} p2={L} radius={20} stroke={angleColor} />
+
         <text x={N.x - 20} y={N.y} fill={strokeColor}>N</text>
         <text x={M.x - 15} y={M.y + 15} fill={strokeColor}>M</text>
         <text x={O.x - 5} y={O.y + 15} fill={strokeColor}>O</text>
@@ -88,7 +192,7 @@ const ProofQuizFigure: React.FC<{ questionIndex: number }> = ({ questionIndex })
   );
 };
 
-// --- Helper figures for the quiz ---
+// --- Helper figures for the quiz (UPDATED) ---
 const SSSFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
   const A={x: 175, y: 220}, C={x: 50, y: 100}, D={x: 175, y: 40}, B={x: 300, y: 100};
   return (
@@ -96,15 +200,16 @@ const SSSFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
       <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y} L ${D.x} ${D.y} L ${B.x} ${B.y} Z`} stroke={strokeColor} fill="none" />
       <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} strokeWidth="1" strokeDasharray="4 4" />
       
-      {/* Ticks: AB cong CD (1) */}
-      <path d="M 242 163 L 234 156" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 108 67 L 116 74" stroke={strokeColor} strokeWidth="2" />
+      {/* --- UPDATED Ticks --- */}
+      {/* Ticks: AB ≅ CD (1) */}
+      <LineTick p1={A} p2={B} position={0.5} stroke={strokeColor} />
+      <LineTick p1={C} p2={D} position={0.5} stroke={strokeColor} />
 
-      {/* Ticks: AC cong BD (2) */}
-      <path d="M 105 165 L 113 158" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 102 162 L 110 155" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 245 67 L 237 74" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 248 70 L 240 77" stroke={strokeColor} strokeWidth="2" />
+      {/* Ticks: AC ≅ BD (2) */}
+      <LineTick p1={A} p2={C} position={0.48} stroke={strokeColor} />
+      <LineTick p1={A} p2={C} position={0.52} stroke={strokeColor} />
+      <LineTick p1={B} p2={D} position={0.48} stroke={strokeColor} />
+      <LineTick p1={B} p2={D} position={0.52} stroke={strokeColor} />
 
       <text x={A.x - 10} y={A.y + 20} fill={strokeColor}>A</text>
       <text x={B.x + 10} y={B.y + 5} fill={strokeColor}>B</text>
@@ -115,6 +220,9 @@ const SSSFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
 };
 
 const SASPentagonFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) => {
+  const { isDarkMode } = useThemeContext();
+  const angleColor = isDarkMode ? '#FCD34D' : '#F59E0B'; // Yellow
+
   const A={x: 175, y: 40}, B={x: 75, y: 100}, C={x: 125, y: 200}, D={x: 225, y: 200}, E={x: 275, y: 100};
   return (
     <g>
@@ -123,21 +231,23 @@ const SASPentagonFigure: React.FC<{ strokeColor: string }> = ({ strokeColor }) =
       <path d={`M ${A.x} ${A.y} L ${C.x} ${C.y}`} stroke={strokeColor} strokeWidth="1" />
       <path d={`M ${A.x} ${A.y} L ${D.x} ${D.y}`} stroke={strokeColor} strokeWidth="1" />
       
-      {/* Ticks: AB cong AE (1) */}
-      <path d="M 120 67 L 128 74" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 230 67 L 222 74" stroke={strokeColor} strokeWidth="2" />
-
-      {/* Ticks: ACD is equilateral (2) */}
-      <path d="M 148 120 L 152 112" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 145 122 L 149 114" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 198 120 L 202 112" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 195 122 L 199 114" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 172 200 L 178 200" stroke={strokeColor} strokeWidth="2" />
-      <path d="M 172 203 L 178 203" stroke={strokeColor} strokeWidth="2" />
+      {/* --- UPDATED Ticks & Arcs --- */}
       
-      {/* Angle: BAC cong DAE */}
-      <path d="M 166 58 A 20 20 0 0 0 148 70" stroke={strokeColor} fill="none" strokeWidth="1.5" />
-      <path d="M 184 58 A 20 20 0 0 1 202 70" stroke={strokeColor} fill="none" strokeWidth="1.5" />
+      {/* Ticks: AB ≅ AE (1) */}
+      <LineTick p1={A} p2={B} position={0.5} stroke={strokeColor} />
+      <LineTick p1={A} p2={E} position={0.5} stroke={strokeColor} />
+
+      {/* Ticks: AC ≅ AD ≅ CD (2) */}
+      <LineTick p1={A} p2={C} position={0.48} stroke={strokeColor} />
+      <LineTick p1={A} p2={C} position={0.52} stroke={strokeColor} />
+      <LineTick p1={A} p2={D} position={0.48} stroke={strokeColor} />
+      <LineTick p1={A} p2={D} position={0.52} stroke={strokeColor} />
+      <LineTick p1={C} p2={D} position={0.48} stroke={strokeColor} />
+      <LineTick p1={C} p2={D} position={0.52} stroke={strokeColor} />
+      
+      {/* Angle: ∠BAC ≅ ∠EAD */}
+      <AngleArc p1={B} vertex={A} p2={C} radius={25} stroke={angleColor} />
+      <AngleArc p1={E} vertex={A} p2={D} radius={25} stroke={angleColor} />
       
       <text x={A.x - 10} y={A.y - 10} fill={strokeColor}>A</text>
       <text x={B.x - 20} y={B.y + 5} fill={strokeColor}>B</text>
@@ -155,7 +265,6 @@ export default function ProvingSlide5() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  // --- UPDATED: Now 4 questions ---
   const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false, false]);
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
@@ -179,37 +288,40 @@ export default function ProvingSlide5() {
     explanation: string;
   }
   
-  // --- UPDATED: New questions based on images ---
+  // --- *** UPDATED: Questions array with KaTeX syntax *** ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'proving-q1-sss-step2',
-      question: 'Diagram 1: Given $\overline{AB} \cong \overline{CD}$. What is the missing "Given" statement in Step 2?',
-      options: ["$\overline{AC} \cong \overline{BD}$", "$\overline{AD} \cong \overline{AD}$", "$\angle A \cong \angle D$", "$\angle B \cong \angle C$"],
-      correctAnswer: "$\overline{AC} \cong \overline{BD}$",
-      explanation: "Correct! This is the second 'Given' pair of sides (marked with double tick marks) needed for the SSS proof."
-    },
-    {
-      id: 'proving-q1-sss-step3',
-      question: 'Diagram 1: What is the reason for Step 3: $\overline{AD} \cong \overline{AD}$?',
-      options: ["Given", "Reflexive property of congruence", "Symmetric property", "SSS criterion"],
-      correctAnswer: "Reflexive property of congruence",
-      explanation: "Correct! The diagonal $\overline{AD}$ is a shared side for both $\triangle ABD$ and $\triangle DCA$. The reason it's congruent to itself is the Reflexive Property."
-    },
-    {
-      id: 'proving-q2-sas-step2',
-      question: 'Diagram 2: What is the missing "Given" statement in Step 2?',
-      options: ["$\overline{AC} \cong \overline{AD}$", "$\overline{AB} \cong \overline{AE}$", "$\angle BAC \cong \angle DAE$", "$\triangle ACD$ is equilateral"],
-      correctAnswer: "$\overline{AB} \cong \overline{AE}$",
-      explanation: "Correct! This is one of the 'Given' statements, providing the first 'Side' (S) for our SAS proof."
-    },
-    {
-      id: 'proving-q2-sas-step4',
-      question: 'Diagram 2: What is the missing Statement in Step 4 that provides the second "Side" for SAS?',
-      options: ["$\overline{AC} \cong \overline{AD}$", "$\overline{BC} \cong \overline{ED}$", "$\angle C \cong \angle D$", "CPCTC"],
-      correctAnswer: "$\overline{AC} \cong \overline{AD}$",
-      explanation: "Correct! Because $\triangle ACD$ is equilateral (Step 1), we know all its sides are congruent. This gives us our second 'Side' (S)."
-    }
-  ];
+   
+  {
+  id: 'proving-q1-sss-step2',
+  question: 'In Diagram 1, we know that AB ≅ CD. What is the other "Given" statement needed for Step 2?',
+  options: ["AC ≅ BD", "AD ≅ AD", "∠A ≅ ∠D", "∠B ≅ ∠C"],
+  correctAnswer: "AC ≅ BD",
+  explanation: "Correct! This is the second 'Given' pair of sides (shown with double tick marks) required for proving the triangles congruent by SSS."
+},
+{
+  id: 'proving-q1-sss-step3',
+  question: 'In Diagram 1, why is AD ≅ AD true in Step 3?',
+  options: ["Given", "Reflexive property of congruence", "Symmetric property", "SSS criterion"],
+  correctAnswer: "Reflexive property of congruence",
+  explanation: "Correct! The side AD is common to both triangles △ABD and △DCA. A side is always congruent to itself — that’s the Reflexive Property."
+},
+{
+  id: 'proving-q2-sas-step2',
+  question: 'In Diagram 2, what is the missing "Given" statement in Step 2?',
+  options: ["AC ≅ AD", "AB ≅ AE", "∠BAC ≅ ∠DAE", "△ACD is equilateral"],
+  correctAnswer: "AB ≅ AE",
+  explanation: "Correct! This is one of the 'Given' pieces of information (shown with single tick marks). It gives us the first Side (S) needed for the SAS proof."
+},
+{
+  id: 'proving-q2-sas-step4',
+  question: 'In Diagram 2, which statement completes Step 4 and gives us the second "Side" for the SAS proof?',
+  options: ["AC ≅ AD", "BC ≅ ED", "∠C ≅ ∠D", "CPCTC"],
+  correctAnswer: "AC ≅ AD",
+  explanation: "Correct! Since △ACD is equilateral (from Step 1), all its sides are congruent. This provides the second 'Side' (S) for the SAS criterion."
+}
+
+]
+;
   
   // --- Data for the table in the left column ---
   const proofRows: ProofRow[] = [
@@ -223,7 +335,6 @@ export default function ProvingSlide5() {
   ];
 
   const handleInteractionComplete = (response: InteractionResponse) => {
-    // ... (This function remains unchanged)
     setLocalInteractions(prev => ({
       ...prev,
       [response.interactionId]: response
@@ -231,7 +342,6 @@ export default function ProvingSlide5() {
   };
 
   const handleQuizAnswer = (answerText: string) => {
-    // ... (This function remains unchanged)
     if (showFeedback || isQuizComplete) return;
 
     setSelectedAnswer(answerText);
@@ -260,7 +370,6 @@ export default function ProvingSlide5() {
   };
 
   const handleNextQuestion = () => {
-    // ... (This function remains unchanged)
     const newAnswered = [...questionsAnswered];
     newAnswered[currentQuestionIndex] = true;
     setQuestionsAnswered(newAnswered);
@@ -287,11 +396,11 @@ export default function ProvingSlide5() {
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Example: SAS & CPCTC</h2>
             <p className="text-lg leading-relaxed">
-  In the diagram below, **O is the midpoint** of the segments{' '}
-  <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{LM}", { throwOnError: false }) }} />
-  {' '}and{' '}
-  <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{NK}", { throwOnError: false }) }} />.
-</p>
+              In the diagram below, **O is the midpoint** of the segments{' '}
+              <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{LM}", { throwOnError: false }) }} />
+              {' '}and{' '}
+              <span dangerouslySetInnerHTML={{ __html: katex.renderToString("\\overline{NK}", { throwOnError: false }) }} />.
+            </p>
             <SasCpctcFigure />
             <p className="text-lg leading-relaxed mt-4">
               Consider the following statement:
@@ -344,22 +453,42 @@ export default function ProvingSlide5() {
 
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4 mt-6" dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}></div>
+                {/* --- UPDATED Question Div --- */}
+                <div 
+                  className="text-lg mb-4 mt-6 break-words" // Added break-words
+                  dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}
+                />
+                
                 {/* --- Answer Options --- */}
                 <div className="grid grid-cols-2 gap-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
+                    
                     const disabled = showFeedback;
-                    const selected = selectedAnswer === option;
-                    const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-red-500 bg-red-100 dark:bg-red-800 opacity-70' // INCORRECT
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
-                    } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    const isCorrect = option === questions[currentQuestionIndex].correctAnswer;
+                    const isSelected = selectedAnswer === option;
+                    let style = '';
+                    if (showFeedback) {
+                      if (isCorrect) {
+                        style = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // CORRECT
+                      } else if (isSelected && !isCorrect) {
+                        style = 'border-red-500 bg-red-100 dark:bg-red-800 opacity-70'; // INCORRECT
+                      } else {
+                        style = 'border-slate-300 dark:border-slate-600 opacity-50'; // Faded/Disabled
+                      }
+                    } else {
+                      if (isSelected) {
+                        style = 'border-blue-500 bg-blue-50 dark:bg-blue-900/3D'; // Selected
+                      } else {
+                        style = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                      }
+                    }
+                    
+                    // --- *** UPDATED Button ClassName *** ---
+                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${style} ${
+                      disabled ? 'cursor-default' : 'cursor-pointer'
+                    } text-base break-words min-h-[4rem] flex items-center`;
+                    // --- END OF UPDATE ---
+
                     return (
                       <motion.button
                         key={idx}
@@ -387,9 +516,18 @@ export default function ProvingSlide5() {
                           : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-             <p className="text-lg text-slate-600 dark:text-slate-400 mb-4 leading-normal break-words whitespace-normal">
-  {questions[currentQuestionIndex].explanation}
-</p>
+                      {/* --- *** UPDATED Explanation Rendering *** --- */}
+                    <p 
+  className="text-lg text-slate-600 dark:text-slate-400 mb-4 leading-normal break-words whitespace-pre-wrap overflow-hidden max-w-full"
+  style={{ wordWrap: "break-word", whiteSpace: "normal" }}
+  dangerouslySetInnerHTML={{ 
+    __html: katex.renderToString(
+      questions[currentQuestionIndex].explanation.replace(/\$/g, ''), 
+      { throwOnError: false }
+    ) 
+  }}
+></p>
+
 
                       <motion.button
                         onClick={handleNextQuestion}

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Interaction, InteractionResponse } from '../../../common-components/concept';
 import SlideComponentWrapper from '../../../common-components/SlideComponentWrapper';
 import { useThemeContext } from '@/lib/ThemeContext';
+import katex from 'katex'; // Import katex
 
 // --- GEOMETRIC HELPER FUNCTIONS & TYPES ---
 
@@ -168,179 +169,8 @@ const AnimatedSideMarks: React.FC<AnimatedSideMarksProps> = ({ p1, p2, numMarks,
 };
 
 
-// --- FIGURE FOR QUIZ QUESTION 1 ---
-const FigureQ1: React.FC = () => {
-  const svgWidth = 400;
-  const svgHeight = 220;
-  const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const questionColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-
-  const T1_Q1 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q1 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-  const commonProps = { fill: 'none', strokeWidth: 2 };
-
-  // Calculate label positions
-  const labelA1Pos = getAngleLabelPosition(T1_Q1.B, T1_Q1.A, T1_Q1.C, 25);
-  const labelDPos = getAngleLabelPosition(T2_Q1.E, T2_Q1.D, T2_Q1.F, 25);
-  const labelBPos = getAngleLabelPosition(T1_Q1.A, T1_Q1.B, T1_Q1.C, 30);
-  const labelEPos = getAngleLabelPosition(T2_Q1.D, T2_Q1.E, T2_Q1.F, 30);
-  const labelCPos = getAngleLabelPosition(T1_Q1.A, T1_Q1.C, T1_Q1.B, 30);
-  const labelFPos = getAngleLabelPosition(T2_Q1.D, T2_Q1.F, T2_Q1.E, 30);
-
-  return (
-    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <motion.svg
-        width={svgWidth}
-        height={svgHeight}
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        variants={groupVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <g key="q1">
-          {/* Triangles */}
-          <motion.path d={`M ${T1_Q1.A.x} ${T1_Q1.A.y} L ${T1_Q1.B.x} ${T1_Q1.B.y} L ${T1_Q1.C.x} ${T1_Q1.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
-          <motion.path d={`M ${T2_Q1.D.x} ${T2_Q1.D.y} L ${T2_Q1.E.x} ${T2_Q1.E.y} L ${T2_Q1.F.x} ${T2_Q1.F.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
-          
-          {/* Markings for Q1 (ASA) */}
-          <motion.text
-            {...labelA1Pos}
-            fill={questionColor}
-            fontSize="14"
-            fontWeight="bold"
-            variants={fadeVariant}
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            x
-          </motion.text>
-          <AnimatedAngleArc p1={T1_Q1.B} vertex={T1_Q1.A} p2={T1_Q1.C} color={questionColor} commonProps={commonProps} radius={20} />
-          
-          <motion.text
-            {...labelDPos}
-            fill={labelColor}
-            fontSize="14"
-            variants={fadeVariant}
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            70°
-          </motion.text>
-          <AnimatedAngleArc p1={T2_Q1.E} vertex={T2_Q1.D} p2={T2_Q1.F} color={strokeColor} commonProps={commonProps} radius={20} />
-
-          <AnimatedAngleArc p1={T1_Q1.A} vertex={T1_Q1.B} p2={T1_Q1.C} color={highlightColor} commonProps={commonProps} radius={20} />
-          <AnimatedAngleArc p1={T2_Q1.D} vertex={T2_Q1.E} p2={T2_Q1.F} color={highlightColor} commonProps={commonProps} radius={20} />
-          <motion.text
-            {...labelBPos}
-            fill={labelColor}
-            fontSize="14"
-            variants={fadeVariant}
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            80°
-          </motion.text>
-
-          <motion.line x1={T1_Q1.B.x} y1={T1_Q1.B.y} x2={T1_Q1.C.x} y2={T1_Q1.C.y} stroke={highlightColor} strokeWidth="4" variants={drawVariant} />
-          <motion.line x1={T2_Q1.E.x} y1={T2_Q1.E.y} x2={T2_Q1.F.x} y2={T2_Q1.F.y} stroke={highlightColor} strokeWidth="4" variants={drawVariant} />
-
-          <AnimatedAngleArc p1={T1_Q1.A} vertex={T1_Q1.C} p2={T1_Q1.B} color={highlightColor} commonProps={{...commonProps, strokeDasharray: "4 4"}} radius={20} />
-          <AnimatedAngleArc p1={T2_Q1.D} vertex={T2_Q1.F} p2={T2_Q1.E} color={highlightColor} commonProps={{...commonProps, strokeDasharray: "4 4"}} radius={20} />
-          <motion.text
-            {...labelCPos}
-            fill={labelColor}
-            fontSize="14"
-            variants={fadeVariant}
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            30°
-          </motion.text>
-        </g>
-      </motion.svg>
-    </div>
-  );
-};
-
-// --- FIGURE FOR QUIZ QUESTION 2 ---
-const FigureQ2: React.FC = () => {
-  const svgWidth = 400;
-  const svgHeight = 220;
-  const { isDarkMode } = useThemeContext();
-  const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
-  const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
-  const highlightColor = isDarkMode ? '#4ADE80' : '#22C55E'; // Green
-  const questionColor = isDarkMode ? '#60A5FA' : '#2563EB'; // Blue
-
-  const T1_Q2 = { A: { x: 80, y: 50 }, B: { x: 30, y: 180 }, C: { x: 180, y: 180 } };
-  const T2_Q2 = { D: { x: 320, y: 50 }, E: { x: 270, y: 180 }, F: { x: 420, y: 180 } };
-  const commonProps = { fill: 'none', strokeWidth: 2 };
-
-  // Calculate label positions
-  const labelAPos = getAngleLabelPosition(T1_Q2.B, T1_Q2.A, T1_Q2.C, 25);
-  const labelDPos = getAngleLabelPosition(T2_Q2.E, T2_Q2.D, T2_Q2.F, 25);
-  const labelBPos = getAngleLabelPosition(T1_Q2.A, T1_Q2.B, T1_Q2.C, 30);
-  const labelEPos = getAngleLabelPosition(T2_Q2.D, T2_Q2.E, T2_Q2.F, 30);
-  const labelCPos = getAngleLabelPosition(T1_Q2.A, T1_Q2.C, T1_Q2.B, 30);
-  const labelFPos = getAngleLabelPosition(T2_Q2.D, T2_Q2.F, T2_Q2.E, 30);
-
-  return (
-    <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
-      <motion.svg
-        width={svgWidth}
-        height={svgHeight}
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        variants={groupVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <g key="q2">
-          {/* Triangles */}
-          <motion.path d={`M ${T1_Q2.A.x} ${T1_Q2.A.y} L ${T1_Q2.B.x} ${T1_Q2.B.y} L ${T1_Q2.C.x} ${T1_Q2.C.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
-          <motion.text x={T1_Q2.A.x} y={T1_Q2.A.y - 5} fill={labelColor} fontSize="14" variants={fadeVariant}>P</motion.text>
-          <motion.text x={T1_Q2.B.x - 15} y={T1_Q2.B.y + 5} fill={labelColor} fontSize="14" variants={fadeVariant}>Q</motion.text>
-          <motion.text x={T1_Q2.C.x + 5} y={T1_Q2.C.y + 5} fill={labelColor} fontSize="14" variants={fadeVariant}>R</motion.text>
-
-          <motion.path d={`M ${T2_Q2.D.x} ${T2_Q2.D.y} L ${T2_Q2.E.x} ${T2_Q2.E.y} L ${T2_Q2.F.x} ${T2_Q2.F.y} Z`} stroke={strokeColor} {...commonProps} variants={drawVariant} />
-          <motion.text x={T2_Q2.D.x} y={T2_Q2.D.y - 5} fill={labelColor} fontSize="14" variants={fadeVariant}>X</motion.text>
-          <motion.text x={T2_Q2.E.x - 15} y={T2_Q2.E.y + 5} fill={labelColor} fontSize="14" variants={fadeVariant}>Y</motion.text>
-          <motion.text x={T2_Q2.F.x + 5} y={T2_Q2.F.y + 5} fill={labelColor} fontSize="14" variants={fadeVariant}>Z</motion.text>
-          
-          {/* Markings for Q2 (ASA) */}
-          <AnimatedAngleArc p1={T1_Q2.A} vertex={T1_Q2.B} p2={T1_Q2.C} color={highlightColor} commonProps={commonProps} radius={20} />
-          <motion.text {...labelBPos} fill={labelColor} fontSize="14" variants={fadeVariant} textAnchor="middle" dominantBaseline="middle">55°</motion.text>
-          
-          <AnimatedAngleArc p1={T2_Q2.D} vertex={T2_Q2.F} p2={T2_Q2.E} color={highlightColor} commonProps={commonProps} radius={20} />
-          <motion.text {...labelFPos} fill={labelColor} fontSize="14" variants={fadeVariant} textAnchor="middle" dominantBaseline="middle">55°</motion.text>
-
-          <motion.line x1={T1_Q2.B.x} y1={T1_Q2.B.y} x2={T1_Q2.C.x} y2={T1_Q2.C.y} stroke={highlightColor} strokeWidth="4" variants={drawVariant} />
-          <motion.line x1={T2_Q2.E.x} y1={T2_Q2.E.y} x2={T2_Q2.F.x} y2={T2_Q2.F.y} stroke={highlightColor} strokeWidth="4" variants={drawVariant} />
-
-          <AnimatedAngleArc p1={T1_Q2.A} vertex={T1_Q2.C} p2={T1_Q2.B} color={highlightColor} commonProps={{...commonProps, strokeDasharray: "4 4"}} radius={20} />
-          <motion.text {...labelCPos} fill={labelColor} fontSize="14" variants={fadeVariant} textAnchor="middle" dominantBaseline="middle">40°</motion.text>
-          
-          <AnimatedAngleArc p1={T2_Q2.D} vertex={T2_Q2.E} p2={T2_Q2.F} color={highlightColor} commonProps={{...commonProps, strokeDasharray: "4 4"}} radius={20} />
-          <motion.text {...labelEPos} fill={labelColor} fontSize="14" variants={fadeVariant} textAnchor="middle" dominantBaseline="middle">40°</motion.text>
-
-          {/* Question parts */}
-          <motion.text {...labelAPos} fill={questionColor} fontSize="14" fontWeight="bold" variants={fadeVariant}>y</motion.text>
-          <AnimatedAngleArc p1={T1_Q2.B} vertex={T1_Q2.A} p2={T1_Q2.C} color={questionColor} commonProps={commonProps} radius={20} />
-          
-          <motion.text {...labelDPos} fill={labelColor} fontSize="14" variants={fadeVariant}>85°</motion.text>
-          <AnimatedAngleArc p1={T2_Q2.E} vertex={T2_Q2.D} p2={T2_Q2.F} color={strokeColor} commonProps={commonProps} radius={20} />
-        </g>
-      </motion.svg>
-    </div>
-  );
-};
-
-// --- FIGURE FOR QUIZ QUESTION 3 (NEW) ---
+// --- FIGURE FOR QUIZ QUESTION 1 (WAS Q3) ---
 const FigureQ3: React.FC = () => {
-  const svgWidth = 400;
-  const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
@@ -362,9 +192,9 @@ const FigureQ3: React.FC = () => {
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <motion.svg
-        width={svgWidth}
-        height={svgHeight}
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        width="100%"
+        height="100%"
+        viewBox="50 0 350 220"
         variants={groupVariants}
         initial="hidden"
         animate="visible"
@@ -405,10 +235,8 @@ const FigureQ3: React.FC = () => {
   );
 };
 
-// --- FIGURE FOR QUIZ QUESTION 4 (NEW) ---
+// --- FIGURE FOR QUIZ QUESTION 2 (WAS Q4) ---
 const FigureQ4: React.FC = () => {
-  const svgWidth = 400;
-  const svgHeight = 220;
   const { isDarkMode } = useThemeContext();
   const strokeColor = isDarkMode ? '#E2E8F0' : '#4A5568';
   const labelColor = isDarkMode ? '#CBD5E1' : '#64748B';
@@ -431,9 +259,9 @@ const FigureQ4: React.FC = () => {
   return (
     <div className="w-full flex justify-center items-center p-4 rounded-lg bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
       <motion.svg
-        width={svgWidth}
-        height={svgHeight}
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        width="100%"
+        height="100%"
+        viewBox="0 0 400 220"
         variants={groupVariants}
         initial="hidden"
         animate="visible"
@@ -486,7 +314,8 @@ export default function AsaSlide3() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false, false, false]);
+  // --- UPDATED State ---
+  const [questionsAnswered, setQuestionsAnswered] = useState<boolean[]>([false, false]); // Now only 2 questions
   const [score, setScore] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
   const { isDarkMode } = useThemeContext();
@@ -510,70 +339,52 @@ export default function AsaSlide3() {
     explanation: string;
   }
 
+  // --- *** UPDATED QUESTIONS ARRAY (First 2 removed) *** ---
   const questions: QuizQuestion[] = [
-    {
-      id: 'asa-find-angle-q1',
-      question: 'The triangles are congruent by ASA. What is the value of x?',
-      figure: <FigureQ1 />,
-      options: [
-        "30°",
-        "70°",
-        "80°",
-        "Cannot be determined"
-      ],
-      correctAnswer: "70°",
-      explanation:
-        "The triangles are congruent by the ASA rule (Angle-Side-Angle). This means all matching angles are equal. Angle A in the first triangle corresponds to angle D in the second triangle. Since angle D is 70°, angle A must also be 70°. Therefore, x = 70°."
-    },
-    {
-      id: 'asa-find-angle-q2',
-      question: 'Look carefully! The triangles are congruent by ASA. What is the value of y?',
-      figure: <FigureQ2 />,
-      options: [
-        "40°",
-        "55°",
-        "85°",
-        "Cannot be determined"
-      ],
-      correctAnswer: "85°",
-      explanation:
-        "The triangles follow the ASA pattern: angle Q (55°) corresponds to angle Z (55°), the included side (green) matches, and angle R (40°) corresponds to angle Y (40°). This means triangle PQR matches triangle XYZ. So, angle P corresponds to angle X. Since angle X is 85°, angle P must also be 85°. Therefore, y = 85°."
-    },
-    {
-      id: 'asa-quiz-q3-pentagon',
-      question: 'According to the ASA rule only, which triangle is congruent to triangle AOB?',
-      figure: <FigureQ3 />,
-      options: [
-        'Triangle DBC',
-        'Triangle BCA',
-        'Triangle BOC',
-        'Triangle COB',
-        'Triangle COD'
-      ],
-      correctAnswer: 'Triangle COD',
-      explanation:
-        "The diagram shows Angle (at O), Side (OA ≅ OC), and Angle (at A/C) are congruent. Wait, no, the diagram shows Side (OA ≅ OC), Side (OB ≅ OD), and Included Angle (at O). This is SAS. However, if we assume the question *meant* to provide ASA, e.g. Angle O, Side OB ≅ OD, and Angle B ≅ D, then AOB would be congruent to COD. Given the options, COD is the only logical choice."
-        // Correcting explanation based on figure: The figure shows Side (OA ≅ OC), Side (OB ≅ OD), and Side (AB is not marked, CD is). This is confusing.
-        // Let's trust the markings: Side (OA ≅ OC), Side (OB ≅ OD), Included Angle (∠AOB ≅ ∠COD). This is SAS.
-        // The question is "According to ASA...". This is a flawed question in the user's data. I will keep the answer but fix the explanation.
-        // New Explanation: "The markings (Side-Angle-Side) actually show congruence by SAS. However, based on the matching parts (∠AOB ≅ ∠COD, OA ≅ OC, OB ≅ OD), the congruent triangle is COD."
-    },
-    {
-      id: 'asa-quiz-q4-identification',
-      question: 'According to ASA, which triangle is congruent to triangle P?',
-      figure: <FigureQ4 />,
-      options: [
-        "T1 and T2 only",
-        "T3 only",
-        "T1, T2, and T3",
-        "T1 only",
-        "T2 only"
-      ],
-      correctAnswer: "T3 only",
-      explanation:
-        "Triangle P has Angle (yellow), an Included Side (1 hash), and Angle (green). Triangle T3 has the same pattern: Angle (yellow), an Included Side (1 hash), and Angle (green). T1 and T2 are not ASA."
-    }
-  ];
+  {
+    id: 'asa-quiz-q3-pentagon',
+    question: "According to the markings, which triangle is congruent to \\triangle AOB?",
+    figure: <FigureQ3 />,
+    options: [
+      "△DBC",
+      "△BCA",
+      "△BOC",
+      "△COB",
+      "△COD"
+    ],
+    correctAnswer: "△COD",
+    explanation: `
+      <strong class='text-slate-800 dark:text-slate-100'>Correct!</strong>
+      <p class='mt-2'>The markings show:</p>
+      <ul class='list-disc list-outside ml-5 mt-2 space-y-1'>
+        <li><strong>S:</strong> ${katex.renderToString("\\overline{OA} \\cong \\overline{OC}", { throwOnError: false })} (double tick)</li>
+        <li><strong>A:</strong> ${katex.renderToString("\\angle AOB \\cong \\angle COD", { throwOnError: false })} (Orange arc, Vertical Angles)</li>
+        <li><strong>S:</strong> ${katex.renderToString("\\overline{OB} \\cong \\overline{OD}", { throwOnError: false })} (single tick)</li>
+      </ul>
+      <p class='mt-2'>This follows the <strong>SAS</strong> (Side-Angle-Side) criterion. Based on this, △AOB ≅ △COD.</p>
+    `
+  },
+  {
+    id: 'asa-quiz-q4-identification',
+    question: "According to ASA, which triangle is congruent to triangle P?",
+    figure: <FigureQ4 />,
+    options: [
+      "T₁ and T₂ only",
+      "T₃ only",
+      "T₁, T₂, and T₃",
+      "T₁ only",
+      "T₂ only"
+    ],
+    correctAnswer: "T₃ only",
+    explanation: `
+      <strong class='text-slate-800 dark:text-slate-100'>Correct!</strong>
+      <p class='mt-2'>Triangle P has the pattern: <strong>Angle</strong> (yellow), <strong>Included Side</strong> (1 hash), <strong>Angle</strong> (green).</p>
+      <p class='mt-1'>Triangle T₃ has the same ASA pattern: <strong>Angle</strong> (yellow), <strong>Included Side</strong> (1 hash), <strong>Angle</strong> (green).</p>
+      <p class='mt-1'>T₁ and T₂ do not match this ASA pattern.</p>
+    `
+  }
+];
+
 
   const handleInteractionComplete = (response: InteractionResponse) => {
     setLocalInteractions(prev => ({
@@ -717,22 +528,36 @@ export default function AsaSlide3() {
 
             {!isQuizComplete ? (
               <>
-                <div className="text-lg mb-4 mt-6">{questions[currentQuestionIndex].question}</div>
+                <div 
+                  className="text-lg mb-4 mt-6 break-words"
+                  dangerouslySetInnerHTML={{ __html: katex.renderToString(questions[currentQuestionIndex].question, { throwOnError: false }) }}
+                ></div>
+                
                 {/* --- Answer Options --- */}
                 <div className="space-y-3">
                   {questions[currentQuestionIndex].options.map((option, idx) => {
+                    
                     const disabled = showFeedback;
-                    const selected = selectedAnswer === option;
-                    const correct = option === questions[currentQuestionIndex].correctAnswer;
-                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${
-                      selected
-                        ? showFeedback
-                          ? correct
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // CORRECT
-                            : 'border-slate-400 bg-slate-100 dark:bg-slate-800 opacity-70' // INCORRECT
-                          : 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' // Selected
-                        : 'border-slate-300 dark:border-slate-600 hover:border-blue-400' // Default
-                    } ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+                    const isCorrect = option === questions[currentQuestionIndex].correctAnswer;
+                    const isSelected = selectedAnswer === option;
+                    let style = '';
+                    if (showFeedback) {
+                      if (isCorrect) {
+                        style = 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'; // CORRECT
+                      } else if (isSelected && !isCorrect) {
+                        style = 'border-red-500 bg-red-100 dark:bg-red-800 opacity-70'; // INCORRECT
+                      } else {
+                        style = 'border-slate-300 dark:border-slate-600 opacity-50'; // Faded/Disabled
+                      }
+                    } else {
+                      if (isSelected) {
+                        style = 'border-blue-500 bg-blue-50 dark:bg-blue-900/3D'; // Selected
+                      } else {
+                        style = 'border-slate-300 dark:border-slate-600 hover:border-blue-400'; // Default
+                      }
+                    }
+                    const className = `w-full p-3 rounded-lg text-left transition-all border-2 ${style} ${disabled ? 'cursor-default' : 'cursor-pointer'}`;
+
                     return (
                       <motion.button
                         key={idx}
@@ -741,8 +566,8 @@ export default function AsaSlide3() {
                         className={className}
                         whileHover={!disabled ? { scale: 1.02 } : {}}
                         whileTap={!disabled ? { scale: 0.98 } : {}}
+                        dangerouslySetInnerHTML={{ __html: katex.renderToString(option, { throwOnError: false }) }}
                       >
-                        {option}
                       </motion.button>
                     );
                   })}
@@ -757,11 +582,13 @@ export default function AsaSlide3() {
                       className={`mt-4 p-4 rounded-lg ${
                         selectedAnswer === questions[currentQuestionIndex].correctAnswer
                           ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700' // Correct
-                          : 'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700' // Incorrect
+                          : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700' // Incorrect
                       }`}
                     >
-                      <div className="text-lg text-slate-600 dark:text-slate-400 mb-4">
-                        {questions[currentQuestionIndex].explanation}
+                      <div 
+                        className="text-lg text-slate-600 dark:text-slate-400 mb-4"
+                        dangerouslySetInnerHTML={{ __html: questions[currentQuestionIndex].explanation }}
+                      >
                       </div>
                       <motion.button
                         onClick={handleNextQuestion}
